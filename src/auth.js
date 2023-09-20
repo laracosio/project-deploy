@@ -1,5 +1,5 @@
 /**
- * 
+ * Given a registered user's email and password returns their authUserId value.
  * @param {number} email - unique email address
  * @param {number} password - user's password
  * @return {{authUserId: number}} on successful log in
