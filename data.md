@@ -2,11 +2,11 @@
 let data = {
   quiz: [
       {
+        quizId: exampleId,
         name: 'exampleName',
-        id: exampleId,
-        description: 'exampleDescription',
         timeCreated: numTimeCreated, 
         timeLastEdited: numTimeLastEdited,
+        description: 'exampleDescription',
       }
   ]
 
