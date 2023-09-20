@@ -1,6 +1,7 @@
 //Stub function for adminQuizInfo by Lara
 
 /**
+ * Get all of the relevant information about the current quiz.
  * 
  * @param {number} authUserId 
  * @param {number} quizId 
