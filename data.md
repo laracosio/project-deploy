@@ -13,7 +13,8 @@ let data = {
   user: [
     {
       userId: exampleId,
-      name: 'exampleName',
+      nameFirst: 'exampleFirst',
+      nameLast: 'exampleLast',
       password: 'examplePassword',
       email: 'example@example.com',
       numSuccessfulLogins: numSuccessfulLogin,
