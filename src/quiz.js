@@ -80,9 +80,11 @@ function adminQuizList (authUserId) {
  * 
  * @param {number} authUserId
  * @param {number} quizId
+ * @param {string} name
  * @returns {{error: string}}
  * 
  */
+
 function adminQuizNameUpdate (authUserId, quizId, name) {
     return {}
 }
