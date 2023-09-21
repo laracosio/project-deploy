@@ -46,13 +46,7 @@ function adminQuizCreate(authUserId, name, description) {
  */
 
 function adminQuizRemove(authUserId, quizId) {
-    return {
-        quizId: 1,
-        name: 'My Quiz',
-        timeCreated: 2009230900,
-        timeLastEdited: 2009231044,
-        description: 'This is my quiz',
-    }
+    return {}
 }
 
 //Stub function for adminQuizList made by Lara
