@@ -11,11 +11,11 @@
 
 function adminQuizInfo (authUserId, quizId) {
     return {
-        quizId: 1,
-        name: 'Interation 0 Quiz',
-        timeCreated: 0920,
-        timeLastEdited: 0921,
-        description: 'This is my quiz for Iteration 0',
+      quizId: 1,
+      name: 'My Quiz',
+      timeCreated: 1683125870,
+      timeLastEdited: 1683125871,
+      description: 'This is my quiz',
       }
 }
 /**
