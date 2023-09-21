@@ -74,3 +74,15 @@ function adminQuizList (authUserId) {
       ]
     }     
 }
+
+//Stub function for adminQuizNameUpdate - Josh
+/**
+ * 
+ * @param {number} authUserId
+ * @param {number} quizId
+ * @returns {{error: string}}
+ * 
+ */
+function adminQuizNameUpdate (authUserId, quizId, name) {
+    return {}
+}
