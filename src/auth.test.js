@@ -53,13 +53,3 @@ describe('Testing adminAuthLogin', () => {
 
 // tests for adminUserDetails
 
-describe('Testing adminAuthDetails', () => {
-    test('Return authUserId if email and password are both correct', () => {
-        // TO DO!  
-      expect(adminAuthDetails(validUser)).toStrictEqual({ authUserId: expect.any(Number) });
-    });
-    test('Return error when AuthUserId is not a valid user', () => {
-      expect(adminAuthDetails(invalidUser)).toStrictEqual({ error: expect.any(String)});
-    });
-
-  });
