@@ -2,12 +2,8 @@
 //e.g. import { clear, movieAdd, movieEdit, moviesList } from './movie';
 
 
-/* 
-TO DO!! 
-'auth.js' or auth.js ??? 
-*/
-import { adminAuthLogin } from 'auth.js';
-
+import { adminAuthLogin, adminAuthDetails } from './auth.js';
+import { setData } from './dataStore.js';
 // Any test resets
 
 
@@ -24,41 +20,71 @@ import { adminAuthLogin } from 'auth.js';
 
 // tests for adminAuthLogin
 
-let validUser = any;
-let invalidUser = any;
-
 beforeEach(() => {
-  clear();
-  validUser = adminAuthRegister('comp1531@gmail.com', 'Aero321', 'Lara', 'Cosio');	
-  invalidUser = adminAuthRegister('invalidemail@@com', 'asdfghjkl', '14r4', 'C')
+  setData({
+    users: [
+      {
+        email: 'comp1531@gmail.com',
+        password: 'Aero321',
+        nameFirst: 'Lara',
+        nameLast: 'Cosio',
+        authUserId: 1,
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0,
+      },
+      {
+        email: 'aero1531@gmail.com',
+        password: 'Comp321',
+        nameFirst: 'Carmen',
+        nameLast: 'Zhang',
+        authUserId: 2,
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0,
+      }
+    ] 
+  });
+
 });
 
 afterAll(() => {
-  clear();
+  setData({});
 });
-
 
 describe('Testing adminAuthLogin', () => {
   test('Return authUserId if email and password are both correct', () => {
-    expect(adminAuthLogin(validUser)).toStrictEqual({ authUserId: expect.any(Number) });
+    expect({ authUserId: adminAuthLogin('comp1531@gmail.com', 'Aero321')}).toStrictEqual({ authUserId: 1 });
+    expect({ authUserId: adminAuthLogin('aero1531@gmail.com', 'Comp321')}).toStrictEqual({ authUserId: 2 });
   });
   test('Return error when email does not belong to a user', () => {
-    expect(adminAuthLogin(invalidUser)).toStrictEqual({ error: expect.any(String)});
+    expect({authUserId: adminAuthLogin('invalidemail@@com', 'asdfghjkl')}).toStrictEqual({ error: expect.any(String)});
   });
   test('Return error when password is not correct', () => {
-    expect(user1).toEqual({ authUserId: expect.any(Number) });
     expect(adminAuthLogin('comp1531@gmail.com', 'Boost21')).toStrictEqual({ error: expect.any(String)});
   });
 });
 
 // tests for adminUserDetails
+
 describe('Testing adminAuthDetails', () => {
   test('Return authUserId if email and password are both correct', () => {
-      // TO DO!  
-    expect(adminAuthDetails(validUser)).toStrictEqual({ authUserId: expect.any(Number) });
+    //two failed attempts
+    adminAuthLogin('comp1531@gmail.com', '12345');
+    adminAuthLogin('comp1531@gmail.com', '12345');
+    expect(adminAuthDetails(1)).toStrictEqual({ 
+      user:
+      {
+        userId: 1,
+        name: 'Lara Cosio',
+        email: 'comp1531@gmail.com',
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 2,
+      }
+    });
   });
   test('Return error when AuthUserId is not a valid user', () => {
-    expect(adminAuthDetails(invalidUser)).toStrictEqual({ error: expect.any(String)});
+    expect(adminAuthDetails(5)).toStrictEqual({ error: expect.any(String)});
+    expect(adminAuthDetails(8)).toStrictEqual({ error: expect.any(String)});
+    expect(adminAuthDetails(0)).toStrictEqual({ error: expect.any(String)});
   });
 
 });
