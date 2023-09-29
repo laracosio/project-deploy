@@ -1,7 +1,7 @@
-// requires authregister and quizCreate to be imported
 import { adminAuthRegister } from './auth.js';
 import { adminQuizCreate} from 'quiz.js';
 import { person1, person2 } from '.testingData.js';
+import { clear } from 'other.js';
 
 describe('clear - Success Cases', () => {
     test('clear - user', () => {
