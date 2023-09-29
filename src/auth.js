@@ -1,3 +1,5 @@
+import { helperAdminRegister } from "./other";
+import { getData, setData } from "./dataStore";
 /**
  * Register a user with an email, password, and names, then returns their authUserId value.
  * @param {string} email - unique email address
@@ -8,8 +10,24 @@
  * @returns {{error: string}} on error
  */
 function adminAuthRegister(email, password, nameFirst, nameLast) {
+    let dataStore = getData();
+    if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.user)) {
+        return { error: 'Invalid registration details.'}
+    }
+    let newUserId = dataStore.user.length + 1;
+    const newUser = {
+        userId: newUserId,
+        nameFirst: nameFirst,
+        nameLast: nameLast,
+        email: email,
+        password: password,
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0,
+    }
+    dataStore.user.push(newUser);
+    setData(dataStore);
     return {
-        authUserId: 1,
+        authUserId: newUserId,
     };
 }
 
@@ -46,3 +64,5 @@ function adminUserDetails(authUserId) {
         }
       }
 }
+
+export { adminAuthRegister }
