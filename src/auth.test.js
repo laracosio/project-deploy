@@ -1,4 +1,6 @@
-// functions to import
+// functions/data to import
+import { person1, person2, person3, person4, person5, person6, person7 } from '.testingData.js';
+
 //e.g. import { clear, movieAdd, movieEdit, moviesList } from './movie';
 const ERROR = { error: expect.any(String)};
 
@@ -27,11 +29,11 @@ describe('adminAuthRegister - Success Cases', () => {
     })
     test('7 users', () => {
         adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-            adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-            adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
-            adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
-            adminAuthRegister(person5.email, person5.password, person5.nameFirst, person5.nameLast);
-            adminAuthRegister(person6.email, person6.password, person6.nameFirst, person6.nameLast);
+        adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+        adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+        adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
+        adminAuthRegister(person5.email, person5.password, person5.nameFirst, person5.nameLast);
+        adminAuthRegister(person6.email, person6.password, person6.nameFirst, person6.nameLast);
         expect(adminAuthRegister(person7.email, person7.password, person7.nameFirst, person7.nameLast).toMatchObject({ authUserId: 7}));
     })
 })
