@@ -17,7 +17,7 @@ beforeEach(() => {
  */
 
 // tests for adminAuthRegister
-describe('Success cases - adminAuthRegister', () => {
+describe('adminAuthRegister - Success Cases', () => {
     test('1 user', () => {
         expect(adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast).toMatchObject({ authUserId: 1 }));
     })
@@ -36,7 +36,7 @@ describe('Success cases - adminAuthRegister', () => {
     })
 })
 
-    describe('Error cases - adminAuthRegister', () => {
+describe('adminAuthRegister - Error Cases', () => {
     test('email address - duplicate', () => {
         adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         expect(adminAuthRegister(person1.email, person2.password, person2.nameFirst, person2.nameLast).toStrictEqual({ ERROR }));
