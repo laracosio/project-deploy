@@ -7,10 +7,12 @@ import { getData, setData } from './dataStore.js';
  * 
  */
 
-function clear () {
+function clear() {
     let store = getData();
     store.user = [];
     store.quiz =[];
     setData(store);
     return store;
 }
+
+export { clear };
