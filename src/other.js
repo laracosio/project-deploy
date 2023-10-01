@@ -5,13 +5,12 @@ const MAXCHAR = 20;
 const MINCHAR = 2;
 const MINPWLEN = 8;
 
-//Stub function for clear - Josh
 /**
+ * Reset the state of the application back to the start.
  * @param {void} 
  * @returns {void}
  * 
  */
-
 function clear() {
     let store = getData();
     store.user = [];
