@@ -1,6 +1,6 @@
 // functions to import
 import { adminAuthRegister } from './auth.js';
-import { person1, person2 } from '.testingData.js';
+import { person1, person2 } from './testingData.js';
 import { clear } from './other.js';
 
 const ERROR = { error: expect.any(String)};
