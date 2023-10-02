@@ -1,12 +1,10 @@
 // functions/data to import
 import { person1, person2, person3, person4, person5, person6, person7} from './testingData.js';
-import { adminAuthRegister } from './auth.js';
+import { adminAuthRegister, adminAuthLogin, adminAuthDetails } from './auth.js';
 import { clear } from './other.js';
 
 const ERROR = { error: expect.any(String)};
 
-import { adminAuthLogin, adminAuthDetails } from './auth.js';
-import { setData } from './dataStore.js';
 // Any test resets
 beforeEach(() => {
   clear();
@@ -80,7 +78,27 @@ describe('adminAuthRegister - Error Cases', () => {
 
 // tests for adminAuthLogin
 
-// tests for adminUserDetails
+describe('Testing adminAuthLogin', () => {
+  test('Return authUserId if email and password are both correct', () => {
+    let user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    let user2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    let user3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    let user4 = adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
+    expect(adminAuthLogin(person1.email, person1.password)).toStrictEqual(user1);
+    expect(adminAuthLogin(person2.email, person2.password)).toStrictEqual(user2);
+    expect(adminAuthLogin(person3.email, person3.password)).toStrictEqual(user3);
+    expect(adminAuthLogin(person4.email, person4.password)).toStrictEqual(user4);
+  });
+  test('Return error when email does not belong to a user', () => {
+    expect(adminAuthLogin(person5.email, person5.password)).toStrictEqual({ error: expect.any(String)});
+  });
+  test('Return error when password is not correct', () => {
+    expect(adminAuthLogin(person1.email, person4.password)).toStrictEqual({ error: expect.any(String)});
+  });
+
+});
+
+// tests for authUserDetails
 
 describe('Testing adminAuthDetails', () => {
   test('Return authUserId if email and password are both correct', () => {
@@ -121,4 +139,5 @@ describe('Testing adminAuthDetails', () => {
   });
 
 });
+
 
