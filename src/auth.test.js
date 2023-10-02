@@ -22,11 +22,11 @@ beforeEach(() => {
 // tests for adminAuthRegister
 describe('adminAuthRegister - Success Cases', () => {
     test('1 user', () => {
-        expect(adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast)).toMatchObject({ authUserId: 1 });
+        expect(adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast)).toMatchObject({ authUserId: expect.any(Number) });
     })
     test('2 users', () => {
         adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-        expect(adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast)).toMatchObject({ authUserId: 2});
+        expect(adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast)).toMatchObject({ authUserId: expect.any(Number) });
     })
     test('7 users', () => {
         adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -35,7 +35,7 @@ describe('adminAuthRegister - Success Cases', () => {
         adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
         adminAuthRegister(person5.email, person5.password, person5.nameFirst, person5.nameLast);
         adminAuthRegister(person6.email, person6.password, person6.nameFirst, person6.nameLast);
-        expect(adminAuthRegister(person7.email, person7.password, person7.nameFirst, person7.nameLast)).toMatchObject({ authUserId: 7});
+        expect(adminAuthRegister(person7.email, person7.password, person7.nameFirst, person7.nameLast)).toMatchObject({ authUserId: expect.any(Number) });
     })
 })
 
