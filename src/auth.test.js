@@ -1,17 +1,11 @@
 // functions/data to import
 import { person1, person2, person3, person4, person5, person6, person7} from './testingData.js';
-import { adminAuthRegister } from './auth.js';
+import { adminAuthRegister, adminAuthLogin } from './auth.js';
 import { clear } from './other.js';
 
 const ERROR = { error: expect.any(String)};
 
-/* 
-TO DO!! 
-'auth.js' or auth.js ??? 
-*/
-import { adminAuthLogin } from 'auth.js';
-import { person1, person2, person3, person4, person5, person6, person7 } from '.testingData.js';
-import { clear } from '.other.js'
+
 
 // Any test resets
 beforeEach(() => {

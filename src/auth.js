@@ -41,7 +41,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 function adminAuthLogin(email, password) {
   /* add num of successful logins and unsuccessful logins */
   
-  /* temporary code
+ 
   let dataStore = getData(); 
    
   const authUser = dataStore.user.find(email);
@@ -60,7 +60,7 @@ function adminAuthLogin(email, password) {
   return {
     authUserId: authUserId
   }
-  */
+  
 }
 
 /**
