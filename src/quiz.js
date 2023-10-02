@@ -98,4 +98,4 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
     return {}
 }
 
-export { adminQuizInfo };
+export { adminQuizInfo, adminQuizCreate };
