@@ -47,8 +47,6 @@ const person7 = {
     nameLast: 'Flanders',
 };
 
-const invalidUserId = adminAuthRegister('bademail@@com', 'abc', 'g1g1', 'X');
-
 const validQuizName = 'My Quiz 1';
 const invalidQuizName = 'qu!z n@me';
 const shortQuizName = 'hi';
