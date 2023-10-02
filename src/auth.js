@@ -41,10 +41,9 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 function adminAuthLogin(email, password) {
   /* add num of successful logins and unsuccessful logins */
   
- 
   let dataStore = getData(); 
    
-  const authUser = dataStore.user.find(email);
+  const authUser = dataStore.user.find(user => user.email === email);
   //email does not belong to a user
   if(!authUser) {
     return {error: 'email does not belong to a user'}
@@ -84,4 +83,4 @@ function adminUserDetails(authUserId) {
       }
 }
 
-export { adminAuthRegister }
+export { adminAuthRegister, adminAuthLogin }
