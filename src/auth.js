@@ -51,11 +51,16 @@ function adminAuthLogin(email, password) {
     
   // if password is incorrect
   if(authUser.password !== password) {
+    authUser.numFailedPasswordsSinceLastLogin++;
     return {error: 'password is incorrect'}
   }
 
   const authUserId = authUser.userId;
-
+  // if successful login, reset num of failed password
+  authUser.numSuccessfulLogins++;
+  authUser.numFailedPasswordsSinceLastLogin = 0;
+  
+  
   return {
     authUserId: authUserId
   }
