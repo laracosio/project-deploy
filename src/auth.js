@@ -65,4 +65,4 @@ function adminUserDetails(authUserId) {
       }
 }
 
-export { adminAuthRegister }
+export { adminAuthRegister };
