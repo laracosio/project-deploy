@@ -7,6 +7,7 @@ let data = {
         timeCreated: numTimeCreated, 
         timeLastEdited: numTimeLastEdited,
         description: 'exampleDescription',
+        quizOwner: authUserId,
       }
   ]
 

@@ -3,6 +3,7 @@
         "test": "jest --testMatch '**/?(*.)+(test).js'"
     },
     "dependencies": {
+        "date-fns": "^2.30.0",
         "rewire": "^6.0.0",
         "validator": "^13.7.0"
     },
