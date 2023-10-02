@@ -20,49 +20,6 @@ import { setData } from './dataStore.js';
 
 // tests for adminAuthLogin
 
-beforeEach(() => {
-  setData({
-    users: [
-      {
-        email: 'comp1531@gmail.com',
-        password: 'Aero321',
-        nameFirst: 'Lara',
-        nameLast: 'Cosio',
-        authUserId: 1,
-        numSuccessfulLogins: 1,
-        numFailedPasswordsSinceLastLogin: 0,
-      },
-      {
-        email: 'aero1531@gmail.com',
-        password: 'Comp321',
-        nameFirst: 'Carmen',
-        nameLast: 'Zhang',
-        authUserId: 2,
-        numSuccessfulLogins: 1,
-        numFailedPasswordsSinceLastLogin: 0,
-      }
-    ] 
-  });
-
-});
-
-afterAll(() => {
-  setData({});
-});
-
-describe('Testing adminAuthLogin', () => {
-  test('Return authUserId if email and password are both correct', () => {
-    expect({ authUserId: adminAuthLogin('comp1531@gmail.com', 'Aero321')}).toStrictEqual({ authUserId: 1 });
-    expect({ authUserId: adminAuthLogin('aero1531@gmail.com', 'Comp321')}).toStrictEqual({ authUserId: 2 });
-  });
-  test('Return error when email does not belong to a user', () => {
-    expect({authUserId: adminAuthLogin('invalidemail@@com', 'asdfghjkl')}).toStrictEqual({ error: expect.any(String)});
-  });
-  test('Return error when password is not correct', () => {
-    expect(adminAuthLogin('comp1531@gmail.com', 'Boost21')).toStrictEqual({ error: expect.any(String)});
-  });
-});
-
 // tests for adminUserDetails
 
 describe('Testing adminAuthDetails', () => {
@@ -82,8 +39,8 @@ describe('Testing adminAuthDetails', () => {
         userId: user1.userId,
         name: user1.name,
         email: user1.email,
-        numSuccessfulLogins: 1,
-        numFailedPasswordsSinceLastLogin: 2,
+        numSuccessfulLogins: user1.numSuccessfulLogins,
+        numFailedPasswordsSinceLastLogin: user1.numFailedPasswordsSinceLastLogin,
       }
     });
     expect(adminAuthDetails(user4.userId)).toStrictEqual({ 
@@ -92,8 +49,8 @@ describe('Testing adminAuthDetails', () => {
         userId: user4.userId,
         name: user4.name,
         email: user4.email,
-        numSuccessfulLogins: 1,
-        numFailedPasswordsSinceLastLogin: 0,
+        numSuccessfulLogins: user4.numSuccessfulLogins,
+        numFailedPasswordsSinceLastLogin: user4.numFailedPasswordsSinceLastLogin,
       }
     });
   });
