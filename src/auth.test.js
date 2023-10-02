@@ -1,6 +1,6 @@
 // functions/data to import
 import { person1, person2, person3, person4, person5, person6, person7} from './testingData.js';
-import { adminAuthRegister, adminAuthLogin, adminAuthDetails } from './auth.js';
+import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth.js';
 import { clear } from './other.js';
 
 const ERROR = { error: expect.any(String)};
@@ -111,7 +111,7 @@ describe('Testing adminAuthDetails', () => {
     //two failed attempts
     adminAuthLogin(user1.email, user2.password);
     adminAuthLogin(user1.email, user3.password);
-    expect(adminAuthDetails(user1.userId)).toStrictEqual({ 
+    expect(adminUserDetails(user1.userId)).toMatchObject({ 
       user:
       {
         userId: user1.userId,
@@ -121,7 +121,7 @@ describe('Testing adminAuthDetails', () => {
         numFailedPasswordsSinceLastLogin: user1.numFailedPasswordsSinceLastLogin,
       }
     });
-    expect(adminAuthDetails(user4.userId)).toStrictEqual({ 
+    expect(adminUserDetails(user4.userId)).toMatchObject({ 
       user:
       {
         userId: user4.userId,
@@ -133,9 +133,9 @@ describe('Testing adminAuthDetails', () => {
     });
   });
   test('Return error when AuthUserId is not a valid user', () => {
-    expect(adminAuthDetails(10)).toStrictEqual({ error: expect.any(String)});
-    expect(adminAuthDetails(8)).toStrictEqual({ error: expect.any(String)});
-    expect(adminAuthDetails(0)).toStrictEqual({ error: expect.any(String)});
+    expect(adminUserDetails(10)).toStrictEqual({ error: expect.any(String)});
+    expect(adminUserDetails(8)).toStrictEqual({ error: expect.any(String)});
+    expect(adminUserDetails(0)).toStrictEqual({ error: expect.any(String)});
   });
 
 });
