@@ -31,10 +31,10 @@ function adminQuizInfo (authUserId, quizId) {
 
 function adminQuizCreate(authUserId, name, description) {
 	let dataStore = getData();
+
 	// check authUserId is valid
-	// const found = dataStore.find((user) => user.authUserId === authUserId);
-	if (!dataStore.includes((user) => user.authUserId === authUserId)) {
-		return { error: 'Invalid user'};
+	if (!dataStore.user.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid user' };
 	}
 
 	// check quiz name only contains alphanumeric characters and spaces
@@ -47,7 +47,7 @@ function adminQuizCreate(authUserId, name, description) {
 		return { error: 'Invalid name length'};
 	}
 	// check quiz name doesn't already exist in current user's list
-	if (dataStore.includes((quiz) => quiz.name === name)) {
+	if (dataStore.quiz.some((quiz) => quiz.name === name)) {
 		return { error: 'Quiz name already in use' };
 	}
 
