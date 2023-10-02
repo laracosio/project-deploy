@@ -79,13 +79,6 @@ describe('adminAuthRegister - Error Cases', () => {
 
 // tests for adminAuthLogin
 
-beforeEach(() => {
-
- clear();
-
-});
-
-
 describe('Testing adminAuthLogin', () => {
   test('Return authUserId if email and password are both correct', () => {
     let user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
