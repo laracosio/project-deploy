@@ -7,6 +7,8 @@ TO DO!!
 'auth.js' or auth.js ??? 
 */
 import { adminAuthLogin } from 'auth.js';
+import { person1, person2, person3, person4, person5, person6, person7 } from '.testingData.js';
+import { clear } from '.other.js'
 
 // Any test resets
 
@@ -24,29 +26,45 @@ import { adminAuthLogin } from 'auth.js';
 
 // tests for adminAuthLogin
 
-let validUser = any;
-let invalidUser = any;
-
 beforeEach(() => {
-  clear();
-  validUser = adminAuthRegister('comp1531@gmail.com', 'Aero321', 'Lara', 'Cosio');	
-  invalidUser = adminAuthRegister('invalidemail@@com', 'asdfghjkl', '14r4', 'C')
+  setData({
+    users: [
+      {
+        email: 'comp1531@gmail.com',
+        password: 'Aero321',
+        nameFirst: 'Lara',
+        nameLast: 'Cosio',
+        authUserId: 1,
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0,
+      },
+      {
+        email: 'aero1531@gmail.com',
+        password: 'Comp321',
+        nameFirst: 'Carmen',
+        nameLast: 'Zhang',
+        authUserId: 2,
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0,
+      }
+    ] 
+  });
+
 });
 
 afterAll(() => {
-  clear();
+  setData({});
 });
-
 
 describe('Testing adminAuthLogin', () => {
   test('Return authUserId if email and password are both correct', () => {
-    expect(adminAuthLogin(validUser)).toStrictEqual({ authUserId: expect.any(Number) });
+    expect({ authUserId: adminAuthLogin('comp1531@gmail.com', 'Aero321')}).toStrictEqual({ authUserId: 1 });
+    expect({ authUserId: adminAuthLogin('aero1531@gmail.com', 'Comp321')}).toStrictEqual({ authUserId: 2 });
   });
   test('Return error when email does not belong to a user', () => {
-    expect(adminAuthLogin(invalidUser)).toStrictEqual({ error: expect.any(String)});
+    expect({authUserId: adminAuthLogin('invalidemail@@com', 'asdfghjkl')}).toStrictEqual({ error: expect.any(String)});
   });
   test('Return error when password is not correct', () => {
-    expect(user1).toEqual({ authUserId: expect.any(Number) });
     expect(adminAuthLogin('comp1531@gmail.com', 'Boost21')).toStrictEqual({ error: expect.any(String)});
   });
 });
