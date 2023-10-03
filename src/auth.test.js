@@ -101,14 +101,11 @@ describe('Testing adminAuthLogin', () => {
 // tests for authUserDetails
 
 describe('Testing adminAuthDetails', () => {
-
-
-  test.only('Return authUserId if email and password are both correct', () => {
-
-  let user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-  let user2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-  let user3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
-  let user4 = adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
+  test('Return authUserId if email and password are both correct', () => {
+    let user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    let user2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    let user3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    let user4 = adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
   
   //two failed attempts
   adminAuthLogin(person1.email, person2.password);
@@ -123,7 +120,7 @@ describe('Testing adminAuthDetails', () => {
         numFailedPasswordsSinceLastLogin: person1.numFailedPasswordsSinceLastLogin,
       }
     });
-    expect(adminUserDetails(user4)).toEqual({ 
+    expect(adminUserDetails(user4.authUserId)).toEqual({ 
       user:
       {
         userId: person4.userId,

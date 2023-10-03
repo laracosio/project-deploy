@@ -3,6 +3,9 @@ const person1 = {
     password: 'quickend98',
     nameFirst: 'Homer',
     nameLast: 'Simpson',
+    numSuccessfulLogins: 1,
+    numFailedPasswordsSinceLastLogin: 2,
+    userId: 1,
 };
 
 const person2 = {
@@ -24,6 +27,9 @@ const person4 = {
     password: 'grayalarm30',
     nameFirst: 'Lisa',
     nameLast: 'Simpson',
+    numSuccessfulLogins: 1,
+    numFailedPasswordsSinceLastLogin: 0,
+    userId: 4,
 };
 
 const person5 = {
