@@ -64,7 +64,7 @@ export {
     person6, 
     person7,
     validQuizName,
-    newvalidQuizName
+    newvalidQuizName,
     invalidQuizName,
     shortQuizName,
     longQuizName,
