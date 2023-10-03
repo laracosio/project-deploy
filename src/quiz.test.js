@@ -14,7 +14,7 @@ import {
 	longQuizDescription, 
 } from './testingData.js';
 
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizRemove} from "./quiz.js";
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizRemove, adminQuizNameUpdate, adminQuizDescriptionUpdate} from "./quiz.js";
 import { adminAuthRegister } from "./auth.js";
 import { clear } from "./other.js";
 
