@@ -12,14 +12,27 @@ import { getUnixTime } from 'date-fns';
  */
 
 function adminQuizInfo (authUserId, quizId) {
-	return {
-		quizId: 1,
-		name: 'My Quiz',
-		timeCreated: 1683125870,
-		timeLastEdited: 1683125871,
-		description: 'This is my quiz',
-		}
+	let dataStore = getData();
+	// check authUserId is valid
+	if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid user' };
+	}
+
+	// check quizId is valid
+	if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
+		return { error: 'Invalid quiz ID'};
+	}
+
+	// check valid quizId is owned by the current user
+	if (dataStore.quizzes.some((quiz) => (!(quiz.quizOwner === authUserId) && quiz.quizId === quizId))) {
+		return { error: 'Quiz ID not owned by this user' };
+	}
+
+	const quizMatch = dataStore.quizzes.find((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
+
+	return quizMatch;
 }
+
 /**
  * Given basic details about a new quiz, create one for  the logged in user.
  * 
@@ -71,7 +84,7 @@ function adminQuizCreate(authUserId, name, description) {
 	dataStore.quizzes.push(newQuiz);
 	setData(dataStore);
     return {
-        quizId: newQuizId,
+			quizId: newQuizId,
     }
 }
 
@@ -137,7 +150,7 @@ function adminQuizList (authUserId) {
  */
 
 function adminQuizNameUpdate (authUserId, quizId, name) {
-    return {}
+	return {}
 }
 
 
@@ -152,7 +165,7 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
  */
 
 function adminQuizDescriptionUpdate (authUserId, quizId, description) {
-    return {}
+	return {}
 }
 
-export { adminQuizList, adminQuizCreate };
+export { adminQuizInfo, adminQuizList, adminQuizCreate };
