@@ -277,7 +277,6 @@ describe('adminQuizList - Passed Cases', () => {
 	});
 });
 
-
 // adminQuizNameUpdate tests
 describe('adminQuizNameUpdate - Success Cases', () => {
     test('valid authUserId, quizId and name', () => {
