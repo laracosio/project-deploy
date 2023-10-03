@@ -39,11 +39,10 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  * @returns {{error: string}} on error
 */
 function adminAuthLogin(email, password) {
-<<<<<<< HEAD
   
   let dataStore = getData(); 
    
-  const authUser = dataStore.user.find(user => user.email === email);
+  const authUser = dataStore.users.find(user => user.email === email);
   //email does not belong to a user
   if(!authUser) {
     return {error: 'email does not belong to a user'}
@@ -65,11 +64,6 @@ function adminAuthLogin(email, password) {
     authUserId: authUserId
   }
   
-=======
-  return {
-    authUserId: 1, 
-  }
->>>>>>> master
 }
 
 /**
@@ -93,8 +87,4 @@ function adminUserDetails(authUserId) {
     }
 }
 
-<<<<<<< HEAD
 export { adminAuthRegister, adminAuthLogin }
-=======
-export { adminAuthRegister };
->>>>>>> master
