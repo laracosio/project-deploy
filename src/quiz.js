@@ -41,7 +41,6 @@ function adminQuizInfo (authUserId, quizId) {
  * @param {string} description - of quiz
  * @returns {quizId: 2}
  */
-
 function adminQuizCreate(authUserId, name, description) {
 	let dataStore = getData();
 
@@ -91,16 +90,26 @@ function adminQuizCreate(authUserId, name, description) {
 /**
  * Given a particular quiz, permanently remove the quiz.
  * 
- * @param {number} authUserId - unique identifier for authorised user
+ * @param {Number} authUserId - unique identifier for user
  * @param {number} quizId - unique identifier for quiz
- * @returns {quizId: 1, name: string, timeCreated: number, timeLastEdited: number, description: string}
- * @param {number} quizId - unique identifier for quiz
- * @returns {quizId: 1, name: string, timeCreated: number, timeLastEdited: number, description: string}
  * @returns {{error: string}}
- * 
  */
-
 function adminQuizRemove(authUserId, quizId) {
+  let dataStore = getData();
+  
+  if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid userId' };
+	}
+  if (!dataStore.quizzes.some(quiz => quiz.quizId === quizId)) {
+		return { error: 'Invalid quizId' };
+	}
+  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner !== authUserId && quiz.quizId === quizId))) {
+		return { error: 'User does not own quiz to remove' };
+	}
+
+  dataStore.quizzes.splice(dataStore.quizzes.findIndex(quiz => quiz.quizId === quizId), 1);
+
+  setData(dataStore);
   return {}
 }
 
@@ -168,4 +177,4 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
 	return {}
 }
 
-export { adminQuizInfo, adminQuizList, adminQuizCreate };
+export { adminQuizInfo, adminQuizList, adminQuizCreate, adminQuizRemove };
