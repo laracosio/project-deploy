@@ -110,20 +110,20 @@ function adminQuizList (authUserId) {
 	}
 
 	// find all user quizzes and add to an array
-	// let userQuizList = [];
-	const userMatch = dataStore.quizzes.filter((quiz) => (quiz.quizOwner === authUserId));
-	console.log(userMatch);
-	return userMatch;
-	// userQuizList.push();
-
-	// return { 
-	// 	quizzes: [
-	// 		{
-	// 			quizId: 1,
-	// 			name: 'My Quiz',
-	// 		}
-	// 	]
-	// }     
+	let userQuizList = [];
+	dataStore.quizzes.forEach((quiz) => {
+		if (quiz.quizOwner === authUserId) {
+			const obj = {
+				quizId: quiz.quizId,
+				name: quiz.name,
+			}
+			userQuizList.push(obj);
+		}
+	})
+	
+	return {
+		quizzes: userQuizList
+	};    
 }
 
 //Stub function for adminQuizNameUpdate - Josh
