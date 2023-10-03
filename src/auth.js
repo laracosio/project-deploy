@@ -1,5 +1,5 @@
-import { helperAdminRegister } from "./other";
-import { getData, setData } from "./dataStore";
+import { helperAdminRegister } from "./other.js";
+import { getData, setData } from "./dataStore.js";
 /**
  * Register a user with an email, password, and names, then returns their authUserId value.
  * @param {string} email - unique email address
