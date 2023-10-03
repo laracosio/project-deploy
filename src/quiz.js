@@ -115,14 +115,28 @@ function adminQuizRemove(authUserId, quizId) {
  */
 
 function adminQuizList (authUserId) {
-	return { 
-		quizzes: [
-			{
-				quizId: 1,
-				name: 'My Quiz',
+	let dataStore = getData();
+
+	// check authUserId is valid
+	if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid user' };
+	}
+
+	// find all user quizzes and add to an array
+	let userQuizList = [];
+	dataStore.quizzes.forEach((quiz) => {
+		if (quiz.quizOwner === authUserId) {
+			const obj = {
+				quizId: quiz.quizId,
+				name: quiz.name,
 			}
-		]
-	}     
+			userQuizList.push(obj);
+		}
+	})
+	
+	return {
+		quizzes: userQuizList
+	};    
 }
 
 //Stub function for adminQuizNameUpdate - Josh
@@ -154,4 +168,4 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
 	return {}
 }
 
-export { adminQuizInfo, adminQuizCreate };
+export { adminQuizInfo, adminQuizList, adminQuizCreate };
