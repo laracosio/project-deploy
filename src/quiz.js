@@ -12,14 +12,27 @@ import { getUnixTime } from 'date-fns';
  */
 
 function adminQuizInfo (authUserId, quizId) {
-	return {
-		quizId: 1,
-		name: 'My Quiz',
-		timeCreated: 1683125870,
-		timeLastEdited: 1683125871,
-		description: 'This is my quiz',
-		}
+	let dataStore = getData();
+	// check authUserId is valid
+	if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid user' };
+	}
+
+	// check quizId is valid
+	if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
+		return { error: 'Invalid quiz ID'};
+	}
+
+	// check valid quizId is owned by the current user
+	if (dataStore.quizzes.some((quiz) => (!(quiz.quizOwner === authUserId) && quiz.quizId === quizId))) {
+		return { error: 'Quiz ID not owned by this user' };
+	}
+
+	const quizMatch = dataStore.quizzes.find((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
+
+	return quizMatch;
 }
+
 /**
  * Given basic details about a new quiz, create one for  the logged in user.
  * 
@@ -28,7 +41,6 @@ function adminQuizInfo (authUserId, quizId) {
  * @param {string} description - of quiz
  * @returns {quizId: 2}
  */
-
 function adminQuizCreate(authUserId, name, description) {
 	let dataStore = getData();
 
@@ -71,16 +83,16 @@ function adminQuizCreate(authUserId, name, description) {
 	dataStore.quizzes.push(newQuiz);
 	setData(dataStore);
     return {
-        quizId: newQuizId,
+			quizId: newQuizId,
     }
 }
 
 /**
  * Given a particular quiz, permanently remove the quiz.
+ * 
  * @param {Number} authUserId - unique identifier for user
  * @param {number} quizId - unique identifier for quiz
  * @returns {{error: string}}
- * 
  */
 function adminQuizRemove(authUserId, quizId) {
   let dataStore = getData();
@@ -112,14 +124,28 @@ function adminQuizRemove(authUserId, quizId) {
  */
 
 function adminQuizList (authUserId) {
-	return { 
-		quizzes: [
-			{
-				quizId: 1,
-				name: 'My Quiz',
+	let dataStore = getData();
+
+	// check authUserId is valid
+	if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid user' };
+	}
+
+	// find all user quizzes and add to an array
+	let userQuizList = [];
+	dataStore.quizzes.forEach((quiz) => {
+		if (quiz.quizOwner === authUserId) {
+			const obj = {
+				quizId: quiz.quizId,
+				name: quiz.name,
 			}
-		]
-	}     
+			userQuizList.push(obj);
+		}
+	})
+	
+	return {
+		quizzes: userQuizList
+	};    
 }
 
 //Stub function for adminQuizNameUpdate - Josh
@@ -133,7 +159,7 @@ function adminQuizList (authUserId) {
  */
 
 function adminQuizNameUpdate (authUserId, quizId, name) {
-    return {}
+	return {}
 }
 
 
@@ -148,7 +174,7 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
  */
 
 function adminQuizDescriptionUpdate (authUserId, quizId, description) {
-    return {}
+	return {}
 }
 
-export { adminQuizCreate, adminQuizRemove };
+export { adminQuizInfo, adminQuizList, adminQuizCreate, adminQuizRemove };
