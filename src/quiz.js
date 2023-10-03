@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore';
+import { getData, setData } from './dataStore.js';
 import { getUnixTime } from 'date-fns';
 
 //Stub function for adminQuizInfo by Lara
