@@ -1,3 +1,5 @@
+import { helperAdminRegister } from "./other";
+import { getData, setData } from "./dataStore";
 /**
  * Register a user with an email, password, and names, then returns their authUserId value.
  * @param {string} email - unique email address
@@ -8,9 +10,25 @@
  * @returns {{error: string}} on error
  */
 function adminAuthRegister(email, password, nameFirst, nameLast) {
-    return {
-        authUserId: 1,
-    };
+  let dataStore = getData();
+  if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
+    return { error: 'Invalid registration details.'}
+  }
+  let newUserId = dataStore.users.length + 1;
+  const newUser = {
+    userId: newUserId,
+    nameFirst: nameFirst,
+    nameLast: nameLast,
+    email: email,
+    password: password,
+    numSuccessfulLogins: 1,
+    numFailedPasswordsSinceLastLogin: 0,
+  }
+  dataStore.users.push(newUser);
+  setData(dataStore);
+  return {
+    authUserId: newUserId,
+  };
 }
 
 /**
@@ -21,9 +39,31 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  * @returns {{error: string}} on error
 */
 function adminAuthLogin(email, password) {
-    return {
-        authUserId: 1, 
-    }
+  
+  let dataStore = getData(); 
+   
+  const authUser = dataStore.users.find(user => user.email === email);
+  //email does not belong to a user
+  if(!authUser) {
+    return {error: 'email does not belong to a user'}
+  }
+    
+  // if password is incorrect
+  if(authUser.password !== password) {
+    authUser.numFailedPasswordsSinceLastLogin++;
+    return {error: 'password is incorrect'}
+  }
+
+  const authUserId = authUser.userId;
+  // if successful login, reset num of failed password
+  authUser.numSuccessfulLogins++;
+  authUser.numFailedPasswordsSinceLastLogin = 0;
+  
+  
+  return {
+    authUserId: authUserId
+  }
+  
 }
 
 /**
@@ -31,18 +71,20 @@ function adminAuthLogin(email, password) {
  * "name" is the first and last name concatenated with a single space between them
  * @param {number} authUserId - calling user's Id
  * @returns {user: {userId: number, email: string, 
- *                  numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
+ *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
 function adminUserDetails(authUserId) {
-    return { 
-        user:
-        {
-          userId: 1,
-          name: 'Hayden Smith',
-          email: 'hayden.smith@unsw.edu.au',
-          numSuccessfulLogins: 3,
-          numFailedPasswordsSinceLastLogin: 1,
-        }
-      }
+  return { 
+    user:
+    {
+      userId: 1,
+      name: 'Hayden Smith',
+      email: 'hayden.smith@unsw.edu.au',
+      numSuccessfulLogins: 3,
+      numFailedPasswordsSinceLastLogin: 1,
+    }
+    }
 }
+
+export { adminAuthRegister, adminAuthLogin }
