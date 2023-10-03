@@ -193,9 +193,9 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
 	}
 	
 	var index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
-
 	dataStore.quizzes[index].name = name;
 
+	setData(dataStore);
 	return {}
 }
 
