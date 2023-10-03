@@ -1,10 +1,9 @@
 // functions/data to import
 import { person1, person2, person3, person4, person5, person6, person7} from './testingData.js';
-import { adminAuthRegister, adminAuthLogin } from './auth.js';
+import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth.js';
 import { clear } from './other.js';
 
 const ERROR = { error: expect.any(String)};
-
 
 // Any test resets
 beforeEach(() => {
@@ -96,7 +95,48 @@ describe('Testing adminAuthLogin', () => {
   test('Return error when password is not correct', () => {
     expect(adminAuthLogin(person1.email, person4.password)).toStrictEqual({ error: expect.any(String)});
   });
+
 });
 
-// tests for adminUserDetails
+// tests for authUserDetails
+
+describe('Testing adminAuthDetails', () => {
+  test('Return authUserId if email and password are both correct', () => {
+    let user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    let user2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    let user3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    let user4 = adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
+  
+  //two failed attempts
+  adminAuthLogin(person1.email, person2.password);
+  adminAuthLogin(person1.email, person4.password);
+    expect(adminUserDetails(user1.authUserId)).toEqual({ 
+      user:
+      {
+        userId: person1.userId,
+        name: person1.nameFirst + ' ' + person1.nameLast,
+        email: person1.email,
+        numSuccessfulLogins: person1.numSuccessfulLogins,
+        numFailedPasswordsSinceLastLogin: person1.numFailedPasswordsSinceLastLogin,
+      }
+    });
+    expect(adminUserDetails(user4.authUserId)).toEqual({ 
+      user:
+      {
+        userId: person4.userId,
+        name: person4.nameFirst + ' ' + person4.nameLast,
+        email: person4.email,
+        numSuccessfulLogins: person4.numSuccessfulLogins,
+        numFailedPasswordsSinceLastLogin: person4.numFailedPasswordsSinceLastLogin,
+      }
+    });
+  });
+  test('Return error when AuthUserId is not a valid user', () => {
+    expect(adminUserDetails(10)).toStrictEqual({ error: expect.any(String)});
+    expect(adminUserDetails(8)).toStrictEqual({ error: expect.any(String)});
+    expect(adminUserDetails(0)).toStrictEqual({ error: expect.any(String)});
+  });
+
+});
+
 

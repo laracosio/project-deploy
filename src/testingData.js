@@ -3,6 +3,9 @@ const person1 = {
     password: 'quickend98',
     nameFirst: 'Homer',
     nameLast: 'Simpson',
+    numSuccessfulLogins: 1,
+    numFailedPasswordsSinceLastLogin: 2,
+    userId: 1,
 };
 
 const person2 = {
@@ -24,6 +27,9 @@ const person4 = {
     password: 'grayalarm30',
     nameFirst: 'Lisa',
     nameLast: 'Simpson',
+    numSuccessfulLogins: 1,
+    numFailedPasswordsSinceLastLogin: 0,
+    userId: 4,
 };
 
 const person5 = {
@@ -48,6 +54,7 @@ const person7 = {
 };
 
 const validQuizName = 'My Quiz 1';
+const newvalidQuizName = 'Renamed My Quiz 1';
 const invalidQuizName = 'qu!z n@me';
 const shortQuizName = 'hi';
 const longQuizName = "this is longer than thirty characters"
@@ -64,6 +71,7 @@ export {
     person6, 
     person7,
     validQuizName,
+    newvalidQuizName,
     invalidQuizName,
     shortQuizName,
     longQuizName,
