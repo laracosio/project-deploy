@@ -84,16 +84,20 @@ function adminQuizCreate(authUserId, name, description) {
  */
 function adminQuizRemove(authUserId, quizId) {
   let dataStore = getData();
-
+  
   if (!dataStore.users.some(user => user.userId === authUserId)) {
 		return { error: 'Invalid userId' };
 	}
   if (!dataStore.quizzes.some(quiz => quiz.quizId === quizId)) {
 		return { error: 'Invalid quizId' };
 	}
-  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === authUserId && quiz.name === name))) {
-		return { error: 'Quiz name already in use' };
+  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner !== authUserId && quiz.quizId === quizId))) {
+		return { error: 'User does not own quiz to remove' };
 	}
+
+  dataStore.quizzes.splice(dataStore.quizzes.findIndex(quiz => quiz.quizId === quizId), 1);
+
+  setData(dataStore);
   return {}
 }
 
@@ -147,4 +151,4 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
     return {}
 }
 
-export { adminQuizCreate };
+export { adminQuizCreate, adminQuizRemove };
