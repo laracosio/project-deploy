@@ -212,6 +212,33 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
  */
 
 function adminQuizDescriptionUpdate (authUserId, quizId, description) {
+	
+	let dataStore = getData();
+	
+	// check authUserId is valid
+	if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid user ID' };
+	}
+
+	// check quizId is valid
+	if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
+		return { error: 'Invalid quiz ID' };
+	}
+
+	// check valid quizId is owned by the current user
+	if (dataStore.quizzes.some((quiz) => (!(quiz.quizOwner === authUserId) && quiz.quizId === quizId))) {
+		return { error: 'Quiz ID not owned by this user' };
+	}
+	
+	// check description is within 100 characters
+	if (description.length > 100) {
+		return { error: 'Quiz Description more than 100 characters in length' };
+	}
+	
+	var index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
+	dataStore.quizzes[index].description = description;
+
+	setData(dataStore);
 	return {}
 }
 
