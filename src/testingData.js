@@ -59,6 +59,7 @@ const invalidQuizName = 'qu!z n@me';
 const shortQuizName = 'hi';
 const longQuizName = "this is longer than thirty characters"
 const validQuizDescription = 'This quiz is awesome';
+const newvalidQuizDescription = 'This new quiz description is awesome';
 const longQuizDescription = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean moon.';
   
 export { 
@@ -75,5 +76,6 @@ export {
     shortQuizName,
     longQuizName,
     validQuizDescription,
+    newvalidQuizDescription,
     longQuizDescription,
 };

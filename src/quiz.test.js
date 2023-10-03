@@ -11,6 +11,7 @@ import {
 	shortQuizName,
 	longQuizName,
 	validQuizDescription,
+	newvalidQuizDescription,
 	longQuizDescription, 
 } from './testingData.js';
 
