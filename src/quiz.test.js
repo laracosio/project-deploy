@@ -12,9 +12,9 @@ import {
 	validQuizDescription,
 	longQuizDescription, 
 } from './testingData.js';
-import { adminQuizCreate, adminQuizInfo} from "./quiz";
-import { adminAuthRegister } from "./auth";
-import { clear } from "./other";
+import { adminQuizCreate, adminQuizInfo} from "./quiz.js";
+import { adminAuthRegister } from "./auth.js";
+import { clear } from "./other.js";
 
 // test reset
 beforeEach(() => {
