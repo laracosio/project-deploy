@@ -141,4 +141,4 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
     return {}
 }
 
-export { adminQuizCreate };
+export { adminQuizList, adminQuizCreate };
