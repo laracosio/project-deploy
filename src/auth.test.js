@@ -108,28 +108,28 @@ describe('Testing adminAuthDetails', () => {
   let user4 = adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
   
   //two failed attempts
-  adminAuthLogin(user1.email, user2.password);
-  adminAuthLogin(user1.email, user3.password);
+  adminAuthLogin(person1.email, person2.password);
+  adminAuthLogin(person1.email, person4.password);
 
   test('Return authUserId if email and password are both correct', () => {
     expect(adminUserDetails(user1)).toEqual({ 
       user:
       {
-        userId: user1.userId,
-        name: user1.name,
-        email: user1.email,
-        numSuccessfulLogins: user1.numSuccessfulLogins,
-        numFailedPasswordsSinceLastLogin: user1.numFailedPasswordsSinceLastLogin,
+        userId: user1,
+        name: person1.nameFirst + ' ' + person1.nameLast,
+        email: person1.email,
+        numSuccessfulLogins: person1.numSuccessfulLogins,
+        numFailedPasswordsSinceLastLogin: person1.numFailedPasswordsSinceLastLogin,
       }
     });
     expect(adminUserDetails(user4)).toEqual({ 
       user:
       {
-        userId: user4.userId,
-        name: user4.name,
-        email: user4.email,
-        numSuccessfulLogins: user4.numSuccessfulLogins,
-        numFailedPasswordsSinceLastLogin: user4.numFailedPasswordsSinceLastLogin,
+        userId: person4.userId,
+        name: person4.nameFirst + ' ' + person4.nameLast,
+        email: person4.email,
+        numSuccessfulLogins: person4.numSuccessfulLogins,
+        numFailedPasswordsSinceLastLogin: person4.numFailedPasswordsSinceLastLogin,
       }
     });
   });

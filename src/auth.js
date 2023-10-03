@@ -91,7 +91,7 @@ function adminUserDetails(authUserId) {
     user:
     {
       userId: authUser.userId,
-      name: authUser.nameFirst + authUser.nameLast,
+      name: authUser.nameFirst + ' ' + authUser.nameLast,
       email: authUser.email,
       numSuccessfulLogins: authUser.numSuccessfulLogins,
       numFailedPasswordsSinceLastLogin: authUser.numFailedPasswordsSinceLastLogin,
