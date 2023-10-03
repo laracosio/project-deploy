@@ -192,9 +192,9 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
 		return { error: 'Quiz name already exists'};
 	}
 	
-	dataStore.quizzes.find((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
+	var index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
 
-	quiz.name = name;
+	quiz[index].name = name;
 
 	return {}
 }
