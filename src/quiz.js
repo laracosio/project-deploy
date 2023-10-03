@@ -77,17 +77,23 @@ function adminQuizCreate(authUserId, name, description) {
 
 /**
  * Given a particular quiz, permanently remove the quiz.
- * 
- * @param {number} authUserId - unique identifier for authorised user
+ * @param {Number} authUserId - unique identifier for user
  * @param {number} quizId - unique identifier for quiz
- * @returns {quizId: 1, name: string, timeCreated: number, timeLastEdited: number, description: string}
- * @param {number} quizId - unique identifier for quiz
- * @returns {quizId: 1, name: string, timeCreated: number, timeLastEdited: number, description: string}
  * @returns {{error: string}}
  * 
  */
-
 function adminQuizRemove(authUserId, quizId) {
+  let dataStore = getData();
+
+  if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid userId' };
+	}
+  if (!dataStore.quizzes.some(quiz => quiz.quizId === quizId)) {
+		return { error: 'Invalid quizId' };
+	}
+  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === authUserId && quiz.name === name))) {
+		return { error: 'Quiz name already in use' };
+	}
   return {}
 }
 
