@@ -10,6 +10,7 @@ import {
 	shortQuizName,
 	longQuizName,
 	validQuizDescription,
+	newvalidQuizDescription,
 	longQuizDescription, 
 } from './testingData.js';
 
@@ -283,7 +284,7 @@ describe('adminQuizDescriptionUpdate - Success Cases', () => {
     test('valid authUserId, quizId and description', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);    
-        expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId, validQuizDescription)).toStrictEqual({});
+        expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual({});
     })
 })
 
@@ -291,18 +292,18 @@ describe('adminQuizRemove - Error Cases', () => {
     test('invalid authUserId', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-        expect(adminQuizDescriptionUpdate(validUserId.authUserId + 1, validQuizId.quizId, validQuizDescription)).toStrictEqual( ERROR );
+        expect(adminQuizDescriptionUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual( ERROR );
     })
     test('invalid QuizId', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-        expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId + 1, validQuizDescription)).toStrictEqual( ERROR );
+        expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizDescription)).toStrictEqual( ERROR );
     })
     test('QuizId not owned by this user', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validUserId2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-        expect(adminQuizDescriptionUpdate(validUserId2.authUserId, validQuizId.quizId, validQuizDescription)).toStrictEqual( ERROR );
+        expect(adminQuizDescriptionUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual( ERROR );
     })
     test ('invalid Description length', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
