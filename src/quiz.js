@@ -102,14 +102,28 @@ function adminQuizRemove(authUserId, quizId) {
  */
 
 function adminQuizList (authUserId) {
-	return { 
-		quizzes: [
-			{
-				quizId: 1,
-				name: 'My Quiz',
-			}
-		]
-	}     
+	let dataStore = getData();
+
+	// check authUserId is valid
+	if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid user' };
+	}
+
+	// find all user quizzes and add to an array
+	// let userQuizList = [];
+	const userMatch = dataStore.quizzes.filter((quiz) => (quiz.quizOwner === authUserId));
+	console.log(userMatch);
+	return userMatch;
+	// userQuizList.push();
+
+	// return { 
+	// 	quizzes: [
+	// 		{
+	// 			quizId: 1,
+	// 			name: 'My Quiz',
+	// 		}
+	// 	]
+	// }     
 }
 
 //Stub function for adminQuizNameUpdate - Josh

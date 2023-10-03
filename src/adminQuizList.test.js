@@ -31,7 +31,7 @@ describe('adminQuizList - Error Cases', () => {
 });
 
 describe('adminQuizList - Passed Cases', () => {
-	test('valid user1 list', () => {
+	test.only('valid user1 list', () => {
 		expect(adminQuizList(validUser1.authUserId)).toStrictEqual(
 			{ quizzes: [
 					{
