@@ -39,9 +39,31 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  * @returns {{error: string}} on error
 */
 function adminAuthLogin(email, password) {
-  return {
-    authUserId: 1, 
+  
+  let dataStore = getData(); 
+   
+  const authUser = dataStore.users.find(user => user.email === email);
+  //email does not belong to a user
+  if(!authUser) {
+    return {error: 'email does not belong to a user'}
   }
+    
+  // if password is incorrect
+  if(authUser.password !== password) {
+    authUser.numFailedPasswordsSinceLastLogin++;
+    return {error: 'password is incorrect'}
+  }
+
+  const authUserId = authUser.userId;
+  // if successful login, reset num of failed password
+  authUser.numSuccessfulLogins++;
+  authUser.numFailedPasswordsSinceLastLogin = 0;
+  
+  
+  return {
+    authUserId: authUserId
+  }
+  
 }
 
 /**
@@ -65,4 +87,4 @@ function adminUserDetails(authUserId) {
     }
 }
 
-export { adminAuthRegister };
+export { adminAuthRegister, adminAuthLogin }
