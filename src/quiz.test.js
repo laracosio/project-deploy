@@ -6,6 +6,7 @@ import {
 	person4,
 	person5,
 	validQuizName,
+	newvalidQuizName,
 	invalidQuizName,
 	shortQuizName,
 	longQuizName,
@@ -282,7 +283,7 @@ describe('adminQuizNameUpdate - Success Cases', () => {
     test('valid authUserId, quizId and name', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);    
-        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, validQuizName)).toStrictEqual({});
+        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, newvalidQuizName)).toStrictEqual({});
     })
 })
 
@@ -290,18 +291,18 @@ describe('adminQuizRemove - Error Cases', () => {
     test('invalid authUserId', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-        expect(adminQuizNameUpdate(validUserId.authUserId + 1, validQuizId.quizId, validQuizName)).toStrictEqual( ERROR );
+        expect(adminQuizNameUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizName)).toStrictEqual( ERROR );
     })
     test('invalid QuizId', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId + 1, validQuizName)).toStrictEqual( ERROR );
+        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizName)).toStrictEqual( ERROR );
     })
     test('QuizId not owned by this user', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validUserId2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-        expect(adminQuizNameUpdate(validUserId2.authUserId, validQuizId.quizId, validQuizName)).toStrictEqual( ERROR );
+        expect(adminQuizNameUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizName)).toStrictEqual( ERROR );
     })
     test('Name contains invalid characters', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
