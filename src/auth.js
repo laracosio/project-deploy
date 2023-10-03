@@ -10,25 +10,25 @@ import { getData, setData } from "./dataStore";
  * @returns {{error: string}} on error
  */
 function adminAuthRegister(email, password, nameFirst, nameLast) {
-    let dataStore = getData();
-    if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.user)) {
-        return { error: 'Invalid registration details.'}
-    }
-    let newUserId = dataStore.user.length + 1;
-    const newUser = {
-        userId: newUserId,
-        nameFirst: nameFirst,
-        nameLast: nameLast,
-        email: email,
-        password: password,
-        numSuccessfulLogins: 1,
-        numFailedPasswordsSinceLastLogin: 0,
-    }
-    dataStore.user.push(newUser);
-    setData(dataStore);
-    return {
-        authUserId: newUserId,
-    };
+  let dataStore = getData();
+  if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
+    return { error: 'Invalid registration details.'}
+  }
+  let newUserId = dataStore.users.length + 1;
+  const newUser = {
+    userId: newUserId,
+    nameFirst: nameFirst,
+    nameLast: nameLast,
+    email: email,
+    password: password,
+    numSuccessfulLogins: 1,
+    numFailedPasswordsSinceLastLogin: 0,
+  }
+  dataStore.users.push(newUser);
+  setData(dataStore);
+  return {
+    authUserId: newUserId,
+  };
 }
 
 /**
@@ -39,6 +39,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  * @returns {{error: string}} on error
 */
 function adminAuthLogin(email, password) {
+<<<<<<< HEAD
   
   let dataStore = getData(); 
    
@@ -64,6 +65,11 @@ function adminAuthLogin(email, password) {
     authUserId: authUserId
   }
   
+=======
+  return {
+    authUserId: 1, 
+  }
+>>>>>>> master
 }
 
 /**
@@ -71,20 +77,24 @@ function adminAuthLogin(email, password) {
  * "name" is the first and last name concatenated with a single space between them
  * @param {number} authUserId - calling user's Id
  * @returns {user: {userId: number, email: string, 
- *                  numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
+ *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
 function adminUserDetails(authUserId) {
-    return { 
-        user:
-        {
-          userId: 1,
-          name: 'Hayden Smith',
-          email: 'hayden.smith@unsw.edu.au',
-          numSuccessfulLogins: 3,
-          numFailedPasswordsSinceLastLogin: 1,
-        }
-      }
+  return { 
+    user:
+    {
+      userId: 1,
+      name: 'Hayden Smith',
+      email: 'hayden.smith@unsw.edu.au',
+      numSuccessfulLogins: 3,
+      numFailedPasswordsSinceLastLogin: 1,
+    }
+    }
 }
 
+<<<<<<< HEAD
 export { adminAuthRegister, adminAuthLogin }
+=======
+export { adminAuthRegister };
+>>>>>>> master

@@ -1,16 +1,17 @@
 ```javascript
 let data = {
-  quiz: [
+  quizzes: [
       {
         quizId: exampleId,
         name: 'exampleName',
         timeCreated: numTimeCreated, 
         timeLastEdited: numTimeLastEdited,
         description: 'exampleDescription',
+        quizOwner: authUserId,
       }
   ]
 
-  user: [
+  users: [
     {
       userId: exampleId,
       nameFirst: 'exampleFirst',
@@ -24,3 +25,5 @@ let data = {
 }
 ```
 [Optional] short description: 
+assumptions:
+  - userIds start at 1 and increment by 1 each time a new user is added
