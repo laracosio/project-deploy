@@ -79,7 +79,7 @@ function adminAuthLogin(email, password) {
 function adminUserDetails(authUserId) {
 
   let dataStore = getData();
-
+  // edit this line. i think the bug is here as it didnt find the authUser
   const authUser = dataStore.users.find(user => user.userId === authUserId);
   
   // invalid authUser

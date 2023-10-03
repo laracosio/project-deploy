@@ -101,17 +101,18 @@ describe('Testing adminAuthLogin', () => {
 // tests for authUserDetails
 
 describe('Testing adminAuthDetails', () => {
+
+  let user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+  let user2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+  let user3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+  let user4 = adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
+  
+  //two failed attempts
+  adminAuthLogin(user1.email, user2.password);
+  adminAuthLogin(user1.email, user3.password);
+
   test('Return authUserId if email and password are both correct', () => {
-    
-    let user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    let user2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    let user3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
-    let user4 = adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
-    
-    //two failed attempts
-    adminAuthLogin(user1.email, user2.password);
-    adminAuthLogin(user1.email, user3.password);
-    expect(adminUserDetails(user1.userId)).toMatchObject({ 
+    expect(adminUserDetails(user1)).toEqual({ 
       user:
       {
         userId: user1.userId,
@@ -121,7 +122,7 @@ describe('Testing adminAuthDetails', () => {
         numFailedPasswordsSinceLastLogin: user1.numFailedPasswordsSinceLastLogin,
       }
     });
-    expect(adminUserDetails(user4.userId)).toMatchObject({ 
+    expect(adminUserDetails(user4)).toEqual({ 
       user:
       {
         userId: user4.userId,
