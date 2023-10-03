@@ -39,6 +39,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  * @returns {{error: string}} on error
 */
 function adminAuthLogin(email, password) {
+
   
   let dataStore = getData(); 
    
@@ -75,16 +76,25 @@ function adminAuthLogin(email, password) {
  * @returns {{error: string}} on error
  */
 function adminUserDetails(authUserId) {
+  let dataStore = getData();
+ 
+  const authUser = dataStore.users.find(user => user.userId === authUserId);
+  
+  // invalid authUser
+  if(!authUser) {
+    return {error: 'authUserId does not belong to a user'}
+  }
+    
   return { 
     user:
     {
-      userId: 1,
-      name: 'Hayden Smith',
-      email: 'hayden.smith@unsw.edu.au',
-      numSuccessfulLogins: 3,
-      numFailedPasswordsSinceLastLogin: 1,
+      userId: authUser.userId,
+      name: authUser.nameFirst + ' ' + authUser.nameLast,
+      email: authUser.email,
+      numSuccessfulLogins: authUser.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: authUser.numFailedPasswordsSinceLastLogin,
     }
     }
 }
 
-export { adminAuthRegister, adminAuthLogin }
+export { adminAuthRegister, adminAuthLogin, adminUserDetails }
