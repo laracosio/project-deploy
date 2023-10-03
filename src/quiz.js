@@ -1,3 +1,5 @@
+import { getData, setData } from './dataStore';
+import { getUnixTime } from 'date-fns';
 
 //Stub function for adminQuizInfo by Lara
 
@@ -10,13 +12,13 @@
  */
 
 function adminQuizInfo (authUserId, quizId) {
-    return {
-      quizId: 1,
-      name: 'My Quiz',
-      timeCreated: 1683125870,
-      timeLastEdited: 1683125871,
-      description: 'This is my quiz',
-      }
+	return {
+		quizId: 1,
+		name: 'My Quiz',
+		timeCreated: 1683125870,
+		timeLastEdited: 1683125871,
+		description: 'This is my quiz',
+		}
 }
 /**
  * Given basic details about a new quiz, create one for  the logged in user.
@@ -28,8 +30,48 @@ function adminQuizInfo (authUserId, quizId) {
  */
 
 function adminQuizCreate(authUserId, name, description) {
+	let dataStore = getData();
+
+	// check authUserId is valid
+	if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid user' };
+	}
+
+	// check quiz name only contains alphanumeric characters and spaces
+	if (!name.match(/^[a-zA-Z0-9\s]+$/)) {
+		return { error: 'Invalid name, must not contain special characters' };
+	}
+
+	// check quiz name is between 3 and 30 characters long
+	if (name.length < 3 || name.length > 30) {
+		return { error: 'Invalid name length'};
+	}
+	// check quiz name doesn't already exist in current user's list
+	if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === authUserId && quiz.name === name))) {
+		return { error: 'Quiz name already in use' };
+	}
+
+	// check description is within 100 characters
+	if (description.length > 100) {
+		return { error: 'Description must be less than 100 characters' };
+	}
+
+	let newQuizId = dataStore.quizzes.length + 1;
+	const date = getUnixTime(new Date());
+
+	const newQuiz = {
+		quizId: newQuizId,
+		name: name,
+		timeCreated: date,
+		timeLastEdited: date,
+		description: description,
+		quizOwner: authUserId,
+	}
+  
+	dataStore.quizzes.push(newQuiz);
+	setData(dataStore);
     return {
-        quizId: 2,
+        quizId: newQuizId,
     }
 }
 
@@ -46,7 +88,7 @@ function adminQuizCreate(authUserId, name, description) {
  */
 
 function adminQuizRemove(authUserId, quizId) {
-    return {}
+  return {}
 }
 
 //Stub function for adminQuizList made by Lara
@@ -60,13 +102,14 @@ function adminQuizRemove(authUserId, quizId) {
  */
 
 function adminQuizList (authUserId) {
-    return { quizzes: [
-        {
-          quizId: 1,
-          name: 'My Quiz',
-        }
-      ]
-    }     
+	return { 
+		quizzes: [
+			{
+				quizId: 1,
+				name: 'My Quiz',
+			}
+		]
+	}     
 }
 
 //Stub function for adminQuizNameUpdate - Josh
@@ -97,3 +140,5 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
 function adminQuizDescriptionUpdate (authUserId, quizId, description) {
     return {}
 }
+
+export { adminQuizCreate };
