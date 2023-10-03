@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { format } from 'date-fns';
+import { getUnixTime } from 'date-fns';
 
 //Stub function for adminQuizInfo by Lara
 
@@ -47,7 +47,7 @@ function adminQuizCreate(authUserId, name, description) {
 		return { error: 'Invalid name length'};
 	}
 	// check quiz name doesn't already exist in current user's list
-	if (dataStore.quizzes.some((quiz) => quiz.name === name)) {
+	if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === authUserId && quiz.name === name))) {
 		return { error: 'Quiz name already in use' };
 	}
 
@@ -57,14 +57,13 @@ function adminQuizCreate(authUserId, name, description) {
 	}
 
 	let newQuizId = dataStore.quizzes.length + 1;
-	const date = new Date();
-	const dateFormatted = format(date, "dd/MM/yyyy h:mm aaa");
+	const date = getUnixTime(new Date());
 
 	const newQuiz = {
 		quizId: newQuizId,
 		name: name,
-		timeCreated: dateFormatted,
-		timeLastEdited: dateFormatted,
+		timeCreated: date,
+		timeLastEdited: date,
 		description: description,
 		quizOwner: authUserId,
 	}
