@@ -6,6 +6,7 @@ import {
 	person4,
 	person5,
 	validQuizName,
+	newvalidQuizName,
 	invalidQuizName,
 	shortQuizName,
 	longQuizName,
@@ -13,7 +14,7 @@ import {
 	longQuizDescription, 
 } from './testingData.js';
 
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizRemove} from "./quiz.js";
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizRemove, adminQuizNameUpdate, adminQuizDescriptionUpdate} from "./quiz.js";
 import { adminAuthRegister } from "./auth.js";
 import { clear } from "./other.js";
 
@@ -276,3 +277,52 @@ describe('adminQuizList - Passed Cases', () => {
 		)
 	});
 });
+
+// adminQuizNameUpdate tests
+describe('adminQuizNameUpdate - Success Cases', () => {
+    test('valid authUserId, quizId and name', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);    
+        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, newvalidQuizName)).toStrictEqual({});
+    })
+})
+
+describe('adminQuizRemove - Error Cases', () => {
+    test('invalid authUserId', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizNameUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizName)).toStrictEqual( ERROR );
+    })
+    test('invalid QuizId', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizName)).toStrictEqual( ERROR );
+    })
+    test('QuizId not owned by this user', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validUserId2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizNameUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizName)).toStrictEqual( ERROR );
+    })
+    test('Name contains invalid characters', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, invalidQuizName)).toStrictEqual( ERROR );
+    })
+    test('invalid Name length - too long', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, longQuizName)).toStrictEqual( ERROR );
+    })
+    test('invalid Name length - too short', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, shortQuizName)).toStrictEqual( ERROR );
+    })
+    test('Name already in use', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        const NameAlreadyExists = validQuizName;
+        expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, NameAlreadyExists)).toStrictEqual( ERROR );
+    })
+})

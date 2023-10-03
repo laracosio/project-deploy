@@ -54,6 +54,7 @@ const person7 = {
 };
 
 const validQuizName = 'My Quiz 1';
+const newvalidQuizName = 'Renamed My Quiz 1';
 const invalidQuizName = 'qu!z n@me';
 const shortQuizName = 'hi';
 const longQuizName = "this is longer than thirty characters"
@@ -69,6 +70,7 @@ export {
     person6, 
     person7,
     validQuizName,
+    newvalidQuizName,
     invalidQuizName,
     shortQuizName,
     longQuizName,
