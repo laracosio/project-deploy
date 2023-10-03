@@ -150,6 +150,7 @@ function adminQuizList (authUserId) {
 
 //Stub function for adminQuizNameUpdate - Josh
 /**
+ * Given a particular quiz, change the name of the quiz
  * 
  * @param {number} authUserId
  * @param {number} quizId
@@ -159,12 +160,49 @@ function adminQuizList (authUserId) {
  */
 
 function adminQuizNameUpdate (authUserId, quizId, name) {
+	
+	let dataStore = getData();
+	
+	// check authUserId is valid
+	if (!dataStore.users.some(user => user.userId === authUserId)) {
+		return { error: 'Invalid user ID' };
+	}
+
+	// check quizId is valid
+	if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
+		return { error: 'Invalid quiz ID' };
+	}
+
+	// check valid quizId is owned by the current user
+	if (dataStore.quizzes.some((quiz) => (!(quiz.quizOwner === authUserId) && quiz.quizId === quizId))) {
+		return { error: 'Quiz ID not owned by this user' };
+	}
+	
+	// check quiz name only contains alphanumeric characters and spaces
+	if (!name.match(/^[a-zA-Z0-9\s]+$/)) {
+		return { error: 'Name cannot contain special characters' };
+	}
+
+	// check quiz name is between 3 and 30 characters long
+	if (name.length < 3 || name.length > 30) {
+		return { error: 'Invalid name length' };
+	}
+	// check quiz name doesn't already exist in current user's list
+	if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === authUserId && quiz.name === name))) {
+		return { error: 'Quiz name already exists'};
+	}
+	
+	dataStore.quizzes.find((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
+
+	quiz.name = name;
+
 	return {}
 }
 
 
 //Stub function for adminQuizDescriptionUpdate - Josh
 /**
+ * Given a particular quiz, change the description of the quiz
  * 
  * @param {number} authUserId
  * @param {number} quizId
