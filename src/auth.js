@@ -40,7 +40,6 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 */
 function adminAuthLogin(email, password) {
 
-  /* add num of successful logins and unsuccessful logins */
   
   let dataStore = getData(); 
    

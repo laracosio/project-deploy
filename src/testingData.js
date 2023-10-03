@@ -53,6 +53,12 @@ const person7 = {
     nameLast: 'Flanders',
 };
 
+const validQuizName = 'My Quiz 1';
+const invalidQuizName = 'qu!z n@me';
+const shortQuizName = 'hi';
+const longQuizName = "this is longer than thirty characters"
+const validQuizDescription = 'This quiz is awesome';
+const longQuizDescription = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean moon.';
   
 export { 
     person1, 
@@ -62,4 +68,10 @@ export {
     person5, 
     person6, 
     person7,
+    validQuizName,
+    invalidQuizName,
+    shortQuizName,
+    longQuizName,
+    validQuizDescription,
+    longQuizDescription,
 };
