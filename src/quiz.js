@@ -215,4 +215,4 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
 	return {}
 }
 
-export { adminQuizInfo, adminQuizList, adminQuizCreate, adminQuizRemove };
+export { adminQuizInfo, adminQuizList, adminQuizCreate, adminQuizRemove, adminQuizNameUpdate, adminQuizDescriptionUpdate };
