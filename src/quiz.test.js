@@ -292,7 +292,7 @@ describe('adminQuizNameUpdate - Error Cases', () => {
     test('invalid authUserId', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-        expect(adminQuizNameUpdate(validUserId.authUserId + 1, validQuizId.quizId, nevalidQuizName)).toStrictEqual( ERROR );
+        expect(adminQuizNameUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizName)).toStrictEqual( ERROR );
     })
     test('invalid QuizId', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
