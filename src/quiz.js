@@ -30,7 +30,13 @@ function adminQuizInfo (authUserId, quizId) {
 
 	const quizMatch = dataStore.quizzes.find((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
 
-	return quizMatch;
+	return {
+		quizId: quizMatch.quizId,
+		name: quizMatch.name,
+		timeCreated: quizMatch.timeCreated,
+		timeLastEdited: quizMatch.timeLastEdited,
+		description: quizMatch.description,
+	};
 }
 
 /**
