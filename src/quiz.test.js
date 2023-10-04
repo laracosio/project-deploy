@@ -72,7 +72,16 @@ describe('adminQuizCreate - Passed Cases', () => {
 		const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
 		const quizCreate = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription)
 		expect(quizCreate.quizId).toStrictEqual(expect.any(Number))
-	})
+	});
+	test('valid multiple quiz details', () => {
+		const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+		const quizCreate = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+		const validUserId2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+		const quiz2 = adminQuizCreate(validUserId2.authUserId, 'Quiz 2', '');
+		const quiz3 = adminQuizCreate(validUserId2.authUserId, 'Quiz 3', '');
+		// const quiz4 = adminQuizCreate(validUserId2.authUserId, 'Quiz 4', '');
+		expect(adminQuizCreate(validUserId2.authUserId, 'Quiz 4', '')).toMatchObject({ quizId: expect.any(Number) });
+	});
 })
 
 // tests for adminQuizRemove
