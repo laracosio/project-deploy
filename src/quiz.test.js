@@ -288,7 +288,7 @@ describe('adminQuizNameUpdate - Success Cases', () => {
     })
 })
 
-describe('adminQuizRemove - Error Cases', () => {
+describe('adminQuizNameUpdate - Error Cases', () => {
     test('invalid authUserId', () => {
         const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
@@ -325,5 +325,39 @@ describe('adminQuizRemove - Error Cases', () => {
         const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
         const NameAlreadyExists = validQuizName;
         expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, NameAlreadyExists)).toStrictEqual( ERROR );
+    })
+})
+
+
+// adminQuizDescriptionUpdate tests
+describe('adminQuizDescriptionUpdate - Success Cases', () => {
+    test('valid authUserId, quizId and description', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);    
+        expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual({});
+    })
+})
+
+describe('adminQuizDescriptionUpdate - Error Cases', () => {
+    test('invalid authUserId', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizDescriptionUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual( ERROR );
+    })
+    test('invalid QuizId', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizDescription)).toStrictEqual( ERROR );
+    })
+    test('QuizId not owned by this user', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validUserId2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizDescriptionUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual( ERROR );
+    })
+    test('Description is longer than 100 characters', () => {
+        const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+        const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+        expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId, longQuizDescription)).toStrictEqual( ERROR );
     })
 })
