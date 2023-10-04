@@ -156,7 +156,6 @@ describe('adminQuizInfo - Passed Cases', () => {
 				timeCreated: expect.any(Number),
 				timeLastEdited: expect.any(Number),
 				description: validQuizDescription,
-				quizOwner: validUser1.authUserId,
 			}
 		)
 	});
@@ -172,7 +171,6 @@ describe('adminQuizInfo - Passed Cases', () => {
 				timeCreated: expect.any(Number),
 				timeLastEdited: expect.any(Number),
 				description: '',
-				quizOwner: validUser2.authUserId,
 			}
 		)
 	})
@@ -192,7 +190,6 @@ describe('adminQuizInfo - Passed Cases', () => {
 				timeCreated: expect.any(Number),
 				timeLastEdited: expect.any(Number),
 				description: '',
-				quizOwner: validUser5.authUserId,
 			}
 		)
 	})
