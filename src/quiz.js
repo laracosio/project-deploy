@@ -74,7 +74,14 @@ function adminQuizCreate(authUserId, name, description) {
 		return { error: 'Description must be less than 100 characters' };
 	}
 
-	let newQuizId = dataStore.quizzes.length + 1;
+	let newQuizId;
+	if (dataStore.quizzes.length === 0) {
+		newQuizId = 1;
+	} else {
+		let currLastQuiz = dataStore.quizzes.findLast(({ quizId }) => quizId >= 1);
+		newQuizId = currLastQuiz.quizId + 1;
+	}
+
 	const date = getUnixTime(new Date());
 
 	const newQuiz = {
@@ -88,6 +95,7 @@ function adminQuizCreate(authUserId, name, description) {
   
 	dataStore.quizzes.push(newQuiz);
 	setData(dataStore);
+	
     return {
 			quizId: newQuizId,
     }
