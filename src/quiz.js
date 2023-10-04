@@ -195,6 +195,9 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
 	var index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
 	dataStore.quizzes[index].name = name;
 
+	const date = getUnixTime(new Date());
+	dataStore.quizzes[index].timeLastEdited = date;
+
 	setData(dataStore);
 	return {}
 }
@@ -237,6 +240,9 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
 	
 	var index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
 	dataStore.quizzes[index].description = description;
+
+	const date = getUnixTime(new Date());
+	dataStore.quizzes[index].timeLastEdited = date;
 
 	setData(dataStore);
 	return {}
