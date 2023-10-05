@@ -1,7 +1,9 @@
-import { adminAuthRegister } from './auth.js';
-import { adminQuizCreate} from './quiz.js';
+import { adminAuthRegister, adminAuthLogin } from './auth.js';
+import { adminQuizCreate, adminQuizRemove } from './quiz.js';
 import { person1, person2 } from './testingData.js';
 import { clear } from './other.js';
+
+const ERROR = { error: expect.any(String)};
 
 describe('clear - Success Cases', () => {
   test('clear - user', () => {
@@ -10,15 +12,17 @@ describe('clear - Success Cases', () => {
     expect(clear()).toStrictEqual({});
   })
   test('clear - user and quiz', () => {
-    adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    adminQuizCreate(1, 'Misc Quiz Name', 'Misc Description');
+    let user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    let quiz1 = adminQuizCreate(user1.authUserId, 'Misc Quiz Name', 'Misc Description');
     expect(clear()).toStrictEqual({});
+    expect(adminQuizRemove(user1.authUserId, quiz1.quizId)).toEqual(ERROR);
   })
   test('clear - multiple users and quizzes', () => {
-    adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    let user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    adminQuizCreate(1, 'Misc Quiz Name', 'Misc Description');
+    let quiz1 = adminQuizCreate(user1.authUserId, 'Misc Quiz Name', 'Misc Description');
     adminQuizCreate(2, 'Misc Quiz Name2', 'Misc Description2');
     expect(clear()).toStrictEqual({});
+    expect(adminAuthLogin(person1.email, person1.password)).toEqual(ERROR);
   })
 })
