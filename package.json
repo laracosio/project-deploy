@@ -8,10 +8,12 @@
         "posttest": "pkill -f 'node_modules/sync-rpc/lib/worker.js' > /dev/null 2>&1 || true"
     },
     "dependencies": {
+        package.json
         "cors": "^2.8.5",
         "express": "^4.18.0",
         "http-errors": "^2.0.0",
         "morgan": "^1.10.0",
+        "date-fns": "^2.30.0",
         "rewire": "^6.0.0",
         "ts-node": "^10.7.0",
         "typescript": "^4.6.3",
