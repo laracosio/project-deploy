@@ -1,7 +1,7 @@
 // functions/data to import
 import { person1, person2, person3, person4, person5, person6, person7} from './testingData.js';
-import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth.js';
-import { clear } from './other.js';
+import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
+import { clear } from './other';
 
 const ERROR = { error: expect.any(String)};
 

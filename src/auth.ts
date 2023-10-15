@@ -1,5 +1,20 @@
-import { helperAdminRegister } from "./other.js";
-import { getData, setData } from "./dataStore.js";
+import { helperAdminRegister } from "./other";
+import { getData, setData, ErrorObject } from "./dataStore";
+
+interface AuthReturn {
+  authUserId: number
+}
+
+interface UserDetailReturn {
+  user: {
+    userId: number,
+    name: string,
+    email: string,
+    numSuccessfulLogins: number,
+    numFailedPasswordsSinceLastLogin: number
+  }
+}
+
 /**
  * Register a user with an email, password, and names, then returns their authUserId value.
  * @param {string} email - unique email address
@@ -9,7 +24,7 @@ import { getData, setData } from "./dataStore.js";
  * @returns {{authUserId: number}}
  * @returns {{error: string}} on error
  */
-function adminAuthRegister(email, password, nameFirst, nameLast) {
+function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn | ErrorObject {
   let dataStore = getData();
   if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
     return { error: 'Invalid registration details.'}
@@ -38,8 +53,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  * @returns {{authUserId: number}} on successful log in
  * @returns {{error: string}} on error
 */
-function adminAuthLogin(email, password) {
-
+function adminAuthLogin(email:string, password: string): AuthReturn | ErrorObject {
   
   let dataStore = getData(); 
    
@@ -60,7 +74,6 @@ function adminAuthLogin(email, password) {
   authUser.numSuccessfulLogins++;
   authUser.numFailedPasswordsSinceLastLogin = 0;
   
-  
   return {
     authUserId: authUserId
   }
@@ -75,7 +88,7 @@ function adminAuthLogin(email, password) {
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(authUserId) {
+function adminUserDetails(authUserId: number): UserDetailReturn | ErrorObject {
   let dataStore = getData();
  
   const authUser = dataStore.users.find(user => user.userId === authUserId);
@@ -94,7 +107,7 @@ function adminUserDetails(authUserId) {
       numSuccessfulLogins: authUser.numSuccessfulLogins,
       numFailedPasswordsSinceLastLogin: authUser.numFailedPasswordsSinceLastLogin,
     }
-    }
+  }
 }
 
 export { adminAuthRegister, adminAuthLogin, adminUserDetails }

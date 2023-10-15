@@ -1,7 +1,25 @@
-import { getData, setData } from './dataStore.js';
+import { getData, setData, ErrorObject, Quiz } from './dataStore';
 import { getUnixTime } from 'date-fns';
 
-//Stub function for adminQuizInfo by Lara
+interface QuizInfoReturn {
+	quizId: number,
+  name: string,
+  timeCreated: number,
+  timeLastEdited: number,
+  description: string
+}
+
+interface QuizCreateReturn {
+	quizId: number
+}
+interface BriefQuizInfo {
+  quizId: number, 
+  name: string
+}
+
+interface QuizListReturn {
+  quizzes: BriefQuizInfo[]
+}
 
 /**
  * Get all of the relevant information about the current quiz.
@@ -11,7 +29,7 @@ import { getUnixTime } from 'date-fns';
  * @returns {quizId: number, name: string, timeCreated: number, timeLastEdited: number, description: string}
  */
 
-function adminQuizInfo (authUserId, quizId) {
+function adminQuizInfo (authUserId: number, quizId: number): QuizInfoReturn | ErrorObject {
 	let dataStore = getData();
 	// check authUserId is valid
 	if (!dataStore.users.some(user => user.userId === authUserId)) {
@@ -47,7 +65,7 @@ function adminQuizInfo (authUserId, quizId) {
  * @param {string} description - of quiz
  * @returns {quizId: 2}
  */
-function adminQuizCreate(authUserId, name, description) {
+function adminQuizCreate(authUserId: number, name: string, description: string): QuizCreateReturn | ErrorObject {
 	let dataStore = getData();
 
 	// check authUserId is valid
@@ -78,7 +96,7 @@ function adminQuizCreate(authUserId, name, description) {
 	if (dataStore.quizzes.length === 0) {
 		newQuizId = 1;
 	} else {
-		let currLastQuiz = dataStore.quizzes.findLast(({ quizId }) => quizId >= 1);
+		let currLastQuiz = dataStore.quizzes.findLast((q: Quiz) => q.quizId >= 1);
 		newQuizId = currLastQuiz.quizId + 1;
 	}
 
@@ -96,9 +114,9 @@ function adminQuizCreate(authUserId, name, description) {
 	dataStore.quizzes.push(newQuiz);
 	setData(dataStore);
 	
-    return {
-			quizId: newQuizId,
-    }
+  return {
+    quizId: newQuizId,
+  }
 }
 
 /**
@@ -108,7 +126,7 @@ function adminQuizCreate(authUserId, name, description) {
  * @param {number} quizId - unique identifier for quiz
  * @returns {{error: string}}
  */
-function adminQuizRemove(authUserId, quizId) {
+function adminQuizRemove(authUserId: number, quizId: number): Object | ErrorObject {
   let dataStore = getData();
   
   if (!dataStore.users.some(user => user.userId === authUserId)) {
@@ -124,10 +142,9 @@ function adminQuizRemove(authUserId, quizId) {
   dataStore.quizzes.splice(dataStore.quizzes.findIndex(quiz => quiz.quizId === quizId), 1);
 
   setData(dataStore);
-  return {}
+  return {};
 }
 
-//Stub function for adminQuizList made by Lara
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -136,8 +153,7 @@ function adminQuizRemove(authUserId, quizId) {
  * @returns {{error: string}}
  * 
  */
-
-function adminQuizList (authUserId) {
+function adminQuizList (authUserId: number): QuizListReturn | ErrorObject {
 	let dataStore = getData();
 
 	// check authUserId is valid
@@ -146,7 +162,7 @@ function adminQuizList (authUserId) {
 	}
 
 	// find all user quizzes and add to an array
-	let userQuizList = [];
+	let userQuizList: Array<BriefQuizInfo> = [];
 	dataStore.quizzes.forEach((quiz) => {
 		if (quiz.quizOwner === authUserId) {
 			const obj = {
@@ -162,7 +178,6 @@ function adminQuizList (authUserId) {
 	};    
 }
 
-//Stub function for adminQuizNameUpdate - Josh
 /**
  * Given a particular quiz, change the name of the quiz
  * 
@@ -172,8 +187,7 @@ function adminQuizList (authUserId) {
  * @returns {{error: string}}
  * 
  */
-
-function adminQuizNameUpdate (authUserId, quizId, name) {
+function adminQuizNameUpdate (authUserId: number, quizId: number, name: string): Object | ErrorObject {
 	
 	let dataStore = getData();
 	
@@ -228,7 +242,7 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
  * 
  */
 
-function adminQuizDescriptionUpdate (authUserId, quizId, description) {
+function adminQuizDescriptionUpdate (authUserId: number, quizId: number, description: string): Object | ErrorObject {
 	
 	let dataStore = getData();
 	

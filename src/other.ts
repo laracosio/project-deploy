@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore.js';
+import { getData, setData, User } from './dataStore';
 import validator from 'validator';
 
 const MAXCHAR = 20;
@@ -11,7 +11,7 @@ const MINPWLEN = 8;
  * @returns {void}
  * 
  */
-function clear() {
+function clear(): Object {
   let store = getData();
   store.users = [];
   store.quizzes =[];
@@ -28,7 +28,7 @@ function clear() {
  * @returns {boolean} - true if valid, false if invalid
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test
  */
-function helperAdminRegister(email, password, nameFirst, nameLast, userArray) {
+function helperAdminRegister(email: string, password: string, nameFirst: string, nameLast: string, userArray: User[]): boolean {
   // check valid email
   if (!validator.isEmail(email)) {
     return false;
@@ -56,7 +56,7 @@ function helperAdminRegister(email, password, nameFirst, nameLast, userArray) {
   // check that password has 1 letter and 1 number
   const pwLetterRegex = /[a-zA-Z]/;
   const pwNumRegex = /\d/;
-  if (!pwLetterRegex.test(password) || !pwNumRegex.test(password)) {
+  if (!pwLetterRegex.test(password) && !pwNumRegex.test(password)) {
     return false;
   }
   return true;
