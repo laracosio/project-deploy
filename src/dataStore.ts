@@ -15,7 +15,7 @@ export interface User {
 export interface Quiz {
   quizId: number,
   name: string,
-  timeCreated: number, 
+  timeCreated: number,
   timeLastEdited: number,
   description: string,
   quizOwner: number

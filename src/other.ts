@@ -7,14 +7,13 @@ const MINPWLEN = 8;
 
 /**
  * Reset the state of the application back to the start.
- * @param {void} 
+ * @param {void}
  * @returns {void}
- * 
  */
-function clear(): Object {
-  let store = getData();
+function clear(): object {
+  const store = getData();
   store.users = [];
-  store.quizzes =[];
+  store.quizzes = [];
   setData(store);
   return {};
 }
@@ -40,14 +39,14 @@ function helperAdminRegister(email: string, password: string, nameFirst: string,
     }
   }
   // check if names are within limit
-  if (nameFirst.length < MINCHAR || nameLast.length < MINCHAR 
-      || nameFirst.length > MAXCHAR || nameLast.length > MAXCHAR) {
+  if (nameFirst.length < MINCHAR || nameLast.length < MINCHAR ||
+      nameFirst.length > MAXCHAR || nameLast.length > MAXCHAR) {
     return false;
   }
   // check if names only contain letters, spaces, hypens or apostrophes
   const regex = /^[a-zA-Z\s\-']+$/;
   if (!regex.test(nameFirst) || !regex.test(nameLast)) {
-    return false; 
+    return false;
   }
   // check if password is long enough
   if (password.length < MINPWLEN) {
@@ -56,10 +55,10 @@ function helperAdminRegister(email: string, password: string, nameFirst: string,
   // check that password has 1 letter and 1 number
   const pwLetterRegex = /[a-zA-Z]/;
   const pwNumRegex = /\d/;
-  if (!pwLetterRegex.test(password) && !pwNumRegex.test(password)) {
+  if (!pwLetterRegex.test(password) || !pwNumRegex.test(password)) {
     return false;
   }
   return true;
 }
 
-export { clear, helperAdminRegister }
+export { clear, helperAdminRegister };
