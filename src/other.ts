@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore.js';
+import { getData, setData, User } from './dataStore';
 import validator from 'validator';
 
 const MAXCHAR = 20;
@@ -7,14 +7,13 @@ const MINPWLEN = 8;
 
 /**
  * Reset the state of the application back to the start.
- * @param {void} 
+ * @param {void}
  * @returns {void}
- * 
  */
-function clear() {
-  let store = getData();
+function clear(): object {
+  const store = getData();
   store.users = [];
-  store.quizzes =[];
+  store.quizzes = [];
   setData(store);
   return {};
 }
@@ -28,7 +27,7 @@ function clear() {
  * @returns {boolean} - true if valid, false if invalid
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test
  */
-function helperAdminRegister(email, password, nameFirst, nameLast, userArray) {
+function helperAdminRegister(email: string, password: string, nameFirst: string, nameLast: string, userArray: User[]): boolean {
   // check valid email
   if (!validator.isEmail(email)) {
     return false;
@@ -40,14 +39,14 @@ function helperAdminRegister(email, password, nameFirst, nameLast, userArray) {
     }
   }
   // check if names are within limit
-  if (nameFirst.length < MINCHAR || nameLast.length < MINCHAR 
-      || nameFirst.length > MAXCHAR || nameLast.length > MAXCHAR) {
+  if (nameFirst.length < MINCHAR || nameLast.length < MINCHAR ||
+      nameFirst.length > MAXCHAR || nameLast.length > MAXCHAR) {
     return false;
   }
   // check if names only contain letters, spaces, hypens or apostrophes
   const regex = /^[a-zA-Z\s\-']+$/;
   if (!regex.test(nameFirst) || !regex.test(nameLast)) {
-    return false; 
+    return false;
   }
   // check if password is long enough
   if (password.length < MINPWLEN) {
@@ -62,4 +61,4 @@ function helperAdminRegister(email, password, nameFirst, nameLast, userArray) {
   return true;
 }
 
-export { clear, helperAdminRegister }
+export { clear, helperAdminRegister };

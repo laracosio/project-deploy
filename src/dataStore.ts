@@ -1,5 +1,33 @@
+export interface ErrorObject {
+  error: string
+}
+
+export interface User {
+  userId: number,
+  nameFirst: string,
+  nameLast: string,
+  password: string,
+  email: string,
+  numSuccessfulLogins: number,
+  numFailedPasswordsSinceLastLogin: number
+}
+
+export interface Quiz {
+  quizId: number,
+  name: string,
+  timeCreated: number,
+  timeLastEdited: number,
+  description: string,
+  quizOwner: number
+}
+
+interface Datastore {
+  users: User[],
+  quizzes: Quiz[]
+}
+
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data = {
+let data: Datastore = {
   users: [],
   quizzes: [],
 };
@@ -26,7 +54,7 @@ function getData() {
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData) {
+function setData(newData: Datastore) {
   data = newData;
 }
 

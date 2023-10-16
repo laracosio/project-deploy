@@ -1,5 +1,20 @@
-import { helperAdminRegister } from "./other.js";
-import { getData, setData } from "./dataStore.js";
+import { helperAdminRegister } from './other';
+import { getData, setData, ErrorObject } from './dataStore';
+
+interface AuthReturn {
+  authUserId: number
+}
+
+interface UserDetailReturn {
+  user: {
+    userId: number,
+    name: string,
+    email: string,
+    numSuccessfulLogins: number,
+    numFailedPasswordsSinceLastLogin: number
+  }
+}
+
 /**
  * Register a user with an email, password, and names, then returns their authUserId value.
  * @param {string} email - unique email address
@@ -9,12 +24,12 @@ import { getData, setData } from "./dataStore.js";
  * @returns {{authUserId: number}}
  * @returns {{error: string}} on error
  */
-function adminAuthRegister(email, password, nameFirst, nameLast) {
-  let dataStore = getData();
+function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn | ErrorObject {
+  const dataStore = getData();
   if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
-    return { error: 'Invalid registration details.'}
+    return { error: 'Invalid registration details.' };
   }
-  let newUserId = dataStore.users.length + 1;
+  const newUserId = dataStore.users.length + 1;
   const newUser = {
     userId: newUserId,
     nameFirst: nameFirst,
@@ -23,7 +38,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     password: password,
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
-  }
+  };
   dataStore.users.push(newUser);
   setData(dataStore);
   return {
@@ -38,54 +53,50 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  * @returns {{authUserId: number}} on successful log in
  * @returns {{error: string}} on error
 */
-function adminAuthLogin(email, password) {
+function adminAuthLogin(email:string, password: string): AuthReturn | ErrorObject {
+  const dataStore = getData();
 
-  
-  let dataStore = getData(); 
-   
   const authUser = dataStore.users.find(user => user.email === email);
-  //email does not belong to a user
-  if(!authUser) {
-    return {error: 'email does not belong to a user'}
+  // email does not belong to a user
+  if (!authUser) {
+    return { error: 'email does not belong to a user' };
   }
-    
+
   // if password is incorrect
-  if(authUser.password !== password) {
+  if (authUser.password !== password) {
     authUser.numFailedPasswordsSinceLastLogin++;
-    return {error: 'password is incorrect'}
+    return { error: 'password is incorrect' };
   }
 
   const authUserId = authUser.userId;
   // if successful login, reset num of failed password
   authUser.numSuccessfulLogins++;
   authUser.numFailedPasswordsSinceLastLogin = 0;
-  
-  
+
   return {
     authUserId: authUserId
-  }
-  
+  };
 }
 
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
  * @param {number} authUserId - calling user's Id
- * @returns {user: {userId: number, email: string, 
+ * @returns {user: {userId: number, email: string,
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(authUserId) {
-  let dataStore = getData();
- 
+function adminUserDetails(authUserId: number): UserDetailReturn | ErrorObject {
+  const dataStore = getData();
+
   const authUser = dataStore.users.find(user => user.userId === authUserId);
-  
+
   // invalid authUser
-  if(!authUser) {
-    return {error: 'authUserId does not belong to a user'}
+  if (!authUser) {
+    return { error: 'authUserId does not belong to a user' };
   }
-    
-  return { 
+
+  return {
     user:
     {
       userId: authUser.userId,
@@ -94,7 +105,7 @@ function adminUserDetails(authUserId) {
       numSuccessfulLogins: authUser.numSuccessfulLogins,
       numFailedPasswordsSinceLastLogin: authUser.numFailedPasswordsSinceLastLogin,
     }
-    }
+  };
 }
 
-export { adminAuthRegister, adminAuthLogin, adminUserDetails }
+export { adminAuthRegister, adminAuthLogin, adminUserDetails };
