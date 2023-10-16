@@ -1,3 +1,4 @@
+import { reverse } from 'dns';
 import { getData, setData, ErrorObject, Quiz } from './dataStore';
 import { getUnixTime } from 'date-fns';
 
@@ -96,8 +97,15 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
 	if (dataStore.quizzes.length === 0) {
 		newQuizId = 1;
 	} else {
-		let currLastQuiz = dataStore.quizzes.findLast((q: Quiz) => q.quizId >= 1);
-		newQuizId = currLastQuiz.quizId + 1;
+		//let currLastQuiz = dataStore.quizzes.findLast((q: Quiz) => q.quizId >= 1);
+		
+		// new implement as .findLast is not on the nodeJS that CSE is working with
+		let clonedArray = dataStore.quizzes.map((x) => x);
+		let reversedArray = clonedArray.reverse();
+		let currLastQuiz = reversedArray[0].quizId;
+		//
+
+		newQuizId = currLastQuiz + 1;
 	}
 
 	const date = getUnixTime(new Date());
