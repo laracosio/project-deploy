@@ -1,4 +1,4 @@
-import { getData, setData, User, Token, AuthReturn } from './dataStore';
+import { getData, setData, User, Token } from './dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -86,7 +86,7 @@ function tokenValidation (token: string): boolean {
   }
 
   // check whether token exists in dataStore
-  if(!dataStore.tokens.some(t => t.sessionId === token)) {
+  if (!dataStore.tokens.some(t => t.sessionId === token)) {
     return false;
   }
   return true;

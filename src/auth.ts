@@ -20,7 +20,7 @@ interface UserDetailReturn {
  * @returns {{authUserId: number}}
  * @returns {{error: string}} on error
  */
-  function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn | ErrorObject {
+function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn | ErrorObject {
   const dataStore = getData();
   if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
     return { error: 'Invalid registration details.' };

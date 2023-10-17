@@ -11,7 +11,6 @@ beforeEach(() => {
   clear();
 });
 
-
 // tests for adminAuthRegister
 describe('adminAuthRegister - Success Cases', () => {
   test('1 user', () => {
@@ -120,7 +119,7 @@ describe('Testing adminAuthDetails', () => {
       }
     });
   });
-  /*test('Return error when AuthUserId is not a valid user', () => {
+  /* test('Return error when AuthUserId is not a valid user', () => {
     expect(adminUserDetails(10)).toStrictEqual(ERROR);
     expect(adminUserDetails(8)).toStrictEqual(ERROR);
     expect(adminUserDetails(0)).toStrictEqual(ERROR);
