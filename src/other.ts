@@ -63,14 +63,15 @@ function helperAdminRegister(email: string, password: string, nameFirst: string,
 }
 /**
  * Generates a sessionId and checks that sessionId has not been assigned previously
- * @param {Array<Tokens>} 
- * @returns {string} 
+ * @param {Array<Tokens>} Token Datastore to check that generated sID does not already exist
+ * @returns {string} sessionId
  */
 function createSessionId(tokens: Array<Token>): string {
   let newSessionId: string = uuidv4();
   while (tokens.some(t => t.sessionId === newSessionId)) {
     newSessionId = uuidv4();
   }
+  console.log(newSessionId);
   return newSessionId;
 }
 
