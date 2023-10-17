@@ -70,7 +70,7 @@ describe('adminAuthRegister - Error Cases', () => {
 
 // tests for adminAuthLogin
 describe('Testing adminAuthLogin', () => {
-  test('Return authUserId if email and password are both correct', () => {
+  test('Return token if email and password are both correct', () => {
     adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
@@ -90,7 +90,7 @@ describe('Testing adminAuthLogin', () => {
 
 // tests for authUserDetails
 describe('Testing adminAuthDetails', () => {
-  test('Return authUserId if email and password are both correct', () => {
+  test('Return token if email and password are both correct', () => {
     const user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
