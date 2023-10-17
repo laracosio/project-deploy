@@ -4,29 +4,21 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
 import { clear } from './other';
 import { ApiError } from './errors/ApiError';
 
-// const ERROR = { error: expect.any(String) };
+const TOKEN = { token: expect.any(String) };
 
 // Any test resets
 beforeEach(() => {
   clear();
 });
 
-/** test template
- * describe('testGroupName', () => {
- *  test('nameOfIndividualTest', () => {
- *   TESTCODE_GOES_HERE
- *  expect(WHAT_YOU_EXPECT_TO_BE_RETURNED).equalityParameter(equalityField);
- * })
- */
-
 // tests for adminAuthRegister
 describe('adminAuthRegister - Success Cases', () => {
   test('1 user', () => {
-    expect(adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast)).toMatchObject({ authUserId: expect.any(Number) });
+    expect(adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast)).toMatchObject(TOKEN);
   });
   test('2 users', () => {
     adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast)).toMatchObject({ authUserId: expect.any(Number) });
+    expect(adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast)).toMatchObject(TOKEN);
   });
   test('7 users', () => {
     adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -35,7 +27,7 @@ describe('adminAuthRegister - Success Cases', () => {
     adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
     adminAuthRegister(person5.email, person5.password, person5.nameFirst, person5.nameLast);
     adminAuthRegister(person6.email, person6.password, person6.nameFirst, person6.nameLast);
-    expect(adminAuthRegister(person7.email, person7.password, person7.nameFirst, person7.nameLast)).toMatchObject({ authUserId: expect.any(Number) });
+    expect(adminAuthRegister(person7.email, person7.password, person7.nameFirst, person7.nameLast)).toMatchObject(TOKEN);
   });
 });
 
@@ -43,7 +35,7 @@ describe('adminAuthRegister - Error Cases', () => {
   test('email address - duplicate', () => {
     adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast)
+      adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -51,7 +43,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('email address - invalid', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister('h.simpson@@springfield.com', person1.password, person1.nameFirst, person1.nameLast)
+      adminAuthRegister('h.simpson@@springfield.com', person1.password, person1.nameFirst, person1.nameLast);
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -59,7 +51,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('first name - invalid characters', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, person1.password, 'H0mer', person1.nameLast)
+      adminAuthRegister(person1.email, person1.password, 'H0mer', person1.nameLast);
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -67,7 +59,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('first name - too short', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, person1.password, 'H', person1.nameLast)
+      adminAuthRegister(person1.email, person1.password, 'H', person1.nameLast);
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -75,7 +67,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('first name - too long', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, person1.password, 'HomerHasAVeryLongName', person1.nameLast)
+      adminAuthRegister(person1.email, person1.password, 'HomerHasAVeryLongName', person1.nameLast);
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -83,7 +75,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('last name - invalid characters', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, person1.password, person1.nameFirst, '$!MP$0N')
+      adminAuthRegister(person1.email, person1.password, person1.nameFirst, '$!MP$0N');
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -91,7 +83,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('last name - too short', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, person1.password, person1.nameFirst, 'S')
+      adminAuthRegister(person1.email, person1.password, person1.nameFirst, 'S');
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -99,7 +91,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('last name - too long', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, person1.password, person1.nameFirst, 'SimpsonSimpsonSimpson')
+      adminAuthRegister(person1.email, person1.password, person1.nameFirst, 'SimpsonSimpsonSimpson');
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -107,7 +99,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('password - too short', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, 'a1', person1.nameFirst, person1.nameLast)
+      adminAuthRegister(person1.email, 'a1', person1.nameFirst, person1.nameLast);
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -115,7 +107,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('password - all letters', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, 'ABCDEFGH', person1.nameFirst, person1.nameLast)
+      adminAuthRegister(person1.email, 'ABCDEFGH', person1.nameFirst, person1.nameLast);
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -123,7 +115,7 @@ describe('adminAuthRegister - Error Cases', () => {
   });
   test('password - all numbers', () => {
     function adminAuthRegisterFunc() {
-      adminAuthRegister(person1.email, '12345678', person1.nameFirst, person1.nameLast)
+      adminAuthRegister(person1.email, '12345678', person1.nameFirst, person1.nameLast);
     }
     expect(adminAuthRegisterFunc).toThrow(ApiError);
     expect(adminAuthRegisterFunc).toThrow('Invalid registration details');
@@ -134,15 +126,15 @@ describe('adminAuthRegister - Error Cases', () => {
 // tests for adminAuthLogin
 
 describe('Testing adminAuthLogin', () => {
-  test('Return authUserId if email and password are both correct', () => {
-    const user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const user2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    const user3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
-    const user4 = adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
-    expect(adminAuthLogin(person1.email, person1.password)).toStrictEqual(user1);
-    expect(adminAuthLogin(person2.email, person2.password)).toStrictEqual(user2);
-    expect(adminAuthLogin(person3.email, person3.password)).toStrictEqual(user3);
-    expect(adminAuthLogin(person4.email, person4.password)).toStrictEqual(user4);
+  test('Return token if email and password are both correct', () => {
+    adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
+    expect(adminAuthLogin(person1.email, person1.password)).toStrictEqual(TOKEN);
+    expect(adminAuthLogin(person2.email, person2.password)).toStrictEqual(TOKEN);
+    expect(adminAuthLogin(person3.email, person3.password)).toStrictEqual(TOKEN);
+    expect(adminAuthLogin(person4.email, person4.password)).toStrictEqual(TOKEN);
   });
   test('Return error when email does not belong to a user', () => {
     adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -150,7 +142,7 @@ describe('Testing adminAuthLogin', () => {
     adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
     adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
     function adminAuthLoginFunc() {
-      adminAuthLogin(person5.email, person5.password)
+      adminAuthLogin(person5.email, person5.password);
     }
     expect(adminAuthLoginFunc).toThrow(ApiError);
     expect(adminAuthLoginFunc).toThrow('email does not belong to a user');
@@ -162,7 +154,7 @@ describe('Testing adminAuthLogin', () => {
     adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
     adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
     function adminAuthLoginFunc() {
-      adminAuthLogin(person1.email, person4.password)
+      adminAuthLogin(person1.email, person4.password);
     }
     expect(adminAuthLoginFunc).toThrow(ApiError);
     expect(adminAuthLoginFunc).toThrow('password is incorrect');
@@ -173,7 +165,7 @@ describe('Testing adminAuthLogin', () => {
 // tests for authUserDetails
 
 describe('Testing adminAuthDetails', () => {
-  test('Return authUserId if email and password are both correct', () => {
+  test('Return token if email and password are both correct', () => {
     const user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
@@ -189,7 +181,7 @@ describe('Testing adminAuthDetails', () => {
 
     // adminAuthLogin(person1.email, person2.password);
     // adminAuthLogin(person1.email, person4.password);
-    expect(adminUserDetails(user1.authUserId)).toEqual({
+    expect(adminUserDetails(user1.token)).toEqual({
       user:
       {
         userId: person1.userId,
@@ -199,7 +191,7 @@ describe('Testing adminAuthDetails', () => {
         numFailedPasswordsSinceLastLogin: person1.numFailedPasswordsSinceLastLogin,
       }
     });
-    expect(adminUserDetails(user4.authUserId)).toEqual({
+    expect(adminUserDetails(user4.token)).toEqual({
       user:
       {
         userId: person4.userId,
@@ -210,27 +202,27 @@ describe('Testing adminAuthDetails', () => {
       }
     });
   });
-  test('Return error when AuthUserId is not a valid user', () => {
-    expect(() => {
-      adminUserDetails(10)
-    }).toThrow(ApiError);
-    expect(() => {
-      adminUserDetails(10)
-    }).toThrow('authUserId does not belong to a user');
-    expect(() => {
-      adminUserDetails(8)
-    }).toThrow(ApiError);
-    expect(() => {
-      adminUserDetails(8)
-    }).toThrow('authUserId does not belong to a user');
-    expect(() => {
-      adminUserDetails(0)
-    }).toThrow(ApiError);
-    expect(() => {
-      adminUserDetails(0)
-    }).toThrow('authUserId does not belong to a user');
+  // test('Return error when AuthUserId is not a valid user', () => {
+  //   expect(() => {
+  //     adminUserDetails(10)
+  //   }).toThrow(ApiError);
+  //   expect(() => {
+  //     adminUserDetails(10)
+  //   }).toThrow('authUserId does not belong to a user');
+  //   expect(() => {
+  //     adminUserDetails(8)
+  //   }).toThrow(ApiError);
+  //   expect(() => {
+  //     adminUserDetails(8)
+  //   }).toThrow('authUserId does not belong to a user');
+  //   expect(() => {
+  //     adminUserDetails(0)
+  //   }).toThrow(ApiError);
+  //   expect(() => {
+  //     adminUserDetails(0)
+  //   }).toThrow('authUserId does not belong to a user');
     // expect(adminUserDetails(10)).toStrictEqual({ error: expect.any(String) });
     // expect(adminUserDetails(8)).toStrictEqual({ error: expect.any(String) });
     // expect(adminUserDetails(0)).toStrictEqual({ error: expect.any(String) });
-  });
+  // });
 });

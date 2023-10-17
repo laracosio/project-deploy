@@ -1,5 +1,6 @@
-import { getData, setData, User } from './dataStore';
+import { getData, setData, User, Token } from './dataStore';
 import validator from 'validator';
+import { v4 as uuidv4 } from 'uuid';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -14,6 +15,8 @@ function clear(): object {
   const store = getData();
   store.users = [];
   store.quizzes = [];
+  store.tokens = [];
+  store.trash = [];
   setData(store);
   return {};
 }
@@ -60,5 +63,40 @@ function helperAdminRegister(email: string, password: string, nameFirst: string,
   }
   return true;
 }
+/**
+ * Generates a sessionId and checks that sessionId has not been assigned previously
+ * @param {Array<Tokens>} Token Datastore to check that generated sID does not already exist
+ * @returns {string} sessionId
+ */
+function createSessionId(tokens: Array<Token>): string {
+  let newSessionId: string = uuidv4();
+  while (tokens.some(t => t.sessionId === newSessionId)) {
+    newSessionId = uuidv4();
+  }
+  return newSessionId;
+}
 
-export { clear, helperAdminRegister };
+/**
+ * Helper function to validate token
+ * @param {string} token - unique token
+ * @returns {boolean} - true if valid, false if invalid
+ */
+function tokenValidation (token: string): boolean {
+  const dataStore = getData();
+  if (token === null) {
+    return false;
+  }
+
+  // check whether token exists in dataStore
+  if (!dataStore.tokens.some(t => t.sessionId === token)) {
+    return false;
+  }
+  return true;
+}
+
+function findTokenUser(token:string): Token {
+  const dataStore = getData();
+  return dataStore.tokens.find(t => t.sessionId === token);
+}
+
+export { clear, helperAdminRegister, createSessionId, tokenValidation, findTokenUser };

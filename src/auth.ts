@@ -1,11 +1,8 @@
-import { helperAdminRegister } from './other';
-import { getData, setData} from './dataStore';
+import { helperAdminRegister, createSessionId, tokenValidation } from './other';
+import { getData, setData, ErrorObject, Token, AuthReturn } from './dataStore';
 import { HttpStatusCode } from './enums/HttpStatusCode';
 import { ApiError } from './errors/ApiError';
 
-interface AuthReturn {
-  authUserId: number
-}
 
 interface UserDetailReturn {
   user: {
@@ -43,11 +40,17 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
   };
-  dataStore.users.push(newUser);
-  setData(dataStore);
-  return {
-    authUserId: newUserId,
+
+  const newSessionId: string = createSessionId(dataStore.tokens);
+  const newToken: Token = {
+    sessionId: newSessionId,
+    userId: newUserId
   };
+
+  dataStore.users.push(newUser);
+  dataStore.tokens.push(newToken);
+  setData(dataStore);
+  return { token: newSessionId };
 }
 
 /**
@@ -59,10 +62,10 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
 */
 function adminAuthLogin(email:string, password: string): AuthReturn {
   const dataStore = getData();
-  console.log(dataStore.users)
-  console.log(dataStore.users.find(user => user.email === email))
+
   const authUser = dataStore.users.find(user => user.email === email);
 
+  // email does not belong to a user
   if (!authUser) {
     throw new ApiError('email does not belong to a user', HttpStatusCode.BAD_REQUEST);
   }
@@ -78,37 +81,44 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   authUser.numSuccessfulLogins++;
   authUser.numFailedPasswordsSinceLastLogin = 0;
 
-  return {
-    authUserId: authUserId
+  const newSessionId: string = createSessionId(dataStore.tokens);
+  const newToken: Token = {
+    sessionId: newSessionId,
+    userId: authUserId
   };
-}
+  dataStore.tokens.push(newToken);
 
+  setData(dataStore);
+  return { token: newSessionId };
+}
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
- * @param {number} authUserId - calling user's Id
+ * @param {string} token - calling user's Id
  * @returns {user: {userId: number, email: string,
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(authUserId: number): UserDetailReturn {
+function adminUserDetails(token: string): UserDetailReturn {
   const dataStore = getData();
 
-  const authUser = dataStore.users.find(user => user.userId === authUserId);
-
-  // invalid authUser
-  if (!authUser) {
-    throw new ApiError('authUserId does not belong to a user', HttpStatusCode.UNAUTHORISED);
+  // invalid Token
+  if (!tokenValidation(token)) {
+    throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'Token is invalid' };
   }
+
+  const userIdInToken = dataStore.tokens.find(user => user.sessionId === token);
+  const adminUserDetails = dataStore.users.find(user => user.userId === userIdInToken.userId);
 
   return {
     user:
     {
-      userId: authUser.userId,
-      name: authUser.nameFirst + ' ' + authUser.nameLast,
-      email: authUser.email,
-      numSuccessfulLogins: authUser.numSuccessfulLogins,
-      numFailedPasswordsSinceLastLogin: authUser.numFailedPasswordsSinceLastLogin,
+      userId: adminUserDetails.userId,
+      name: adminUserDetails.nameFirst + ' ' + adminUserDetails.nameLast,
+      email: adminUserDetails.email,
+      numSuccessfulLogins: adminUserDetails.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: adminUserDetails.numFailedPasswordsSinceLastLogin,
     }
   };
 }
