@@ -79,11 +79,16 @@ function adminAuthLogin(email:string, password: string): AuthReturn | ErrorObjec
   authUser.numSuccessfulLogins++;
   authUser.numFailedPasswordsSinceLastLogin = 0;
 
-  return {
-    authUserId: authUserId
+  const newSessionId: string = createSessionId(dataStore.tokens);
+  const newToken: Token = {
+    sessionId: newSessionId,
+    userId: authUserId
   };
-}
+  dataStore.tokens.push(newToken);
 
+  setData(dataStore);
+  return { token: newSessionId };
+}
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
