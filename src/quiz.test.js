@@ -84,50 +84,50 @@ describe('adminQuizCreate - Passed Cases', () => {
 // tests for adminQuizRemove
 describe('adminQuizRemove - Success Cases', () => {
   test('1 quiz created - 1 removed', () => {
-    const person = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const quiz = adminQuizCreate(person.authUserId, 'Misc Quiz Name', 'Misc Quiz Description');
-    expect(adminQuizRemove(person.authUserId, quiz.quizId)).toStrictEqual({});
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
+    expect(adminQuizRemove(session.token, quiz.quizId)).toStrictEqual({});
   });
   test('2 quiz created - 1 removed', () => {
-    const person = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    adminQuizCreate(person.authUserId, 'Misc Quiz Name', 'Misc Quiz Description');
-    const quiz2 = adminQuizCreate(person.authUserId, 'Misc Quiz Name2', 'Misc Quiz Description2');
-    expect(adminQuizRemove(person.authUserId, quiz2.quizId)).toStrictEqual({});
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
+    const quiz2 = adminQuizCreate(session.token, 'Misc Quiz Name2', 'Misc Quiz Description2');
+    expect(adminQuizRemove(session.token, quiz2.quizId)).toStrictEqual({});
   });
   test('multiple quizzes create, multiple quizzes removed', () => {
-    const person = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const personB = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    adminQuizCreate(person.authUserId, 'Quiz1', 'Misc Quiz Description');
-    const quiz2 = adminQuizCreate(person.authUserId, 'Quiz2', 'Misc Quiz Description2');
-    adminQuizCreate(person.authUserId, 'Quiz3', 'Misc Quiz Description3');
-    const quiz4 = adminQuizCreate(person.authUserId, 'Quiz4', 'Misc Quiz Description4');
-    const quiz5 = adminQuizCreate(personB.authUserId, 'Quiz5', 'Misc Quiz Description5');
-    adminQuizCreate(personB.authUserId, 'Quiz6', 'Misc Quiz Description6');
-    const quiz7 = adminQuizCreate(personB.authUserId, 'Quiz7', 'Misc Quiz Description7');
-    adminQuizCreate(personB.authUserId, 'Quiz8', 'Misc Quiz Description8');
-    expect(adminQuizRemove(personB.authUserId, quiz7.quizId)).toStrictEqual({});
-    expect(adminQuizRemove(person.authUserId, quiz4.quizId)).toStrictEqual({});
-    expect(adminQuizRemove(personB.authUserId, quiz5.quizId)).toStrictEqual({});
-    expect(adminQuizRemove(person.authUserId, quiz2.quizId)).toStrictEqual({});
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const sessionB = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    adminQuizCreate(session.token, 'Quiz1', 'Misc Quiz Description');
+    const quiz2 = adminQuizCreate(session.token, 'Quiz2', 'Misc Quiz Description2');
+    adminQuizCreate(session.token, 'Quiz3', 'Misc Quiz Description3');
+    const quiz4 = adminQuizCreate(session.token, 'Quiz4', 'Misc Quiz Description4');
+    const quiz5 = adminQuizCreate(sessionB.token, 'Quiz5', 'Misc Quiz Description5');
+    adminQuizCreate(sessionB.token, 'Quiz6', 'Misc Quiz Description6');
+    const quiz7 = adminQuizCreate(sessionB.token, 'Quiz7', 'Misc Quiz Description7');
+    adminQuizCreate(sessionB.token, 'Quiz8', 'Misc Quiz Description8');
+    expect(adminQuizRemove(sessionB.token, quiz7.quizId)).toStrictEqual({});
+    expect(adminQuizRemove(session.token, quiz4.quizId)).toStrictEqual({});
+    expect(adminQuizRemove(sessionB.token, quiz5.quizId)).toStrictEqual({});
+    expect(adminQuizRemove(session.token, quiz2.quizId)).toStrictEqual({});
   });
 });
 
 describe('adminQuizRemove - Error Cases', () => {
   test('invalid authUser', () => {
-    const person = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const quiz = adminQuizCreate(person.authUserId, 'Misc Quiz Name', 'Misc Quiz Description');
-    expect(adminQuizRemove(person.authUserId + 1, quiz.quizId)).toStrictEqual(ERROR);
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
+    expect(adminQuizRemove(session.token + 1, quiz.quizId)).toStrictEqual(ERROR);
   });
   test('invalid quiz', () => {
-    const person = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const quiz = adminQuizCreate(person.authUserId, 'Misc Quiz Name', 'Misc Quiz Description');
-    expect(adminQuizRemove(person.authUserId, quiz.quizId + 1)).toStrictEqual(ERROR);
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
+    expect(adminQuizRemove(session.token, quiz.quizId + 1)).toStrictEqual(ERROR);
   });
   test('Quiz  does not refer to a quiz that this user owns', () => {
-    const person = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const personB = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    const quiz = adminQuizCreate(person.authUserId, 'Misc Quiz Name', 'Misc Quiz Description');
-    expect(adminQuizRemove(personB.authUserId, quiz.quizId)).toStrictEqual(ERROR);
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const sessionB = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
+    expect(adminQuizRemove(sessionB.token, quiz.quizId)).toStrictEqual(ERROR);
   });
 });
 
