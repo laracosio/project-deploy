@@ -81,7 +81,6 @@ function createSessionId(tokens: Array<Token>): string {
  */
 function tokenValidation (token: string): boolean {
   const dataStore = getData();
-  
   if (token === null) {
     return false;
   }

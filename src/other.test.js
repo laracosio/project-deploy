@@ -27,10 +27,9 @@ describe('clear - Success Cases', () => {
   });
 });
 
-
 describe('tokenValidation - Success Cases', () => {
   test('tokenValidation', () => {
-    let token1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    cosnt token1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     expect(tokenValidation(token1)).toStrictEqual(true);
     expect(tokenValidation('fkalkgla')).toStrictEqual(false);
   });

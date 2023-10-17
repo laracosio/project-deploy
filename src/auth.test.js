@@ -99,7 +99,7 @@ describe('Testing adminAuthDetails', () => {
     // two failed attempts
     adminAuthLogin(person1.email, person2.password);
     adminAuthLogin(person1.email, person4.password);
-    expect(adminUserDetails(user1)).toEqual({
+    expect(adminUserDetails(user1.token)).toEqual({
       user:
       {
         userId: person1.userId,
@@ -109,7 +109,7 @@ describe('Testing adminAuthDetails', () => {
         numFailedPasswordsSinceLastLogin: person1.numFailedPasswordsSinceLastLogin,
       }
     });
-    expect(adminUserDetails(user4)).toEqual({
+    expect(adminUserDetails(user4.token)).toEqual({
       user:
       {
         userId: person4.userId,
