@@ -143,28 +143,28 @@ describe('adminQuizRemove - Error Cases', () => {
 // adminQuizInfo tests
 describe('adminQuizInfo - Error Cases', () => {
   test('invalid authUserId', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const validQuizId = adminQuizCreate(validUser1.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizInfo(validUser1.authUserId + 100, validQuizId.quizId).error).toStrictEqual('Invalid user');
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const validQuizId = adminQuizCreate(session.token, validQuizName, validQuizDescription);
+    expect(adminQuizInfo(session.token + 100, validQuizId.quizId).error).toStrictEqual('Invalid user');
   });
   test('invalid quizId', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const validQuizId = adminQuizCreate(validUser1.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizInfo(validUser1.authUserId, validQuizId.quizId + 100).error).toStrictEqual('Invalid quiz ID');
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const validQuizId = adminQuizCreate(session.token, validQuizName, validQuizDescription);
+    expect(adminQuizInfo(session.token, validQuizId.quizId + 100).error).toStrictEqual('Invalid quiz ID');
   });
   test('quizId not owned by this user', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const validQuizId = adminQuizCreate(validUser1.authUserId, validQuizName, validQuizDescription);
-    const validUser2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    expect(adminQuizInfo(validUser2.authUserId, validQuizId.quizId).error).toStrictEqual('Quiz ID not owned by this user');
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const validQuizId = adminQuizCreate(session.token, validQuizName, validQuizDescription);
+    const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    expect(adminQuizInfo(session2.token, validQuizId.quizId).error).toStrictEqual('Quiz ID not owned by this user');
   });
 });
 
 describe('adminQuizInfo - Passed Cases', () => {
-  test('one valid authUserId and quizId', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const validQuizId = adminQuizCreate(validUser1.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizInfo(validUser1.authUserId, validQuizId.quizId)).toStrictEqual(
+  test('one valid token and quizId', () => {
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const validQuizId = adminQuizCreate(session.token, validQuizName, validQuizDescription);
+    expect(adminQuizInfo(session.token, validQuizId.quizId)).toStrictEqual(
       {
         quizId: validQuizId.quizId,
         name: validQuizName,
@@ -175,13 +175,13 @@ describe('adminQuizInfo - Passed Cases', () => {
     );
   });
   test('find user2 quiz from dataStore with two registered users', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    adminQuizCreate(validUser1.authUserId, validQuizName, validQuizDescription);
-    const validUser2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    const validUser2Quiz = adminQuizCreate(validUser2.authUserId, 'User2s quiz', '');
-    expect(adminQuizInfo(validUser2.authUserId, validUser2Quiz.quizId)).toStrictEqual(
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminQuizCreate(session.token, validQuizName, validQuizDescription);
+    const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const session2Quiz = adminQuizCreate(session2.token, 'User2s quiz', '');
+    expect(adminQuizInfo(session2.token, session2Quiz.quizId)).toStrictEqual(
       {
-        quizId: validUser2Quiz.quizId,
+        quizId: session2Quiz.quizId,
         name: 'User2s quiz',
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
@@ -190,17 +190,17 @@ describe('adminQuizInfo - Passed Cases', () => {
     );
   });
   test('find user5 quiz from dataStore with five registered users', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    adminQuizCreate(validUser1.authUserId, validQuizName, validQuizDescription);
-    const validUser2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    adminQuizCreate(validUser2.authUserId, 'User2s quiz', '');
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminQuizCreate(session.token, validQuizName, validQuizDescription);
+    const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    adminQuizCreate(session2.token, 'User2s quiz', '');
     adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
     adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
-    const validUser5 = adminAuthRegister(person5.email, person5.password, person5.nameFirst, person5.nameLast);
-    const validUser5Quiz = adminQuizCreate(validUser5.authUserId, 'User5s quiz', '');
-    expect(adminQuizInfo(validUser5.authUserId, validUser5Quiz.quizId)).toStrictEqual(
+    const session5 = adminAuthRegister(person5.email, person5.password, person5.nameFirst, person5.nameLast);
+    const session5Quiz = adminQuizCreate(session5.token, 'User5s quiz', '');
+    expect(adminQuizInfo(session5.token, session5Quiz.quizId)).toStrictEqual(
       {
-        quizId: validUser5Quiz.quizId,
+        quizId: session5Quiz.quizId,
         name: 'User5s quiz',
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
