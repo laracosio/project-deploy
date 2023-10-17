@@ -29,14 +29,14 @@ const HOST: string = process.env.IP || 'localhost';
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 
-// Persistence - code sourced from 
+// Persistence - code sourced from
 // https://nw-syd-gitlab.cseunsw.tech/COMP1531/23T3/comp1531-lecturecode-23t3/-/blob/main/week3-9/src/5.1_4persistence.ts?ref_type=heads
-const datastr = fs.readFileSync('./datastore.json');
-let data = JSON.parse(String(datastr));
+// const datastr = fs.readFileSync('./datastore.json');
+// const data = JSON.parse(String(datastr));
 
-const save = () => {
-	fs.writeFileSync('./datastore.json', JSON.stringify(data));
-}
+// const save = () => {
+//   fs.writeFileSync('./datastore.json', JSON.stringify(data));
+// };
 
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {
