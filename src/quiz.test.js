@@ -30,7 +30,7 @@ const ERROR = { error: expect.any(String) };
 describe('adminQuizCreate - Error Cases', () => {
   test('invalid token', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(session.token + 1, validQuizName, validQuizDescription).error).toStrictEqual('Invalid user');
+    expect(adminQuizCreate(session.token + 1, validQuizName, validQuizDescription).error).toStrictEqual('Invalid token');
   });
   test('invalid name characters', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -145,7 +145,7 @@ describe('adminQuizInfo - Error Cases', () => {
   test('invalid token', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(session.token, validQuizName, validQuizDescription);
-    expect(adminQuizInfo(session.token + 100, validQuizId.quizId).error).toStrictEqual('Invalid user');
+    expect(adminQuizInfo(session.token + 100, validQuizId.quizId).error).toStrictEqual('Invalid token');
   });
   test('invalid quizId', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -156,7 +156,7 @@ describe('adminQuizInfo - Error Cases', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(session.token, validQuizName, validQuizDescription);
     const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    expect(adminQuizInfo(session2.token, validQuizId.quizId).error).toStrictEqual('Quiz ID not owned by this user');
+    expect(adminQuizInfo(session2.token, validQuizId.quizId).error).toStrictEqual('User does not own quiz to check info');
   });
 });
 
@@ -214,7 +214,7 @@ describe('adminQuizInfo - Passed Cases', () => {
 describe('adminQuizList - Error Cases', () => {
   test('invalid token', () => {
     const session1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizList(session1.token + 100).error).toStrictEqual('Invalid user');
+    expect(adminQuizList(session1.token + 100).error).toStrictEqual('Invalid token');
   });
 });
 
