@@ -159,24 +159,24 @@ function adminQuizRemove(token:string, quizId: number): object | ErrorObject {
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
- *
- * @param {number} authUserId
+ * @param {string} token
  * @returns {quizzes: [{quizId: number, name: string}]}
  * @returns {{error: string}}
- *
  */
-function adminQuizList (authUserId: number): QuizListReturn | ErrorObject {
+function adminQuizList (token: string): QuizListReturn | ErrorObject {
   const dataStore = getData();
 
-  // check authUserId is valid
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid user' };
+  // check that token is not empty or is valid
+  if (!token || !dataStore.tokens.some(t => t.sessionId === token)) {
+    return { error: 'Invalid token' };
   }
+
+  const tokenUser = dataStore.tokens.find(t => t.sessionId === token);
 
   // find all user quizzes and add to an array
   const userQuizList: Array<BriefQuizInfo> = [];
   dataStore.quizzes.forEach((quiz) => {
-    if (quiz.quizOwner === authUserId) {
+    if (quiz.quizOwner === tokenUser.userId) {
       const obj = {
         quizId: quiz.quizId,
         name: quiz.name,
