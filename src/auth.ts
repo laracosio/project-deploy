@@ -1,8 +1,8 @@
-import { helperAdminRegister } from './other';
-import { getData, setData, ErrorObject } from './dataStore';
+import { helperAdminRegister, createSessionId } from './other';
+import { getData, setData, ErrorObject, Token } from './dataStore';
 
 interface AuthReturn {
-  authUserId: number
+  token: string
 }
 
 interface UserDetailReturn {
@@ -39,11 +39,17 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
   };
-  dataStore.users.push(newUser);
-  setData(dataStore);
-  return {
-    authUserId: newUserId,
+
+  const newSessionId: string = createSessionId(dataStore.tokens);
+  const newToken: Token = {
+    sessionId: newSessionId,
+    userId: newUserId
   };
+
+  dataStore.users.push(newUser);
+  dataStore.tokens.push(newToken);
+  setData(dataStore);
+  return { token: newSessionId };
 }
 
 /**
