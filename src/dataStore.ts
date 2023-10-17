@@ -21,15 +21,24 @@ export interface Quiz {
   quizOwner: number
 }
 
+export interface Token {
+  sessionId: string,
+  userId: number
+}
+
 interface Datastore {
   users: User[],
-  quizzes: Quiz[]
+  quizzes: Quiz[],
+  tokens: Token[],
+  trash: Quiz[]
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data: Datastore = {
   users: [],
   quizzes: [],
+  tokens: [],
+  trash: []
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
