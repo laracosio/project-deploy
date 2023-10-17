@@ -71,7 +71,6 @@ function createSessionId(tokens: Array<Token>): string {
   while (tokens.some(t => t.sessionId === newSessionId)) {
     newSessionId = uuidv4();
   }
-  console.log(newSessionId);
   return newSessionId;
 }
 
