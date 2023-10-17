@@ -88,22 +88,20 @@ function adminAuthLogin(email:string, password: string): AuthReturn | ErrorObjec
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
- * @param {number} authUserId - calling user's Id
+ * @param {string} token - calling user's Id
  * @returns {user: {userId: number, email: string,
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(authToken: AuthReturn): UserDetailReturn | ErrorObject {
+function adminUserDetails(token: string): UserDetailReturn | ErrorObject {
   const dataStore = getData();
 
-  const validToken = tokenValidation(authToken);
-  
   // invalid Token
-  if (!validToken) {
+  if (!tokenValidation(token)) {
     return { error: 'Token is invalid' };
   }
 
-  const userIdInToken = dataStore.tokens.find(user => user.sessionId === authToken.token);
+  const userIdInToken = dataStore.tokens.find(user => user.sessionId === token);
   const adminUserDetails = dataStore.users.find(user => user.userId === userIdInToken.userId);
 
   return {
