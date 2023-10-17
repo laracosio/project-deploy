@@ -4,28 +4,21 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
 import { clear } from './other';
 
 const ERROR = { error: expect.any(String) };
+const TOKEN = { token: expect.any(String) };
 
 // Any test resets
 beforeEach(() => {
   clear();
 });
 
-/** test template
- * describe('testGroupName', () => {
- *  test('nameOfIndividualTest', () => {
- *   TESTCODE_GOES_HERE
- *  expect(WHAT_YOU_EXPECT_TO_BE_RETURNED).equalityParameter(equalityField);
- * })
- */
-
 // tests for adminAuthRegister
 describe('adminAuthRegister - Success Cases', () => {
   test('1 user', () => {
-    expect(adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast)).toMatchObject({ authUserId: expect.any(Number) });
+    expect(adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast)).toMatchObject(TOKEN);
   });
   test('2 users', () => {
     adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast)).toMatchObject({ authUserId: expect.any(Number) });
+    expect(adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast)).toMatchObject(TOKEN);
   });
   test('7 users', () => {
     adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -34,7 +27,7 @@ describe('adminAuthRegister - Success Cases', () => {
     adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
     adminAuthRegister(person5.email, person5.password, person5.nameFirst, person5.nameLast);
     adminAuthRegister(person6.email, person6.password, person6.nameFirst, person6.nameLast);
-    expect(adminAuthRegister(person7.email, person7.password, person7.nameFirst, person7.nameLast)).toMatchObject({ authUserId: expect.any(Number) });
+    expect(adminAuthRegister(person7.email, person7.password, person7.nameFirst, person7.nameLast)).toMatchObject(TOKEN);
   });
 });
 
@@ -79,20 +72,20 @@ describe('adminAuthRegister - Error Cases', () => {
 
 describe('Testing adminAuthLogin', () => {
   test('Return authUserId if email and password are both correct', () => {
-    const user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const user2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    const user3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
-    const user4 = adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
-    expect(adminAuthLogin(person1.email, person1.password)).toStrictEqual(user1);
-    expect(adminAuthLogin(person2.email, person2.password)).toStrictEqual(user2);
-    expect(adminAuthLogin(person3.email, person3.password)).toStrictEqual(user3);
-    expect(adminAuthLogin(person4.email, person4.password)).toStrictEqual(user4);
+    adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
+    expect(adminAuthLogin(person1.email, person1.password)).toStrictEqual(TOKEN);
+    expect(adminAuthLogin(person2.email, person2.password)).toStrictEqual(TOKEN);
+    expect(adminAuthLogin(person3.email, person3.password)).toStrictEqual(TOKEN);
+    expect(adminAuthLogin(person4.email, person4.password)).toStrictEqual(TOKEN);
   });
   test('Return error when email does not belong to a user', () => {
-    expect(adminAuthLogin(person5.email, person5.password)).toStrictEqual({ error: expect.any(String) });
+    expect(adminAuthLogin(person5.email, person5.password)).toStrictEqual(ERROR);
   });
   test('Return error when password is not correct', () => {
-    expect(adminAuthLogin(person1.email, person4.password)).toStrictEqual({ error: expect.any(String) });
+    expect(adminAuthLogin(person1.email, person4.password)).toStrictEqual(ERROR);
   });
 });
 
@@ -108,7 +101,7 @@ describe('Testing adminAuthDetails', () => {
     // two failed attempts
     adminAuthLogin(person1.email, person2.password);
     adminAuthLogin(person1.email, person4.password);
-    expect(adminUserDetails(user1.authUserId)).toEqual({
+    expect(adminUserDetails(user1.token)).toEqual({
       user:
       {
         userId: person1.userId,
@@ -118,7 +111,7 @@ describe('Testing adminAuthDetails', () => {
         numFailedPasswordsSinceLastLogin: person1.numFailedPasswordsSinceLastLogin,
       }
     });
-    expect(adminUserDetails(user4.authUserId)).toEqual({
+    expect(adminUserDetails(user4.token)).toEqual({
       user:
       {
         userId: person4.userId,
@@ -130,8 +123,8 @@ describe('Testing adminAuthDetails', () => {
     });
   });
   test('Return error when AuthUserId is not a valid user', () => {
-    expect(adminUserDetails(10)).toStrictEqual({ error: expect.any(String) });
-    expect(adminUserDetails(8)).toStrictEqual({ error: expect.any(String) });
-    expect(adminUserDetails(0)).toStrictEqual({ error: expect.any(String) });
+    expect(adminUserDetails(10)).toStrictEqual(ERROR);
+    expect(adminUserDetails(8)).toStrictEqual(ERROR);
+    expect(adminUserDetails(0)).toStrictEqual(ERROR);
   });
 });
