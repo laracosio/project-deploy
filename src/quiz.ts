@@ -123,24 +123,33 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
 /**
  * Given a particular quiz, permanently remove the quiz.
  *
- * @param {Number} authUserId - unique identifier for user
+ * @param {string} token - unique token containing sessionId
  * @param {number} quizId - unique identifier for quiz
  * @returns {{error: string}}
  */
-function adminQuizRemove(authUserId: number, quizId: number): object | ErrorObject {
+function adminQuizRemove(token:string, quizId: number): object | ErrorObject {
   const dataStore = getData();
 
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid userId' };
-  }
-  if (!dataStore.quizzes.some(quiz => quiz.quizId === quizId)) {
+  // check that quizId is not empty or is valid
+  if (!quizId || !dataStore.quizzes.some(q => q.quizId === quizId)) {
     return { error: 'Invalid quizId' };
   }
-  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner !== authUserId && quiz.quizId === quizId))) {
+
+  // check that token is not empty or is valid
+  if (!token || !dataStore.tokens.some(t => t.sessionId === token)) {
+    return { error: 'Invalid token' };
+  }
+
+  // find user associated with token and checks whether they are the quiz owner
+  const tokenUser = dataStore.tokens.find(t => t.sessionId === token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
     return { error: 'User does not own quiz to remove' };
   }
 
-  dataStore.quizzes.splice(dataStore.quizzes.findIndex(quiz => quiz.quizId === quizId), 1);
+  const quizIndex: number = dataStore.quizzes.findIndex(quiz => quiz.quizId === quizId);
+  const trashQuiz = dataStore.quizzes.splice(quizIndex, 1)[0];
+  trashQuiz.timeLastEdited = getUnixTime(new Date());
+  dataStore.trash.push(trashQuiz);
 
   setData(dataStore);
   return {};
