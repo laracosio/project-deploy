@@ -60,17 +60,17 @@ function adminQuizInfo (authUserId: number, quizId: number): QuizInfoReturn | Er
 /**
  * Given basic details about a new quiz, create one for  the logged in user.
  *
- * @param {number} authUserId - unique identifier for authorised user
+ * @param {string} token - unique token
  * @param {string} name - of quiz
  * @param {string} description - of quiz
  * @returns {quizId: 2}
  */
-function adminQuizCreate(authUserId: number, name: string, description: string): QuizCreateReturn | ErrorObject {
+function adminQuizCreate(token: string, name: string, description: string): QuizCreateReturn | ErrorObject {
   const dataStore = getData();
 
-  // check authUserId is valid
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid user' };
+  // check that token is not empty or is valid
+  if (!token || !dataStore.tokens.some(t => t.sessionId === token)) {
+    return { error: 'Invalid token' };
   }
 
   // check quiz name only contains alphanumeric characters and spaces
@@ -82,8 +82,9 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
   if (name.length < 3 || name.length > 30) {
     return { error: 'Invalid name length' };
   }
-  // check quiz name doesn't already exist in current user's list
-  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === authUserId && quiz.name === name))) {
+
+  const tokenUser = dataStore.tokens.find(t => t.sessionId === token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner === tokenUser.userId && q.name === name))) {
     return { error: 'Quiz name already in use' };
   }
 
@@ -109,14 +110,14 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
     timeCreated: date,
     timeLastEdited: date,
     description: description,
-    quizOwner: authUserId,
+    quizOwner: tokenUser.userId,
   };
 
   dataStore.quizzes.push(newQuiz);
   setData(dataStore);
 
   return {
-    quizId: newQuizId,
+    quizId: newQuizId
   };
 }
 
