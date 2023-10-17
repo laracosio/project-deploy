@@ -136,7 +136,6 @@ describe('adminQuizRemove - Error Cases', () => {
   });
   test('empty quizId', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
     expect(adminQuizRemove(session.token, '')).toStrictEqual(ERROR);
   });
 });
