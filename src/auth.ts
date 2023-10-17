@@ -1,5 +1,7 @@
 import { helperAdminRegister } from './other';
-import { getData, setData, ErrorObject } from './dataStore';
+import { getData, setData} from './dataStore';
+import { HttpStatusCode } from './enums/HttpStatusCode';
+import { ApiError } from './errors/ApiError';
 
 interface AuthReturn {
   authUserId: number
@@ -24,11 +26,13 @@ interface UserDetailReturn {
  * @returns {{authUserId: number}}
  * @returns {{error: string}} on error
  */
-function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn | ErrorObject {
+function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn {
+
   const dataStore = getData();
   if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
-    return { error: 'Invalid registration details.' };
+    throw new ApiError('Invalid registration details', HttpStatusCode.BAD_REQUEST);
   }
+
   const newUserId = dataStore.users.length + 1;
   const newUser = {
     userId: newUserId,
@@ -53,19 +57,20 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
  * @returns {{authUserId: number}} on successful log in
  * @returns {{error: string}} on error
 */
-function adminAuthLogin(email:string, password: string): AuthReturn | ErrorObject {
+function adminAuthLogin(email:string, password: string): AuthReturn {
   const dataStore = getData();
-
+  console.log(dataStore.users)
+  console.log(dataStore.users.find(user => user.email === email))
   const authUser = dataStore.users.find(user => user.email === email);
-  // email does not belong to a user
+
   if (!authUser) {
-    return { error: 'email does not belong to a user' };
+    throw new ApiError('email does not belong to a user', HttpStatusCode.BAD_REQUEST);
   }
 
   // if password is incorrect
   if (authUser.password !== password) {
     authUser.numFailedPasswordsSinceLastLogin++;
-    return { error: 'password is incorrect' };
+    throw new ApiError('password is incorrect', HttpStatusCode.BAD_REQUEST);
   }
 
   const authUserId = authUser.userId;
@@ -86,14 +91,14 @@ function adminAuthLogin(email:string, password: string): AuthReturn | ErrorObjec
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(authUserId: number): UserDetailReturn | ErrorObject {
+function adminUserDetails(authUserId: number): UserDetailReturn {
   const dataStore = getData();
 
   const authUser = dataStore.users.find(user => user.userId === authUserId);
 
   // invalid authUser
   if (!authUser) {
-    return { error: 'authUserId does not belong to a user' };
+    throw new ApiError('authUserId does not belong to a user', HttpStatusCode.UNAUTHORISED);
   }
 
   return {

@@ -2,8 +2,9 @@ import { adminAuthRegister, adminAuthLogin } from './auth';
 import { adminQuizCreate, adminQuizRemove } from './quiz';
 import { person1, person2 } from './testingData.js';
 import { clear } from './other';
+import { ApiError } from './errors/ApiError';
 
-const ERROR = { error: expect.any(String) };
+// const ERROR = { error: expect.any(String) };
 
 describe('clear - Success Cases', () => {
   test('clear - user', () => {
@@ -15,7 +16,14 @@ describe('clear - Success Cases', () => {
     const user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const quiz1 = adminQuizCreate(user1.authUserId, 'Misc Quiz Name', 'Misc Description');
     expect(clear()).toStrictEqual({});
-    expect(adminQuizRemove(user1.authUserId, quiz1.quizId)).toEqual(ERROR);
+
+    function adminQuizRemoveFunc() {
+      adminQuizRemove(user1.authUserId, quiz1.quizId)
+    }
+    expect(adminQuizRemoveFunc).toThrow(ApiError);
+    expect(adminQuizRemoveFunc).toThrow('Invalid userId');
+    
+    // expect(adminQuizRemove(user1.authUserId, quiz1.quizId)).toEqual(ERROR);
   });
   test('clear - multiple users and quizzes', () => {
     const user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -23,6 +31,13 @@ describe('clear - Success Cases', () => {
     adminQuizCreate(user1.authUserId, 'Misc Quiz Name', 'Misc Description');
     adminQuizCreate(2, 'Misc Quiz Name2', 'Misc Description2');
     expect(clear()).toStrictEqual({});
-    expect(adminAuthLogin(person1.email, person1.password)).toEqual(ERROR);
+
+    function adminAuthLoginFunc() {
+      adminAuthLogin(person1.email, person1.password)
+    }
+    expect(adminAuthLoginFunc).toThrow(ApiError);
+    expect(adminAuthLoginFunc).toThrow('email does not belong to a user');
+
+    // expect(adminAuthLogin(person1.email, person1.password)).toEqual(ERROR);
   });
 });

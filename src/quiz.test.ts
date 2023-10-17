@@ -18,37 +18,66 @@ import {
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizRemove, adminQuizNameUpdate, adminQuizDescriptionUpdate } from './quiz';
 import { adminAuthRegister } from './auth';
 import { clear } from './other';
+import { ApiError } from './errors/ApiError';
+
+/* NEW */
+// import {expect, test, beforeEach, describe} from '@jest/globals';
 
 // test reset
 beforeEach(() => {
   clear();
 });
 
-const ERROR = { error: expect.any(String) };
+// const ERROR = { error: expect.any(String) };
 
 // adminQuizCreate tests
 describe('adminQuizCreate - Error Cases', () => {
   test('invalid authUserId', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId + 1, validQuizName, validQuizDescription).error).toStrictEqual('Invalid user');
+    function adminQuizCreateFunc() {
+      adminQuizCreate(validUserId.authUserId + 1, validQuizName, validQuizDescription)
+    }
+    expect(adminQuizCreateFunc).toThrow(ApiError);
+    expect(adminQuizCreateFunc).toThrow('Invalid user');
+    // expect(adminQuizCreate(validUserId.authUserId + 1, validQuizName, validQuizDescription)).toStrictEqual('Invalid registration details');
   });
   test('invalid name characters', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId, invalidQuizName, validQuizDescription).error).toStrictEqual('Invalid name, must not contain special characters');
+    function adminQuizCreateFunc() {
+      adminQuizCreate(validUserId.authUserId, invalidQuizName, validQuizDescription)
+    }
+    expect(adminQuizCreateFunc).toThrow(ApiError);
+    expect(adminQuizCreateFunc).toThrow('Invalid name, must not contain special characters');
+    // expect(adminQuizCreate(validUserId.authUserId, invalidQuizName, validQuizDescription).error).toStrictEqual('Invalid name, must not contain special characters');
   });
   test('invalid name length too short', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId, shortQuizName, validQuizDescription).error).toStrictEqual('Invalid name length');
+    function adminQuizCreateFunc() {
+      adminQuizCreate(validUserId.authUserId, shortQuizName, validQuizDescription)
+    }
+    expect(adminQuizCreateFunc).toThrow(ApiError);
+    expect(adminQuizCreateFunc).toThrow('Invalid name length');
+    // expect(adminQuizCreate(validUserId.authUserId, shortQuizName, validQuizDescription).error).toStrictEqual('Invalid name length');
   });
   test('invalid name length too long', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId, longQuizName, validQuizDescription).error).toStrictEqual('Invalid name length');
+    function adminQuizCreateFunc() {
+      adminQuizCreate(validUserId.authUserId, longQuizName, validQuizDescription)
+    }
+    expect(adminQuizCreateFunc).toThrow(ApiError);
+    expect(adminQuizCreateFunc).toThrow('Invalid name length');
+    // expect(adminQuizCreate(validUserId.authUserId, longQuizName, validQuizDescription).error).toStrictEqual('Invalid name length');
   });
   test('existing name under same user', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
     const invalidSecondQuizName = validQuizName;
-    expect(adminQuizCreate(validUserId.authUserId, invalidSecondQuizName, validQuizDescription).error).toStrictEqual('Quiz name already in use');
+    function adminQuizCreateFunc() {
+      adminQuizCreate(validUserId.authUserId, invalidSecondQuizName, validQuizDescription)
+    }
+    expect(adminQuizCreateFunc).toThrow(ApiError);
+    expect(adminQuizCreateFunc).toThrow('Quiz name already in use');
+    // expect(adminQuizCreate(validUserId.authUserId, invalidSecondQuizName, validQuizDescription).error).toStrictEqual('Quiz name already in use');
   });
   test('existing name under different user', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -61,7 +90,12 @@ describe('adminQuizCreate - Error Cases', () => {
   });
   test('invalid description length', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId, validQuizName, longQuizDescription).error).toStrictEqual('Description must be less than 100 characters');
+    function adminQuizCreateFunc() {
+      adminQuizCreate(validUserId.authUserId, validQuizName, longQuizDescription)
+    }
+    expect(adminQuizCreateFunc).toThrow(ApiError);
+    expect(adminQuizCreateFunc).toThrow('Description must be less than 100 characters');
+    // expect(adminQuizCreate(validUserId.authUserId, validQuizName, longQuizDescription).error).toStrictEqual('Description must be less than 100 characters');
   });
 });
 
@@ -116,18 +150,33 @@ describe('adminQuizRemove - Error Cases', () => {
   test('invalid authUser', () => {
     const person = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const quiz = adminQuizCreate(person.authUserId, 'Misc Quiz Name', 'Misc Quiz Description');
-    expect(adminQuizRemove(person.authUserId + 1, quiz.quizId)).toStrictEqual(ERROR);
+    function adminQuizRemoveFunc() {
+      adminQuizRemove(person.authUserId + 1, quiz.quizId)
+    }
+    expect(adminQuizRemoveFunc).toThrow(ApiError);
+    expect(adminQuizRemoveFunc).toThrow('Invalid userId');
+    // expect(adminQuizRemove(person.authUserId + 1, quiz.quizId)).toStrictEqual(ERROR);
   });
   test('invalid quiz', () => {
     const person = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const quiz = adminQuizCreate(person.authUserId, 'Misc Quiz Name', 'Misc Quiz Description');
-    expect(adminQuizRemove(person.authUserId, quiz.quizId + 1)).toStrictEqual(ERROR);
+    function adminQuizRemoveFunc() {
+      adminQuizRemove(person.authUserId, quiz.quizId + 1)
+    }
+    expect(adminQuizRemoveFunc).toThrow(ApiError);
+    expect(adminQuizRemoveFunc).toThrow('Invalid quizId');
+    // expect(adminQuizRemove(person.authUserId, quiz.quizId + 1)).toStrictEqual(ERROR);
   });
   test('Quiz  does not refer to a quiz that this user owns', () => {
     const person = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personB = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const quiz = adminQuizCreate(person.authUserId, 'Misc Quiz Name', 'Misc Quiz Description');
-    expect(adminQuizRemove(personB.authUserId, quiz.quizId)).toStrictEqual(ERROR);
+    function adminQuizRemoveFunc() {
+      adminQuizRemove(personB.authUserId, quiz.quizId)
+    }
+    expect(adminQuizRemoveFunc).toThrow(ApiError);
+    expect(adminQuizRemoveFunc).toThrow('User does not own quiz to remove');
+    // expect(adminQuizRemove(personB.authUserId, quiz.quizId)).toStrictEqual(ERROR);
   });
 });
 
@@ -136,18 +185,33 @@ describe('adminQuizInfo - Error Cases', () => {
   test('invalid authUserId', () => {
     const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUser1.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizInfo(validUser1.authUserId + 100, validQuizId.quizId).error).toStrictEqual('Invalid user');
+    function adminQuizInfoFunc() {
+      adminQuizInfo(validUser1.authUserId + 100, validQuizId.quizId)
+    }
+    expect(adminQuizInfoFunc).toThrow(ApiError);
+    expect(adminQuizInfoFunc).toThrow('Invalid user');
+    // expect(adminQuizInfo(validUser1.authUserId + 100, validQuizId.quizId).error).toStrictEqual('Invalid user');
   });
   test('invalid quizId', () => {
     const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUser1.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizInfo(validUser1.authUserId, validQuizId.quizId + 100).error).toStrictEqual('Invalid quiz ID');
+    function adminQuizInfoFunc() {
+      adminQuizInfo(validUser1.authUserId, validQuizId.quizId + 100)
+    }
+    expect(adminQuizInfoFunc).toThrow(ApiError);
+    expect(adminQuizInfoFunc).toThrow('Invalid quiz ID');
+    // expect(adminQuizInfo(validUser1.authUserId, validQuizId.quizId + 100).error).toStrictEqual('Invalid quiz ID');
   });
   test('quizId not owned by this user', () => {
     const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUser1.authUserId, validQuizName, validQuizDescription);
     const validUser2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    expect(adminQuizInfo(validUser2.authUserId, validQuizId.quizId).error).toStrictEqual('Quiz ID not owned by this user');
+    function adminQuizInfoFunc() {
+      adminQuizInfo(validUser2.authUserId, validQuizId.quizId)
+    }
+    expect(adminQuizInfoFunc).toThrow(ApiError);
+    expect(adminQuizInfoFunc).toThrow('Quiz ID not owned by this user');
+    // expect(adminQuizInfo(validUser2.authUserId, validQuizId.quizId).error).toStrictEqual('Quiz ID not owned by this user');
   });
 });
 
@@ -205,7 +269,12 @@ describe('adminQuizInfo - Passed Cases', () => {
 describe('adminQuizList - Error Cases', () => {
   test('invalid authUserId', () => {
     const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizList(validUser1.authUserId + 100).error).toStrictEqual('Invalid user');
+    function adminQuizListFunc() {
+      adminQuizList(validUser1.authUserId + 100)
+    }
+    expect(adminQuizListFunc).toThrow(ApiError);
+    expect(adminQuizListFunc).toThrow('Invalid user');
+    // expect(adminQuizList(validUser1.authUserId + 100).error).toStrictEqual('Invalid user');
   });
 });
 
@@ -298,39 +367,74 @@ describe('adminQuizNameUpdate - Error Cases', () => {
   test('invalid authUserId', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizNameUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizName)).toStrictEqual(ERROR);
+    function adminQuizNameUpdateFunc() {
+      adminQuizNameUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizName)
+    }
+    expect(adminQuizNameUpdateFunc).toThrow(ApiError);
+    expect(adminQuizNameUpdateFunc).toThrow('Invalid user ID');
+    // expect(adminQuizNameUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizName)).toStrictEqual(ERROR);
   });
   test('invalid QuizId', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizName)).toStrictEqual(ERROR);
+    function adminQuizNameUpdateFunc() {
+      adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizName)
+    }
+    expect(adminQuizNameUpdateFunc).toThrow(ApiError);
+    expect(adminQuizNameUpdateFunc).toThrow('Invalid quiz ID');
+    // expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizName)).toStrictEqual(ERROR);
   });
   test('QuizId not owned by this user', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validUserId2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizNameUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizName)).toStrictEqual(ERROR);
+    function adminQuizNameUpdateFunc() {
+      adminQuizNameUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizName)
+    }
+    expect(adminQuizNameUpdateFunc).toThrow(ApiError);
+    expect(adminQuizNameUpdateFunc).toThrow('Quiz ID not owned by this user');
+    // expect(adminQuizNameUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizName)).toStrictEqual(ERROR);
   });
   test('Name contains invalid characters', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, invalidQuizName)).toStrictEqual(ERROR);
+    function adminQuizNameUpdateFunc() {
+      adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, invalidQuizName)
+    }
+    expect(adminQuizNameUpdateFunc).toThrow(ApiError);
+    expect(adminQuizNameUpdateFunc).toThrow('Name cannot contain special characters');
+    // expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, invalidQuizName)).toStrictEqual(ERROR);
   });
   test('invalid Name length - too long', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, longQuizName)).toStrictEqual(ERROR);
+    function adminQuizNameUpdateFunc() {
+      adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, longQuizName)
+    }
+    expect(adminQuizNameUpdateFunc).toThrow(ApiError);
+    expect(adminQuizNameUpdateFunc).toThrow('Invalid name length');
+    // expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, longQuizName)).toStrictEqual(ERROR);
   });
   test('invalid Name length - too short', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, shortQuizName)).toStrictEqual(ERROR);
+    function adminQuizNameUpdateFunc() {
+      adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, shortQuizName)
+    }
+    expect(adminQuizNameUpdateFunc).toThrow(ApiError);
+    expect(adminQuizNameUpdateFunc).toThrow('Invalid name length');
+    // expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, shortQuizName)).toStrictEqual(ERROR);
   });
   test('Name already in use', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
     const NameAlreadyExists = validQuizName;
-    expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, NameAlreadyExists)).toStrictEqual(ERROR);
+    function adminQuizNameUpdateFunc() {
+      adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, NameAlreadyExists)
+    }
+    expect(adminQuizNameUpdateFunc).toThrow(ApiError);
+    expect(adminQuizNameUpdateFunc).toThrow('Quiz name already exists');
+    // expect(adminQuizNameUpdate(validUserId.authUserId, validQuizId.quizId, NameAlreadyExists)).toStrictEqual(ERROR);
   });
 });
 
@@ -347,22 +451,42 @@ describe('adminQuizDescriptionUpdate - Error Cases', () => {
   test('invalid authUserId', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizDescriptionUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual(ERROR);
+    function adminQuizDescriptionUpdateFunc() {
+      adminQuizDescriptionUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizDescription)
+    }
+    expect(adminQuizDescriptionUpdateFunc).toThrow(ApiError);
+    expect(adminQuizDescriptionUpdateFunc).toThrow('Invalid user ID');
+    // expect(adminQuizDescriptionUpdate(validUserId.authUserId + 1, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual(ERROR);
   });
   test('invalid QuizId', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizDescription)).toStrictEqual(ERROR);
+    function adminQuizDescriptionUpdateFunc() {
+      adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizDescription)
+    }
+    expect(adminQuizDescriptionUpdateFunc).toThrow(ApiError);
+    expect(adminQuizDescriptionUpdateFunc).toThrow('Invalid quiz ID');
+    // expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId + 1, newvalidQuizDescription)).toStrictEqual(ERROR);
   });
   test('QuizId not owned by this user', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validUserId2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizDescriptionUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual(ERROR);
+    function adminQuizDescriptionUpdateFunc() {
+      adminQuizDescriptionUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizDescription)
+    }
+    expect(adminQuizDescriptionUpdateFunc).toThrow(ApiError);
+    expect(adminQuizDescriptionUpdateFunc).toThrow('Quiz ID not owned by this user');
+    // expect(adminQuizDescriptionUpdate(validUserId2.authUserId, validQuizId.quizId, newvalidQuizDescription)).toStrictEqual(ERROR);
   });
   test('Description is longer than 100 characters', () => {
     const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId, longQuizDescription)).toStrictEqual(ERROR);
+    function adminQuizDescriptionUpdateFunc() {
+      adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId, longQuizDescription)
+    }
+    expect(adminQuizDescriptionUpdateFunc).toThrow(ApiError);
+    expect(adminQuizDescriptionUpdateFunc).toThrow('Quiz Description more than 100 characters in length');
+    // expect(adminQuizDescriptionUpdate(validUserId.authUserId, validQuizId.quizId, longQuizDescription)).toStrictEqual(ERROR);
   });
 });
