@@ -1,5 +1,11 @@
+import { UUID } from "crypto"
+
 export interface ErrorObject {
   error: string
+}
+
+export interface AuthReturn {
+  token: string
 }
 
 export interface User {

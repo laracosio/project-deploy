@@ -1,7 +1,7 @@
 import { adminAuthRegister, adminAuthLogin } from './auth';
 import { adminQuizCreate, adminQuizRemove } from './quiz';
 import { person1, person2 } from './testingData.js';
-import { clear } from './other';
+import { clear, tokenValidation } from './other';
 
 const ERROR = { error: expect.any(String) };
 
@@ -24,5 +24,14 @@ describe('clear - Success Cases', () => {
     adminQuizCreate(2, 'Misc Quiz Name2', 'Misc Description2');
     expect(clear()).toStrictEqual({});
     expect(adminAuthLogin(person1.email, person1.password)).toEqual(ERROR);
+  });
+});
+
+
+describe('tokenValidation - Success Cases', () => {
+  test('tokenValidation', () => {
+    let token1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    expect(tokenValidation(token1)).toStrictEqual(true);
+    expect(tokenValidation('fkalkgla')).toStrictEqual(false);
   });
 });

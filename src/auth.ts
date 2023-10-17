@@ -1,9 +1,5 @@
-import { helperAdminRegister, createSessionId } from './other';
-import { getData, setData, ErrorObject, Token } from './dataStore';
-
-interface AuthReturn {
-  token: string
-}
+import { helperAdminRegister, createSessionId, tokenValidation } from './other';
+import { getData, setData, ErrorObject, Token, AuthReturn } from './dataStore';
 
 interface UserDetailReturn {
   user: {
@@ -24,7 +20,7 @@ interface UserDetailReturn {
  * @returns {{authUserId: number}}
  * @returns {{error: string}} on error
  */
-function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn | ErrorObject {
+  function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn | ErrorObject {
   const dataStore = getData();
   if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
     return { error: 'Invalid registration details.' };
@@ -97,24 +93,27 @@ function adminAuthLogin(email:string, password: string): AuthReturn | ErrorObjec
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(authUserId: number): UserDetailReturn | ErrorObject {
+function adminUserDetails(authToken: AuthReturn): UserDetailReturn | ErrorObject {
   const dataStore = getData();
 
-  const authUser = dataStore.users.find(user => user.userId === authUserId);
-
-  // invalid authUser
-  if (!authUser) {
-    return { error: 'authUserId does not belong to a user' };
+  const validToken = tokenValidation(authToken);
+  
+  // invalid Token
+  if (!validToken) {
+    return { error: 'Token is invalid' };
   }
+
+  const userIdInToken = dataStore.tokens.find(user => user.sessionId === authToken.token);
+  const adminUserDetails = dataStore.users.find(user => user.userId === userIdInToken.userId);
 
   return {
     user:
     {
-      userId: authUser.userId,
-      name: authUser.nameFirst + ' ' + authUser.nameLast,
-      email: authUser.email,
-      numSuccessfulLogins: authUser.numSuccessfulLogins,
-      numFailedPasswordsSinceLastLogin: authUser.numFailedPasswordsSinceLastLogin,
+      userId: adminUserDetails.userId,
+      name: adminUserDetails.nameFirst + ' ' + adminUserDetails.nameLast,
+      email: adminUserDetails.email,
+      numSuccessfulLogins: adminUserDetails.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: adminUserDetails.numFailedPasswordsSinceLastLogin,
     }
   };
 }

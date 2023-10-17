@@ -1,4 +1,4 @@
-import { getData, setData, User, Token } from './dataStore';
+import { getData, setData, User, Token, AuthReturn } from './dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -74,4 +74,25 @@ function createSessionId(tokens: Array<Token>): string {
   return newSessionId;
 }
 
-export { clear, helperAdminRegister, createSessionId };
+/**
+ * Helper function to validate token
+ * @param {AuthToken} authtoken - unique token
+ * @returns {boolean} - true if valid, false if invalid
+ */
+function tokenValidation (authToken: AuthReturn): boolean {
+  const dataStore = getData();
+  
+  if(authToken.token === null) {
+    return false;
+  }
+
+  const validToken = dataStore.tokens.find(token => token.sessionId === authToken.token);
+  
+  if(!validToken) {
+    return false;
+  }
+  
+  return true;
+}
+
+export { clear, helperAdminRegister, createSessionId, tokenValidation };
