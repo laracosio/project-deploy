@@ -69,7 +69,6 @@ describe('adminAuthRegister - Error Cases', () => {
 });
 
 // tests for adminAuthLogin
-
 describe('Testing adminAuthLogin', () => {
   test('Return authUserId if email and password are both correct', () => {
     adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -90,7 +89,6 @@ describe('Testing adminAuthLogin', () => {
 });
 
 // tests for authUserDetails
-
 describe('Testing adminAuthDetails', () => {
   test('Return authUserId if email and password are both correct', () => {
     const user1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
