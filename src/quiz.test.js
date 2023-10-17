@@ -29,55 +29,55 @@ const ERROR = { error: expect.any(String) };
 // adminQuizCreate tests
 describe('adminQuizCreate - Error Cases', () => {
   test('invalid authUserId', () => {
-    const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId + 1, validQuizName, validQuizDescription).error).toStrictEqual('Invalid user');
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    expect(adminQuizCreate(session.token + 1, validQuizName, validQuizDescription).error).toStrictEqual('Invalid user');
   });
   test('invalid name characters', () => {
-    const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId, invalidQuizName, validQuizDescription).error).toStrictEqual('Invalid name, must not contain special characters');
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    expect(adminQuizCreate(session.token, invalidQuizName, validQuizDescription).error).toStrictEqual('Invalid name, must not contain special characters');
   });
   test('invalid name length too short', () => {
-    const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId, shortQuizName, validQuizDescription).error).toStrictEqual('Invalid name length');
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    expect(adminQuizCreate(session.token, shortQuizName, validQuizDescription).error).toStrictEqual('Invalid name length');
   });
   test('invalid name length too long', () => {
-    const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId, longQuizName, validQuizDescription).error).toStrictEqual('Invalid name length');
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    expect(adminQuizCreate(session.token, longQuizName, validQuizDescription).error).toStrictEqual('Invalid name length');
   });
   test('existing name under same user', () => {
-    const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminQuizCreate(session.token, validQuizName, validQuizDescription);
     const invalidSecondQuizName = validQuizName;
-    expect(adminQuizCreate(validUserId.authUserId, invalidSecondQuizName, validQuizDescription).error).toStrictEqual('Quiz name already in use');
+    expect(adminQuizCreate(session.token, invalidSecondQuizName, validQuizDescription).error).toStrictEqual('Quiz name already in use');
   });
   test('existing name under different user', () => {
-    const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const validUserId2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    adminQuizCreate(validUserId.authUserId, 'Quiz 2', validQuizDescription);
-    adminQuizCreate(validUserId.authUserId, 'Quiz 3', validQuizDescription);
-    adminQuizCreate(validUserId2.authUserId, 'Potato Quiz', validQuizDescription);
-    expect(adminQuizCreate(validUserId2.authUserId, validQuizName, validQuizDescription).quizId).toStrictEqual(expect.any(Number));
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    adminQuizCreate(session.token, validQuizName, validQuizDescription);
+    adminQuizCreate(session.token, 'Quiz 2', validQuizDescription);
+    adminQuizCreate(session.token, 'Quiz 3', validQuizDescription);
+    adminQuizCreate(session2.token, 'Potato Quiz', validQuizDescription);
+    expect(adminQuizCreate(session2.token, validQuizName, validQuizDescription).quizId).toStrictEqual(expect.any(Number));
   });
   test('invalid description length', () => {
-    const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizCreate(validUserId.authUserId, validQuizName, longQuizDescription).error).toStrictEqual('Description must be less than 100 characters');
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    expect(adminQuizCreate(session.token, validQuizName, longQuizDescription).error).toStrictEqual('Description must be less than 100 characters');
   });
 });
 
 describe('adminQuizCreate - Passed Cases', () => {
   test('valid quiz details', () => {
-    const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const quizCreate = adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const quizCreate = adminQuizCreate(session.token, validQuizName, validQuizDescription);
     expect(quizCreate.quizId).toStrictEqual(expect.any(Number));
   });
   test('valid multiple quiz details', () => {
-    const validUserId = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    adminQuizCreate(validUserId.authUserId, validQuizName, validQuizDescription);
-    const validUserId2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    adminQuizCreate(validUserId2.authUserId, 'Quiz 2', '');
-    adminQuizCreate(validUserId2.authUserId, 'Quiz 3', '');
-    expect(adminQuizCreate(validUserId2.authUserId, 'Quiz 4', '')).toMatchObject({ quizId: expect.any(Number) });
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminQuizCreate(session.token, validQuizName, validQuizDescription);
+    const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    adminQuizCreate(session2.token, 'Quiz 2', '');
+    adminQuizCreate(session2.token, 'Quiz 3', '');
+    expect(adminQuizCreate(session2.token, 'Quiz 4', '')).toMatchObject({ quizId: expect.any(Number) });
   });
 });
 
