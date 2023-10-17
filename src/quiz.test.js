@@ -28,7 +28,7 @@ const ERROR = { error: expect.any(String) };
 
 // adminQuizCreate tests
 describe('adminQuizCreate - Error Cases', () => {
-  test('invalid authUserId', () => {
+  test('invalid token', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     expect(adminQuizCreate(session.token + 1, validQuizName, validQuizDescription).error).toStrictEqual('Invalid user');
   });
@@ -142,7 +142,7 @@ describe('adminQuizRemove - Error Cases', () => {
 
 // adminQuizInfo tests
 describe('adminQuizInfo - Error Cases', () => {
-  test('invalid authUserId', () => {
+  test('invalid token', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(session.token, validQuizName, validQuizDescription);
     expect(adminQuizInfo(session.token + 100, validQuizId.quizId).error).toStrictEqual('Invalid user');
@@ -212,18 +212,18 @@ describe('adminQuizInfo - Passed Cases', () => {
 
 // adminQuizList tests
 describe('adminQuizList - Error Cases', () => {
-  test('invalid authUserId', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    expect(adminQuizList(validUser1.authUserId + 100).error).toStrictEqual('Invalid user');
+  test('invalid token', () => {
+    const session1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    expect(adminQuizList(session1.token + 100).error).toStrictEqual('Invalid user');
   });
 });
 
 describe('adminQuizList - Passed Cases', () => {
   test('valid user1 list', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const validQuiz1 = adminQuizCreate(validUser1.authUserId, 'User1 first quiz', '');
-    const validQuiz2 = adminQuizCreate(validUser1.authUserId, 'User1 second quiz', '');
-    expect(adminQuizList(validUser1.authUserId)).toStrictEqual(
+    const session1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const validQuiz1 = adminQuizCreate(session1.token, 'User1 first quiz', '');
+    const validQuiz2 = adminQuizCreate(session1.token, 'User1 second quiz', '');
+    expect(adminQuizList(session1.token)).toStrictEqual(
       {
         quizzes: [
           {
@@ -239,12 +239,12 @@ describe('adminQuizList - Passed Cases', () => {
     );
   });
   test('valid user2 list', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    adminQuizCreate(validUser1.authUserId, 'User1 first quiz', '');
-    adminQuizCreate(validUser1.authUserId, 'User1 second quiz', '');
-    const validUser2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    const validQuiz3 = adminQuizCreate(validUser2.authUserId, 'User2 first quiz', '');
-    expect(adminQuizList(validUser2.authUserId)).toStrictEqual(
+    const session1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminQuizCreate(session1.token, 'User1 first quiz', '');
+    adminQuizCreate(session1.token, 'User1 second quiz', '');
+    const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const validQuiz3 = adminQuizCreate(session2.token, 'User2 first quiz', '');
+    expect(adminQuizList(session2.token)).toStrictEqual(
       {
         quizzes: [
           {
@@ -256,20 +256,20 @@ describe('adminQuizList - Passed Cases', () => {
     );
   });
   test('valid user3 list', () => {
-    const validUser1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    adminQuizCreate(validUser1.authUserId, 'User1 first quiz', '');
-    adminQuizCreate(validUser1.authUserId, 'User1 second quiz', '');
-    adminQuizCreate(validUser1.authUserId, 'User1 third quiz', '');
-    const validUser2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    adminQuizCreate(validUser2.authUserId, 'User2 first quiz', '');
-    adminQuizCreate(validUser2.authUserId, 'User2 second quiz', '');
-    adminQuizCreate(validUser2.authUserId, 'User2 third quiz', '');
-    const validUser3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
-    const validQuiz7 = adminQuizCreate(validUser3.authUserId, 'User3 first quiz', '');
-    const validQuiz8 = adminQuizCreate(validUser3.authUserId, 'User3 second quiz', '');
-    const validQuiz9 = adminQuizCreate(validUser3.authUserId, 'User3 third quiz', '');
-    const validQuiz10 = adminQuizCreate(validUser3.authUserId, 'User3 fourth quiz', '');
-    expect(adminQuizList(validUser3.authUserId)).toStrictEqual(
+    const session1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminQuizCreate(session1.token, 'User1 first quiz', '');
+    adminQuizCreate(session1.token, 'User1 second quiz', '');
+    adminQuizCreate(session1.token, 'User1 third quiz', '');
+    const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    adminQuizCreate(session2.token, 'User2 first quiz', '');
+    adminQuizCreate(session2.token, 'User2 second quiz', '');
+    adminQuizCreate(session2.token, 'User2 third quiz', '');
+    const session3 = adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    const validQuiz7 = adminQuizCreate(session3.token, 'User3 first quiz', '');
+    const validQuiz8 = adminQuizCreate(session3.token, 'User3 second quiz', '');
+    const validQuiz9 = adminQuizCreate(session3.token, 'User3 third quiz', '');
+    const validQuiz10 = adminQuizCreate(session3.token, 'User3 fourth quiz', '');
+    expect(adminQuizList(session3.token)).toStrictEqual(
       {
         quizzes: [
           {
