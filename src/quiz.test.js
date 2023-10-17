@@ -113,7 +113,7 @@ describe('adminQuizRemove - Success Cases', () => {
 });
 
 describe('adminQuizRemove - Error Cases', () => {
-  test('invalid authUser', () => {
+  test('invalid token', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
     expect(adminQuizRemove(session.token + 1, quiz.quizId)).toStrictEqual(ERROR);
@@ -123,11 +123,21 @@ describe('adminQuizRemove - Error Cases', () => {
     const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
     expect(adminQuizRemove(session.token, quiz.quizId + 1)).toStrictEqual(ERROR);
   });
-  test('Quiz  does not refer to a quiz that this user owns', () => {
+  test('Quiz does not refer to a quiz that this user owns', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const sessionB = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
     expect(adminQuizRemove(sessionB.token, quiz.quizId)).toStrictEqual(ERROR);
+  });
+  test('empty token', () => {
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
+    expect(adminQuizRemove('', quiz.quizId)).toStrictEqual(ERROR);
+  });
+  test('empty quizId', () => {
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const quiz = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Quiz Description');
+    expect(adminQuizRemove(session.token, '')).toStrictEqual(ERROR);
   });
 });
 
