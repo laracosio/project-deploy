@@ -1,5 +1,6 @@
 import { getData, setData, ErrorObject } from './dataStore';
 import { getUnixTime } from 'date-fns';
+import { findTokenUser, tokenValidation } from './other';
 
 interface QuizInfoReturn {
   quizId: number,
@@ -23,7 +24,6 @@ interface QuizListReturn {
 
 /**
  * Get all of the relevant information about the current quiz.
- *
  * @param {string} token
  * @param {number} quizId
  * @returns {quizId: number, name: string, timeCreated: number, timeLastEdited: number, description: string}
@@ -32,12 +32,13 @@ function adminQuizInfo(token:string, quizId: number): QuizInfoReturn | ErrorObje
   const dataStore = getData();
 
   // check that token is not empty or is valid
-  if (!token || !dataStore.tokens.some(t => t.sessionId === token)) {
+  if (!tokenValidation(token)) {
     return { error: 'Invalid token' };
   }
 
   // find user associated with token and checks whether they are the quiz owner
-  const tokenUser = dataStore.tokens.find(t => t.sessionId === token);
+  const tokenUser = findTokenUser(token);
+
   if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
     return { error: 'User does not own quiz to check info' };
   }
@@ -60,7 +61,6 @@ function adminQuizInfo(token:string, quizId: number): QuizInfoReturn | ErrorObje
 
 /**
  * Given basic details about a new quiz, create one for  the logged in user.
- *
  * @param {string} token - unique token
  * @param {string} name - of quiz
  * @param {string} description - of quiz
@@ -70,7 +70,7 @@ function adminQuizCreate(token: string, name: string, description: string): Quiz
   const dataStore = getData();
 
   // check that token is not empty or is valid
-  if (!token || !dataStore.tokens.some(t => t.sessionId === token)) {
+  if (!tokenValidation(token)) {
     return { error: 'Invalid token' };
   }
 
@@ -84,7 +84,7 @@ function adminQuizCreate(token: string, name: string, description: string): Quiz
     return { error: 'Invalid name length' };
   }
 
-  const tokenUser = dataStore.tokens.find(t => t.sessionId === token);
+  const tokenUser = findTokenUser(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner === tokenUser.userId && q.name === name))) {
     return { error: 'Quiz name already in use' };
   }
@@ -124,7 +124,6 @@ function adminQuizCreate(token: string, name: string, description: string): Quiz
 
 /**
  * Given a particular quiz, permanently remove the quiz.
- *
  * @param {string} token - unique token containing sessionId
  * @param {number} quizId - unique identifier for quiz
  * @returns {{error: string}}
@@ -138,12 +137,12 @@ function adminQuizRemove(token:string, quizId: number): object | ErrorObject {
   }
 
   // check that token is not empty or is valid
-  if (!token || !dataStore.tokens.some(t => t.sessionId === token)) {
+  if (!tokenValidation(token)) {
     return { error: 'Invalid token' };
   }
 
   // find user associated with token and checks whether they are the quiz owner
-  const tokenUser = dataStore.tokens.find(t => t.sessionId === token);
+  const tokenUser = findTokenUser(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
     return { error: 'User does not own quiz to remove' };
   }
@@ -167,11 +166,11 @@ function adminQuizList (token: string): QuizListReturn | ErrorObject {
   const dataStore = getData();
 
   // check that token is not empty or is valid
-  if (!token || !dataStore.tokens.some(t => t.sessionId === token)) {
+  if (!tokenValidation(token)) {
     return { error: 'Invalid token' };
   }
 
-  const tokenUser = dataStore.tokens.find(t => t.sessionId === token);
+  const tokenUser = findTokenUser(token);
 
   // find all user quizzes and add to an array
   const userQuizList: Array<BriefQuizInfo> = [];
@@ -192,12 +191,10 @@ function adminQuizList (token: string): QuizListReturn | ErrorObject {
 
 /**
  * Given a particular quiz, change the name of the quiz
- *
  * @param {number} authUserId
  * @param {number} quizId
  * @param {string} name
  * @returns {{error: string}}
- *
  */
 function adminQuizNameUpdate (authUserId: number, quizId: number, name: string): object | ErrorObject {
   const dataStore = getData();
@@ -241,17 +238,13 @@ function adminQuizNameUpdate (authUserId: number, quizId: number, name: string):
   return {};
 }
 
-// Stub function for adminQuizDescriptionUpdate - Josh
 /**
  * Given a particular quiz, change the description of the quiz
- *
  * @param {number} authUserId
  * @param {number} quizId
  * @param {string} description
  * @returns {{error: string}}
- *
  */
-
 function adminQuizDescriptionUpdate (authUserId: number, quizId: number, description: string): object | ErrorObject {
   const dataStore = getData();
 
