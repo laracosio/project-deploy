@@ -15,6 +15,8 @@ function clear(): object {
   const store = getData();
   store.users = [];
   store.quizzes = [];
+  store.tokens = [];
+  store.trash = [];
   setData(store);
   return {};
 }
