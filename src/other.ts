@@ -76,22 +76,20 @@ function createSessionId(tokens: Array<Token>): string {
 
 /**
  * Helper function to validate token
- * @param {AuthToken} authtoken - unique token
+ * @param {string} token - unique token
  * @returns {boolean} - true if valid, false if invalid
  */
-function tokenValidation (authToken: AuthReturn): boolean {
+function tokenValidation (token: string): boolean {
   const dataStore = getData();
   
-  if(authToken.token === null) {
+  if (token === null) {
     return false;
   }
 
-  const validToken = dataStore.tokens.find(token => token.sessionId === authToken.token);
-  
-  if(!validToken) {
+  // check whether token exists in dataStore
+  if(!dataStore.tokens.some(t => t.sessionId === token)) {
     return false;
   }
-  
   return true;
 }
 
