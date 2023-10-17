@@ -24,29 +24,30 @@ interface QuizListReturn {
 /**
  * Get all of the relevant information about the current quiz.
  *
- * @param {number} authUserId
+ * @param {string} token
  * @param {number} quizId
  * @returns {quizId: number, name: string, timeCreated: number, timeLastEdited: number, description: string}
  */
-
-function adminQuizInfo (authUserId: number, quizId: number): QuizInfoReturn | ErrorObject {
+function adminQuizInfo(token:string, quizId: number): QuizInfoReturn | ErrorObject {
   const dataStore = getData();
-  // check authUserId is valid
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid user' };
+
+  // check that token is not empty or is valid
+  if (!token || !dataStore.tokens.some(t => t.sessionId === token)) {
+    return { error: 'Invalid token' };
+  }
+
+  // find user associated with token and checks whether they are the quiz owner
+  const tokenUser = dataStore.tokens.find(t => t.sessionId === token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+    return { error: 'User does not own quiz to check info' };
   }
 
   // check quizId is valid
-  if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
+  if (!dataStore.quizzes.some((q) => q.quizId === quizId)) {
     return { error: 'Invalid quiz ID' };
   }
 
-  // check valid quizId is owned by the current user
-  if (dataStore.quizzes.some((quiz) => (!(quiz.quizOwner === authUserId) && quiz.quizId === quizId))) {
-    return { error: 'Quiz ID not owned by this user' };
-  }
-
-  const quizMatch = dataStore.quizzes.find((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
+  const quizMatch = dataStore.quizzes.find((q) => (q.quizOwner === tokenUser.userId && q.quizId === quizId));
 
   return {
     quizId: quizMatch.quizId,
