@@ -13,12 +13,13 @@ import {
   validQuizDescription,
   newvalidQuizDescription,
   longQuizDescription,
-} from './testingData.js';
+} from '../testingData.js';
 
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizRemove, adminQuizNameUpdate, adminQuizDescriptionUpdate } from './quiz';
-import { adminAuthRegister } from './auth';
-import { clear } from './other';
-import { ApiError } from './errors/ApiError';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../features/quiz';
+import { adminQuizRemove } from '../features/trash';
+import { adminAuthRegister } from '../features/auth';
+import { clear } from '../features//other';
+import { ApiError } from '../errors/ApiError';
 
 // test reset
 beforeEach(() => {

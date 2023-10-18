@@ -1,7 +1,7 @@
 import { helperAdminRegister, createSessionId, tokenValidation } from './other';
-import { getData, setData, Token, AuthReturn } from './dataStore';
-import { HttpStatusCode } from './enums/HttpStatusCode';
-import { ApiError } from './errors/ApiError';
+import { getData, setData, Token, AuthReturn } from '../dataStore';
+import { HttpStatusCode } from '../enums/HttpStatusCode';
+import { ApiError } from '../errors/ApiError';
 
 interface UserDetailReturn {
   user: {
