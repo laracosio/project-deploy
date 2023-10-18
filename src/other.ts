@@ -70,6 +70,7 @@ function helperAdminRegister(email: string, password: string, nameFirst: string,
  */
 function createSessionId(tokens: Array<Token>): string {
   let newSessionId: string = uuidv4();
+  /* istanbul ignore next */
   while (tokens.some(t => t.sessionId === newSessionId)) {
     newSessionId = uuidv4();
   }
