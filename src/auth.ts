@@ -1,8 +1,7 @@
 import { helperAdminRegister, createSessionId, tokenValidation } from './other';
-import { getData, setData, ErrorObject, Token, AuthReturn } from './dataStore';
+import { getData, setData, Token, AuthReturn } from './dataStore';
 import { HttpStatusCode } from './enums/HttpStatusCode';
 import { ApiError } from './errors/ApiError';
-
 
 interface UserDetailReturn {
   user: {
@@ -24,7 +23,6 @@ interface UserDetailReturn {
  * @returns {{error: string}} on error
  */
 function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn {
-
   const dataStore = getData();
   if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
     throw new ApiError('Invalid registration details', HttpStatusCode.BAD_REQUEST);

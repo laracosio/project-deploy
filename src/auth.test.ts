@@ -160,10 +160,10 @@ describe('Testing adminAuthDetails', () => {
 
     // two failed attempts
     expect(() => {
-      adminAuthLogin(person1.email, person2.password)
+      adminAuthLogin(person1.email, person2.password);
     }).toThrow('password is incorrect');
     expect(() => {
-      adminAuthLogin(person1.email, person4.password)
+      adminAuthLogin(person1.email, person4.password);
     }).toThrow('password is incorrect');
 
     expect(adminUserDetails(user1.token)).toEqual({
@@ -186,5 +186,20 @@ describe('Testing adminAuthDetails', () => {
         numFailedPasswordsSinceLastLogin: person4.numFailedPasswordsSinceLastLogin,
       }
     });
+  });
+});
+
+describe('Testing adminAuthDetails', () => {
+  test('Return error if token is invalid', () => {
+    adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    adminAuthRegister(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    const invalidUser = { token: '32589invalid2582' };
+    adminAuthRegister(person4.email, person4.password, person4.nameFirst, person4.nameLast);
+    function adminAuthDetailsFunc() {
+      adminUserDetails(invalidUser.token);
+    }
+    expect(adminAuthDetailsFunc).toThrow(ApiError);
+    expect(adminAuthDetailsFunc).toThrow('Token is invalid');
   });
 });

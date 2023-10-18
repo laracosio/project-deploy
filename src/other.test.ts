@@ -20,7 +20,6 @@ describe('clear - Success Cases', () => {
     }
     expect(adminQuizRemoveFunc).toThrow(ApiError);
     expect(adminQuizRemoveFunc).toThrow('Invalid quizId');
-    
     // expect(adminQuizRemove(user1.authUserId, quiz1.quizId)).toEqual(ERROR);
   });
   test('clear - multiple users and quizzes', () => {
@@ -45,5 +44,6 @@ describe('tokenValidation - Success Cases', () => {
     const token1 = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     expect(tokenValidation(token1.token)).toStrictEqual(true);
     expect(tokenValidation('fkalkgla')).toStrictEqual(false);
-  })
-})
+    expect(tokenValidation(null)).toStrictEqual(false);
+  });
+});

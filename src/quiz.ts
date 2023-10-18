@@ -1,4 +1,4 @@
-import { getData, setData, ErrorObject } from './dataStore';
+import { getData, setData } from './dataStore';
 import { getUnixTime } from 'date-fns';
 import { findTokenUser, tokenValidation } from './other';
 import { ApiError } from './errors/ApiError';
@@ -140,7 +140,6 @@ function adminQuizCreate(token: string, name: string, description: string): Quiz
  */
 function adminQuizRemove(token:string, quizId: number): object {
   const dataStore = getData();
-  
   // check that quizId is not empty or is valid
   if (!quizId || !dataStore.quizzes.some(q => q.quizId === quizId)) {
     throw new ApiError('Invalid quizId', HttpStatusCode.BAD_REQUEST);
@@ -226,7 +225,7 @@ function adminQuizNameUpdate (token: string, quizId: number, name: string): obje
   }
 
   // check valid quizId is owned by the current user associated with token
-  const tokenUser = findTokenUser(token); 
+  const tokenUser = findTokenUser(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.UNAUTHORISED);
     // return { error: 'Quiz ID not owned by this user' };
@@ -283,7 +282,7 @@ function adminQuizDescriptionUpdate (token: string, quizId: number, description:
   }
 
   // check valid quizId is owned by the current user associated with token
-  const tokenUser = findTokenUser(token); 
+  const tokenUser = findTokenUser(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.UNAUTHORISED);
     // return { error: 'Quiz ID not owned by this user' };

@@ -86,7 +86,6 @@ function tokenValidation (token: string): boolean {
   if (token === null) {
     return false;
   }
-
   // check whether token exists in dataStore
   if (!dataStore.tokens.some(t => t.sessionId === token)) {
     return false;
