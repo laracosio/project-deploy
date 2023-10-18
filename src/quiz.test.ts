@@ -359,7 +359,7 @@ describe('adminQuizNameUpdate - Error Cases', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const validQuizId = adminQuizCreate(session.token, validQuizName, validQuizDescription);
     function adminQuizNameUpdateFunc() {
-      adminQuizNameUpdate(session.token, validQuizId.quizId + 100 newvalidQuizName);
+      adminQuizNameUpdate(session.token, validQuizId.quizId + 100, newvalidQuizName);
     }
     expect(adminQuizNameUpdateFunc).toThrow(ApiError);
     expect(adminQuizNameUpdateFunc).toThrow('Invalid quiz ID');

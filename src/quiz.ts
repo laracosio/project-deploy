@@ -249,7 +249,7 @@ function adminQuizNameUpdate (token: string, quizId: number, name: string): obje
     // return { error: 'Quiz name already exists' };
   }
 
-  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.useriD && quiz.quizId === quizId));
+  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
   dataStore.quizzes[index].name = name;
 
   const date = getUnixTime(new Date());
