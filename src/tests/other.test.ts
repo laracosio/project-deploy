@@ -1,8 +1,9 @@
-import { adminAuthRegister, adminAuthLogin } from './auth';
-import { adminQuizCreate, adminQuizRemove } from './quiz';
-import { person1, person2 } from './testingData.js';
-import { clear, tokenValidation } from './other';
-import { ApiError } from './errors/ApiError';
+import { adminAuthRegister, adminAuthLogin } from '../features/auth';
+import { adminQuizCreate } from '../features/quiz';
+import { adminQuizRemove } from '../features/trash';
+import { person1, person2 } from '../testingData.js';
+import { clear, tokenValidation } from '../features/other';
+import { ApiError } from '../errors/ApiError';
 
 describe('clear - Success Cases', () => {
   test('clear - user', () => {

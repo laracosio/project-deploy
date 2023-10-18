@@ -1,4 +1,4 @@
-// DELETE THIS LATER
+// // DELETE THIS LATER
 test('REMOVE ME - added to pass testing pipeline!', () => {
   const number = 1;
   expect(number).toBeGreaterThanOrEqual(1);
@@ -8,7 +8,7 @@ test('REMOVE ME - added to pass testing pipeline!', () => {
 
 // Do not delete this file
 // import request from 'sync-request-curl';
-// import config from './config.json';
+// import config from '../config.json';
 
 // const OK = 200;
 // const INPUT_ERROR = 400;

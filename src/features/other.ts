@@ -1,4 +1,4 @@
-import { getData, setData, User, Token } from './dataStore';
+import { getData, setData, User, Token } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 
