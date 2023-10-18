@@ -1,5 +1,8 @@
-import { getData, setData, ErrorObject } from './dataStore';
+import { getData, setData } from './dataStore';
 import { getUnixTime } from 'date-fns';
+import { findTokenUser, tokenValidation } from './other';
+import { ApiError } from './errors/ApiError';
+import { HttpStatusCode } from './enums/HttpStatusCode';
 
 interface QuizInfoReturn {
   quizId: number,
@@ -23,30 +26,34 @@ interface QuizListReturn {
 
 /**
  * Get all of the relevant information about the current quiz.
- *
- * @param {number} authUserId
+ * @param {string} token
  * @param {number} quizId
  * @returns {quizId: number, name: string, timeCreated: number, timeLastEdited: number, description: string}
  */
-
-function adminQuizInfo (authUserId: number, quizId: number): QuizInfoReturn | ErrorObject {
+function adminQuizInfo(token:string, quizId: number): QuizInfoReturn {
   const dataStore = getData();
-  // check authUserId is valid
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid user' };
+
+  // check that token is not empty or is valid
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.FORBIDDEN);
+    // return { error: 'Invalid token' };
+  }
+
+  // find user associated with token and checks whether they are the quiz owner
+  const tokenUser = findTokenUser(token);
+
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+    throw new ApiError('User does not own quiz to check info', HttpStatusCode.FORBIDDEN);
+    // return { error: 'User does not own quiz to check info' };
   }
 
   // check quizId is valid
-  if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
-    return { error: 'Invalid quiz ID' };
+  if (!dataStore.quizzes.some((q) => q.quizId === quizId)) {
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Invalid quiz ID' };
   }
 
-  // check valid quizId is owned by the current user
-  if (dataStore.quizzes.some((quiz) => (!(quiz.quizOwner === authUserId) && quiz.quizId === quizId))) {
-    return { error: 'Quiz ID not owned by this user' };
-  }
-
-  const quizMatch = dataStore.quizzes.find((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
+  const quizMatch = dataStore.quizzes.find((q) => (q.quizOwner === tokenUser.userId && q.quizId === quizId));
 
   return {
     quizId: quizMatch.quizId,
@@ -59,37 +66,42 @@ function adminQuizInfo (authUserId: number, quizId: number): QuizInfoReturn | Er
 
 /**
  * Given basic details about a new quiz, create one for  the logged in user.
- *
- * @param {number} authUserId - unique identifier for authorised user
+ * @param {string} token - unique token
  * @param {string} name - of quiz
  * @param {string} description - of quiz
  * @returns {quizId: 2}
  */
-function adminQuizCreate(authUserId: number, name: string, description: string): QuizCreateReturn | ErrorObject {
+function adminQuizCreate(token: string, name: string, description: string): QuizCreateReturn {
   const dataStore = getData();
 
-  // check authUserId is valid
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid user' };
+  // check that token is not empty or is valid
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'Invalid token' };
   }
 
   // check quiz name only contains alphanumeric characters and spaces
   if (!name.match(/^[a-zA-Z0-9\s]+$/)) {
-    return { error: 'Invalid name, must not contain special characters' };
+    throw new ApiError('Invalid name, must not contain special characters', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Invalid name, must not contain special characters' };
   }
 
   // check quiz name is between 3 and 30 characters long
   if (name.length < 3 || name.length > 30) {
-    return { error: 'Invalid name length' };
+    throw new ApiError('Invalid name length', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Invalid name length' };
   }
-  // check quiz name doesn't already exist in current user's list
-  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === authUserId && quiz.name === name))) {
-    return { error: 'Quiz name already in use' };
+
+  const tokenUser = findTokenUser(token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner === tokenUser.userId && q.name === name))) {
+    throw new ApiError('Quiz name already in use', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Quiz name already in use' };
   }
 
   // check description is within 100 characters
   if (description.length > 100) {
-    return { error: 'Description must be less than 100 characters' };
+    throw new ApiError('Description must be less than 100 characters', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Description must be less than 100 characters' };
   }
 
   let newQuizId;
@@ -109,38 +121,48 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
     timeCreated: date,
     timeLastEdited: date,
     description: description,
-    quizOwner: authUserId,
+    quizOwner: tokenUser.userId,
   };
 
   dataStore.quizzes.push(newQuiz);
   setData(dataStore);
 
   return {
-    quizId: newQuizId,
+    quizId: newQuizId
   };
 }
 
 /**
  * Given a particular quiz, permanently remove the quiz.
- *
- * @param {Number} authUserId - unique identifier for user
+ * @param {string} token - unique token containing sessionId
  * @param {number} quizId - unique identifier for quiz
  * @returns {{error: string}}
  */
-function adminQuizRemove(authUserId: number, quizId: number): object | ErrorObject {
+function adminQuizRemove(token:string, quizId: number): object {
   const dataStore = getData();
-
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid userId' };
-  }
-  if (!dataStore.quizzes.some(quiz => quiz.quizId === quizId)) {
-    return { error: 'Invalid quizId' };
-  }
-  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner !== authUserId && quiz.quizId === quizId))) {
-    return { error: 'User does not own quiz to remove' };
+  // check that quizId is not empty or is valid
+  if (!quizId || !dataStore.quizzes.some(q => q.quizId === quizId)) {
+    throw new ApiError('Invalid quizId', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Invalid quizId' };
   }
 
-  dataStore.quizzes.splice(dataStore.quizzes.findIndex(quiz => quiz.quizId === quizId), 1);
+  // check that token is not empty or is valid
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'Invalid token' };
+  }
+
+  // find user associated with token and checks whether they are the quiz owner
+  const tokenUser = findTokenUser(token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+    throw new ApiError('User does not own quiz to remove', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'User does not own quiz to remove' };
+  }
+
+  const quizIndex: number = dataStore.quizzes.findIndex(quiz => quiz.quizId === quizId);
+  const trashQuiz = dataStore.quizzes.splice(quizIndex, 1)[0];
+  trashQuiz.timeLastEdited = getUnixTime(new Date());
+  dataStore.trash.push(trashQuiz);
 
   setData(dataStore);
   return {};
@@ -148,24 +170,25 @@ function adminQuizRemove(authUserId: number, quizId: number): object | ErrorObje
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
- *
- * @param {number} authUserId
+ * @param {string} token
  * @returns {quizzes: [{quizId: number, name: string}]}
  * @returns {{error: string}}
- *
  */
-function adminQuizList (authUserId: number): QuizListReturn | ErrorObject {
+function adminQuizList (token: string): QuizListReturn {
   const dataStore = getData();
 
-  // check authUserId is valid
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid user' };
+  // check that token is not empty or is valid
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'Invalid token' };
   }
+
+  const tokenUser = findTokenUser(token);
 
   // find all user quizzes and add to an array
   const userQuizList: Array<BriefQuizInfo> = [];
   dataStore.quizzes.forEach((quiz) => {
-    if (quiz.quizOwner === authUserId) {
+    if (quiz.quizOwner === tokenUser.userId) {
       const obj = {
         quizId: quiz.quizId,
         name: quiz.name,
@@ -181,46 +204,51 @@ function adminQuizList (authUserId: number): QuizListReturn | ErrorObject {
 
 /**
  * Given a particular quiz, change the name of the quiz
- *
- * @param {number} authUserId
+ * @param {string} token
  * @param {number} quizId
  * @param {string} name
  * @returns {{error: string}}
- *
  */
-function adminQuizNameUpdate (authUserId: number, quizId: number, name: string): object | ErrorObject {
+function adminQuizNameUpdate (token: string, quizId: number, name: string): object {
   const dataStore = getData();
 
-  // check authUserId is valid
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid user ID' };
+  // check token is valid
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'Invalid token' };
   }
 
   // check quizId is valid
   if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
-    return { error: 'Invalid quiz ID' };
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Invalid quiz ID' };
   }
 
-  // check valid quizId is owned by the current user
-  if (dataStore.quizzes.some((quiz) => (!(quiz.quizOwner === authUserId) && quiz.quizId === quizId))) {
-    return { error: 'Quiz ID not owned by this user' };
+  // check valid quizId is owned by the current user associated with token
+  const tokenUser = findTokenUser(token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'Quiz ID not owned by this user' };
   }
 
   // check quiz name only contains alphanumeric characters and spaces
   if (!name.match(/^[a-zA-Z0-9\s]+$/)) {
-    return { error: 'Name cannot contain special characters' };
+    throw new ApiError('Name cannot contain special characters', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Name cannot contain special characters' };
   }
 
   // check quiz name is between 3 and 30 characters long
   if (name.length < 3 || name.length > 30) {
-    return { error: 'Invalid name length' };
+    throw new ApiError('Invalid name length', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Invalid name length' };
   }
   // check quiz name doesn't already exist in current user's list
-  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === authUserId && quiz.name === name))) {
-    return { error: 'Quiz name already exists' };
+  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === name))) {
+    throw new ApiError('Quiz name already exists', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Quiz name already exists' };
   }
 
-  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
+  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
   dataStore.quizzes[index].name = name;
 
   const date = getUnixTime(new Date());
@@ -230,41 +258,43 @@ function adminQuizNameUpdate (authUserId: number, quizId: number, name: string):
   return {};
 }
 
-// Stub function for adminQuizDescriptionUpdate - Josh
 /**
  * Given a particular quiz, change the description of the quiz
- *
- * @param {number} authUserId
+ * @param {string} token
  * @param {number} quizId
  * @param {string} description
  * @returns {{error: string}}
- *
  */
 
-function adminQuizDescriptionUpdate (authUserId: number, quizId: number, description: string): object | ErrorObject {
+function adminQuizDescriptionUpdate (token: string, quizId: number, description: string): object {
   const dataStore = getData();
 
-  // check authUserId is valid
-  if (!dataStore.users.some(user => user.userId === authUserId)) {
-    return { error: 'Invalid user ID' };
+  // check token is valid
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'Invalid token' };
   }
 
   // check quizId is valid
   if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
-    return { error: 'Invalid quiz ID' };
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
+    // return { error: 'Invalid quiz ID' };
   }
 
-  // check valid quizId is owned by the current user
-  if (dataStore.quizzes.some((quiz) => (!(quiz.quizOwner === authUserId) && quiz.quizId === quizId))) {
-    return { error: 'Quiz ID not owned by this user' };
+  // check valid quizId is owned by the current user associated with token
+  const tokenUser = findTokenUser(token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'Quiz ID not owned by this user' };
   }
 
   // check description is within 100 characters
   if (description.length > 100) {
-    return { error: 'Quiz Description more than 100 characters in length' };
+    throw new ApiError('Quiz Description more than 100 characters in length', HttpStatusCode.FORBIDDEN);
+    // return { error: 'Quiz Description more than 100 characters in length' };
   }
 
-  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === authUserId && quiz.quizId === quizId));
+  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
   dataStore.quizzes[index].description = description;
 
   const date = getUnixTime(new Date());

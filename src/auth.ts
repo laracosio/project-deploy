@@ -1,9 +1,7 @@
-import { helperAdminRegister } from './other';
-import { getData, setData, ErrorObject } from './dataStore';
-
-interface AuthReturn {
-  authUserId: number
-}
+import { helperAdminRegister, createSessionId, tokenValidation } from './other';
+import { getData, setData, Token, AuthReturn } from './dataStore';
+import { HttpStatusCode } from './enums/HttpStatusCode';
+import { ApiError } from './errors/ApiError';
 
 interface UserDetailReturn {
   user: {
@@ -24,11 +22,12 @@ interface UserDetailReturn {
  * @returns {{authUserId: number}}
  * @returns {{error: string}} on error
  */
-function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn | ErrorObject {
+function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn {
   const dataStore = getData();
   if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
-    return { error: 'Invalid registration details.' };
+    throw new ApiError('Invalid registration details', HttpStatusCode.BAD_REQUEST);
   }
+
   const newUserId = dataStore.users.length + 1;
   const newUser = {
     userId: newUserId,
@@ -39,11 +38,17 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
   };
-  dataStore.users.push(newUser);
-  setData(dataStore);
-  return {
-    authUserId: newUserId,
+
+  const newSessionId: string = createSessionId(dataStore.tokens);
+  const newToken: Token = {
+    sessionId: newSessionId,
+    userId: newUserId
   };
+
+  dataStore.users.push(newUser);
+  dataStore.tokens.push(newToken);
+  setData(dataStore);
+  return { token: newSessionId };
 }
 
 /**
@@ -53,19 +58,20 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
  * @returns {{authUserId: number}} on successful log in
  * @returns {{error: string}} on error
 */
-function adminAuthLogin(email:string, password: string): AuthReturn | ErrorObject {
+function adminAuthLogin(email:string, password: string): AuthReturn {
   const dataStore = getData();
 
   const authUser = dataStore.users.find(user => user.email === email);
+
   // email does not belong to a user
   if (!authUser) {
-    return { error: 'email does not belong to a user' };
+    throw new ApiError('email does not belong to a user', HttpStatusCode.BAD_REQUEST);
   }
 
   // if password is incorrect
   if (authUser.password !== password) {
     authUser.numFailedPasswordsSinceLastLogin++;
-    return { error: 'password is incorrect' };
+    throw new ApiError('password is incorrect', HttpStatusCode.BAD_REQUEST);
   }
 
   const authUserId = authUser.userId;
@@ -73,37 +79,44 @@ function adminAuthLogin(email:string, password: string): AuthReturn | ErrorObjec
   authUser.numSuccessfulLogins++;
   authUser.numFailedPasswordsSinceLastLogin = 0;
 
-  return {
-    authUserId: authUserId
+  const newSessionId: string = createSessionId(dataStore.tokens);
+  const newToken: Token = {
+    sessionId: newSessionId,
+    userId: authUserId
   };
-}
+  dataStore.tokens.push(newToken);
 
+  setData(dataStore);
+  return { token: newSessionId };
+}
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
- * @param {number} authUserId - calling user's Id
+ * @param {string} token - calling user's Id
  * @returns {user: {userId: number, email: string,
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(authUserId: number): UserDetailReturn | ErrorObject {
+function adminUserDetails(token: string): UserDetailReturn {
   const dataStore = getData();
 
-  const authUser = dataStore.users.find(user => user.userId === authUserId);
-
-  // invalid authUser
-  if (!authUser) {
-    return { error: 'authUserId does not belong to a user' };
+  // invalid Token
+  if (!tokenValidation(token)) {
+    throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
+    // return { error: 'Token is invalid' };
   }
+
+  const userIdInToken = dataStore.tokens.find(user => user.sessionId === token);
+  const adminUserDetails = dataStore.users.find(user => user.userId === userIdInToken.userId);
 
   return {
     user:
     {
-      userId: authUser.userId,
-      name: authUser.nameFirst + ' ' + authUser.nameLast,
-      email: authUser.email,
-      numSuccessfulLogins: authUser.numSuccessfulLogins,
-      numFailedPasswordsSinceLastLogin: authUser.numFailedPasswordsSinceLastLogin,
+      userId: adminUserDetails.userId,
+      name: adminUserDetails.nameFirst + ' ' + adminUserDetails.nameLast,
+      email: adminUserDetails.email,
+      numSuccessfulLogins: adminUserDetails.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: adminUserDetails.numFailedPasswordsSinceLastLogin,
     }
   };
 }
