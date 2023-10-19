@@ -1,6 +1,6 @@
-import { clearRequest, authRegisterRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest } from "./serverTestHelper";
-import { person1, person2, validQuizName, validQuizDescription } from "../testingData";
-import { Response } from "sync-request-curl";
+import { clearRequest, authRegisterRequest, quizCreateRequest, quizRemoveRequest } from './serverTestHelper';
+import { person1, person2, validQuizName, validQuizDescription } from '../testingData';
+import { Response } from 'sync-request-curl';
 
 beforeEach(() => {
   clearRequest();
@@ -41,7 +41,7 @@ describe('QuizRemove Server - Error', () => {
     const res = quizRemoveRequest(sess1data.token + 1, quiz1data.quizId);
     expect(res.statusCode).toStrictEqual(401);
   });
-  
+
   test('invalid quiz', () => {
     sess1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const sess1data = JSON.parse(sess1.body.toString());
@@ -61,4 +61,4 @@ describe('QuizRemove Server - Error', () => {
     const res = quizRemoveRequest(sess2data.token, quiz1data.quizId);
     expect(res.statusCode).toStrictEqual(403);
   });
-})
+});
