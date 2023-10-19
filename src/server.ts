@@ -56,7 +56,8 @@ app.get('/echo', (req: Request, res: Response) => {
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   console.log(err);
   if (err instanceof ApiError) {
-    res.status(err.httpCode).json(err.message)
+
+    res.status(err.httpCode).json({ error: err.message} )
   } else {
     res.status(404).json(err.message)
   }
