@@ -14,6 +14,33 @@ const authRegisterRequest = (email: string, password: string, nameFirst: string,
   return JSON.parse(response.body.toString());
 };
 
+const authLoginRequest = (email: string, password: string): SessionReturn => {
+  const response = request(
+    'POST',
+    SERVER_URL + '/v1/admin/auth/login',
+    {
+      json: {
+        email: email,
+        password: password,
+      }
+    }
+  );
+  return JSON.parse(response.body.toString());
+}
+ 
+const authUserDetailsRequest = (token: string) => {
+  const response = request(
+    'GET',
+    SERVER_URL + '/v1/admin/auth/details',
+    {
+      qs: {
+        token: token,
+      }
+    }
+  );
+  return JSON.parse(response.body.toString());
+}
+
 const clearRequest = (): SessionReturn => {
   const response = request(
     'DELETE',
@@ -108,4 +135,4 @@ const quizDescriptUpdateRequest = (quizId: number, token: string, description: s
   return JSON.parse(response.body.toString());
 };
 
-export { authRegisterRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest };
+export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest };
