@@ -7,7 +7,7 @@ const SERVER_URL = `${url}:${port}`;
 const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): Response => {
   return request(
     'POST',
-    `${SERVER_URL}/v1/auth/register`,
+    `${SERVER_URL}/v1/admin/auth/register`,
     {
       json:
       {
