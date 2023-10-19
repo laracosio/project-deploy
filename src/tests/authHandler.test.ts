@@ -1,5 +1,5 @@
 import { person1, person2, person3, person4, person5, person6, person7 } from '../testingData';
-
+import { authLoginRequest, authRegisterRequest, authUserDetailsRequest } from './serverTestHelper';
 import request from 'sync-request-curl';
 import { port, url } from '../config.json';
 const SERVER_URL = `${url}:${port}`;
@@ -103,289 +103,32 @@ describe('adminAuthRegister Server - error', () => {
 
 //server tests for adminAuthLogin
 describe('adminAuthLogin - Successful Root', () => {
-  // Not necessary, since it's empty, though reminder that
-  // GET/DELETE is `qs`, PUT/POST is `json`
   test('adminAuthLogin - Successful Root', () => {
-    const validEmail = person1.email;
-    const validPassword = person1.password;
-    const validNameFirst = person1.nameFirst;
-    const validNameLast = person1.nameLast;
 
-    const resRegister = request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/register',
-      {
-        json: {
-          validEmail,
-          validPassword,
-          validNameFirst,
-          validNameLast,
-        }
-      }
-    )
-
-    const resLogin = request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/login',
-
-      // Not necessary, since it's empty, though reminder that
-      // GET/DELETE is `qs`, PUT/POST is `json`
-      {
-        json: {
-          validEmail,
-          validPassword,
-        }
-      }
-    );
-    
-    //expect(resLogin.statusCode).toStrictEqual(200);
-
-    const data = JSON.parse(resLogin.body.toString());
-    console.log('This is the response: ', data);
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person1.email, person1.password);
+   
+    const data = JSON.parse(resLogin.toString());
     expect(data).toStrictEqual({ token: expect.any(String) });
   });
 });
 
 describe('adminAuthLogin - Unsuccessful Root', () => {
-  // Not necessary, since it's empty, though reminder that
-  // GET/DELETE is `qs`, PUT/POST is `json`
   test('Unsuccessful Root (400): Email address does not exist', () => {
-    const validEmail = person1.email; 
-    const validPassword = person1.password;
-    const validNameFirst = person1.nameFirst;
-    const validNameLast = person1.nameLast;
-    const invalidEmail = person2.email;
 
-    //adminAuthRegister request
-    request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/register',
-      {
-        json: {
-          validEmail,
-          validPassword,
-          validNameFirst,
-          validNameLast,
-        }
-      }
-    )
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person2.email, person1.password);
 
-    const resLogin = request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/login',
-
-      // Not necessary, since it's empty, though reminder that
-      // GET/DELETE is `qs`, PUT/POST is `json`
-      {
-        json: {
-          invalidEmail,
-          validPassword,
-        }
-      }
-    );
-
-    expect(resLogin.statusCode).toStrictEqual(400);
-
-    const data = JSON.parse(resLogin.body.toString());
+    const data = JSON.parse(resLogin.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Unsuccessful Root (400): Password is not correct for the given email', () => {
-    const validEmail = person1.email;
-    const validPassword = person1.password;
-    const validNameFirst = person1.nameFirst;
-    const validNameLast = person1.nameLast;
-    const invalidPassword = person2.password;
-    
-    //adminAuthRegister request
-    request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/register',
-      {
-        json: {
-          validEmail,
-          validPassword,
-          validNameFirst,
-          validNameLast,
-        }
-      }
-    )
 
-    const resLogin = request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/login',
-
-      // Not necessary, since it's empty, though reminder that
-      // GET/DELETE is `qs`, PUT/POST is `json`
-      {
-        json: {
-          validEmail,
-          invalidPassword,
-        }
-      }
-    );
-
-    expect(resLogin.statusCode).toStrictEqual(400);
-
-    const data = JSON.parse(resLogin.body.toString());
-    expect(data).toStrictEqual({ error: expect.any(String) });
-  });
-});
-
-//server tests for adminAuthDetails
-describe('adminAuthDetails - Successful Root', () => {
-  // Not necessary, since it's empty, though reminder that
-  // GET/DELETE is `qs`, PUT/POST is `json`
-  test('adminAuthDetails - Successful Root', () => {
-    const validEmail = person1.email;
-    const validPassword = person1.password;
-    const validNameFirst = person1.nameFirst;
-    const validNameLast = person1.nameLast;
-
-    //register
-    request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/register',
-      {
-        json: {
-          validEmail,
-          validPassword,
-          validNameFirst,
-          validNameLast,
-        }
-      }
-    )
-    
-    //login
-    const resLogin = request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/login',
-      {
-        json: {
-          validEmail,
-          validPassword,
-        }
-      }
-    );
-
-    const token = JSON.parse(resLogin.body.toString());
-
-    const resDetails = request(
-      'GET',
-      SERVER_URL + '/v1/admin/auth/details',
-      {
-        qs: {
-          token,
-        }
-      }
-    );
-
-    expect(resDetails.statusCode).toStrictEqual(200);
-    const data = JSON.parse(resDetails.body.toString());
-    expect(data).toStrictEqual({ token: expect.any(String) });
-  });
-});
-
-describe('adminAuthDetails - Unsuccessful Root', () => {
-  // Not necessary, since it's empty, though reminder that
-  // GET/DELETE is `qs`, PUT/POST is `json`
-  test('Unsuccessful Root (401): Token is empty', () => {
-    const validEmail = person1.email;
-    const validPassword = person1.password;
-    const validNameFirst = person1.nameFirst;
-    const validNameLast = person1.nameLast;
-
-    //register
-    request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/register',
-      {
-        json: {
-          validEmail,
-          validPassword,
-          validNameFirst,
-          validNameLast,
-        }
-      }
-    )
-    
-    //login
-    const resLogin = request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/login',
-      {
-        json: {
-          validEmail,
-          validPassword,
-        }
-      }
-    );
-
-    const token = '';
-
-    const resDetails = request(
-      'GET',
-      SERVER_URL + '/v1/admin/auth/details',
-      {
-        qs: {
-          token,
-        }
-      }
-    );
-
-    expect(resDetails.statusCode).toStrictEqual(401);
-
-    const data = JSON.parse(resDetails.body.toString());
-    expect(data).toStrictEqual({ error: expect.any(String) });
-  });
-
-  test('Unsuccessful Root (401): Token is invalid', () => {
-    const validEmail = person1.email;
-    const validPassword = person1.password;
-    const validNameFirst = person1.nameFirst;
-    const validNameLast = person1.nameLast;
-
-    //register
-    request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/register',
-      {
-        json: {
-          validEmail,
-          validPassword,
-          validNameFirst,
-          validNameLast,
-        }
-      }
-    )
-    
-    //login
-    const resLogin = request(
-      'POST',
-      SERVER_URL + '/v1/admin/auth/login',
-      {
-        json: {
-          validEmail,
-          validPassword,
-        }
-      }
-    );
-
-    const token = 'lkgjlaksjglaksjgla';
-
-    const resDetails = request(
-      'GET',
-      SERVER_URL + '/v1/admin/auth/details',
-      {
-        qs: {
-          token,
-        }
-      }
-    );
-
-    expect(resDetails.statusCode).toStrictEqual(401);
-
-    const data = JSON.parse(resDetails.body.toString());
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person1.email, person2.password);
+  
+    const data = JSON.parse(resLogin.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });

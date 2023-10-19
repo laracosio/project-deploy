@@ -54,34 +54,12 @@ app.get('/echo', (req: Request, res: Response) => {
 });
 
 
-app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
-  const { email, password } = req.body;
-
-  const response = adminAuthLogin(email, password);
-  
-  if (response instanceof ApiError) {
-    return res.status(response.httpCode).json(response.message);
-  }
-
-  res.json(response);
-});
-
-app.get('/v1/admin/auth/details', (req: Request, res: Response) => {
-  const sessionId = JSON.parse(req.params.sessionId);
-  
-  const response = adminUserDetails(sessionId);
-
-  if (response instanceof ApiError) {
-    return res.status(response.httpCode).json(response.message);
-  }
-
-  res.json(response);
-});
 
 app.use('/v1/admin/quiz', quizRouter);
 app.use('/v1/admin/auth', authRouter);
 app.use('/v1/admin/user', userRouter);
 app.use('/v1/clear', otherRouter);
+
 
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ApiError) {
