@@ -10,30 +10,23 @@ import {
   longQuizDescription,
 } from '../testingData';
 
-
 beforeEach(() => {
   clearRequest();
-})
+});
 
 // adminQuizCreate tests
 describe('quizRouter.post - Error Cases', () => {
   test('invalid token', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
-    const response = quizCreateRequest(`${userData.token}9`, validQuizName, validQuizDescription);
+    const response = quizCreateRequest(userData.token + 1, validQuizName, validQuizDescription);
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
-  });
-  test.only('success - one user', () => {
-    const res = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const data = JSON.parse(res.body.toString());
-    console.log(data);
-    expect(data).toStrictEqual({ token: expect.any(String) });
   });
   test('invalid name characters', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
-    console.log(userData.token);
+    console.log(userData);
     const response = quizCreateRequest(userData.token, invalidQuizName, validQuizDescription);
     console.log(response);
     expect(response.statusCode).toStrictEqual(400);
