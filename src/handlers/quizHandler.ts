@@ -9,9 +9,9 @@ quizRouter.post('/', (req: Request, res: Response) => {
   res.json(adminQuizCreate(token, name, description));
 });
 
-quizRouter.delete(':quizid', (req: Request, res: Response) => {
+quizRouter.delete('/:quizid', (req: Request, res: Response) => {
   const sessionToken = req.query.token as string;
-  const quizId = parseInt(req.params.quizId);
+  const quizId = parseInt(req.params.quizid);
   const response = adminQuizRemove(sessionToken, quizId);
   res.json(response);
 });

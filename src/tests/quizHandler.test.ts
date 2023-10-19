@@ -18,9 +18,7 @@ describe('quizRouter.post - Error Cases', () => {
   test('invalid name characters', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
-    console.log(userData);
     const response = quizCreateRequest(userData.token, invalidQuizName, validQuizDescription);
-    console.log(response);
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name, must not contain special characters'});
   });
@@ -84,6 +82,7 @@ describe('quizRouter.post - Passed Cases', () => {
     expect(JSON.parse(response.body.toString())).toStrictEqual({ quizId: expect.any(Number) });
   });
 });
+
 describe('quizRemove Server - Success', () => {
   let sess1: Response, quiz1: Response;
   test('1 quiz created - 1 removed', () => {
@@ -116,7 +115,7 @@ describe('QuizRemove Server - Error', () => {
     const sess1data = JSON.parse(sess1.body.toString());
     quiz1 = quizCreateRequest(sess1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
-    const res = quizRemoveRequest(sess1data.token + 1, quiz1data.quizId);
+    const res = quizRemoveRequest(quiz1data.quizId, sess1data.token + 1);
     expect(res.statusCode).toStrictEqual(401);
   });
 
@@ -125,7 +124,7 @@ describe('QuizRemove Server - Error', () => {
     const sess1data = JSON.parse(sess1.body.toString());
     quiz1 = quizCreateRequest(sess1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
-    const res = quizRemoveRequest(sess1data.token, quiz1data.quizId + 1);
+    const res = quizRemoveRequest(quiz1data.quizId + 1, sess1data.token);
     expect(res.statusCode).toStrictEqual(400);
   });
 
@@ -136,7 +135,7 @@ describe('QuizRemove Server - Error', () => {
     const sess2data = JSON.parse(sess2.body.toString());
     quiz1 = quizCreateRequest(sess1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
-    const res = quizRemoveRequest(sess2data.token, quiz1data.quizId);
+    const res = quizRemoveRequest(quiz1data.quizId, sess2data.token);
     expect(res.statusCode).toStrictEqual(403);
   });
 });
