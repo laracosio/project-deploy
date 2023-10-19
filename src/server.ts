@@ -12,6 +12,7 @@ import { ApiError } from './errors/ApiError';
 import { authRouter } from './handlers/authHandler';
 import { quizRouter } from './handlers/quizHandler';
 import { userRouter } from './handlers/userHandler';
+import { otherRouter } from './handlers/otherHandler';
 
 // Set up web app
 const app = express();
@@ -55,6 +56,7 @@ app.get('/echo', (req: Request, res: Response) => {
 app.use('/v1/admin/quiz', quizRouter);
 app.use('/v1/admin/auth', authRouter);
 app.use('/v1/admin/user', userRouter);
+app.use('/v1/clear', otherRouter);
 
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ApiError) {
