@@ -6,4 +6,3 @@ export const otherRouter = Router();
 otherRouter.delete('/', (req: Request, res:Response) => {
   res.json(clear());
 });
-

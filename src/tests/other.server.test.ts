@@ -1,20 +1,16 @@
-import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
-import { port, url } from '../config.json';
 import { person1, person2, validQuizDescription, validQuizName } from '../testingData';
 import { authRegisterRequest, clearRequest, quizRemoveRequest, quizCreateRequest } from './serverTestHelper';
-const SERVER_URL = `${url}:${port}`;
 
 describe('Clear - Success', () => {
-  let user1: Response, user2: Response, quiz1: Response, quiz2: Response;
+  let user1: Response, user2: Response, quiz1: Response;
 
   test('empty clear', () => {
     expect(JSON.parse(clearRequest().body.toString())).toStrictEqual({});
   });
 
   test('one user, clear and attempt quizCreate', () => {
-    user1 = authRegisterRequest(person2.email, person2.password,
-                                person2.nameFirst, person2.nameLast);
+    user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const user1data = JSON.parse(user1.body.toString());
     expect(JSON.parse(clearRequest().body.toString())).toStrictEqual({});
 
@@ -24,11 +20,10 @@ describe('Clear - Success', () => {
   });
 
   test('one user, create quiz, clear and attempt to trash', () => {
-    user2 = authRegisterRequest(person2.email, person2.password,
-                                person2.nameFirst, person2.nameLast);
-    const user2data = JSON.parse(user2.body.toString());        
+    user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const user2data = JSON.parse(user2.body.toString());
     quiz1 = quizCreateRequest(user2data.token, validQuizName, validQuizDescription);
-    const quiz1data = JSON.parse(quiz1.body.toString());    
+    const quiz1data = JSON.parse(quiz1.body.toString());
     expect(JSON.parse(clearRequest().body.toString())).toStrictEqual({});
 
     const removeQuiz = quizRemoveRequest(quiz1data.quizId, user2data.token);
