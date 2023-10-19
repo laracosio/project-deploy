@@ -1,4 +1,4 @@
-import { authRegisterRequest, quizCreateRequest, quizInfoRequest } from './serverTestHelper'
+import { authRegisterRequest, quizCreateRequest, quizInfoRequest, quizListRequest } from './serverTestHelper'
 import {
   person1,
   person2,
@@ -192,6 +192,114 @@ describe('quizInfoRouter.get - Passed Cases', () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: 'Description 5',
+      }
+    );
+  });
+});
+
+// adminQuizList tests
+describe('quizListRouter.get - Error Cases', () => {
+  test('invalid token', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    quizCreateRequest(`${userData.token}9`, validQuizName, validQuizDescription);
+    const response = quizListRequest(userData.token);
+    expect(response.statusCode).toStrictEqual(401);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
+  });
+});
+
+describe('quizListRouter.get - Passed Cases', () => {
+  test('valid user1 list', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const quiz1 = quizCreateRequest(userData.token, 'User1 first quiz', 'Description 1');
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const quiz2 = quizCreateRequest(userData.token, 'User1 second quiz', 'Description 2');
+    const quiz2Data = JSON.parse(quiz2.body.toString());
+    
+    const response = quizListRequest(userData.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual(
+      {
+        quizzes: [
+          {
+            quizId: quiz1Data.quizId,
+            name: 'User1 first quiz',
+          },
+          {
+            quizId: quiz2Data.quizId,
+            name: 'User1 second quiz',
+          },
+        ]
+      }
+    );
+  });
+  test('valid user2 list', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    quizCreateRequest(userData.token, 'User1 first quiz', 'Description 1');
+    quizCreateRequest(userData.token, 'User1 second quiz', 'Description 2');
+    const user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const user2Data = JSON.parse(user2.body.toString());
+    const user2Quiz = quizCreateRequest(user2Data.token, 'User2 first quiz', 'User2 Description');
+    const user2QuizData = JSON.parse(user2Quiz.body.toString());
+    const response = quizListRequest(user2Data.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual(
+      {
+        quizzes: [
+          {
+            quizId: user2QuizData.quizId,
+            name: 'User2 first quiz',
+          },
+        ]
+      }
+    );
+  });
+  test('valid user3 list', () => {
+    const user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user1.body.toString());
+    quizCreateRequest(userData.token, 'User1 first quiz', '');
+    quizCreateRequest(userData.token, 'User1 second quiz', '');
+    quizCreateRequest(userData.token, 'User1 third quiz', '');
+    const user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const user2Data = JSON.parse(user2.body.toString());
+    quizCreateRequest(user2Data.token, 'User2 first quiz', '');
+    quizCreateRequest(user2Data.token, 'User2 second quiz', '');
+    quizCreateRequest(user2Data.token, 'User2 third quiz', '');
+    const user3 = authRegisterRequest(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    const user3Data = JSON.parse(user3.body.toString());
+    const quiz1 = quizCreateRequest(user3Data.token, 'User3 first quiz', '');
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const quiz2 = quizCreateRequest(user3Data.token, 'User3 second quiz', '');
+    const quiz2Data = JSON.parse(quiz2.body.toString());
+    const quiz3 = quizCreateRequest(user3Data.token, 'User3 third quiz', '');
+    const quiz3Data = JSON.parse(quiz3.body.toString());
+    const quiz4 = quizCreateRequest(user3Data.token, 'User3 fourth quiz', '');
+    const quiz4Data = JSON.parse(quiz4.body.toString());
+    const response = quizListRequest(user3Data.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual(
+      {
+        quizzes: [
+          {
+            quizId: quiz1Data.quizId,
+            name: 'User3 first quiz',
+          },
+          {
+            quizId: quiz2Data.quizId,
+            name: 'User3 second quiz',
+          },
+          {
+            quizId: quiz3Data.quizId,
+            name: 'User3 third quiz',
+          },
+          {
+            quizId: quiz4Data.quizId,
+            name: 'User3 fourth quiz',
+          },
+        ]
       }
     );
   });
