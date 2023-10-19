@@ -8,7 +8,7 @@ import {
   longQuizName,
   validQuizDescription,
   longQuizDescription,
-} from '../testingData.js';
+} from '../testingData';
 
 
 beforeEach(() => {
@@ -24,7 +24,7 @@ describe('quizRouter.post - Error Cases', () => {
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
   });
-  test('invalid name characters', () => {
+  test.only('invalid name characters', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const response = quizCreateRequest(userData.token, invalidQuizName, validQuizDescription);
