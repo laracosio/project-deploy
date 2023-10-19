@@ -1,4 +1,4 @@
-import { authRegisterRequest, quizCreateRequest } from './serverTestHelper'
+import { authRegisterRequest, clearRequest, quizCreateRequest } from './serverTestHelper'
 import {
   person1,
   person2,
@@ -12,7 +12,7 @@ import {
 
 
 beforeEach(() => {
-  // clear
+  clearRequest();
 })
 
 // adminQuizCreate tests
@@ -24,11 +24,18 @@ describe('quizRouter.post - Error Cases', () => {
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
   });
-  test.only('invalid name characters', () => {
+  test.only('success - one user', () => {
+    const res = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const data = JSON.parse(res.body.toString());
+    console.log(data);
+    expect(data).toStrictEqual({ token: expect.any(String) });
+  });
+  test('invalid name characters', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
-    console.log(userData);
+    console.log(userData.token);
     const response = quizCreateRequest(userData.token, invalidQuizName, validQuizDescription);
+    console.log(response);
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name, must not contain special characters'});
   });
