@@ -53,6 +53,31 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(ret);
 });
 
+
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  const response = adminAuthLogin(email, password);
+  
+  if (response instanceof ApiError) {
+    return res.status(response.httpCode).json(response.message);
+  }
+
+  res.json(response);
+});
+
+app.get('/v1/admin/auth/details', (req: Request, res: Response) => {
+  const sessionId = JSON.parse(req.params.sessionId);
+  
+  const response = adminUserDetails(sessionId);
+
+  if (response instanceof ApiError) {
+    return res.status(response.httpCode).json(response.message);
+  }
+
+  res.json(response);
+});
+
 app.use('/v1/admin/quiz', quizRouter);
 app.use('/v1/admin/auth', authRouter);
 app.use('/v1/admin/user', userRouter);
@@ -69,6 +94,14 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
+
+app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof ApiError) {
+    res.status(err.httpCode).json(err.message)
+  } else {
+    res.status(404).json(err.message)
+  }
+});
 
 app.use((req: Request, res: Response) => {
   const error = `

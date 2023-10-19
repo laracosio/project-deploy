@@ -48,7 +48,7 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
   dataStore.users.push(newUser);
   dataStore.tokens.push(newToken);
   setData(dataStore);
-  return { token: newSessionId };
+  return newToken;
 }
 
 /**
@@ -87,7 +87,7 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   dataStore.tokens.push(newToken);
 
   setData(dataStore);
-  return { token: newSessionId };
+  return newToken;
 }
 /**
  * Given an admin user's authUserId, return details about the user.
@@ -97,16 +97,16 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(token: string): UserDetailReturn {
+function adminUserDetails(sessionId: string): UserDetailReturn {
   const dataStore = getData();
 
   // invalid Token
-  if (!tokenValidation(token)) {
+  if (!tokenValidation(sessionId)) {
     throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
     // return { error: 'Token is invalid' };
   }
 
-  const userIdInToken = dataStore.tokens.find(user => user.sessionId === token);
+  const userIdInToken = dataStore.tokens.find(user => user.sessionId === sessionId);
   const adminUserDetails = dataStore.users.find(user => user.userId === userIdInToken.userId);
 
   return {
