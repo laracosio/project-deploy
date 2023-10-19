@@ -1,8 +1,5 @@
-import { person1, person2, person3, person4, person5, person6, person7, validQuizDescription, validQuizName} from '../testingData';
+import { person1, person2, person3, validQuizDescription, validQuizName } from '../testingData';
 import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest, quizCreateRequest } from './serverTestHelper';
-import request from 'sync-request-curl';
-import { port, url } from '../config.json';
-const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
   clearRequest();
@@ -96,14 +93,11 @@ describe('adminAuthRegister Server - error', () => {
   });
 });
 
-
-//server tests for adminAuthLogin
+//server tests for adminAuthLogin 
 describe('adminAuthLogin - Successful Root', () => {
   test('adminAuthLogin - Successful Root', () => {
-
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const resLogin = authLoginRequest(person1.email, person1.password);
-   
+    const resLogin = authLoginRequest(person1.email, person1.password);   
     const data = JSON.parse(resLogin.body.toString());
     expect(data).toStrictEqual({ token: expect.any(String) });
   });
@@ -128,8 +122,6 @@ describe('adminAuthLogin - Unsuccessful Root', () => {
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
-
-
 
 //server tests for adminAuthDetails
 describe('adminAuthDetails - Successful Root', () => {

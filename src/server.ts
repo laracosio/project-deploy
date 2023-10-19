@@ -53,13 +53,10 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(ret);
 });
 
-
-
 app.use('/v1/admin/quiz', quizRouter);
 app.use('/v1/admin/auth', authRouter);
 app.use('/v1/admin/user', userRouter);
 app.use('/v1/clear', otherRouter);
-
 
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ApiError) {
@@ -75,9 +72,9 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
 
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ApiError) {
-    res.status(err.httpCode).json(err.message)
+    res.status(err.httpCode).json(err.message);
   } else {
-    res.status(404).json(err.message)
+    res.status(404).json(err.message);
   }
 });
 

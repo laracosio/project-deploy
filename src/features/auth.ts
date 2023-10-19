@@ -87,7 +87,7 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   dataStore.tokens.push(newToken);
 
   setData(dataStore);
-  return {token: newSessionId };
+  return { token: newSessionId };
 }
 /**
  * Given an admin user's authUserId, return details about the user.

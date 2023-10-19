@@ -1,4 +1,4 @@
-import { clearRequest, authRegisterRequest, quizCreateRequest, quizRemoveRequest } from './serverTestHelper';
+import { clearRequest, authRegisterRequest, quizCreateRequest, quizRemoveRequest } from './serverTestHelper';;
 import { person1, person2, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription } from '../testingData';
 import { Response } from 'sync-request-curl';
 
@@ -140,3 +140,4 @@ describe('QuizRemove Server - Error', () => {
     expect(res.statusCode).toStrictEqual(403);
   });
 });
+

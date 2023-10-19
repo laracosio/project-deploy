@@ -8,7 +8,6 @@ class ApiError extends Error {
     this.httpCode = httpCode;
     Object.setPrototypeOf(this, ApiError.prototype);
   }
-  
 }
 
 export { ApiError };
