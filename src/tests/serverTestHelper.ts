@@ -26,8 +26,8 @@ const authLoginRequest = (email: string, password: string): SessionReturn => {
     }
   );
   return JSON.parse(response.body.toString());
-}
- 
+};
+
 const authUserDetailsRequest = (token: string) => {
   const response = request(
     'GET',
@@ -39,7 +39,7 @@ const authUserDetailsRequest = (token: string) => {
     }
   );
   return JSON.parse(response.body.toString());
-}
+};
 
 const clearRequest = (): SessionReturn => {
   const response = request(
