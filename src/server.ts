@@ -9,6 +9,10 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { ApiError } from './errors/ApiError';
+import { authRouter } from './handlers/authHandler'
+import { quizRouter } from './handlers/quizHandler'
+import { trashRouter } from './handlers/trashHandler'
+import { userRouter } from './handlers/userHandler'
 
 // Set up web app
 const app = express();
@@ -49,9 +53,10 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(ret);
 });
 
-// ====================================================================
-//  ================= WORK IS DONE ABOVE THIS LINE ===================
-// ====================================================================
+app.use("/v1/admin/quiz", quizRouter);
+app.use("/v1/admin/auth", authRouter);
+app.use("/v1/admin/user", userRouter);
+app.use("/v1/admin/trash", trashRouter);
 
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ApiError) {
@@ -60,6 +65,10 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
     res.status(404).json(err.message);
   }
 });
+
+// ====================================================================
+//  ================= WORK IS DONE ABOVE THIS LINE ===================
+// ====================================================================
 
 app.use((req: Request, res: Response) => {
   const error = `
