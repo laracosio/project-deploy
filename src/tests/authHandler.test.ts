@@ -23,9 +23,9 @@ describe('adminAuthRegister Server - Success', () => {
     const p3 = authRegisterRequest(person3.email, person3.password, person3.nameFirst, person3.nameLast);
     const person3data = JSON.parse(p3.body.toString());
     expect(person3data).toStrictEqual({ token: expect.any(String) });
-    // const quiz1 = quizCreateRequest(person3data.token, validQuizName, validQuizDescription);
-    // const quiz1data = JSON.parse(quiz1.body.toString());
-    // expect(quiz1data).toStrictEqual({ quizId: expect.any(Number) });
+    const quiz1 = quizCreateRequest(person3data.token, validQuizName, validQuizDescription);
+    const quiz1data = JSON.parse(quiz1.body.toString());
+    expect(quiz1data).toStrictEqual({ quizId: expect.any(Number) });
   });
 });
 
