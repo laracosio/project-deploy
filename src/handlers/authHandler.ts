@@ -8,13 +8,14 @@ export const authRouter = Router();
 // });
 
 authRouter.post('/login', (req: Request, res: Response) => {
+    console.log('Entered authRouter: login');
     const {email, password} = req.body;
     const response = adminAuthLogin(email, password);
     res.json(response);
 });
 
-authRouter.post('/details', (req: Request, res: Response) => {
-    const { token } = req.body;
+authRouter.get('/details', (req: Request, res: Response) => {
+    const token = req.query.token.toString()
     const response = adminUserDetails(token);
     res.send(response);
 });

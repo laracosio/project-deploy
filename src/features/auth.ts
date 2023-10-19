@@ -99,7 +99,6 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
  */
 function adminUserDetails(sessionId: string): UserDetailReturn {
   const dataStore = getData();
-
   // invalid Token
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
