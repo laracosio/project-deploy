@@ -58,10 +58,6 @@ app.use('/v1/admin/auth', authRouter);
 app.use('/v1/admin/user', userRouter);
 app.use('/v1/clear', otherRouter);
 
-// ====================================================================
-//  ================= WORK IS DONE ABOVE THIS LINE ===================
-// ====================================================================
-
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ApiError) {
     res.status(err.httpCode).json({ error: err.message });
@@ -70,7 +66,9 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
   }
 });
 
-
+// ====================================================================
+//  ================= WORK IS DONE ABOVE THIS LINE ===================
+// ====================================================================
 
 app.use((req: Request, res: Response) => {
   const error = `
