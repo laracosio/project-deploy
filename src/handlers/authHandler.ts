@@ -9,10 +9,12 @@ export const authRouter = Router();
 
 authRouter.post('/login', (req: Request, res: Response) => {
     const {email, password} = req.body;
-    res.send(adminAuthLogin(email, password));
+    const response = adminAuthLogin(email, password);
+    res.json(response);
 });
 
 authRouter.post('/details', (req: Request, res: Response) => {
     const { token } = req.body;
-    res.send(adminUserDetails(token));
+    const response = adminUserDetails(token);
+    res.send(response);
 });

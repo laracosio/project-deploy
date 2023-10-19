@@ -3,7 +3,7 @@ export interface ErrorObject {
 }
 
 export interface AuthReturn {
-  sessionId: string
+  token: string
 }
 
 export interface User {
