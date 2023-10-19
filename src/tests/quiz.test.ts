@@ -13,7 +13,7 @@ import {
   validQuizDescription,
   newvalidQuizDescription,
   longQuizDescription,
-} from '../testingData.js';
+} from '../testingData';
 
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../features/quiz';
 import { adminQuizRemove } from '../features/trash';
