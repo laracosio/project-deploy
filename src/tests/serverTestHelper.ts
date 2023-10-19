@@ -7,7 +7,9 @@ interface SessionReturn {
   token: string
 }
 
-const requestSession = (email: string, password: string, nameFirst: string, nameLast: string): SessionReturn => {
+const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): SessionReturn => {
   const response = request('POST', `${SERVER_URL}/v1/auth/register`, { json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast } });
   return JSON.parse(response.body.toString());
 }
+
+export { authRegisterRequest, };
