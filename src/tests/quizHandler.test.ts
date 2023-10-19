@@ -1,125 +1,93 @@
-import request from 'sync-request-curl';
-import { port, url } from '../config.json'
-
+import { authRegisterRequest, quizCreateRequest } from './serverTestHelper'
 import {
   person1,
   person2,
-  person3,
-  person4,
-  person5,
   validQuizName,
-  newvalidQuizName,
   invalidQuizName,
   shortQuizName,
   longQuizName,
   validQuizDescription,
-  newvalidQuizDescription,
   longQuizDescription,
 } from '../testingData.js';
 
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../features/quiz';
-import { adminQuizRemove } from '../features/trash';
-import { adminAuthRegister } from '../features/auth';
-import { clear } from '../features//other';
-
-import { authRegisterRequest } from './serverTestHelper'
 
 beforeEach(() => {
   // clear
 })
 
-interface authRegisterRequestReturn {
-  token: string
-}
-
-// const requestSession = (email: string, password: string, nameFirst: string, nameLast: string): SessionReturn => {
-//   const response = request('POST', `${SERVER_URL}/v1/auth/register`, { json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast } });
-//   return JSON.parse(response.body.toString());
-// }
-
-const SERVER_URL = `${url}:${port}`;
-
 // adminQuizCreate tests
 describe('quizRouter.post - Error Cases', () => {
   test('invalid token', () => {
-    const session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const response = request('POST', `${SERVER_URL}/v1/admin/quiz`, { json: {token: session1.token, name: validQuizName, description: validQuizDescription} }); 
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = quizCreateRequest(`${userData.token}9`, validQuizName, validQuizDescription);
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
-
-    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    // function adminQuizCreateFunc() {
-    //   adminQuizCreate(session.token + 1, validQuizName, validQuizDescription);
-    // }
-    // expect(adminQuizCreateFunc).toThrow(ApiError);
-    // expect(adminQuizCreateFunc).toThrow('Invalid token');
   });
   test('invalid name characters', () => {
-
-    // const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    // function adminQuizCreateFunc() {
-    //   adminQuizCreate(session.token, invalidQuizName, validQuizDescription);
-    // }
-    // expect(adminQuizCreateFunc).toThrow(ApiError);
-    // expect(adminQuizCreateFunc).toThrow('Invalid name, must not contain special characters');
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = quizCreateRequest(userData.token, invalidQuizName, validQuizDescription);
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name, must not contain special characters'});
   });
   test('invalid name length too short', () => {
-    // const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    // function adminQuizCreateFunc() {
-    //   adminQuizCreate(session.token, shortQuizName, validQuizDescription);
-    // }
-    // expect(adminQuizCreateFunc).toThrow(ApiError);
-    // expect(adminQuizCreateFunc).toThrow('Invalid name length');
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = quizCreateRequest(userData.token, shortQuizName, validQuizDescription);
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name length'});
   });
   test('invalid name length too long', () => {
-    // const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    // function adminQuizCreateFunc() {
-    //   adminQuizCreate(session.token, longQuizName, validQuizDescription);
-    // }
-    // expect(adminQuizCreateFunc).toThrow(ApiError);
-    // expect(adminQuizCreateFunc).toThrow('Invalid name length');
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = quizCreateRequest(userData.token, longQuizName, validQuizDescription);
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name length'});
   });
   test('existing name under same user', () => {
-    // const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    // adminQuizCreate(session.token, validQuizName, validQuizDescription);
-    // const invalidSecondQuizName = validQuizName;
-    // function adminQuizCreateFunc() {
-    //   adminQuizCreate(session.token, invalidSecondQuizName, validQuizDescription);
-    // }
-    // expect(adminQuizCreateFunc).toThrow(ApiError);
-    // expect(adminQuizCreateFunc).toThrow('Quiz name already in use');
-  });
-  test('existing name under different user', () => {
-    // const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    // const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    // adminQuizCreate(session.token, validQuizName, validQuizDescription);
-    // adminQuizCreate(session.token, 'Quiz 2', validQuizDescription);
-    // adminQuizCreate(session.token, 'Quiz 3', validQuizDescription);
-    // adminQuizCreate(session.token, 'Potato Quiz', validQuizDescription);
-    // expect(adminQuizCreate(session2.token, validQuizName, validQuizDescription).quizId).toStrictEqual(expect.any(Number));
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    quizCreateRequest(userData.token, validQuizName, validQuizDescription);
+    const response = quizCreateRequest(userData.token, validQuizName, '');
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Quiz name already in use'});
   });
   test('invalid description length', () => {
-    // const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    // function adminQuizCreateFunc() {
-    //   adminQuizCreate(session.token, validQuizName, longQuizDescription);
-    // }
-    // expect(adminQuizCreateFunc).toThrow(ApiError);
-    // expect(adminQuizCreateFunc).toThrow('Description must be less than 100 characters');
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = quizCreateRequest(userData.token, validQuizName, longQuizDescription);
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Description must be less than 100 characters'});
   });
 });
 
 describe('quizRouter.post - Passed Cases', () => {
   test('valid quiz details', () => {
-    // const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    // const quizCreate = adminQuizCreate(session.token, validQuizName, validQuizDescription);
-    // expect(quizCreate.quizId).toStrictEqual(expect.any(Number));
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = quizCreateRequest(userData.token, validQuizName, validQuizDescription);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ quizId: expect.any(Number) });
   });
   test('valid multiple quiz details', () => {
-    // const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    // adminQuizCreate(session.token, validQuizName, validQuizDescription);
-    // const session2 = adminAuthRegister(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    // adminQuizCreate(session2.token, 'Quiz 2', '');
-    // adminQuizCreate(session2.token, 'Quiz 3', '');
-    // expect(adminQuizCreate(session2.token, 'Quiz 4', '')).toMatchObject({ quizId: expect.any(Number) });
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    quizCreateRequest(userData.token, 'Quiz 1', '');
+    quizCreateRequest(userData.token, 'Quiz 2', '');
+    quizCreateRequest(userData.token, 'Quiz 3', '');
+    const response = quizCreateRequest(userData.token, 'Quiz 4', validQuizDescription);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ quizId: expect.any(Number) });
+  });
+  test('existing name under different user', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    quizCreateRequest(userData.token, validQuizName, validQuizDescription);
+    const user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const user2Data = JSON.parse(user2.body.toString());
+    const response = quizCreateRequest(user2Data.token, validQuizName, '');
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ quizId: expect.any(Number) });
   });
 });
