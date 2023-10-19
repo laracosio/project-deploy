@@ -1,12 +1,8 @@
-import { person1, person2, person3, person4, person5, person6, person7 } from '../testingData';
-import { authLoginRequest, authRegisterRequest, authUserDetailsRequest } from './serverTestHelper';
+import { person1, person2, person3, person4, person5, person6, person7, validQuizDescription, validQuizName} from '../testingData';
+import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest, quizCreateRequest } from './serverTestHelper';
 import request from 'sync-request-curl';
 import { port, url } from '../config.json';
 const SERVER_URL = `${url}:${port}`;
-
-
-import { person1, person2, person3, validQuizDescription, validQuizName } from '../testingData';
-import { clearRequest, authRegisterRequest, quizCreateRequest } from './serverTestHelper';
 
 beforeEach(() => {
   clearRequest();
