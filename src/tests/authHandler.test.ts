@@ -97,34 +97,34 @@ describe('adminAuthRegister Server - error', () => {
 });
 
 
-// //server tests for adminAuthLogin
-// describe('adminAuthLogin - Successful Root', () => {
-//   test('adminAuthLogin - Successful Root', () => {
+//server tests for adminAuthLogin
+describe('adminAuthLogin - Successful Root', () => {
+  test('adminAuthLogin - Successful Root', () => {
 
-//     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-//     const resLogin = authLoginRequest(person1.email, person1.password);
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person1.email, person1.password);
    
-//     const data = JSON.parse(resLogin.toString());
-//     expect(data).toStrictEqual({ token: expect.any(String) });
-//   });
-// });
+    const data = JSON.parse(resLogin.body.toString());
+    expect(data).toStrictEqual({ token: expect.any(String) });
+  });
+});
 
-// describe('adminAuthLogin - Unsuccessful Root', () => {
-//   test('Unsuccessful Root (400): Email address does not exist', () => {
+describe('adminAuthLogin - Unsuccessful Root', () => {
+  test('Unsuccessful Root (400): Email address does not exist', () => {
 
-//     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-//     const resLogin = authLoginRequest(person2.email, person1.password);
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person2.email, person1.password);
 
-//     const data = JSON.parse(resLogin.toString());
-//     expect(data).toStrictEqual({ error: expect.any(String) });
-//   });
+    const data = JSON.parse(resLogin.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+  });
 
-//   test('Unsuccessful Root (400): Password is not correct for the given email', () => {
+  test('Unsuccessful Root (400): Password is not correct for the given email', () => {
 
-//     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-//     const resLogin = authLoginRequest(person1.email, person2.password);
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person1.email, person2.password);
   
-//     const data = JSON.parse(resLogin.toString());
-//     expect(data).toStrictEqual({ error: expect.any(String) });
-//   });
-// });
+    const data = JSON.parse(resLogin.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+  });
+});
