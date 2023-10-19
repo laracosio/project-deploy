@@ -1,4 +1,4 @@
-import express, { json, Request, Response } from 'express';
+import express, { json, Request, Response, NextFunction } from 'express';
 import { echo } from './echo/newecho';
 import morgan from 'morgan';
 import config from './config.json';
@@ -8,6 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import { ApiError } from './errors/ApiError';
 
 // Set up web app
 const app = express();
@@ -51,6 +52,14 @@ app.get('/echo', (req: Request, res: Response) => {
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
+
+app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof ApiError) {
+    res.status(err.httpCode).json({ error: err.message });
+  } else {
+    res.status(404).json(err.message);
+  }
+});
 
 app.use((req: Request, res: Response) => {
   const error = `
