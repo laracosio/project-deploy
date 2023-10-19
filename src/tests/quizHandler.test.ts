@@ -1,4 +1,4 @@
-import { authRegisterRequest, quizCreateRequest, quizInfoRequest } from './serverTestHelper'
+import { authRegisterRequest, clearRequest, quizCreateRequest, quizInfoRequest } from './serverTestHelper'
 import {
   person1,
   person2,
@@ -11,19 +11,18 @@ import {
   longQuizName,
   validQuizDescription,
   longQuizDescription,
-} from '../testingData.js';
-
+} from '../testingData';
 
 beforeEach(() => {
-  // clear
-})
+  clearRequest();
+});
 
 // adminQuizCreate tests
 describe('quizCreateRouter.post - Error Cases', () => {
   test('invalid token', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
-    const response = quizCreateRequest(`${userData.token}9`, validQuizName, validQuizDescription);
+    const response = quizCreateRequest(userData.token + 1, validQuizName, validQuizDescription);
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
   });
