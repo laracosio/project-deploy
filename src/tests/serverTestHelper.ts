@@ -1,17 +1,27 @@
 import request from 'sync-request-curl';
+import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
 
 const SERVER_URL = `${url}:${port}`;
 
-const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): object => {
-  const response = request('POST',
+const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): Response => {
+  return request(
+    'POST',
     `${SERVER_URL}/v1/auth/register`,
-    { json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast } });
-  return JSON.parse(response.body.toString());
+    {
+      json:
+      {
+        email: email,
+        password: password,
+        nameFirst: nameFirst,
+        nameLast: nameLast
+      }
+    }
+  );
 };
 
-const authLoginRequest = (email: string, password: string): object => {
-  const response = request(
+const authLoginRequest = (email: string, password: string): Response => {
+  return request(
     'POST',
     SERVER_URL + '/v1/admin/auth/login',
     {
@@ -21,11 +31,10 @@ const authLoginRequest = (email: string, password: string): object => {
       }
     }
   );
-  return JSON.parse(response.body.toString());
 };
 
-const authUserDetailsRequest = (token: string) => {
-  const response = request(
+const authUserDetailsRequest = (token: string): Response => {
+  return request(
     'GET',
     SERVER_URL + '/v1/admin/auth/details',
     {
@@ -34,19 +43,17 @@ const authUserDetailsRequest = (token: string) => {
       }
     }
   );
-  return JSON.parse(response.body.toString());
 };
 
-const clearRequest = (): object => {
-  const response = request(
+const clearRequest = (): Response => {
+  return request(
     'DELETE',
     SERVER_URL + '/v1/clear'
   );
-  return JSON.parse(response.body.toString());
 };
 
-const quizCreateRequest = (token: string, name: string, description: string): object => {
-  const response = request(
+const quizCreateRequest = (token: string, name: string, description: string): Response => {
+  return request(
     'POST',
     SERVER_URL + '/v1/admin/quiz',
     {
@@ -58,11 +65,10 @@ const quizCreateRequest = (token: string, name: string, description: string): ob
       headers: { 'Content-type': 'application/json' },
     }
   );
-  return JSON.parse(response.body.toString());
 };
 
-const quizRemoveRequest = (quizId: number, token: string) => {
-  const response = request(
+const quizRemoveRequest = (quizId: number, token: string): Response => {
+  return request(
     'DELETE',
     SERVER_URL + '/v1/admin/quiz/' + quizId,
     {
@@ -71,11 +77,10 @@ const quizRemoveRequest = (quizId: number, token: string) => {
       }
     }
   );
-  return JSON.parse(response.body.toString());
 };
 
-const quizListRequest = (token: string) => {
-  const response = request(
+const quizListRequest = (token: string): Response => {
+  return request(
     'GET',
     SERVER_URL + '/v1/admin/quiz/list',
     {
@@ -84,11 +89,10 @@ const quizListRequest = (token: string) => {
       }
     }
   );
-  return JSON.parse(response.body.toString());
 };
 
-const quizInfoRequest = (quizId: number, token: string) => {
-  const response = request(
+const quizInfoRequest = (quizId: number, token: string): Response => {
+  return request(
     'GET',
     SERVER_URL + '/v1/admin/quiz/list',
     {
@@ -98,11 +102,10 @@ const quizInfoRequest = (quizId: number, token: string) => {
       }
     }
   );
-  return JSON.parse(response.body.toString());
 };
 
-const quizNameUpdateRequest = (quizId: number, token: string, name: string) => {
-  const response = request(
+const quizNameUpdateRequest = (quizId: number, token: string, name: string): Response => {
+  return request(
     'PUT',
     SERVER_URL + '/v1/admin/' + quizId + '/name',
     {
@@ -113,11 +116,10 @@ const quizNameUpdateRequest = (quizId: number, token: string, name: string) => {
       headers: { 'Content-type': 'application/json' },
     }
   );
-  return JSON.parse(response.body.toString());
 };
 
-const quizDescriptUpdateRequest = (quizId: number, token: string, description: string) => {
-  const response = request(
+const quizDescriptUpdateRequest = (quizId: number, token: string, description: string): Response => {
+  return request(
     'PUT',
     SERVER_URL + '/v1/admin/' + quizId + '/name',
     {
@@ -128,7 +130,6 @@ const quizDescriptUpdateRequest = (quizId: number, token: string, description: s
       headers: { 'Content-type': 'application/json' },
     }
   );
-  return JSON.parse(response.body.toString());
 };
 
 export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest };
