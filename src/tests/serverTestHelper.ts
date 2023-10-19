@@ -3,18 +3,14 @@ import { port, url } from '../config.json';
 
 const SERVER_URL = `${url}:${port}`;
 
-interface SessionReturn {
-  token: string
-}
-
-const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): SessionReturn => {
+const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): object => {
   const response = request('POST',
     `${SERVER_URL}/v1/auth/register`,
     { json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast } });
   return JSON.parse(response.body.toString());
 };
 
-const authLoginRequest = (email: string, password: string): SessionReturn => {
+const authLoginRequest = (email: string, password: string): object => {
   const response = request(
     'POST',
     SERVER_URL + '/v1/admin/auth/login',
@@ -41,7 +37,7 @@ const authUserDetailsRequest = (token: string) => {
   return JSON.parse(response.body.toString());
 };
 
-const clearRequest = (): SessionReturn => {
+const clearRequest = (): object => {
   const response = request(
     'DELETE',
     SERVER_URL + '/v1/clear'
@@ -49,7 +45,7 @@ const clearRequest = (): SessionReturn => {
   return JSON.parse(response.body.toString());
 };
 
-const quizCreateRequest = (token: string, name: string, description: string): SessionReturn => {
+const quizCreateRequest = (token: string, name: string, description: string): object => {
   const response = request(
     'POST',
     SERVER_URL + '/v1/admin/quiz',
