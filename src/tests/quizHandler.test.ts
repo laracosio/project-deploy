@@ -22,25 +22,27 @@ import { adminQuizRemove } from '../features/trash';
 import { adminAuthRegister } from '../features/auth';
 import { clear } from '../features//other';
 
+import { authRegisterRequest } from './serverTestHelper'
+
 beforeEach(() => {
   // clear
 })
 
-interface SessionReturn {
+interface authRegisterRequestReturn {
   token: string
 }
 
-const requestSession = (email: string, password: string, nameFirst: string, nameLast: string): SessionReturn => {
-  const response = request('POST', `${SERVER_URL}/v1/auth/register`, { json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast } });
-  return JSON.parse(response.body.toString());
-}
+// const requestSession = (email: string, password: string, nameFirst: string, nameLast: string): SessionReturn => {
+//   const response = request('POST', `${SERVER_URL}/v1/auth/register`, { json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast } });
+//   return JSON.parse(response.body.toString());
+// }
 
 const SERVER_URL = `${url}:${port}`;
 
 // adminQuizCreate tests
 describe('quizRouter.post - Error Cases', () => {
   test('invalid token', () => {
-    const session1 = requestSession(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const response = request('POST', `${SERVER_URL}/v1/admin/quiz`, { json: {token: session1.token, name: validQuizName, description: validQuizDescription} }); 
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
