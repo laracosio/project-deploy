@@ -13,28 +13,28 @@ describe('quizRouter.post - Error Cases', () => {
     const userData = JSON.parse(user.body.toString());
     const response = quizCreateRequest(userData.token + 1, validQuizName, validQuizDescription);
     expect(response.statusCode).toStrictEqual(401);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
   });
   test('invalid name characters', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const response = quizCreateRequest(userData.token, invalidQuizName, validQuizDescription);
     expect(response.statusCode).toStrictEqual(400);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name, must not contain special characters'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name, must not contain special characters' });
   });
   test('invalid name length too short', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const response = quizCreateRequest(userData.token, shortQuizName, validQuizDescription);
     expect(response.statusCode).toStrictEqual(400);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name length'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name length' });
   });
   test('invalid name length too long', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const response = quizCreateRequest(userData.token, longQuizName, validQuizDescription);
     expect(response.statusCode).toStrictEqual(400);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name length'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name length' });
   });
   test('existing name under same user', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -42,14 +42,14 @@ describe('quizRouter.post - Error Cases', () => {
     quizCreateRequest(userData.token, validQuizName, validQuizDescription);
     const response = quizCreateRequest(userData.token, validQuizName, '');
     expect(response.statusCode).toStrictEqual(400);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Quiz name already in use'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Quiz name already in use' });
   });
   test('invalid description length', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const response = quizCreateRequest(userData.token, validQuizName, longQuizDescription);
     expect(response.statusCode).toStrictEqual(400);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Description must be less than 100 characters'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Description must be less than 100 characters' });
   });
 });
 
@@ -133,6 +133,7 @@ describe('QuizRemove Server - Error', () => {
     const sess1data = JSON.parse(sess1.body.toString());
     const sess2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const sess2data = JSON.parse(sess2.body.toString());
+    // person1 creates quiz1
     quiz1 = quizCreateRequest(sess1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
     const res = quizRemoveRequest(quiz1data.quizId, sess2data.token);

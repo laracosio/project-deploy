@@ -15,4 +15,3 @@ quizRouter.delete('/:quizid', (req: Request, res: Response) => {
   const response = adminQuizRemove(sessionToken, quizId);
   res.json(response);
 });
-
