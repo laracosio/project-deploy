@@ -1,5 +1,4 @@
-import { adminQuizCreate } from '../features/quiz';
-import { Request, Response, Router } from 'express';
+import { Router } from 'express';
 
 export const quizRouter = Router();
 

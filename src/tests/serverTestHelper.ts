@@ -1,5 +1,5 @@
 import request from 'sync-request-curl';
-import { port, url } from '../config.json'
+import { port, url } from '../config.json';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -9,10 +9,10 @@ interface SessionReturn {
 
 const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): SessionReturn => {
   const response = request('POST',
-    `${SERVER_URL}/v1/auth/register`, 
+    `${SERVER_URL}/v1/auth/register`,
     { json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast } });
   return JSON.parse(response.body.toString());
-}
+};
 
 const clearRequest = (): SessionReturn => {
   const response = request(
@@ -20,7 +20,7 @@ const clearRequest = (): SessionReturn => {
     SERVER_URL + '/v1/clear'
   );
   return JSON.parse(response.body.toString());
-}
+};
 
 const quizCreateRequest = (token: string, name: string, description: string): SessionReturn => {
   const response = request(
@@ -36,7 +36,7 @@ const quizCreateRequest = (token: string, name: string, description: string): Se
     }
   );
   return JSON.parse(response.body.toString());
-}
+};
 
 const quizRemoveRequest = (quizId: number, token: string) => {
   const response = request(
@@ -49,6 +49,6 @@ const quizRemoveRequest = (quizId: number, token: string) => {
     }
   );
   return JSON.parse(response.body.toString());
-}
+};
 
 export { authRegisterRequest, clearRequest, quizRemoveRequest, quizCreateRequest };
