@@ -14,6 +14,8 @@ import { quizRouter } from './handlers/quizHandler';
 import { userRouter } from './handlers/userHandler';
 import { otherRouter } from './handlers/otherHandler';
 
+import { adminAuthRegister } from './features/auth';
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
