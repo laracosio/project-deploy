@@ -27,6 +27,7 @@ describe('quizRouter.post - Error Cases', () => {
   test.only('invalid name characters', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
+    console.log(userData);
     const response = quizCreateRequest(userData.token, invalidQuizName, validQuizDescription);
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid name, must not contain special characters'});
