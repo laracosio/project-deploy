@@ -254,7 +254,7 @@ function adminQuizDescriptionUpdate (token: string, quizId: number, description:
 
   // check description is within 100 characters
   if (description.length > 100) {
-    throw new ApiError('Quiz Description more than 100 characters in length', HttpStatusCode.FORBIDDEN);
+    throw new ApiError('Quiz Description more than 100 characters in length', HttpStatusCode.BAD_REQUEST);
     // return { error: 'Quiz Description more than 100 characters in length' };
   }
 
