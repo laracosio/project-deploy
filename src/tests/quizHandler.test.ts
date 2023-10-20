@@ -356,3 +356,81 @@ describe('GET /v1/admin/quiz/list - Passed Cases', () => {
     );
   });
 });
+
+
+//adminQuizNameUpdate tests
+describe('adminQuizNameUpdate - Success Cases', () => {
+  let session1: Response, quiz1: Response;
+  test('valid authUserId, quizId and name', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const response = quizNameUpdateRequest(quiz1Data.quizId, session1Data.token, newvalidQuizName);
+    const responseData = JSON.parse(response.body.toString());
+    expect(responseData).toStrictEqual({});
+  });
+});
+
+describe('adminQuizNameUpdate - Error Cases', () => {
+  let session1: Response, session2: Response, quiz1: Response;
+  test('invalid token', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const response = quizNameUpdateRequest(quiz1Data.quizId, session1Data.token + 1, newvalidQuizName);
+    expect(response.statusCode).toStrictEqual(401);
+  });
+  test('invalid QuizId', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const response = quizNameUpdateRequest(quiz1Data.quizId + 1, session1Data.token, newvalidQuizName);
+    expect(response.statusCode).toStrictEqual(400);
+  });
+  test('QuizId not owned by this user', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const response = quizNameUpdateRequest(quiz1Data.quizId + 1, session1Data.token, newvalidQuizName);
+    expect(response.statusCode).toStrictEqual(401);
+  });
+  test('Name contains invalid characters', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const session2Data = JSON.parse(session2.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const response = quizNameUpdateRequest(quiz1Data.quizId, session2Data.token, validQuizName);
+    expect(response.statusCode).toStrictEqual(403);
+  });
+  test('invalid Name length - too long', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const response = quizNameUpdateRequest(quiz1Data.quizId, session1Data.token, longQuizName);
+    expect(response.statusCode).toStrictEqual(400);
+  });
+  test('invalid Name length - too short', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const response = quizNameUpdateRequest(quiz1Data.quizId, session1Data.token, shortQuizName);
+    expect(response.statusCode).toStrictEqual(400);
+  });
+  test('Name already in use', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const NameAlreadyExists = validQuizName;
+    const response = quizNameUpdateRequest(quiz1Data.quizId, session1Data.token, NameAlreadyExists);
+    expect(response.statusCode).toStrictEqual(400);
+  });
+});
