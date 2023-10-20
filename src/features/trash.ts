@@ -27,7 +27,7 @@ function adminQuizRemove(token:string, quizId: number): object {
   // find user associated with token and checks whether they are the quiz owner
   const tokenUser = findTokenUser(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
-    throw new ApiError('User does not own quiz to remove', HttpStatusCode.UNAUTHORISED);
+    throw new ApiError('User does not own quiz to remove', HttpStatusCode.FORBIDDEN);
     // return { error: 'User does not own quiz to remove' };
   }
 
