@@ -95,13 +95,13 @@ describe('quizCreateRouter.post - Passed Cases', () => {
 });
 
 // adminQuizInfo tests
-describe('quizInfoRouter.get - Error Cases', () => {
+describe.only('quizInfoRouter.get - Error Cases', () => {
   test('invalid token', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const quiz = quizCreateRequest(userData.token, validQuizName, validQuizDescription);
     const quizData = JSON.parse(quiz.body.toString());
-    const response = quizInfoRequest(quizData.quizId, `${userData.token}9`);
+    const response = quizInfoRequest(quizData.quizId, userData.token + 1);
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
   });
@@ -114,14 +114,16 @@ describe('quizInfoRouter.get - Error Cases', () => {
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid quiz ID'});
   });
-  test('quizId not owned by this user', () => {
+  test.only('quizId not owned by this user', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const quiz = quizCreateRequest(userData.token, validQuizName, validQuizDescription);
     const quizData = JSON.parse(quiz.body.toString());
     const user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    const user2Data = JSON.parse(user.body.toString());
+    const user2Data = JSON.parse(user2.body.toString());
     const response = quizInfoRequest(quizData.quizId, user2Data.token);
+    console.log(response);
+    console.log(JSON.parse(response.body.toString()));
     expect(response.statusCode).toStrictEqual(403);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'User does not own quiz to check info'});
   });
