@@ -1,7 +1,7 @@
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 
 class ApiError extends Error {
-  httpCode: HttpStatusCode;
+  public httpCode: HttpStatusCode;
 
   constructor(message: string, httpCode: HttpStatusCode) {
     super(message);
