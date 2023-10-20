@@ -26,3 +26,9 @@ quizRouter.get('/:quizId', (req: Request, res: Response) => {
   const quizId: number = parseInt(req.params.quizId);
   res.json(adminQuizInfo(token, quizId));
 });
+
+quizRouter.put('/:quizId', (req: Request, res: Response) => {
+  const sessionToken = req.query.token as string;
+  const quizId = parseInt(req.params.quizid);
+  res.json(adminQuizNameUpdate(sessionToken, quizId, req.body.name));
+});
