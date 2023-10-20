@@ -103,8 +103,9 @@ describe('quizRemove Server - Success', () => {
     const res = quizRemoveRequest(quiz2data.quizId, sess1data.token);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
-    // const currQuiz = quizInfoRequest(quiz2data.quizId, sess1data.token);
-    // expect(currQuiz.statusCode).toStrictEqual(400);
+    // should no longer be able to run quizInfo
+    const currQuiz = quizInfoRequest(sess1data.token, quiz2data.quizId);
+    expect(currQuiz.statusCode).toStrictEqual(400);
   });
 });
 
