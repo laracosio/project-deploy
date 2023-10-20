@@ -19,4 +19,4 @@ quizRouter.delete('/:quizid', (req: Request, res: Response) => {
 quizRouter.get('/list', (req: Request, res: Response) => {
   const token: string = req.query.token as string;
   res.json(adminQuizList(token));
-})
+});

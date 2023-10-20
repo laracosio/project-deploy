@@ -1,5 +1,5 @@
-import { clearRequest, authRegisterRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest, quizListRequest } from './serverTestHelper';
-import { person1, person2, person3, person4, person5, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription } from '../testingData';
+import { clearRequest, authRegisterRequest, quizCreateRequest, quizRemoveRequest, quizListRequest } from './serverTestHelper';
+import { person1, person2, person3, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription } from '../testingData';
 import { Response } from 'sync-request-curl';
 
 beforeEach(() => {
@@ -141,9 +141,6 @@ describe('QuizRemove Server - Error', () => {
   });
 });
 
-
-
-
 // adminQuizList tests
 describe('GET /v1/admin/quiz/list - Error Cases', () => {
   test('invalid token', () => {
@@ -152,7 +149,7 @@ describe('GET /v1/admin/quiz/list - Error Cases', () => {
     quizCreateRequest(userData.token, validQuizName, validQuizDescription);
     const response = quizListRequest(userData.token + 1);
     expect(response.statusCode).toStrictEqual(401);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
   });
 });
 
@@ -164,7 +161,7 @@ describe('GET /v1/admin/quiz/list - Passed Cases', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
     const quiz2 = quizCreateRequest(userData.token, 'User1 second quiz', 'Description 2');
     const quiz2Data = JSON.parse(quiz2.body.toString());
-    
+
     const response = quizListRequest(userData.token);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual(
