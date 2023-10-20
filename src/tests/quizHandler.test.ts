@@ -397,7 +397,7 @@ describe('adminQuizNameUpdate - Error Cases', () => {
     const session2data = JSON.parse(session2.body.toString());
     quiz1 = quizCreateRequest(session1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
-    const response = quizNameUpdateRequest(session2data.token, quiz1data.quizId, validQuizName);
+    const response = quizNameUpdateRequest(session2data.token, quiz1data.quizId, newvalidQuizName);
     expect(response.statusCode).toStrictEqual(403);
   });
   test('Name contains invalid characters', () => {
