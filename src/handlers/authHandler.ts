@@ -10,7 +10,6 @@ authRouter.post('/register', (req: Request, res: Response) => {
 });
 
 authRouter.post('/login', (req: Request, res: Response) => {
-  console.log('Entered authRouter: login');
   const { email, password } = req.body;
   const response = adminAuthLogin(email, password);
   res.json(response);
