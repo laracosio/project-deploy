@@ -67,7 +67,7 @@ const quizCreateRequest = (token: string, name: string, description: string): Re
   );
 };
 
-const quizRemoveRequest = (quizId: number, token: string): Response => {
+const quizRemoveRequest = (token: string, quizId: number): Response => {
   return request(
     'DELETE',
     SERVER_URL + '/v1/admin/quiz/' + quizId,

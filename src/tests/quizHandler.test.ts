@@ -90,7 +90,7 @@ describe('quizRemove Server - Success', () => {
     const sess1data = JSON.parse(sess1.body.toString());
     quiz1 = quizCreateRequest(sess1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
-    const res = quizRemoveRequest(quiz1data.quizId, sess1data.token);
+    const res = quizRemoveRequest(sess1data.token, quiz1data.quizId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
   });
@@ -100,11 +100,12 @@ describe('quizRemove Server - Success', () => {
     quizCreateRequest(sess1data.token, 'Valid Quiz Name', validQuizDescription);
     const quiz2 = quizCreateRequest(sess1data.token, validQuizName, validQuizDescription);
     const quiz2data = JSON.parse(quiz2.body.toString());
-    const res = quizRemoveRequest(quiz2data.quizId, sess1data.token);
+    const res = quizRemoveRequest(sess1data.token, quiz2data.quizId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
-    // const currQuiz = quizInfoRequest(quiz2data.quizId, sess1data.token);
-    // expect(currQuiz.statusCode).toStrictEqual(400);
+    // should no longer be able to run quizInfo
+    const currQuiz = quizInfoRequest(sess1data.token, quiz2data.quizId);
+    expect(currQuiz.statusCode).toStrictEqual(400);
   });
 });
 
@@ -115,7 +116,7 @@ describe('QuizRemove Server - Error', () => {
     const sess1data = JSON.parse(sess1.body.toString());
     quiz1 = quizCreateRequest(sess1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
-    const res = quizRemoveRequest(quiz1data.quizId, sess1data.token + 1);
+    const res = quizRemoveRequest(sess1data.token + 1, quiz1data.quizId);
     expect(res.statusCode).toStrictEqual(401);
   });
 
@@ -124,7 +125,7 @@ describe('QuizRemove Server - Error', () => {
     const sess1data = JSON.parse(sess1.body.toString());
     quiz1 = quizCreateRequest(sess1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
-    const res = quizRemoveRequest(quiz1data.quizId + 1, sess1data.token);
+    const res = quizRemoveRequest(sess1data.token, quiz1data.quizId + 1);
     expect(res.statusCode).toStrictEqual(400);
   });
 
@@ -136,7 +137,7 @@ describe('QuizRemove Server - Error', () => {
     // person1 creates quiz1
     quiz1 = quizCreateRequest(sess1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
-    const res = quizRemoveRequest(quiz1data.quizId, sess2data.token);
+    const res = quizRemoveRequest(sess2data.token, quiz1data.quizId);
     expect(res.statusCode).toStrictEqual(403);
   });
 });
