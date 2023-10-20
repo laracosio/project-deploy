@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
-import { adminQuizCreate, adminQuizInfo, adminQuizList } from '../features/quiz';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate } from '../features/quiz';
 
 export const quizRouter = Router();
 
