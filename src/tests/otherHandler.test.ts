@@ -19,7 +19,7 @@ describe('Clear - Success', () => {
     expect(JSON.parse(quiz1.body.toString())).toStrictEqual({ error: expect.any(String) });
   });
 
-  test('one user, create quiz, clear and attempt to trash', () => {
+  test('one user, create quiz, clear and to trash', () => {
     user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const user2data = JSON.parse(user2.body.toString());
     quiz1 = quizCreateRequest(user2data.token, validQuizName, validQuizDescription);

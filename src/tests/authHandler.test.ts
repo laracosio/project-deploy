@@ -1,5 +1,5 @@
 import { person1, person2, person3, validQuizDescription, validQuizName } from '../testingData';
-import { clearRequest, authRegisterRequest, quizCreateRequest } from './serverTestHelper';
+import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest, quizCreateRequest } from './serverTestHelper';
 
 beforeEach(() => {
   clearRequest();
@@ -90,5 +90,71 @@ describe('adminAuthRegister Server - error', () => {
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toBe(400);
+  });
+});
+
+describe('adminAuthLogin - Successful Root', () => {
+  test('adminAuthLogin - Successful Root', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person1.email, person1.password);
+    const data = JSON.parse(resLogin.body.toString());
+    expect(data).toStrictEqual({ token: expect.any(String) });
+  });
+});
+
+describe('adminAuthLogin - Unsuccessful Root', () => {
+  test('Unsuccessful Root (400): Email address does not exist', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person2.email, person1.password);
+    const data = JSON.parse(resLogin.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+  });
+
+  test('Unsuccessful Root (400): Password is not correct for the given email', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person1.email, person2.password);
+    const data = JSON.parse(resLogin.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+  });
+});
+
+describe('adminAuthDetails - Successful Root', () => {
+  test('adminAuthDetails - Successful Root', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const resLogin = authLoginRequest(person1.email, person1.password);
+    const token = JSON.parse(resLogin.body.toString());
+    const resDetails = authUserDetailsRequest(token.token);
+    const data = JSON.parse(resDetails.body.toString());
+    expect(data).toStrictEqual(
+      {
+        user:
+        {
+          userId: person1.userId,
+          name: person1.nameFirst + ' ' + person1.nameLast,
+          email: person1.email,
+          numSuccessfulLogins: 2,
+          numFailedPasswordsSinceLastLogin: 0,
+        }
+      });
+  });
+});
+
+describe('adminAuthDetails - Unsuccessful Root', () => {
+  test('Unsuccessful Root (401): Token is empty', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    authLoginRequest(person1.email, person1.password);
+    const token = '';
+    const resDetails = authUserDetailsRequest(token);
+    const data = JSON.parse(resDetails.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+  });
+
+  test('Unsuccessful Root (401): Token is invalid', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    authLoginRequest(person1.email, person1.password);
+    const token = 'lkgjlaksjglaksjgla';
+    const resDetails = authUserDetailsRequest(token);
+    const data = JSON.parse(resDetails.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
