@@ -1,5 +1,5 @@
 import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest } from './serverTestHelper'
-import { person1, person2, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription } from '../testingData';
+import { person1, person2, person4, person5, person3, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription } from '../testingData';
 import { Response } from 'sync-request-curl';
 
 beforeEach(() => {
@@ -143,13 +143,13 @@ describe('QuizRemove Server - Error', () => {
 
 
 // adminQuizInfo tests
-describe.only('quizInfoRouter.get - Error Cases', () => {
+describe('quizInfoRouter.get - Error Cases', () => {
   test('invalid token', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const quiz = quizCreateRequest(userData.token, validQuizName, validQuizDescription);
     const quizData = JSON.parse(quiz.body.toString());
-    const response = quizInfoRequest(quizData.quizId, userData.token + 1);
+    const response = quizInfoRequest(userData.token + 1, quizData.quizId);
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
   });
@@ -158,20 +158,23 @@ describe.only('quizInfoRouter.get - Error Cases', () => {
     const userData = JSON.parse(user.body.toString());
     const quiz = quizCreateRequest(userData.token, validQuizName, validQuizDescription);
     const quizData = JSON.parse(quiz.body.toString());
-    const response = quizInfoRequest(quizData.quizId + 1, userData.token);
+    const response = quizInfoRequest(userData.token, quizData.quizId + 100);
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid quiz ID'});
   });
-  test.only('quizId not owned by this user', () => {
+
+  test('quizId not owned by this user', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
+    
     const quiz = quizCreateRequest(userData.token, validQuizName, validQuizDescription);
     const quizData = JSON.parse(quiz.body.toString());
+
     const user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const user2Data = JSON.parse(user2.body.toString());
-    const response = quizInfoRequest(quizData.quizId, user2Data.token);
-    console.log(response);
-    console.log(JSON.parse(response.body.toString()));
+
+    const response = quizInfoRequest(user2Data.token, quizData.quizId);
+
     expect(response.statusCode).toStrictEqual(403);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'User does not own quiz to check info'});
   });
@@ -183,7 +186,7 @@ describe('quizInfoRouter.get - Passed Cases', () => {
     const userData = JSON.parse(user.body.toString());
     const quiz = quizCreateRequest(userData.token, validQuizName, validQuizDescription);
     const quizData = JSON.parse(quiz.body.toString());
-    const response = quizInfoRequest(quizData.quizId, userData.token);
+    const response = quizInfoRequest(userData.token, quizData.quizId);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual(
       {
@@ -203,7 +206,7 @@ describe('quizInfoRouter.get - Passed Cases', () => {
     const user2Data = JSON.parse(user2.body.toString());
     const quiz2 = quizCreateRequest(user2Data.token, 'Potato Quiz', 'Cool Description');
     const quiz2Data = JSON.parse(quiz2.body.toString());
-    const response = quizInfoRequest(quiz2Data.quizId, user2Data.token);
+    const response = quizInfoRequest(user2Data.token, quiz2Data.quizId);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual(
       {
@@ -232,7 +235,7 @@ describe('quizInfoRouter.get - Passed Cases', () => {
     const user5Data = JSON.parse(user5.body.toString());
     const quiz5 = quizCreateRequest(user5Data.token, 'Quiz 5', 'Description 5');
     const quiz5Data = JSON.parse(quiz5.body.toString());
-    const response = quizInfoRequest(quiz5Data.quizId, user5Data.token);
+    const response = quizInfoRequest(user5Data.token, quiz5Data.quizId);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual(
       {

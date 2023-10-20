@@ -91,13 +91,12 @@ const quizListRequest = (token: string): Response => {
   );
 };
 
-const quizInfoRequest = (quizId: number, token: string): Response => {
+const quizInfoRequest = (token: string, quizId: number): Response => {
   return request(
     'GET',
-    SERVER_URL + '/v1/admin/quiz/list',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}`,
     {
       qs: {
-        quizId: quizId,
         token: token
       }
     }

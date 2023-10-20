@@ -16,13 +16,8 @@ quizRouter.delete('/:quizid', (req: Request, res: Response) => {
   res.json(response);
 });
 
-
-const bodyParser = require('body-parser');
-const url = require('url');
-const querystring = require('querystring');
-// const Article = require('./models').Article;
-
 quizRouter.get('/:quizId', (req: Request, res: Response) => {
+  console.log('hello?')
   const token: string = req.query.token as string
   const quizId: number = parseInt(req.params.quizId);
   res.json(adminQuizInfo(token, quizId));
