@@ -35,7 +35,7 @@ function adminQuizInfo(token:string, quizId: number): QuizInfoReturn {
 
   // check that token is not empty or is valid
   if (!tokenValidation(token)) {
-    throw new ApiError('Invalid token', HttpStatusCode.FORBIDDEN);
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
     // return { error: 'Invalid token' };
   }
 
