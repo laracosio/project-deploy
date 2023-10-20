@@ -70,14 +70,6 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
 
-app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof ApiError) {
-    res.status(err.httpCode).json(err.message);
-  } else {
-    res.status(404).json(err.message);
-  }
-});
-
 app.use((req: Request, res: Response) => {
   const error = `
     404 Not found - This could be because:
