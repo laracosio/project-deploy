@@ -27,8 +27,8 @@ describe('Clear - Success', () => {
     expect(JSON.parse(clearRequest().body.toString())).toStrictEqual({});
 
     const removeQuiz = quizRemoveRequest(quiz1data.quizId, user2data.token);
-    expect(removeQuiz.statusCode).toBeGreaterThan(400);
-    expect(removeQuiz.statusCode).toBeGreaterThan(400);
-    expect(JSON.parse(quiz1.body.toString())).toStrictEqual({ error: expect.any(String) });
+    expect(removeQuiz.statusCode).toBeGreaterThanOrEqual(400);
+    expect(removeQuiz.statusCode).toBeGreaterThanOrEqual(400);
+    expect(JSON.parse(removeQuiz.body.toString())).toStrictEqual({ error: expect.any(String) });
   });
 });
