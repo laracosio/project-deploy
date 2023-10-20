@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
-import { adminQuizCreate, adminQuizList } from '../features/quiz';
+import { adminQuizCreate, adminQuizInfo, adminQuizList } from '../features/quiz';
 
 export const quizRouter = Router();
 
@@ -19,4 +19,10 @@ quizRouter.delete('/:quizid', (req: Request, res: Response) => {
 quizRouter.get('/list', (req: Request, res: Response) => {
   const token: string = req.query.token as string;
   res.json(adminQuizList(token));
+});
+
+quizRouter.get('/:quizId', (req: Request, res: Response) => {
+  const token: string = req.query.token as string;
+  const quizId: number = parseInt(req.params.quizId);
+  res.json(adminQuizInfo(token, quizId));
 });

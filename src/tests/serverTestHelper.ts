@@ -97,7 +97,6 @@ const quizInfoRequest = (token: string, quizId: number): Response => {
     `${SERVER_URL}/v1/admin/quiz/${quizId}`,
     {
       qs: {
-        quizId: quizId,
         token: token
       }
     }
