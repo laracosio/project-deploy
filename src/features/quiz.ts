@@ -31,7 +31,6 @@ interface QuizListReturn {
  * @returns {quizId: number, name: string, timeCreated: number, timeLastEdited: number, description: string}
  */
 function adminQuizInfo(token:string, quizId: number): QuizInfoReturn {
-  console.log('admin quiz info')
   const dataStore = getData();
 
   // check that token is not empty or is valid

@@ -1,4 +1,4 @@
-import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest } from './serverTestHelper'
+import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest } from './serverTestHelper';
 import { person1, person2, person4, person5, person3, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription } from '../testingData';
 import { Response } from 'sync-request-curl';
 
@@ -141,7 +141,6 @@ describe('QuizRemove Server - Error', () => {
   });
 });
 
-
 // adminQuizInfo tests
 describe('quizInfoRouter.get - Error Cases', () => {
   test('invalid token', () => {
@@ -151,7 +150,7 @@ describe('quizInfoRouter.get - Error Cases', () => {
     const quizData = JSON.parse(quiz.body.toString());
     const response = quizInfoRequest(userData.token + 1, quizData.quizId);
     expect(response.statusCode).toStrictEqual(401);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
   });
   test('invalid quizId', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -160,13 +159,13 @@ describe('quizInfoRouter.get - Error Cases', () => {
     const quizData = JSON.parse(quiz.body.toString());
     const response = quizInfoRequest(userData.token, quizData.quizId + 100);
     expect(response.statusCode).toStrictEqual(400);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid quiz ID'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid quiz ID' });
   });
 
   test('quizId not owned by this user', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
-    
+
     const quiz = quizCreateRequest(userData.token, validQuizName, validQuizDescription);
     const quizData = JSON.parse(quiz.body.toString());
 
@@ -176,7 +175,7 @@ describe('quizInfoRouter.get - Error Cases', () => {
     const response = quizInfoRequest(user2Data.token, quizData.quizId);
 
     expect(response.statusCode).toStrictEqual(403);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'User does not own quiz to check info'});
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'User does not own quiz to check info' });
   });
 });
 
