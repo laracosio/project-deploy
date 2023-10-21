@@ -1,4 +1,4 @@
-import { Quiz, getData, setData } from '../dataStore';
+import { Question, Quiz, getData, setData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
 import { findTokenUser, tokenValidation } from './other';
 import { ApiError } from '../errors/ApiError';
@@ -9,7 +9,10 @@ interface QuizInfoReturn {
   name: string,
   timeCreated: number,
   timeLastEdited: number,
-  description: string
+  description: string,
+  numQuestions: number,
+  questions: Question[],
+  duration: number,
 }
 
 interface QuizCreateReturn {
@@ -25,49 +28,12 @@ interface QuizListReturn {
 }
 
 /**
- * Get all of the relevant information about the current quiz.
- * @param {string} sessionId
- * @param {number} quizId
- * @returns {quizId: number, name: string, timeCreated: number, timeLastEdited: number, description: string}
- */
-function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
-  const dataStore = getData();
-
-  // check that token is not empty or is valid
-  if (!tokenValidation(sessionId)) {
-    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
-  }
-
-  // find user associated with token and checks whether they are the quiz owner
-  const tokenUser = findTokenUser(sessionId);
-
-  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
-    throw new ApiError('User does not own quiz to check info', HttpStatusCode.FORBIDDEN);
-  }
-
-  // check quizId is valid
-  if (!dataStore.quizzes.some((q) => q.quizId === quizId)) {
-    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
-  }
-
-  const quizMatch = dataStore.quizzes.find((q) => (q.quizOwner === tokenUser.userId && q.quizId === quizId));
-
-  return {
-    quizId: quizMatch.quizId,
-    name: quizMatch.name,
-    timeCreated: quizMatch.timeCreated,
-    timeLastEdited: quizMatch.timeLastEdited,
-    description: quizMatch.description,
-  };
-}
-
-/**
  * Given basic details about a new quiz, create one for  the logged in user.
  * @param {string} sessionId - unique token
  * @param {string} name - of quiz
  * @param {string} description - of quiz
  * @returns {quizId: 2}
- */
+*/
 function adminQuizCreate(sessionId: string, name: string, description: string): QuizCreateReturn {
   const dataStore = getData();
 
@@ -117,7 +83,7 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
     description: description,
     quizOwner: tokenUser.userId,
     numQuestions: 0, // questionCreate to update
-    questions: [],   // questionCreate to update
+    questions: [], // questionCreate to update
     quizDuration: 0, // questionCreate to update
   };
 
@@ -126,6 +92,46 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
 
   return {
     quizId: newQuizId
+  };
+}
+
+/**
+ * Get all of the relevant information about the current quiz.
+ * @param {string} sessionId
+ * @param {number} quizId
+ * @returns {quizId: number, name: string, timeCreated: number, timeLastEdited: number, description: string}
+ */
+function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
+  const dataStore = getData();
+
+  // check that token is not empty or is valid
+  if (!tokenValidation(sessionId)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+
+  // find user associated with token and checks whether they are the quiz owner
+  const tokenUser = findTokenUser(sessionId);
+
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+    throw new ApiError('User does not own quiz to check info', HttpStatusCode.FORBIDDEN);
+  }
+
+  // check quizId is valid
+  if (!dataStore.quizzes.some((q) => q.quizId === quizId)) {
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const quizMatch = dataStore.quizzes.find((q) => (q.quizOwner === tokenUser.userId && q.quizId === quizId));
+
+  return {
+    quizId: quizMatch.quizId,
+    name: quizMatch.name,
+    timeCreated: quizMatch.timeCreated,
+    timeLastEdited: quizMatch.timeLastEdited,
+    description: quizMatch.description,
+    numQuestions: quizMatch.numQuestions,
+    questions: quizMatch.questions,
+    duration: quizMatch.quizDuration
   };
 }
 
