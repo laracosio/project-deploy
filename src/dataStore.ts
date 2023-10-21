@@ -30,10 +30,12 @@ export interface Question {
 export interface Answer {
   answerId: number, 
   answer: string, 
-  colour: string, //need to make an array of colours to pick
   correct: boolean, 
-  position: number
+  position: number, 
+  timeCreated: number,
+  timeLastEdited: number,
 }
+
 export interface Quiz {
   quizId: number,
   name: string,
