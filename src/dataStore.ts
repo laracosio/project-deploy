@@ -2,23 +2,8 @@ export interface ErrorObject {
   error: string
 }
 
-export interface AuthReturn {
-  token: string
-}
+export const colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
 
-export interface CreateQuestionReturn {
-  questionId: number
-}
-
-export interface UserDetailReturn {
-  user: {
-    userId: number,
-    name: string,
-    email: string,
-    numSuccessfulLogins: number,
-    numFailedPasswordsSinceLastLogin: number
-  }
-}
 export interface User {
   userId: number,
   nameFirst: string,
@@ -46,7 +31,6 @@ export interface Answer {
   timeLastEdited: number,
 }
 
-export const colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
 
 export interface Quiz {
   quizId: number,
