@@ -103,10 +103,10 @@ const quizInfoRequest = (token: string, quizId: number): Response => {
   );
 };
 
-const quizNameUpdateRequest = (quizId: number, token: string, name: string): Response => {
+const quizNameUpdateRequest = (token: string, quizId: number, name: string): Response => {
   return request(
     'PUT',
-    SERVER_URL + '/v1/admin/' + quizId + '/name',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/name`,
     {
       body: JSON.stringify({
         token: token,
