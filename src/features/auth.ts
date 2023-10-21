@@ -1,8 +1,21 @@
 import { helperAdminRegister, createSessionId, tokenValidation } from './other';
-import { getData, setData, Token, AuthReturn, UserDetailReturn } from '../dataStore';
+import { getData, setData, Token } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 
+interface AuthReturn {
+  token: string
+}
+
+interface UserDetailReturn {
+  user: {
+    userId: number,
+    name: string,
+    email: string,
+    numSuccessfulLogins: number,
+    numFailedPasswordsSinceLastLogin: number
+  }
+}
 /**
  * Register a user with an email, password, and names, then returns their authUserId value.
  * @param {string} email - unique email address
