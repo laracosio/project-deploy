@@ -19,6 +19,7 @@ export interface User {
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
 }
+
 export interface Question {
   questionId: number, 
   question: string, 
@@ -35,6 +36,8 @@ export interface Answer {
   timeCreated: number,
   timeLastEdited: number,
 }
+
+export const colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
 
 export interface Quiz {
   quizId: number,
