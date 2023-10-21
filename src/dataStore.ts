@@ -6,6 +6,10 @@ export interface AuthReturn {
   token: string
 }
 
+export interface CreateQuestionReturn {
+  questionId: number
+}
+
 export interface User {
   userId: number,
   nameFirst: string,
@@ -15,14 +19,31 @@ export interface User {
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
 }
+export interface Question {
+  questionId: number, 
+  question: string, 
+  duration: number,
+  points: number, 
+  answers: Answer[]
+}
 
+export interface Answer {
+  answerId: number, 
+  answer: string, 
+  colour: string, //need to make an array of colours to pick
+  correct: boolean, 
+  position: number
+}
 export interface Quiz {
   quizId: number,
   name: string,
   timeCreated: number,
   timeLastEdited: number,
   description: string,
-  quizOwner: number
+  quizOwner: number,
+  numQuestions: number, 
+  questions: Question[], 
+  quizDuration: number
 }
 
 export interface Token {
