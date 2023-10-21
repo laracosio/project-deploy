@@ -2,7 +2,7 @@ export interface ErrorObject {
   error: string
 }
 
-export const colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
+export const Colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
 
 export interface User {
   userId: number,
