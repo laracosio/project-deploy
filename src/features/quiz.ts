@@ -248,13 +248,13 @@ function adminQuizDescriptionUpdate (token: string, quizId: number, description:
   // check valid quizId is owned by the current user associated with token
   const tokenUser = findTokenUser(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
-    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.UNAUTHORISED);
+    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
     // return { error: 'Quiz ID not owned by this user' };
   }
 
   // check description is within 100 characters
   if (description.length > 100) {
-    throw new ApiError('Quiz Description more than 100 characters in length', HttpStatusCode.FORBIDDEN);
+    throw new ApiError('Quiz Description more than 100 characters in length', HttpStatusCode.BAD_REQUEST);
     // return { error: 'Quiz Description more than 100 characters in length' };
   }
 
