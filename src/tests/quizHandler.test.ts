@@ -357,8 +357,7 @@ describe('GET /v1/admin/quiz/list - Passed Cases', () => {
   });
 });
 
-
-//adminQuizNameUpdate tests
+// adminQuizNameUpdate tests
 describe('adminQuizNameUpdate - Success Cases', () => {
   let session1: Response, quiz1: Response;
   test('valid authUserId, quizId and name', () => {
@@ -393,7 +392,7 @@ describe('adminQuizNameUpdate - Error Cases', () => {
   test('QuizId not owned by this user', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1data = JSON.parse(session1.body.toString());
-    const session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const session2data = JSON.parse(session2.body.toString());
     quiz1 = quizCreateRequest(session1data.token, validQuizName, validQuizDescription);
     const quiz1data = JSON.parse(quiz1.body.toString());
