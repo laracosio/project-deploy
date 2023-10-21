@@ -13,24 +13,22 @@ export interface User {
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
 }
-
-export interface Question {
-  questionId: number, 
-  question: string, 
-  duration: number,
-  points: number, 
-  answers: Answer[]
-}
-
 export interface Answer {
-  answerId: number, 
-  answer: string, 
-  correct: boolean, 
-  position: number, 
+  answerId: number,
+  answer: string,
+  correct: boolean,
+  position: number,
   timeCreated: number,
   timeLastEdited: number,
 }
 
+export interface Question {
+  questionId: number,
+  question: string,
+  duration: number,
+  points: number,
+  answers: Answer[]
+}
 
 export interface Quiz {
   quizId: number,
@@ -39,8 +37,8 @@ export interface Quiz {
   timeLastEdited: number,
   description: string,
   quizOwner: number,
-  numQuestions: number, 
-  questions: Question[], 
+  numQuestions: number,
+  questions: Question[],
   quizDuration: number
 }
 
