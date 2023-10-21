@@ -10,6 +10,15 @@ export interface CreateQuestionReturn {
   questionId: number
 }
 
+export interface UserDetailReturn {
+  user: {
+    userId: number,
+    name: string,
+    email: string,
+    numSuccessfulLogins: number,
+    numFailedPasswordsSinceLastLogin: number
+  }
+}
 export interface User {
   userId: number,
   nameFirst: string,

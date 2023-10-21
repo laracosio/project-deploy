@@ -1,17 +1,7 @@
 import { helperAdminRegister, createSessionId, tokenValidation } from './other';
-import { getData, setData, Token, AuthReturn } from '../dataStore';
+import { getData, setData, Token, AuthReturn, UserDetailReturn } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-
-interface UserDetailReturn {
-  user: {
-    userId: number,
-    name: string,
-    email: string,
-    numSuccessfulLogins: number,
-    numFailedPasswordsSinceLastLogin: number
-  }
-}
 
 /**
  * Register a user with an email, password, and names, then returns their authUserId value.
@@ -92,7 +82,7 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
- * @param {string} token - calling user's Id
+ * @param {string} sessionId - calling user's Id
  * @returns {user: {userId: number, email: string,
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
@@ -102,7 +92,6 @@ function adminUserDetails(sessionId: string): UserDetailReturn {
   // invalid Token
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
-    // return { error: 'Token is invalid' };
   }
 
   const userIdInToken = dataStore.tokens.find(user => user.sessionId === sessionId);
