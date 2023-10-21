@@ -195,6 +195,9 @@ describe('GET /v1/admin/quiz/{quizid} - Passed Cases', () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: validQuizDescription,
+        numQuestions: 0,
+        questions: [],
+        duration: 0
       }
     );
   });
@@ -215,6 +218,9 @@ describe('GET /v1/admin/quiz/{quizid} - Passed Cases', () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: 'Cool Description',
+        numQuestions: 0,
+        questions: [],
+        duration: 0
       }
     );
   });
@@ -244,6 +250,9 @@ describe('GET /v1/admin/quiz/{quizid} - Passed Cases', () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: 'Description 5',
+        numQuestions: 0,
+        questions: [],
+        duration: 0
       }
     );
   });
