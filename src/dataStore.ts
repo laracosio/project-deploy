@@ -26,8 +26,8 @@ export interface Question {
   points: number,
   answers: Answer[]
   position: number,
-  timeCreated: number,
-  timeLastEdited: number
+  timeCreated: number, // is this needed for question?
+  timeLastEdited: number // is this needed for question?
 }
 
 export interface Quiz {
