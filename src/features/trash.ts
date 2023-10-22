@@ -1,19 +1,20 @@
 import { getData, setData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { tokenValidation, findTokenUser } from './other';
+import { tokenValidation, findToken, findQuizById } from './other';
 import { getUnixTime } from 'date-fns';
 
 /**
- * Given a particular quiz, permanently remove the quiz.
+ * Given a particular quiz, send it to the trash (can be recovered later)
  * @param {string} sessionId - unique token containing sessionId
  * @param {number} quizId - unique identifier for quiz
  * @returns {{error: string}}
  */
 function adminQuizRemove(sessionId: string, quizId: number): object {
   const dataStore = getData();
+  const matchedQuiz = findQuizById(quizId);
   // check that quizId is not empty or is valid
-  if (!quizId || !dataStore.quizzes.some(q => q.quizId === quizId)) {
+  if (!quizId || matchedQuiz === undefined) {
     throw new ApiError('Invalid quizId', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -23,8 +24,8 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
   }
 
   // find user associated with token and checks whether they are the quiz owner
-  const tokenUser = findTokenUser(sessionId);
-  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+  const matchedToken = findToken(sessionId);
+  if (matchedQuiz.quizOwner !== matchedToken.userId) {
     throw new ApiError('User does not own quiz to remove', HttpStatusCode.FORBIDDEN);
   }
 

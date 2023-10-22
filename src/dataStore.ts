@@ -16,10 +16,7 @@ export interface User {
 export interface Answer {
   answerId: number,
   answer: string,
-  correct: boolean,
-  position: number,
-  timeCreated: number,
-  timeLastEdited: number,
+  correct: boolean
 }
 
 export interface Question {
@@ -28,6 +25,9 @@ export interface Question {
   duration: number,
   points: number,
   answers: Answer[]
+  position: number,
+  timeCreated: number, // is this needed for question?
+  timeLastEdited: number // is this needed for question?
 }
 
 export interface Quiz {

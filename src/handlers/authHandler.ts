@@ -3,6 +3,14 @@ import { Router, Request, Response } from 'express';
 
 export const authRouter = Router();
 
+// get Routers
+authRouter.get('/details', (req: Request, res: Response) => {
+  const token = req.query.token.toString();
+  const response = adminUserDetails(token);
+  res.send(response);
+});
+
+// post Routers
 authRouter.post('/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const response = adminAuthRegister(email, password, nameFirst, nameLast);
@@ -15,8 +23,6 @@ authRouter.post('/login', (req: Request, res: Response) => {
   res.json(response);
 });
 
-authRouter.get('/details', (req: Request, res: Response) => {
-  const token = req.query.token.toString();
-  const response = adminUserDetails(token);
-  res.send(response);
-});
+// put Routers
+
+// delete Routers

@@ -1,4 +1,4 @@
-import { getData, setData, User, Token } from '../dataStore';
+import { getData, setData, User, Token, Quiz, Question } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -63,6 +63,7 @@ function helperAdminRegister(email: string, password: string, nameFirst: string,
   }
   return true;
 }
+
 /**
  * Generates a sessionId and checks that sessionId has not been assigned previously
  * @param {Array<Tokens>} Token Datastore to check that generated sID does not already exist
@@ -94,9 +95,45 @@ function tokenValidation (token: string): boolean {
   return true;
 }
 
-function findTokenUser(token:string): Token {
+/**
+ * Returns a Token from the dataStore based on passed in sessionId
+ * @param token - sessionId
+ * @returns Token | undefined (if not found)
+ */
+function findToken (token: string): Token {
   const dataStore = getData();
   return dataStore.tokens.find(t => t.sessionId === token);
 }
 
-export { clear, helperAdminRegister, createSessionId, tokenValidation, findTokenUser };
+/**
+ * Returns a user from the dataStore based on passed in userId
+ * @param userId - identifies user based on userId
+ * @returns User | undefined(if not found)
+ */
+function findUserById (userId: number): User {
+  const dataStore = getData();
+  return dataStore.users.find((user) => user.userId === userId);
+}
+
+/**
+ * Returns a user from the dataStore based on passed in quizId
+ * @param quizId - identifies user based on quizId
+ * @returns Quiz | undefined(if not found)
+ */
+function findQuizById (quizId: number): Quiz {
+  const dataStore = getData();
+  return dataStore.quizzes.find((quiz) => quiz.quizId === quizId);
+}
+
+/**
+ * Returns a Question within a Quiz based on Quiz and questionId
+ * @param quiz - Quiz NOT quizId
+ * @param questionId - identifies individual question witihin Quiz
+ * @returns Question | undefined(if not found)
+ */
+function findQuestionbyQuiz (quiz: Quiz, questionId: number): Question {
+  return quiz.questions.find((question) => question.questionId === questionId);
+}
+
+export { clear, helperAdminRegister, createSessionId, tokenValidation };
+export { findToken, findUserById, findQuizById, findQuestionbyQuiz };
