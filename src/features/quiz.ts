@@ -45,13 +45,11 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
   // check quiz name only contains alphanumeric characters and spaces
   if (!name.match(/^[a-zA-Z0-9\s]+$/)) {
     throw new ApiError('Invalid name, must not contain special characters', HttpStatusCode.BAD_REQUEST);
-    // return { error: 'Invalid name, must not contain special characters' };
   }
 
   // check quiz name is between 3 and 30 characters long
   if (name.length < 3 || name.length > 30) {
     throw new ApiError('Invalid name length', HttpStatusCode.BAD_REQUEST);
-    // return { error: 'Invalid name length' };
   }
 
   const matchedToken = findToken(sessionId);

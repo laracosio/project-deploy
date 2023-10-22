@@ -5,7 +5,7 @@ import { tokenValidation, findToken } from './other';
 import { getUnixTime } from 'date-fns';
 
 /**
- * Given a particular quiz, permanently remove the quiz.
+ * Given a particular quiz, send it to the trash (can be recovered later)
  * @param {string} sessionId - unique token containing sessionId
  * @param {number} quizId - unique identifier for quiz
  * @returns {{error: string}}

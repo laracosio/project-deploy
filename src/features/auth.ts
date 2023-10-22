@@ -16,6 +16,7 @@ interface UserDetailReturn {
     numFailedPasswordsSinceLastLogin: number
   }
 }
+
 /**
  * Register a user with an email, password, and names, then returns their authUserId value.
  * @param {string} email - unique email address
@@ -92,6 +93,7 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   setData(dataStore);
   return { token: newSessionId };
 }
+
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them

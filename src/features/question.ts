@@ -1,8 +1,8 @@
 // import statements
 
-// interface
+// interfaces
 // interface CreateQuestionReturn {
 //     questionId: number
 //   }
 
-// code
+// code for Question functions
