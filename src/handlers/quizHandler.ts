@@ -48,5 +48,6 @@ quizRouter.delete('/:quizid', (req: Request, res: Response) => {
 quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, questionBody } = req.body;
-  res.json(quizCreateQuestion(quizId, req.body.token, req.body.questionBody));
+  res.json(quizCreateQuestion(quizId, token, questionBody));
 });
+

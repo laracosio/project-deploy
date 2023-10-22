@@ -2,15 +2,10 @@
 
 import { Question, Answer, QuestionCreate, Colours } from "../dataStore";
 import { tokenValidation, getTotalDurationOfQuiz, getRandomColorAndRemove } from './other';
-import { getData, setData } from '../dataStore';
+import { getData, setData, CreateQuestionReturn } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { getUnixTime } from 'date-fns';
-
-// interface
-interface CreateQuestionReturn {
-    questionId: number,
-}
 
 // code
 function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): CreateQuestionReturn {
@@ -34,11 +29,12 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     if (questionBody.answers.find(answer => answer.answer.length < 1) || questionBody.answers.find(answer => answer.answer.length > 10)) {
         throw new ApiError('The length of any answer is shorter than 1 character long, or longer than 30 characters long', HttpStatusCode.BAD_REQUEST);
     }
-
+    
     var set = new Set(questionBody.answers);
     if (set.size !== questionBody.answers.length) {
         throw new ApiError('Answer strings are duplicates of one another', HttpStatusCode.BAD_REQUEST);
     }
+
     if (!(questionBody.answers.find(answer => answer.correct === true))) {
         throw new ApiError('There are no correct answers', HttpStatusCode.BAD_REQUEST);
     }
@@ -52,27 +48,21 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     }
 
     const authUser = dataStore.tokens.find(user => user.sessionId === token);
-    if (dataStore.quizzes[quizId].quizOwner !== authUser.userId) {
+    const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
+    if (quiz.quizOwner !== authUser.userId) {
         throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
     }
+    
     //edit timeLastEdited
-    dataStore.quizzes[quizId].timeLastEdited = getUnixTime(new Date());
+    quiz.timeLastEdited = getUnixTime(new Date());
     //create questionId
-    let questionId = 0;
-    if (dataStore.quizzes[quizId].numQuestions === 0) {
-        questionId = 1;
-    } else {
-        const reversedQuestionId = dataStore.quizzes.map(q => q.quizId).reverse();
-        const currLastQuestionId = reversedQuestionId[0];
-        questionId = currLastQuestionId + 1;
-    }
+    let questionId = quiz.numQuestions + 1;
     //assign colour and answerId to answer
     let availableColours = [...Colours];
     let arrayOfAnswers = [];
 
     for (let element of questionBody.answers) {
-        let newAnswerId = 0;
-        newAnswerId = (dataStore.quizzes[quizId].questions[questionId].answers.length);
+        let newAnswerId = (arrayOfAnswers.length + 1);
         const questionAnswerBody: Answer = {
             answerId: newAnswerId,
             answer: element.answer,
@@ -90,9 +80,10 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
         "answers": arrayOfAnswers,
     }
 
-    dataStore.quizzes[quizId].questions.push(newQuestion);
+    quiz.questions.push(newQuestion);
     setData(dataStore);
     console.log("This is the questionId: ", questionId);
+    
     return {
         questionId: questionId,
     };

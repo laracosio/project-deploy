@@ -1,4 +1,3 @@
-// // DELETE THIS LATER
 import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from './serverTestHelper';
 import { person1, person2 } from '../testingData';
 
@@ -33,8 +32,8 @@ describe('Successful tests: Create a quiz question', () => {
     }
     const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
 
-    const data = res.body;
-    console.log(res);
+    const data =  JSON.parse(res.body.toString());
+    console.log(data);
     expect(data).toStrictEqual({ questionId: expect.any(Number) });
   });
 });

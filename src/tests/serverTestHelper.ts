@@ -1,7 +1,7 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
-import { QuestionCreate } from '../dataStore';
+import { QuestionCreate, CreateQuestionReturn } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
