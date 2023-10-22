@@ -1,8 +1,15 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../features/quiz';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, quizTransferOwner } from '../features/quiz';
 
 export const quizRouter = Router();
+
+//transfer and restore must go before create
+quizRouter.post('/:quizid/transfer', (req: Request, res: Response) => {
+  const { token, userEmail } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  res.json(quizTransferOwner(token, quizId, userEmail));
+});
 
 quizRouter.post('/', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
@@ -38,3 +45,4 @@ quizRouter.put('/:quizId/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   res.json(adminQuizDescriptionUpdate(sessionToken, quizId, req.body.description));
 });
+
