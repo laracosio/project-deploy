@@ -1,4 +1,4 @@
-import { authRegisterRequest, clearRequest, quizCreateRequest, quizInfoRequest, } from './serverTestHelper';
+import { authRegisterRequest, clearRequest, quizCreateRequest, quizInfoRequest, duplicateQuestionRequest } from './serverTestHelper';
 import { person1, person2, validQuizName, validQuizDescription, validQuestionInput1, validQuestionInput2 } from '../testingData';
 import { Response } from 'sync-request-curl';
 
