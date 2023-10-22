@@ -56,6 +56,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
 
   // edit timeLastEdited
   quiz.timeLastEdited = getUnixTime(new Date());
+
   // create questionId
   const questionId = quiz.numQuestions + 1;
   // assign colour and answerId to answer
@@ -72,6 +73,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     };
     arrayOfAnswers.push(questionAnswerBody);
   }
+
   const newQuestion: Question = {
     questionId: questionId,
     question: questionBody.question,
@@ -81,6 +83,9 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
   };
 
   quiz.questions.push(newQuestion);
+  quiz.quizDuration = getTotalDurationOfQuiz(quiz.quizId);
+  quiz.numQuestions++;
+
   setData(dataStore);
 
   return {

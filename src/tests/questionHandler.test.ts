@@ -28,7 +28,6 @@ describe('Successful tests: Create a quiz question', () => {
       answers: answerCreate,
     };
     const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
-
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ questionId: expect.any(Number) });
   });
@@ -60,6 +59,7 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
 
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccessful (400): Question string is greater than 50 characters in length', () => {
