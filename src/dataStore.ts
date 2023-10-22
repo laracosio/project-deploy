@@ -25,19 +25,20 @@ export interface User {
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
 }
+
 export interface Answer {
-  answerId: number,
+  answerId?: number,
   answer: string,
   correct: boolean,
   colour: string
 }
 
 export interface Question {
-  questionId: number,
+  questionId?: number,
   question: string,
   duration: number,
   points: number,
-  answers: Answer[]
+  answers: Answer[],
 }
 
 export interface Quiz {

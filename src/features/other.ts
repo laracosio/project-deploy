@@ -135,7 +135,17 @@ function findQuestionByQuiz (quiz: Quiz, questionId: number): Question {
   return quiz.questions.find((question) => question.questionId === questionId);
 }
 
-export {
-  clear, helperAdminRegister, createSessionId, tokenValidation,
-  findToken, findUserById, findQuizById, findQuestionByQuiz
-};
+function getTotalDurationOfQuiz (quizId: number): number {
+  const dataStore = getData();
+  let totalDuration = 0;
+  
+  const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
+
+  for (var question of quiz.questions) {
+      totalDuration = totalDuration + question.duration;
+  }
+  return totalDuration;
+
+}
+
+export { clear, helperAdminRegister, createSessionId, tokenValidation,  findToken, findUserById, findQuizById, findQuestionByQuiz, getTotalDurationOfQuiz };
