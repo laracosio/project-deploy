@@ -1,8 +1,8 @@
 // import statements
 
-import { Question, Answer, AnswerCreate, QuestionCreate, Colours } from "../dataStore";
-import { tokenValidation, getTotalDurationOfQuiz, getRandomColour } from './other';
-import { getData, setData, Token } from '../dataStore';
+import { Question, Answer, QuestionCreate, Colours } from "../dataStore";
+import { tokenValidation, getTotalDurationOfQuiz, getRandomColorAndRemove } from './other';
+import { getData, setData } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { getUnixTime } from 'date-fns';
@@ -15,7 +15,6 @@ interface CreateQuestionReturn {
 // code
 function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): CreateQuestionReturn {
     const dataStore = getData();
-
 
     if (questionBody.question.length < 5 || questionBody.question.length > 50) {
         throw new ApiError('Question string is less than 5 characters in length or greater than 50 characters in length', HttpStatusCode.BAD_REQUEST);
@@ -56,9 +55,9 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     if (dataStore.quizzes[quizId].quizOwner !== authUser.userId) {
         throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
     }
-
-    dataStore.quizzes[quizId].timeLastEdited = getUnixTime(new Date());;
-
+    //edit timeLastEdited
+    dataStore.quizzes[quizId].timeLastEdited = getUnixTime(new Date());
+    //create questionId
     let questionId = 0;
     if (dataStore.quizzes[quizId].numQuestions === 0) {
         questionId = 1;
@@ -67,38 +66,21 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
         const currLastQuestionId = reversedQuestionId[0];
         questionId = currLastQuestionId + 1;
     }
-
-    let AnswerBody: Answer = {
-        answerId: -1,
-        answer: 'blah',
-        correct: true,
-        colour: 'blue',
-    };
-
-
-    //TODO: ASSIGNING COLOUR
-    for (let answer of questionBody.answers) {
-        let unavailableColours: string | string[] = [];
-        let randomColour = 'not assigned'
-        while (unavailableColours.includes(randomColour)) {
-            let randomColour = getRandomColour(Colours);
-        }
-        unavailableColours.push(randomColour);
-        AnswerBody.colour = randomColour;
-    }
-
-    for (let answer of questionBody.answers) {
+    //assign colour and answerId to answer
+    let availableColours = [...Colours];
+    for (let element of questionBody.answers) {
         let newAnswerId = 0;
-        if (dataStore.quizzes[quizId].questions[questionId].answers.length === 0) {
-            newAnswerId = 1;
-            //TODO: AnswerBody.answer = questionBody.answers[newAnswerId].answer;
-
-        } else {
-            newAnswerId = (dataStore.quizzes[quizId].questions[questionId].answers.length) + 1;
+        newAnswerId = (dataStore.quizzes[quizId].questions[questionId].answers.length);
+        const questionAnswerBody: Answer = {
+            answerId: newAnswerId,
+            answer: element.answer,
+            correct: element.correct,
+            colour: getRandomColorAndRemove(availableColours),
         }
-    }
+        dataStore.quizzes[quizId].questions[questionId].answers.push(questionAnswerBody)
 
-    //push it in the array
+    }
+    //TODO: push it in the array
 
     const newQuestion: Question = {
         "questionId": questionId,
@@ -114,6 +96,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     return {
         questionId: questionId,
     };
+
 };
 
 export { quizCreateQuestion };

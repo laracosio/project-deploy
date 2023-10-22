@@ -148,9 +148,22 @@ function getTotalDurationOfQuiz (quizId: number): number {
 
 }
 
-function getRandomColour(colors: string[]): string {
-  const randomIndex = Math.floor(Math.random() * Colours.length);
-  return colors[randomIndex];
-} 
+  function getRandomColorAndRemove(availableColours: string[]): string | null {
+    if (availableColours.length === 0) {
+      // Array is empty, return null or handle as desired
+      return null;
+    }
+  
+    // Generate a random index
+    const randomIndex = Math.floor(Math.random() * availableColours.length);
+  
+    // Get the random color
+    const randomColor = availableColours[randomIndex];
+  
+    // Remove the color from the array
+    availableColours.splice(randomIndex, 1);
+  
+    return randomColor;
+  }
 
-export { clear, helperAdminRegister, createSessionId, tokenValidation, findToken, getTotalDurationOfQuiz, getRandomColour };
+export { clear, helperAdminRegister, createSessionId, tokenValidation, findQuestionByQuiz, findQuizById, findUserById, findToken, getTotalDurationOfQuiz, getRandomColorAndRemove };
