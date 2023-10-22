@@ -60,6 +60,7 @@ function duplicateQuestion (sessionId: string, quizId: number, questionId: numbe
   quizBody.questions.forEach((question, index) => question.position = index);
   quizBody.timeLastEdited = getUnixTime(new Date());
   quizBody.quizDuration = TO_BE_IMPLEMENTED!!!
+  
   return { newQuestionId: duplicatedQuestion.questionId }
 }
 
