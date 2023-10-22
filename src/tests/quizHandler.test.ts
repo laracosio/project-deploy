@@ -1,4 +1,4 @@
-import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest, quizListRequest, quizNameUpdateRequest, quizDescriptUpdateRequest } from './serverTestHelper';
+import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest, quizListRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest, authLoginRequest } from './serverTestHelper';
 import { person1, person2, person3, person4, person5, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription, newvalidQuizName, newvalidQuizDescription } from '../testingData';
 import { Response } from 'sync-request-curl';
 
@@ -503,19 +503,17 @@ describe('POST /v1/admin/quiz/{quizId}/transfer - Success', () => {
     quiz1 = quizCreateRequest(sess1Data.token, validQuizName, validQuizDescription);
     sess2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
   });
-  test('transfer to from person1 to person2', () => {
+  test('transfer to from person1 to person2 and then to person3', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const res = quizTransferOwner(quiz1Data.quizId, sess1Data.token, person2.email);
-    expect(JSON.parse(res.body.toString())).toStrictEqual({});
-  });
-  test('transfer to from person2 to person3 and person3 trashes', () => {
-    const quiz1Data = JSON.parse(quiz1.body.toString());
     const sess2Data = JSON.parse(sess2.body.toString());
+    const res = quizTransferRequest(sess1Data.token, quiz1Data.quizId, person2.email);
+    expect(JSON.parse(res.body.toString())).toStrictEqual({});
+
     const sess3 = authRegisterRequest(person3.email, person3.password, person3.nameFirst, person3.nameLast);
     const sess3Data = JSON.parse(sess3.body.toString());
-    const res = quizTransferOwner(quiz1Data.quizId, sess2Data.token, person3.email);
-    expect(JSON.parse(res.body.toString())).toStrictEqual({});
+    const res2 = quizTransferRequest(sess2Data.token, quiz1Data.quizId, person3.email);
+    expect(JSON.parse(res2.body.toString())).toStrictEqual({});
     const trashQuiz = quizRemoveRequest(sess3Data.token, quiz1Data.quizId);
     expect(JSON.parse(trashQuiz.body.toString())).toStrictEqual({});
   });
@@ -532,23 +530,29 @@ describe('POST /v1/admin/quiz/{quizId}/transfer - Error', () => {
   test('Quiz ID does not refer to a valid quiz', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const res = quizTransferOwner(quiz1Data.quizId + 1, sess1Data.token, person2.email);
+    const res = quizTransferRequest(sess1Data.token, quiz1Data.quizId + 1, person2.email);
     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(400);
   });
   test('userEmail is not a real user', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const res = quizTransferOwner(quiz1Data.quizId, sess1Data.token, person3.email);
+    const res = quizTransferRequest(sess1Data.token, quiz1Data.quizId, person3.email);
+    expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(400);
+  });
+  test('userEmail is the same token-sessionId', () => {
+    const sess1Data = JSON.parse(sess1.body.toString());
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const res = quizTransferRequest(sess1Data.token, quiz1Data.quizId, person1.email);
     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(400);
   });
   test('userEmail is the current logged in user', () => {
-    const sess1Data = JSON.parse(sess1.body.toString());
-    const sess2Data = JSON.parse(sess2.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    quizLogout(sess2Data.token);
-    const res = quizTransferOwner(quiz1Data.quizId, sess1Data.token, person1.email);
+    const sameUser = authLoginRequest(person1.email, person1.password);
+    const sameUserData = JSON.parse(sameUser.body.toString());
+    const res = quizTransferRequest(sameUserData.token, quiz1Data.quizId, person1.email);
     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(400);
   });
@@ -557,31 +561,31 @@ describe('POST /v1/admin/quiz/{quizId}/transfer - Error', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
     const sess2Data = JSON.parse(sess2.body.toString());
     quizCreateRequest(sess2Data.token, validQuizName, validQuizDescription);
-    const res = quizTransferOwner(quiz1Data.quizId, sess1Data.token, person2.email);
+    const res = quizTransferRequest(sess1Data.token, quiz1Data.quizId, person2.email);
     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(400);
   });
   test('Token is empty)', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const res = quizTransferOwner(quiz1Data.quizId,'', person2.email);
+    const res = quizTransferRequest('', quiz1Data.quizId, person2.email);
     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(401);
   });
-  // NEEDS LOG OUT
-  // test('Token is invalid (does not refer to valid logged in user session)', () => {
-  //   const sess1Data = JSON.parse(sess1.body.toString());
-  //   const quiz1Data = JSON.parse(quiz1.body.toString());
-  //   const sess2Data = JSON.parse(sess2.body.toString());
-  //   quizLogout(sess2Data.token);
-  //   const res = quizTransferOwner(quiz1Data.quizId, sess2Data.token, person2.email);
-  //   expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
-  //   expect(res.statusCode).toStrictEqual(401);
-  // });
+  //   // NEEDS LOG OUT
+  //   test('Token is invalid (does not refer to valid logged in user session)', () => {
+  //     const sess1Data = JSON.parse(sess1.body.toString());
+  //     const quiz1Data = JSON.parse(quiz1.body.toString());
+  //     const sess2Data = JSON.parse(sess2.body.toString());
+  //     quizLogout(sess2Data.token);
+  //     const res = quizTransferRequest(quiz1Data.quizId, sess2Data.token, person2.email);
+  //     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
+  //     expect(res.statusCode).toStrictEqual(401);
+  //   });
   test('Valid token is provided, but user is not an owner of this quiz', () => {
-    const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
     const sess2Data = JSON.parse(sess2.body.toString());
-    const res = quizTransferOwner(quiz1Data.quizId, sess2Data.token, person1.email);
+    authRegisterRequest(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    const res = quizTransferRequest(sess2Data.token, quiz1Data.quizId, person3.email);
     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(403);
   });
