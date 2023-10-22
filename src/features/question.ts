@@ -1,6 +1,6 @@
 // import statements
 
-import { Question, Answer } from "../dataStore";
+import { Question, Answer, AnswerCreate, QuestionCreate } from "../dataStore";
 import { tokenValidation, getTotalDurationOfQuiz } from './other';
 import { getData, setData, Token } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
@@ -72,7 +72,6 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
         questionId = currLastQuestionId + 1;
     }
 
-    //TODO ASSIGNING ANSWER ID FOR ALL ANSWERS
     let answerId = 0;
     for (var answer of questionBody.answers) {
         if (dataStore.quizzes[quizId].questions[questionId].answers.length === 0) {
@@ -83,9 +82,14 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
             answer.answerId = answerId;
         }
     }
+
     let position = 0;
-    for (var answer of questionBody.answers) {
-        answer.position++;
+    if (dataStore.quizzes[quizId].questions[questionId].position === 0) {
+        position = 1;
+        questionBody.position = position;
+    } else {
+        position = position + 1;
+        questionBody.position = position;
     }
 
     const newQuestion: Question = {
@@ -93,10 +97,16 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
         "question": questionBody.question,
         "duration": questionBody.duration,
         "points": questionBody.points,
+        "position": questionBody.position,
         "answers": questionBody.answers,
     }
 
-    return questionId;
+    dataStore.quizzes[quizId].questions.push(newQuestion);
+    setData(dataStore);
+
+    return {
+        questionId: questionId,
+    };
 };
 
 export { quizCreateQuestion };

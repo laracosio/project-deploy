@@ -26,19 +26,26 @@ export interface User {
   numFailedPasswordsSinceLastLogin: number
 }
 
-export interface Answer {
-  answerId?: number,
-  answer: string,
-  correct: boolean,
-  colour: string
-}
-
-export interface Question {
-  questionId?: number,
+export interface QuestionCreate {
   question: string,
   duration: number,
   points: number,
   answers: Answer[],
+}
+
+export interface AnswerCreate {
+  answer: string,
+  correct: boolean,
+}
+
+export interface Question extends QuestionCreate {
+  questionId: number,
+  position: number,
+}
+
+export interface Answer extends AnswerCreate {
+  answerId: number,
+  colour: string,
 }
 
 export interface Quiz {

@@ -17,20 +17,20 @@ describe('Successful tests: Create a quiz question', () => {
     const quizId = quizCreateRequest(personLoginParsed, quizName, quizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
 
-    const answer = [
+    const answerCreate = [
       {answer: 'Hamlet', correct: true},
       { answer: 'Coco', correct: false },
       { answer: 'Bob', correct: false },
     ]
 
-    const questionBody = {
+    const questionCreate = {
       question: 'Who is laras best boy cat?',
       duration: 1,
       points: 2,
-      answers: answer,
+      answers: answerCreate,
     }
   
-    const res = createQuizQuestionRequest(personLoginParsed, quizIdParsed, questionBody);
+    const res = createQuizQuestionRequest(personLoginParsed, quizIdParsed, questionCreate);
 
     const data = res.body;
     expect(data).toStrictEqual({ questionId: expect.any(Number) });
