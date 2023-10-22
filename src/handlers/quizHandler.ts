@@ -1,8 +1,17 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../features/quiz';
+import { duplicateQuestion } from '../features/question';
 
 export const quizRouter = Router();
+
+quizRouter.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate',(req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionId);
+  const { token } = req.body;
+  res.json(duplicateQuestion(token, quizId, questionId));
+});
+
 
 quizRouter.post('/', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
