@@ -30,7 +30,7 @@ export interface QuestionCreate {
   question: string,
   duration: number,
   points: number,
-  answers: Answer[],
+  answers: AnswerCreate[],
 }
 
 export interface AnswerCreate {
@@ -38,14 +38,19 @@ export interface AnswerCreate {
   correct: boolean,
 }
 
-export interface Question extends QuestionCreate {
-  questionId: number,
-  position: number,
+export interface Answer {
+  answerId: number,
+  answer: string,
+  correct: boolean,
+  colour: string,
 }
 
-export interface Answer extends AnswerCreate {
-  answerId: number,
-  colour: string,
+export interface Question {
+  questionId: number,
+  question: string,
+  duration: number,
+  points: number,
+  answers: Answer[],
 }
 
 export interface Quiz {

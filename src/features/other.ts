@@ -1,4 +1,4 @@
-import { getData, setData, User, Token, Quiz, Question } from '../dataStore';
+import { getData, setData, User, Token, Quiz, Question, Colours } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -148,4 +148,9 @@ function getTotalDurationOfQuiz (quizId: number): number {
 
 }
 
-export { clear, helperAdminRegister, createSessionId, tokenValidation,  findToken, findUserById, findQuizById, findQuestionByQuiz, getTotalDurationOfQuiz };
+function getRandomColour(colors: string[]): string {
+  const randomIndex = Math.floor(Math.random() * Colours.length);
+  return colors[randomIndex];
+} 
+
+export { clear, helperAdminRegister, createSessionId, tokenValidation, findToken, getTotalDurationOfQuiz, getRandomColour };
