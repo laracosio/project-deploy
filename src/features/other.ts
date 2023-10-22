@@ -107,7 +107,7 @@ function findToken (token: string): Token {
 
 /**
  * Returns a user from the dataStore based on passed in userId
- * @param userId - identifies user based on userId 
+ * @param userId - identifies user based on userId
  * @returns User | undefined(if not found)
  */
 function findUserById (userId: number): User {
@@ -117,7 +117,7 @@ function findUserById (userId: number): User {
 
 /**
  * Returns a user from the dataStore based on passed in quizId
- * @param quizId - identifies user based on quizId 
+ * @param quizId - identifies user based on quizId
  * @returns Quiz | undefined(if not found)
  */
 function findQuizById (quizId: number): Quiz {
@@ -127,7 +127,7 @@ function findQuizById (quizId: number): Quiz {
 
 /**
  * Returns a Question within a Quiz based on Quiz and questionId
- * @param quiz - Quiz NOT quizId 
+ * @param quiz - Quiz NOT quizId
  * @param questionId - identifies individual question witihin Quiz
  * @returns Question | undefined(if not found)
  */

@@ -131,4 +131,7 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
   );
 };
 
-export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest };
+export { authRegisterRequest, authLoginRequest, authUserDetailsRequest };
+export { clearRequest };
+export { quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest };
+export { quizNameUpdateRequest, quizDescriptUpdateRequest };
