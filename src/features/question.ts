@@ -51,6 +51,9 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     if (dataStore.quizzes[quizId].quizOwner !== authUser.userId) {
         throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
     }
+
+    dataStore.quizzes[quizId].timeLastEdited = getUnixTime(new Date());;
+    
     /*
     const assignedColour = randomColourGenerator();
     
@@ -61,7 +64,6 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     */
 
     let questionId = 0;
-
     if (dataStore.quizzes[quizId].numQuestions === 0) {
         questionId = 1;
     } else {
@@ -81,8 +83,10 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
             answer.answerId = answerId;
         }
     }
-
-    const date = getUnixTime(new Date());
+    let position = 0;
+    for (var answer of questionBody.answers) {
+        answer.position++;
+    }
 
     const newQuestion: Question = {
         "questionId": questionId,
