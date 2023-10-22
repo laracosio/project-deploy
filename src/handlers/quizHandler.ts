@@ -16,7 +16,7 @@ quizRouter.get('/:quizId', (req: Request, res: Response) => {
   res.json(adminQuizInfo(token, quizId));
 });
 
-// post routers
+// post routers - quizCreate must go last!
 quizRouter.post('/', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
   res.json(adminQuizCreate(token, name, description));
