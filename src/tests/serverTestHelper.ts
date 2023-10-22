@@ -52,6 +52,21 @@ const clearRequest = (): Response => {
   );
 };
 
+// must go before create!
+const quizTransferRequest = (token: string, quizId: number, userEmail: string): Response => {
+  return request(
+    'POST',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/transfer',
+    {
+      body: JSON.stringify({
+        token: token,
+        userEmail: userEmail
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
 const quizCreateRequest = (token: string, name: string, description: string): Response => {
   return request(
     'POST',
@@ -131,4 +146,8 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
   );
 };
 
-export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest };
+export {
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
+  quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
+  quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest
+};
