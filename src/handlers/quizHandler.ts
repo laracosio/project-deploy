@@ -50,4 +50,7 @@ quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   const { token, questionBody } = req.body;
   res.json(quizCreateQuestion(quizId, token, questionBody));
 });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 73070b9 (createQuestion passed tests and passed linting)

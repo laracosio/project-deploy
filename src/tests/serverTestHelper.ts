@@ -1,7 +1,7 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
-import { QuestionCreate, CreateQuestionReturn } from '../dataStore';
+import { QuestionCreate } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -140,11 +140,11 @@ const createQuizQuestionRequest = (quizId: number, token: string, questionBody: 
     'POST',
     `${SERVER_URL}/v1/admin/quiz/${quizId}/question`,
     {
-        json: {
-          token: token,
-          questionBody: questionBody,
-        },
+      json: {
+        token: token,
+        questionBody: questionBody,
+      },
     }
-);
-} 
+  );
+};
 export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, createQuizQuestionRequest };

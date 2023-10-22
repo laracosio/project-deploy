@@ -29,16 +29,16 @@ export interface CreateQuestionReturn {
   questionId: number,
 }
 
+export interface AnswerCreate {
+  answer: string,
+  correct: boolean,
+}
+
 export interface QuestionCreate {
   question: string,
   duration: number,
   points: number,
   answers: AnswerCreate[],
-}
-
-export interface AnswerCreate {
-  answer: string,
-  correct: boolean,
 }
 
 export interface Answer {
