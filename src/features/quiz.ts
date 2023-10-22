@@ -1,6 +1,6 @@
 import { Question, Quiz, getData, setData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
-import { findTokenUser, tokenValidation } from './other';
+import { findToken, tokenValidation } from './other';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 
@@ -54,8 +54,8 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
     // return { error: 'Invalid name length' };
   }
 
-  const tokenUser = findTokenUser(sessionId);
-  if (dataStore.quizzes.some((q) => (q.quizOwner === tokenUser.userId && q.name === name))) {
+  const matchedToken = findToken(sessionId);
+  if (dataStore.quizzes.some((q) => (q.quizOwner === matchedToken.userId && q.name === name))) {
     throw new ApiError('Quiz name already in use', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -81,7 +81,7 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
     timeCreated: date,
     timeLastEdited: date,
     description: description,
-    quizOwner: tokenUser.userId,
+    quizOwner: matchedToken.userId,
     numQuestions: 0, // questionCreate to update
     questions: [], // questionCreate to update
     quizDuration: 0, // questionCreate to update
@@ -110,9 +110,9 @@ function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
   }
 
   // find user associated with token and checks whether they are the quiz owner
-  const tokenUser = findTokenUser(sessionId);
+  const matchedToken = findToken(sessionId);
 
-  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('User does not own quiz to check info', HttpStatusCode.FORBIDDEN);
   }
 
@@ -121,7 +121,7 @@ function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
     throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
   }
 
-  const quizMatch = dataStore.quizzes.find((q) => (q.quizOwner === tokenUser.userId && q.quizId === quizId));
+  const quizMatch = dataStore.quizzes.find((q) => (q.quizOwner === matchedToken.userId && q.quizId === quizId));
 
   return {
     quizId: quizMatch.quizId,
@@ -149,12 +149,12 @@ function adminQuizList (sessionId: string): QuizListReturn {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  const tokenUser = findTokenUser(sessionId);
+  const matchedToken = findToken(sessionId);
 
   // find all user quizzes and add to an array
   const userQuizList: Array<BriefQuizInfo> = [];
   dataStore.quizzes.forEach((quiz) => {
-    if (quiz.quizOwner === tokenUser.userId) {
+    if (quiz.quizOwner === matchedToken.userId) {
       const obj = {
         quizId: quiz.quizId,
         name: quiz.name,
@@ -189,8 +189,8 @@ function adminQuizNameUpdate (sessionId: string, quizId: number, name: string): 
   }
 
   // check valid quizId is owned by the current user associated with token
-  const tokenUser = findTokenUser(sessionId);
-  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+  const matchedToken = findToken(sessionId);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }
 
@@ -204,11 +204,11 @@ function adminQuizNameUpdate (sessionId: string, quizId: number, name: string): 
     throw new ApiError('Invalid name length', HttpStatusCode.BAD_REQUEST);
   }
   // check quiz name doesn't already exist in current user's list
-  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === name))) {
+  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === matchedToken.userId && quiz.name === name))) {
     throw new ApiError('Quiz name already exists', HttpStatusCode.BAD_REQUEST);
   }
 
-  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
+  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === matchedToken.userId && quiz.quizId === quizId));
   dataStore.quizzes[index].name = name;
 
   const date = getUnixTime(new Date());
@@ -239,8 +239,8 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
   }
 
   // check valid quizId is owned by the current user associated with token
-  const tokenUser = findTokenUser(sessionId);
-  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+  const matchedToken = findToken(sessionId);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }
 
@@ -249,7 +249,7 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
     throw new ApiError('Quiz Description more than 100 characters in length', HttpStatusCode.BAD_REQUEST);
   }
 
-  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
+  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === matchedToken.userId && quiz.quizId === quizId));
   dataStore.quizzes[index].description = description;
 
   const date = getUnixTime(new Date());

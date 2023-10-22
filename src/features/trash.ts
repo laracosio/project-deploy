@@ -1,7 +1,7 @@
 import { getData, setData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { tokenValidation, findTokenUser } from './other';
+import { tokenValidation, findToken } from './other';
 import { getUnixTime } from 'date-fns';
 
 /**
@@ -23,8 +23,8 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
   }
 
   // find user associated with token and checks whether they are the quiz owner
-  const tokenUser = findTokenUser(sessionId);
-  if (dataStore.quizzes.some((q) => (q.quizOwner !== tokenUser.userId && q.quizId === quizId))) {
+  const matchedToken = findToken(sessionId);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('User does not own quiz to remove', HttpStatusCode.FORBIDDEN);
   }
 

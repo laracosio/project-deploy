@@ -94,9 +94,9 @@ function tokenValidation (token: string): boolean {
   return true;
 }
 
-function findTokenUser(token:string): Token {
+function findToken(token:string): Token {
   const dataStore = getData();
   return dataStore.tokens.find(t => t.sessionId === token);
 }
 
-export { clear, helperAdminRegister, createSessionId, tokenValidation, findTokenUser };
+export { clear, helperAdminRegister, createSessionId, tokenValidation, findToken };
