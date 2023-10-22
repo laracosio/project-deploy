@@ -138,7 +138,7 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
 const createQuizQuestionRequest = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
   return request(
     'POST',
-    SERVER_URL + 'v1/admin/quiz/' + quizId + '/question',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question`,
     {
         json: {
           token: token,

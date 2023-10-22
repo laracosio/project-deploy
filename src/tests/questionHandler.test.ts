@@ -8,15 +8,17 @@ beforeEach(() => {
 
 //TODO
 describe('Successful tests: Create a quiz question', () => {
-  test('Create a Quiz Question test', () => {
+  test.only('Create a Quiz Question test', () => {
+    clearRequest();
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
+    console.log("This is the token: ", personLoginParsed.token);
     const quizName = 'My first quiz';
     const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
+    console.log("This is the quizId:", quizIdParsed.quizId);
     const answerCreate = [
       {answer: 'Hamlet', correct: true},
       { answer: 'Coco', correct: false },
@@ -29,10 +31,10 @@ describe('Successful tests: Create a quiz question', () => {
       points: 2,
       answers: answerCreate,
     }
-  
-    const res = createQuizQuestionRequest(personLoginParsed, quizIdParsed, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
 
     const data = res.body;
+    console.log(res);
     expect(data).toStrictEqual({ questionId: expect.any(Number) });
   });
 });

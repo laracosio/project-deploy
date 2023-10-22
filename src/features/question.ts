@@ -68,6 +68,8 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     }
     //assign colour and answerId to answer
     let availableColours = [...Colours];
+    let arrayOfAnswers = [];
+
     for (let element of questionBody.answers) {
         let newAnswerId = 0;
         newAnswerId = (dataStore.quizzes[quizId].questions[questionId].answers.length);
@@ -77,22 +79,20 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
             correct: element.correct,
             colour: getRandomColorAndRemove(availableColours),
         }
-        dataStore.quizzes[quizId].questions[questionId].answers.push(questionAnswerBody)
+        arrayOfAnswers.push(questionAnswerBody);
 
     }
-    //TODO: push it in the array
-
     const newQuestion: Question = {
         "questionId": questionId,
         "question": questionBody.question,
         "duration": questionBody.duration,
         "points": questionBody.points,
-        "answers": questionBody.answers,
+        "answers": arrayOfAnswers,
     }
 
     dataStore.quizzes[quizId].questions.push(newQuestion);
     setData(dataStore);
-
+    console.log("This is the questionId: ", questionId);
     return {
         questionId: questionId,
     };

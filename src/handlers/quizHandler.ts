@@ -43,11 +43,10 @@ quizRouter.delete('/:quizid', (req: Request, res: Response) => {
   const response = adminQuizRemove(sessionToken, quizId);
   res.json(response);
 });
-=======
+
 //
 quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, questionBody } = req.body;
-  res.json(quizCreateQuestion(quizId, token, questionBody));
+  res.json(quizCreateQuestion(quizId, req.body.token, req.body.questionBody));
 });
->>>>>>> e71085a (WIP: createQuestion)
