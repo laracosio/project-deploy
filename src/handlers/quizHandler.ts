@@ -4,7 +4,7 @@ import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adm
 
 export const quizRouter = Router();
 
-//transfer and restore must go before create
+// transfer and restore must go before create
 quizRouter.post('/:quizid/transfer', (req: Request, res: Response) => {
   const { token, userEmail } = req.body;
   const quizId = parseInt(req.params.quizid);
@@ -45,4 +45,3 @@ quizRouter.put('/:quizId/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   res.json(adminQuizDescriptionUpdate(sessionToken, quizId, req.body.description));
 });
-
