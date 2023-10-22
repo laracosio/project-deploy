@@ -1,4 +1,4 @@
-import { getData, setData, User, Token } from '../dataStore';
+import { getData, setData, User, Token, Quiz, Question } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -94,9 +94,24 @@ function tokenValidation (token: string): boolean {
   return true;
 }
 
-function findToken(token:string): Token {
+/**
+ * Returns a Token from the dataStore based on passed in sessionId
+ * @param token 
+ * @returns Token | undefined (if not found)
+ */
+function findToken (token: string): Token {
   const dataStore = getData();
   return dataStore.tokens.find(t => t.sessionId === token);
+}
+
+/**
+ * Returns a user from the dataStore based on passed in sessionId
+ * @param sessionId - identifies user based on sessionId 
+ * @returns User | undefined(if not found)
+ */
+function findUserById(sessionId: string): User {
+  const dataStore = getData();
+  return dataStore.users.find((user) => user.email === userEmail);
 }
 
 export { clear, helperAdminRegister, createSessionId, tokenValidation, findToken };
