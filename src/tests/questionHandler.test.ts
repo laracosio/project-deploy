@@ -7,7 +7,7 @@ beforeEach(() => {
   clearRequest();
 });
 
-// create Question
+// create Question - Lara
 describe('Successful tests: Create a quiz question', () => {
   test('Create a Quiz Question test', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
