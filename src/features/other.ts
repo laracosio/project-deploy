@@ -1,5 +1,5 @@
 
-import { getData, setData, User, Token,  Quiz, Question, Colours } from '../dataStore';
+import { getData, setData, User, Token, Quiz, Question } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 

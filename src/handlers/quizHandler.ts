@@ -49,4 +49,3 @@ quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   const { token, questionBody } = req.body;
   res.json(quizCreateQuestion(quizId, token, questionBody));
 });
-
