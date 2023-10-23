@@ -163,7 +163,6 @@ const createQuizQuestionRequest = (quizId: number, token: string, questionBody: 
     }
   );
 };
-<<<<<<< HEAD
 
 const moveQuestionRequest = (token: string, quizId: number, questionId: number, newPosition: number): Response => {
   return request(
@@ -179,13 +178,6 @@ const moveQuestionRequest = (token: string, quizId: number, questionId: number, 
   );
 };
 
-export {
-  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
-  quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
-  quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest, quizTransferRequest,
-  createQuizQuestionRequest
-};
-=======
 const updateQuizQuestionRequest = (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): Response => {
   return request(
     'PUT',
@@ -198,5 +190,10 @@ const updateQuizQuestionRequest = (quizId: number, questionId: number, token: st
     }
   );
 };
-export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, createQuizQuestionRequest, updateQuizQuestionRequest };
->>>>>>> f372c43 (updateQuestion: Working code and passing all tests)
+
+export { 
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
+  quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
+  quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest, quizTransferRequest,
+  createQuizQuestionRequest, updateQuizQuestionRequest
+};
