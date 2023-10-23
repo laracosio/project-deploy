@@ -131,4 +131,17 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
   );
 };
 
-export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest };
+const quizViewTrashRequest = (token: string): Response => {
+  return request(
+    'PUT'
+    `$SERVER_URL}/v1/admin/quiz/trash`,
+    {
+      body: JSON.stringify({
+        token: token,
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  )
+}
+
+export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizViewTrashRequest };
