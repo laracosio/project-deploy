@@ -163,6 +163,7 @@ const createQuizQuestionRequest = (quizId: number, token: string, questionBody: 
     }
   );
 };
+<<<<<<< HEAD
 
 const moveQuestionRequest = (token: string, quizId: number, questionId: number, newPosition: number): Response => {
   return request(
@@ -184,3 +185,18 @@ export {
   quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest, quizTransferRequest,
   createQuizQuestionRequest
 };
+=======
+const updateQuizQuestionRequest = (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`,
+    {
+      json: {
+        token: token,
+        questionBody: questionBody,
+      },
+    }
+  );
+};
+export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, createQuizQuestionRequest, updateQuizQuestionRequest };
+>>>>>>> f372c43 (updateQuestion: Working code and passing all tests)
