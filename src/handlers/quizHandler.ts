@@ -35,7 +35,6 @@ quizRouter.put('/:quizId/description', (req: Request, res: Response) => {
   res.json(adminQuizDescriptionUpdate(sessionToken, quizId, req.body.description));
 });
 
-<<<<<<< HEAD
 // delete routers
 quizRouter.delete('/:quizid', (req: Request, res: Response) => {
   const sessionToken = req.query.token as string;
@@ -50,7 +49,4 @@ quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   const { token, questionBody } = req.body;
   res.json(quizCreateQuestion(quizId, token, questionBody));
 });
-<<<<<<< HEAD
 
-=======
->>>>>>> 73070b9 (createQuestion passed tests and passed linting)
