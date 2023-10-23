@@ -149,7 +149,6 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
 =======
 function quizUpdateQuestion (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
   const dataStore = getData();
-
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
 
   if (!quiz.questions.some((question) => question.questionId === questionId)) {

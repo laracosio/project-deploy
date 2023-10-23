@@ -624,7 +624,6 @@ describe('Successful tests: Update a quiz question', () => {
       points: 2,
       answers: answerCreateUpdate,
     };
-
     const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});

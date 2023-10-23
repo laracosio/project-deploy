@@ -1,8 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../features/quiz';
+<<<<<<< HEAD
 import { quizCreateQuestion } from '../features/question'; import { adminMoveQuestion } from '../features/question';
 
+=======
+import { quizCreateQuestion, quizUpdateQuestion } from '../features/question';
+>>>>>>> 89a9cf0 (Fixed conflicts)
 export const quizRouter = Router();
 
 // get routers
@@ -28,6 +32,13 @@ quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, questionBody } = req.body;
   res.json(quizCreateQuestion(quizId, token, questionBody));
+});
+
+quizRouter.put('/:quizId/question/:questionId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const { token, questionBody } = req.body;
+  res.json(quizUpdateQuestion(quizId, questionId, token, questionBody));
 });
 
 quizRouter.post('/', (req: Request, res: Response) => {
