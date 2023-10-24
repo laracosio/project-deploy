@@ -133,7 +133,7 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
 
 const quizViewTrashRequest = (token: string): Response => {
   return request(
-    'PUT'
+    'GET'
     `$SERVER_URL}/v1/admin/quiz/trash`,
     {
       body: JSON.stringify({
@@ -144,4 +144,30 @@ const quizViewTrashRequest = (token: string): Response => {
   )
 }
 
-export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizViewTrashRequest };
+const quizRestoreTrashRequest = (token: string, quizId: number): Response => {
+  return request(
+    'POST'
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/restore`,
+    {
+      body: JSON.stringify({
+        token: token,
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  )
+}
+
+const quizEmptyTrashRequest = (token: string, quizId: number): Response => {
+  return request(
+    'DELETE'
+    `$SERVER_URL}/v1/admin/quiz/trash/empty`,
+    {
+      body: JSON.stringify({
+        token: token,
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  )
+}
+
+export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizViewTrashRequest, quizRestoreTrashRequest, quizEmptyTrashRequest };
