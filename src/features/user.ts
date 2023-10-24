@@ -1,4 +1,4 @@
-import { getData } from '../dataStore';
+import { getData, setData } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { findToken, findUserById, tokenValidation } from './other';
@@ -52,25 +52,33 @@ function adminUserDetails(sessionId: string): UserDetailReturn {
  * @returns {}
  * @returns {{ error: string }} on error
  */
-function adminUserUpdatePassword(sessionId: string, oldPassword: string, newPassword: string) {
+function adminUserUpdatePassword(token: string, oldPassword: string, newPassword: string): object {
   const dataStore = getData();
   
-  const userToken = findToken(sessionId);
+  const userToken = findToken(token);
   const user = findUserById(userToken.userId);
-  
+
   // check oldPassword is correct
-  if (oldPassword = user.password) {
+  if (oldPassword !== user.password) {
+    console.log('curr incorrect');
     throw new ApiError('Old Password is incorrect', HttpStatusCode.BAD_REQUEST);
   }
 
   // check newPassword doesn't match oldPassword
-  if (oldPassword === newPassword) {
+  if (newPassword === oldPassword) {
+    console.log('same as curr');
     throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
   }
 
+  console.log(user.oldPasswords.includes(newPassword));
+  console.log(`old: ${oldPassword} new: ${newPassword}`);
+
   // check newPassword hasn't been used by this user in the past
-  if (user.oldPasswords.some((p) => p === newPassword)) {
-    throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
+  if (user.oldPasswords.includes(newPassword)) {
+    console.log('same as old');
+    console.log(newPassword);
+    console.log('^ should be quickend');
+    throw new ApiError('poop', HttpStatusCode.BAD_REQUEST);
   }
 
   // check newPassword is not less than 8 characters
@@ -85,6 +93,14 @@ function adminUserUpdatePassword(sessionId: string, oldPassword: string, newPass
     throw new ApiError('Password must contain at least one number and at least one letter', HttpStatusCode.BAD_REQUEST);
   }
 
+  // store old password in user details
+  console.log('reset password');
+  user.oldPasswords.push(oldPassword);
+  user.password = newPassword;
+  // update new password
+
+  setData(dataStore);
+  return {};
 }
 
 export {

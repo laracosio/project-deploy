@@ -12,9 +12,9 @@ userRouter.get('/details', (req: Request, res: Response) => {
 // post routers
 
 // put routers
-userRouter.get('/password', (req: Request, res: Response) => {
-  const token = req.query.token.toString();
-  res.json(adminUserUpdatePassword(token, req.body.oldPassword, req.body.newPassword));
-})
+userRouter.put('/password', (req: Request, res: Response) => {
+  const { token, oldPassword, newPassword } = req.body;
+  res.json(adminUserUpdatePassword(token, oldPassword, newPassword));
+});
 
 // delete routers

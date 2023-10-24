@@ -47,19 +47,13 @@ describe('adminAuthDetails - Unsuccessful Route', () => {
 });
 
 // tests for user/password
-describe.only('PUT /v1/admin/user/password - Error Cases', () => {
+describe('PUT /v1/admin/user/password - Error Cases', () => {
   test('Old Password is not the correct old password', () => {
-    console.log('1');
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    console.log('2');
     const userData = JSON.parse(user.body.toString());
-    console.log('3');
     const response = userUpdatePasswordRequest(userData.token, `${person1.password}m`, 'd1sn3yl4nd');
-    console.log(response);
     expect(response.statusCode).toStrictEqual(400);
-    console.log('5');
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Old Password is incorrect' });
-    console.log('6');
   });
   test('New Password = Old Password', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -74,7 +68,8 @@ describe.only('PUT /v1/admin/user/password - Error Cases', () => {
     userUpdatePasswordRequest(userData.token, person1.password, person2.password);
     userUpdatePasswordRequest(userData.token, person2.password, person3.password);
     userUpdatePasswordRequest(userData.token, person3.password, person4.password);
-    const response = userUpdatePasswordRequest(userData.token, person4.password, person1.password);
+    const response = userUpdatePasswordRequest(userData.token, person4.password, person2.password);
+    console.log(response);
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'New Password cannot be the same as old password' });
   });
@@ -102,7 +97,7 @@ describe.only('PUT /v1/admin/user/password - Error Cases', () => {
   test('New Password does not contain at least one number and at least one letter - all special', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
-    const response = userUpdatePasswordRequest(userData.token, person1.password, '!@#$');
+    const response = userUpdatePasswordRequest(userData.token, person1.password, '!@#$%^&*');
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Password must contain at least one number and at least one letter' });
   });
@@ -112,8 +107,6 @@ describe.only('PUT /v1/admin/user/password - Error Cases', () => {
     const response = userUpdatePasswordRequest(userData.token + 1, person1.password, 'd1sn3yl4nd');
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
-    expect(response.statusCode).toStrictEqual(400);
-    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Password must contain at least one number and at least one letter' });
   });
 });
 

@@ -21,7 +21,7 @@ export interface User {
   nameFirst: string,
   nameLast: string,
   password: string,
-  oldPasswords: [];
+  oldPasswords: string[];
   email: string,
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number

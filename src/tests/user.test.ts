@@ -1,7 +1,7 @@
 import { person1, person2, person3, person4 } from '../testingData';
 import { adminAuthRegister, adminAuthLogin } from '../features/auth';
 import { clear } from '../features/other';
-import { adminUserDetails } from '../features/user';
+import { adminUserDetails, adminUserUpdatePassword } from '../features/user';
 import { ApiError } from '../errors/ApiError';
 
 beforeEach(() => {
@@ -61,3 +61,13 @@ describe('Testing adminAuthDetails', () => {
     expect(adminAuthDetailsFunc).toThrow('Token is invalid');
   });
 });
+
+describe.only('Test', () => {
+  test.only('New Password has already been used before by this user', () => {
+    const user = adminAuthRegister(person1.email, 'firstpassw0rd', person1.nameFirst, person1.nameLast);
+    adminUserUpdatePassword(user.token, 'firstpassw0rd', 'secondpassw0rd');
+    adminUserUpdatePassword(user.token, 'secondpassw0rd', 'thirdpassw0rd');
+    adminUserUpdatePassword(user.token, 'thirdpassw0rd', 'fourthpassw0rd');
+    adminUserUpdatePassword(user.token, 'fourthpassw0rd', 'secondpassw0rd');
+  });
+})

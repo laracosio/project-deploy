@@ -18,18 +18,21 @@ interface AuthReturn {
  */
 function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn {
   const dataStore = getData();
+  console.log('auth');
 
   if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
     throw new ApiError('Invalid registration details', HttpStatusCode.BAD_REQUEST);
   }
 
   const newUserId = dataStore.users.length + 1;
+  const oldPasswords: string[] = [];
   const newUser = {
     userId: newUserId,
     nameFirst: nameFirst,
     nameLast: nameLast,
-    email: email,
     password: password,
+    oldPasswords: oldPasswords,
+    email: email,
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
   };

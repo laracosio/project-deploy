@@ -66,10 +66,10 @@ const userUpdatePasswordRequest = (token: string, oldPassword: string, newPasswo
         oldPassword: oldPassword,
         newPassword: newPassword
       }),
-      headers: { 'Content-type': 'apllication/json' },
+      headers: { 'Content-type': 'application/json' },
     }
   );
-}
+};
 
 // quiz requests
 // must go before create!
