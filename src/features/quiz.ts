@@ -181,15 +181,15 @@ function adminQuizNameUpdate (sessionId: string, quizId: number, name: string): 
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  // check quizId is valid
-  if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
-    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
-  }
-
   // check valid quizId is owned by the current user associated with token
   const matchedToken = findToken(sessionId);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
+  }
+
+  // check quizId is valid
+  if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
   }
 
   // check quiz name only contains alphanumeric characters and spaces
@@ -231,15 +231,15 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  // check quizId is valid
-  if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
-    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
-  }
-
   // check valid quizId is owned by the current user associated with token
   const matchedToken = findToken(sessionId);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
+  }
+
+  // check quizId is valid
+  if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
   }
 
   // check description is within 100 characters

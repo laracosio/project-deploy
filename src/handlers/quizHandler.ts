@@ -4,7 +4,6 @@ import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adm
 
 export const quizRouter = Router();
 
-
 // get routers
 quizRouter.get('/list', (req: Request, res: Response) => {
   const token: string = req.query.token as string;
@@ -18,12 +17,6 @@ quizRouter.get('/:quizId', (req: Request, res: Response) => {
 });
 
 // post routers - quizCreate must go last!
-quizRouter.post('/:quizid/transfer', (req: Request, res: Response) => {
-  const { token, userEmail } = req.body;
-  const quizId = parseInt(req.params.quizid);
-  res.json(adminQuizTransferOwner(token, quizId, userEmail));
-});
-
 quizRouter.post('/', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
   res.json(adminQuizCreate(token, name, description));

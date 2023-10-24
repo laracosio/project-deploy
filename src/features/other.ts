@@ -127,13 +127,15 @@ function findQuizById (quizId: number): Quiz {
 
 /**
  * Returns a Question within a Quiz based on Quiz and questionId
- * @param quiz - Quiz NOT quizId
+ * @param quiz - takes in a Quiz NOT quizId
  * @param questionId - identifies individual question witihin Quiz
  * @returns Question | undefined(if not found)
  */
-function findQuestionbyQuiz (quiz: Quiz, questionId: number): Question {
+function findQuestionByQuiz (quiz: Quiz, questionId: number): Question {
   return quiz.questions.find((question) => question.questionId === questionId);
 }
 
-export { clear, helperAdminRegister, createSessionId, tokenValidation };
-export { findToken, findUserById, findQuizById, findQuestionbyQuiz };
+export {
+  clear, helperAdminRegister, createSessionId, tokenValidation,
+  findToken, findUserById, findQuizById, findQuestionByQuiz
+};
