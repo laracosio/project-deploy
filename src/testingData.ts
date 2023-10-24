@@ -1,4 +1,4 @@
-import { Question, QuestionCreate } from "./dataStore";
+import { QuestionCreate } from './dataStore';
 
 const person1 = {
   email: 'h.simpson@springfield.com',
@@ -68,26 +68,14 @@ const validQuestionInput1: QuestionCreate = {
   duration: 4,
   points: 5,
   answers: [
-    {
-      answer: 'Prince Charles',
-      correct: true
-    },
-    {
-      answer: 'Shrek',
-      correct: false
-    },
-    {
-      answer: 'Prince Charming',
-      correct: false
-    },
-    {
-      answer: 'Rumpelstiltskin',
-      correct: false
-    }
+    { answer: 'Prince Charles', correct: true },
+    { answer: 'Shrek', correct: false },
+    { answer: 'Prince Charming', correct: false },
+    { answer: 'Rumpelstiltskin', correct: false },
   ]
-}
+};
 
-const validQuestionInput2 = {
+const validQuestionInput2: QuestionCreate = {
   question: 'Who ended the War of Roses?',
   duration: 5,
   points: 6,
@@ -109,7 +97,31 @@ const validQuestionInput2 = {
       correct: false
     }
   ]
-}
+};
+
+const validQuestionInput3: QuestionCreate = {
+  question: 'Who was Queen Victoria married to?',
+  duration: 2,
+  points: 4,
+  answers: [
+    {
+      answer: 'George Windsor',
+      correct: false
+    },
+    {
+      answer: 'Leopold I',
+      correct: false
+    },
+    {
+      answer: 'Philip of Greece',
+      correct: false
+    },
+    {
+      answer: 'Albert of SCG',
+      correct: true
+    }
+  ]
+};
 
 export {
   person1,
@@ -128,5 +140,6 @@ export {
   newvalidQuizDescription,
   longQuizDescription,
   validQuestionInput1,
-  validQuestionInput2
+  validQuestionInput2,
+  validQuestionInput3
 };

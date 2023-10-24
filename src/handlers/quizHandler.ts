@@ -23,17 +23,17 @@ quizRouter.post('/:quizid/transfer', (req: Request, res: Response) => {
   res.json(adminQuizTransferOwner(token, quizId, userEmail));
 });
 
+quizRouter.post('/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token } = req.body;
+  res.json(adminDuplicateQuestion(token, quizId, questionId));
+});
+
 quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, questionBody } = req.body;
   res.json(quizCreateQuestion(quizId, token, questionBody));
-});
-
-quizRouter.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate',(req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const questionId = parseInt(req.params.questionId);
-  const { token } = req.body;
-  res.json(adminDuplicateQuestion(token, quizId, questionId));
 });
 
 quizRouter.post('/', (req: Request, res: Response) => {
