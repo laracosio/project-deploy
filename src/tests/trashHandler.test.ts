@@ -5,7 +5,7 @@ test('REMOVE ME - added to pass testing pipeline!', () => {
 });
 
 
-import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizViewTrashRequest, quizRestoreTrashRequest, quizEmptyTrashRequest } from './serverTestHelper';
+import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizViewTrashRequest, quizRestoreTrashRequest } from './serverTestHelper';
 import { person1, person2, person3, person4, person5, validQuizName, validQuizDescription } from '../testingData';
 import { Response } from 'sync-request-curl';
 

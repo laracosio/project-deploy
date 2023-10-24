@@ -106,7 +106,7 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   }
 
   // check valid quizId is owned by the current user associated with token
-  const tokenUser = findTokenUser(sessionId);
+  const tokenUser = findToken(sessionId);
   if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }
