@@ -29,13 +29,6 @@ quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   res.json(quizCreateQuestion(quizId, token, questionBody));
 });
 
-quizRouter.put('/:quizId/question/:questionId', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizId);
-  const questionId = parseInt(req.params.questionId);
-  const { token, questionBody } = req.body;
-  res.json(quizUpdateQuestion(quizId, questionId, token, questionBody));
-});
-
 quizRouter.post('/', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
   res.json(adminQuizCreate(token, name, description));
@@ -60,6 +53,13 @@ quizRouter.put('/:quizid/question/:questionid/move', (req: Request, res: Respons
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   res.json(adminMoveQuestion(sessionToken, quizId, questionId, newPostion));
+});
+
+quizRouter.put('/:quizId/question/:questionId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const { token, questionBody } = req.body;
+  res.json(quizUpdateQuestion(quizId, questionId, token, questionBody));
 });
 
 // delete routers

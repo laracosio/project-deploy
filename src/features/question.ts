@@ -17,20 +17,23 @@ import { findQuestionByQuiz, findQuizById, findToken, tokenValidation, getTotalD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): CreateQuestionReturn {
 =======
 // code
 =======
 
+=======
+>>>>>>> 06c42f0 (Fixed quizHandler)
 interface QuestionReturn {
   questionId: number,
 }
 
 /**
- * 
- * @param quizId 
- * @param token 
- * @param questionBody 
+ *
+ * @param quizId
+ * @param token
+ * @param questionBody
  * @returns QuestionReturn
  */
 >>>>>>> d9730b5 (fixed code according to carmens comments)
@@ -169,12 +172,12 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
 =======
 =======
 /**
- * 
- * @param quizId 
- * @param questionId 
- * @param token 
- * @param questionBody 
- * @returns empty object 
+ *
+ * @param quizId
+ * @param questionId
+ * @param token
+ * @param questionBody
+ * @returns empty object
  */
 >>>>>>> d9730b5 (fixed code according to carmens comments)
 function quizUpdateQuestion (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
