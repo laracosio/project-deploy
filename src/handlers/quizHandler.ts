@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { adminQuizRemove } from '../features/trash';
+import { adminQuizRemove, adminQuizRestoreTrash, adminQuizViewTrash } from '../features/trash';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../features/quiz';
 import { quizCreateQuestion } from '../features/question';
 export const quizRouter = Router();
@@ -16,10 +16,21 @@ quizRouter.get('/:quizId', (req: Request, res: Response) => {
   res.json(adminQuizInfo(token, quizId));
 });
 
+quizRouter.get('/trash', (req: Request, res: Response) => {
+  const token: string = req.query.token as string;
+  res.json(adminQuizViewTrash(token));
+});
+
 // post routers - quizCreate must go last!
 quizRouter.post('/', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
   res.json(adminQuizCreate(token, name, description));
+});
+
+quizRouter.post('/:quizId/restore', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  const quizId: number = parseInt(req.params.quizId);
+  res.json(adminQuizRestoreTrash(token, quizId));
 });
 
 // put routers
