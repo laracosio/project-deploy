@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../features/quiz';
+import { adminMoveQuestion } from '../features/question';
 
 export const quizRouter = Router();
 
@@ -34,6 +35,14 @@ quizRouter.put('/:quizId/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   res.json(adminQuizDescriptionUpdate(sessionToken, quizId, req.body.description));
 });
+
+quizRouter.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
+  const sessionToken = req.body.token as string;
+  const newPostion = req.body.newPosition as number;
+  const quizId =  parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  res.json(adminMoveQuestion(sessionToken, quizId, questionId, newPostion));
+})
 
 // delete routers
 quizRouter.delete('/:quizid', (req: Request, res: Response) => {
