@@ -194,5 +194,5 @@ export {
   authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
   quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
   quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest,
-  createQuizQuestionRequest, quizViewTrashRequest, quizRestoreTrashRequest, quizEmptyTrashRequest
+  createQuizQuestionRequest, quizViewTrashRequest, quizRestoreTrashRequest
 };

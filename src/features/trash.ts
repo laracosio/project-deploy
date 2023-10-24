@@ -61,7 +61,7 @@ function adminQuizViewTrash(sessionId: string): userTrashQuizList {
   }
 
   // find all user quizzes in the trash and add to an array
-  const tokenUser = findTokenUser(sessionId);
+  const tokenUser = findToken(sessionId);
   const userTrashQuizList: Array<BriefTrashQuizInfo> = [];
   dataStore.trash.forEach((quiz) => {
     if (quiz.quizOwner === tokenUser.userId) {

@@ -71,14 +71,14 @@ describe('quizRestoreTrash - Error Cases', () => {
   });
   test('QuizId not owned by this user', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const session1data = JSON.parse(session1.body.toString());
+    const session1Data = JSON.parse(session1.body.toString());
     session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    const session2data = JSON.parse(session2.body.toString());
-    quiz1 = quizCreateRequest(session1data.token, validQuizName, validQuizDescription);
-    const quiz1data = JSON.parse(quiz1.body.toString());
+    const session2Data = JSON.parse(session2.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
     const trashedQuiz1Data = JSON.parse(trashedQuiz1.body.toString());
-    const response = quizRestoreTrashRequest(session2data.token, trashedQuiz1Data.quizId);
+    const response = quizRestoreTrashRequest(session2Data.token, trashedQuiz1Data.quizId);
     expect(response.statusCode).toStrictEqual(403);
   });
   test('Name already in use by other active quiz', () => {
