@@ -51,7 +51,7 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
  * @param {string} sessionId - unique token containing sessionId
  * @returns {{error: string}}
  */
-function quizViewTrash(sessionId: string, quizId: number): userTrashQuizList {
+function adminQuizViewTrash(sessionId: string, quizId: number): userTrashQuizList {
   const dataStore = getData();
 
   // check that sessionId is not empty or is valid
@@ -77,4 +77,49 @@ function quizViewTrash(sessionId: string, quizId: number): userTrashQuizList {
   };
 }
 
-export { adminQuizRemove, quizViewTrash };
+/**
+ * Given a particular quiz in the user's trash, restore it.
+ * @param {string} sessionId
+ * @param {number} quizId
+ * @returns {{error: string}}
+ */
+function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
+  const dataStore = getData();
+
+  //declare index to access quiz in array that the quizId parameter refers to
+  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
+
+  // check sessionId is valid
+  if (!tokenValidation(sessionId)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+
+  // check quizId refers to quiz in trash
+  if (!dataStore.trash.some((quiz) => quiz.quizId === quizId)) {
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // check quiz name doesn't already exist in current user's list
+  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === dataStore.quizzes[index].name ))) {
+    throw new ApiError('Quiz name already exists', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // check valid quizId is owned by the current user associated with token
+  const tokenUser = findTokenUser(sessionId);
+  if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
+    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
+  }
+
+//restores specified quiz from trash
+  const restoreQuiz = dataStore.quizzes.splice(index, 1)[0];
+  dataStore.trash.push(restoreQuiz);
+
+//Update time quiz lasted edited
+  const date = getUnixTime(new Date());
+  dataStore.quizzes[index].timeLastEdited = date;
+
+  setData(dataStore);
+  return {};
+}
+
+export { adminQuizRemove, adminQuizViewTrash, adminQuizRestoreTrash };
