@@ -55,6 +55,22 @@ const authUserDetailsRequest = (token: string): Response => {
   );
 };
 
+// user requests
+const userUpdatePasswordRequest = (token: string, oldPassword: string, newPassword: string): Response => {
+  return request (
+    'PUT',
+    SERVER_URL + '/v1/admin/user/password',
+    {
+      body: JSON.stringify({
+        token: token,
+        oldPassword: oldPassword,
+        newPassword: newPassword
+      }),
+      headers: { 'Content-type': 'apllication/json' },
+    }
+  );
+}
+
 // quiz requests
 // must go before create!
 const quizTransferRequest = (token: string, quizId: number, userEmail: string): Response => {
@@ -168,5 +184,5 @@ export {
   authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
   quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
   quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest,
-  createQuizQuestionRequest
+  createQuizQuestionRequest, userUpdatePasswordRequest,
 };
