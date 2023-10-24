@@ -163,22 +163,23 @@ const createQuizQuestionRequest = (quizId: number, token: string, questionBody: 
     }
   );
 };
+
 const quizViewTrashRequest = (token: string): Response => {
   return request(
-    'GET'
-    `$SERVER_URL}/v1/admin/quiz/trash`,
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/trash`,
     {
       body: JSON.stringify({
         token: token,
       }),
       headers: { 'Content-type': 'application/json' },
     }
-  )
-}
+  );
+};
 
 const quizRestoreTrashRequest = (token: string, quizId: number): Response => {
   return request(
-    'POST'
+    'POST',
     `${SERVER_URL}/v1/admin/quiz/${quizId}/restore`,
     {
       body: JSON.stringify({
@@ -186,22 +187,8 @@ const quizRestoreTrashRequest = (token: string, quizId: number): Response => {
       }),
       headers: { 'Content-type': 'application/json' },
     }
-  )
-}
-
-const quizEmptyTrashRequest = (token: string, quizId: number): Response => {
-  return request(
-    'DELETE'
-    `$SERVER_URL}/v1/admin/quiz/trash/empty`,
-    {
-      body: JSON.stringify({
-        token: token,
-      }),
-      headers: { 'Content-type': 'application/json' },
-    }
-  )
-}
-
+  );
+};
 
 export {
   authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
