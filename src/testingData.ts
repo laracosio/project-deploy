@@ -1,4 +1,4 @@
-import { Question } from "./dataStore";
+import { Question, QuestionCreate } from "./dataStore";
 
 const person1 = {
   email: 'h.simpson@springfield.com',
@@ -63,7 +63,7 @@ const longQuizName = 'this is longer than thirty characters';
 const validQuizDescription = 'This quiz is awesome';
 const newvalidQuizDescription = 'This new quiz description is awesome';
 const longQuizDescription = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean moon.';
-const validQuestionInput1 = {
+const validQuestionInput1: QuestionCreate = {
   question: 'Who is the Monarch of England?',
   duration: 4,
   points: 5,

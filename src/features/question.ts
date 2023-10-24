@@ -1,16 +1,110 @@
 // import statements
-import { formatDuration, getUnixTime } from "date-fns";
-import { getData } from "../dataStore";
-import { HttpStatusCode } from "../enums/HttpStatusCode";
-import { ApiError } from "../errors/ApiError";
-import { findTokenUser, tokenValidation } from "./other";
+import { Question, Answer, QuestionCreate, Colours } from '../dataStore';
+import { tokenValidation, getTotalDurationOfQuiz, getRandomColorAndRemove, findToken } from './other';
+import { getData, setData } from '../dataStore';
+import { HttpStatusCode } from '../enums/HttpStatusCode';
+import { ApiError } from '../errors/ApiError';
+import { getUnixTime } from 'date-fns';
 
-// interface
-// interface CreateQuestionReturn {
-//   questionId: number
-// }
 interface duplicateQuestionReturn {
   newQuestionId: number
+}
+
+export interface CreateQuestionReturn {
+  questionId: number,
+}
+
+/**
+ * Create a new stub question for a particular quiz.
+ * When this route is called, and a question is created, the timeLastEdited is set as the same as the created time, and the colours of all answers of that question are randomly generated.
+ * @param quizId 
+ * @param token 
+ * @param questionBody 
+ * @returns - CreateQuestionReturn returns a questionId
+ */
+function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): CreateQuestionReturn {
+  const dataStore = getData();
+  
+  if (questionBody.question.length < 5 || questionBody.question.length > 50) {
+    throw new ApiError('Question string is less than 5 characters in length or greater than 50 characters in length', HttpStatusCode.BAD_REQUEST);
+  }
+  if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
+    throw new ApiError('The question has more than 6 answers or less than 2 answers', HttpStatusCode.BAD_REQUEST);
+  }
+  if (questionBody.duration < 1) {
+    throw new ApiError('The question duration is not a positive number', HttpStatusCode.BAD_REQUEST);
+  }
+  if ((getTotalDurationOfQuiz(quizId) + questionBody.duration) > 180) {
+    throw new ApiError('The sum of the question durations in the quiz exceeds 3 minutes', HttpStatusCode.BAD_REQUEST);
+  }
+  if (questionBody.points < 1 || questionBody.points > 10) {
+    throw new ApiError('The points awarded for the question are less than 1 or greater than 10', HttpStatusCode.BAD_REQUEST);
+  }
+  if (questionBody.answers.find(answer => answer.answer.length < 1) || questionBody.answers.find(answer => answer.answer.length > 10)) {
+    throw new ApiError('The length of any answer is shorter than 1 character long, or longer than 30 characters long', HttpStatusCode.BAD_REQUEST);
+  }
+  
+  const answerMap = new Map <string, boolean>();
+  
+  questionBody.answers.map(answer => answerMap.set(answer.answer, answer.correct));
+  if (answerMap.size !== questionBody.answers.length) {
+    throw new ApiError('Answer strings are duplicates of one another', HttpStatusCode.BAD_REQUEST);
+  }
+  
+  if (!(questionBody.answers.find(answer => answer.correct === true))) {
+    throw new ApiError('There are no correct answers', HttpStatusCode.BAD_REQUEST);
+  }
+  if (!tokenValidation(token)) {
+    throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
+  }
+  
+  if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
+  }
+  
+  const authUser = dataStore.tokens.find(user => user.sessionId === token);
+  const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
+  if (quiz.quizOwner !== authUser.userId) {
+    throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
+  }
+  
+  // edit timeLastEdited
+  quiz.timeLastEdited = getUnixTime(new Date());
+  
+  // create questionId
+  const questionId = quiz.numQuestions + 1;
+  // assign colour and answerId to answer
+  const availableColours = [...Colours];
+  const arrayOfAnswers = [];
+  
+  for (const element of questionBody.answers) {
+    const newAnswerId = (arrayOfAnswers.length + 1);
+    const questionAnswerBody: Answer = {
+      answerId: newAnswerId,
+      answer: element.answer,
+      correct: element.correct,
+      colour: getRandomColorAndRemove(availableColours),
+    };
+    arrayOfAnswers.push(questionAnswerBody);
+  }
+  
+  const newQuestion: Question = {
+    questionId: questionId,
+    question: questionBody.question,
+    duration: questionBody.duration,
+    points: questionBody.points,
+    answers: arrayOfAnswers,
+  };
+  
+  quiz.questions.push(newQuestion);
+  quiz.quizDuration = getTotalDurationOfQuiz(quiz.quizId);
+  quiz.numQuestions++;
+  
+  setData(dataStore);
+  
+  return {
+    questionId: questionId,
+  };
 }
 
 /**
@@ -19,49 +113,48 @@ interface duplicateQuestionReturn {
  * @param sessionId - sessionId of token
  * @param quizId - quizId of question to be duplicated
  * @param questionId - question within quiz to be duplicated
- */
+*/
 function duplicateQuestion (sessionId: string, quizId: number, questionId: number): duplicateQuestionReturn {
-  const dataStore = getData();
-  const quizBody = dataStore.quizzes.find((quiz) => quiz.quizId === quizId);
-  // invalid quiz
-  if (quizBody === undefined) {
-    throw new ApiError('Quiz ID does not refer to a valid quiz', HttpStatusCode.BAD_REQUEST);
-  }
-  // invalid question in quiz
-  const questionToCopy = quizBody.questions.find((question) => question.questionId === questionId);
-  if (questionToCopy === undefined) {
-    throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
-  }
-  // invalid token
-  if (!tokenValidation(sessionId)) {
-    throw new ApiError('Token is empty or invalid (does not refer to valid logged in user session)', HttpStatusCode.UNAUTHORISED);
-  }
+  return { newQuestionId: 123 }
+  // const dataStore = getData();
+  // const quizBody = dataStore.quizzes.find((quiz) => quiz.quizId === quizId);
+  // // invalid quiz
+  // if (quizBody === undefined) {
+  //   throw new ApiError('Quiz ID does not refer to a valid quiz', HttpStatusCode.BAD_REQUEST);
+  // }
+  // // invalid question in quiz
+  // const questionToCopy = quizBody.questions.find((question) => question.questionId === questionId);
+  // if (questionToCopy === undefined) {
+  //   throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
+  // }
+  // // invalid token
+  // if (!tokenValidation(sessionId)) {
+  //   throw new ApiError('Token is empty or invalid (does not refer to valid logged in user session)', HttpStatusCode.UNAUTHORISED);
+  // }
   
-  const tokenUser = findTokenUser(sessionId);
-  // token user is not the owner of question
-  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
-    throw new ApiError('User does not own quiz to change owner', HttpStatusCode.FORBIDDEN);
-  }
-
-  // needs to call questionCreate
-  const duplicatedQuestion: Question = {
-    questionId: number,
-    question: questionToCopy.question,
-    duration: questionToCopy.duration,
-    points: questionToCopy.points,
-    answers: questionToCopy.answers,
-    position: -100,
-    timeCreated: getUnixTime(new Date()),
-    timeLastEdited: getUnixTime(new Date()),
-  }
-
-  const questionIndex = quizBody.questions.findIndex((question) => question.questionId === questionId);
-  quizBody.questions.splice(questionIndex, 0, duplicatedQuestion);
-  quizBody.questions.forEach((question, index) => question.position = index);
-  quizBody.timeLastEdited = getUnixTime(new Date());
-  quizBody.quizDuration = TO_BE_IMPLEMENTED!!!
+  // const tokenUser = findToken(sessionId);
+  // // token user is not the owner of question
+  // if (dataStore.quizzes.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
+  //   throw new ApiError('User does not own quiz to change owner', HttpStatusCode.FORBIDDEN);
+  // }
   
-  return { newQuestionId: duplicatedQuestion.questionId }
+  // // needs to call questionCreate
+  // const duplicatedQuestion: Question = {
+  //   questionId: number,
+  //   question: questionToCopy.question,
+  //   duration: questionToCopy.duration,
+  //   points: questionToCopy.points,
+  //   answers: questionToCopy.answers,
+  // }
+  
+  // const questionIndex = quizBody.questions.findIndex((question) => question.questionId === questionId);
+  // quizBody.questions.splice(questionIndex, 0, duplicatedQuestion);
+  // quizBody.questions.forEach((question, index) => question.position = index);
+  // quizBody.timeLastEdited = getUnixTime(new Date());
+  // need to update number of questions!
+  // quizBody.quizDuration = TO_BE_IMPLEMENTED!!!
+  
+  // return { newQuestionId: duplicatedQuestion.questionId }
 }
 
-export { duplicateQuestion };
+export { quizCreateQuestion, duplicateQuestion };
