@@ -52,7 +52,7 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
  * @param {string} sessionId - unique token containing sessionId
  * @returns {{error: string}}
  */
-function adminQuizViewTrash(sessionId: string, quizId: number): userTrashQuizList {
+function adminQuizViewTrash(sessionId: string): userTrashQuizList {
   const dataStore = getData();
 
   // check that sessionId is not empty or is valid
