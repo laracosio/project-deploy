@@ -77,21 +77,29 @@ describe('PUT /v1/admin/user/password - Error Cases', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const response = userUpdatePasswordRequest(userData.token, person1.password, 'disney7');
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Password must be at least 8 characters' });
   });
   test('New Password does not contain at least one number and at least one letter - all letters', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const response = userUpdatePasswordRequest(userData.token, person1.password, 'disneyland');
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Password must contain at least one number and at least one letter' });
   });
   test('New Password does not contain at least one number and at least one letter - all numbers', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const response = userUpdatePasswordRequest(userData.token, person1.password, '12345678');
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Password must contain at least one number and at least one letter' });
   });
   test('New Password does not contain at least one number and at least one letter - all special', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
     const response = userUpdatePasswordRequest(userData.token, person1.password, '!@#$');
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Password must contain at least one number and at least one letter' });
   });
   test('Invalid token', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -99,6 +107,7 @@ describe('PUT /v1/admin/user/password - Error Cases', () => {
     const response = userUpdatePasswordRequest(userData.token + 1, person1.password, 'd1sn3yl4nd');
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
-
+    expect(response.statusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Password must contain at least one number and at least one letter' });
   });
 });
