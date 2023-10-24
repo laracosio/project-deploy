@@ -18,6 +18,11 @@ authRouter.post('/login', (req: Request, res: Response) => {
   res.json(response);
 });
 
+authRouter.post('/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
+  res.json(adminAuthLogout(token));
+});
+
 // put Routers
 
 // delete Routers
