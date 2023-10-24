@@ -85,6 +85,23 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   return { token: newSessionId };
 }
 
+function adminAuthLogout(token: string): object {
+  const dataStore = getData();
+  
+  // check if token is valid
+  if (!dataStore.tokens.some(user =>user.sessionId === token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // remove token from dataStore
+  const tokenIndex: number = dataStore.tokens.findIndex(user => user.sessionId === token);
+  dataStore.tokens.splice(tokenIndex, 1);
+
+  setData(dataStore);
+
+  return {};
+}
+
 export {
   adminAuthRegister, adminAuthLogin
 };
