@@ -54,7 +54,6 @@ const authUserDetailsRequest = (token: string): Response => {
   );
 };
 
-
 // quiz requests
 // must go before create!
 const quizTransferRequest = (token: string, quizId: number, userEmail: string): Response => {

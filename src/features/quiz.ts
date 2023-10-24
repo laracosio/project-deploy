@@ -266,10 +266,11 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
 */
 function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: string): object {
   const dataStore = getData();
-
+  
   const transferUser = dataStore.users.find((user) => user.email === userEmail);
   const transferQuiz = findQuizById(quizId)
-
+  
+  const tokenUser = findToken(sessionId);
   // check quizId
   if (transferQuiz === undefined) {
     throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
@@ -279,11 +280,14 @@ function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: st
   if (transferUser === undefined) {
     throw new ApiError('userEmail is not a real user', HttpStatusCode.BAD_REQUEST);
   }
-
-  const tokenUser = findToken(sessionId);
   // invalid token
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
+  }
+  
+  // valid token but user is not owner
+  if (tokenUser.userId !== transferQuiz.quizOwner) {
+    throw new ApiError('User does not own quiz to change owner', HttpStatusCode.FORBIDDEN);
   }
 
   // check if tokenUser is the same as transferUser
@@ -293,11 +297,6 @@ function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: st
   // duplicate name
   if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === transferUser.userId && quiz.name === transferQuiz.name))) {
     throw new ApiError('Quiz ID refers to a quiz that has a name that is already used by the target user', HttpStatusCode.BAD_REQUEST);
-  }
-
-  // valid token but user is not owner
-  if (tokenUser.userId !== transferQuiz.quizOwner) {
-    throw new ApiError('User does not own quiz to change owner', HttpStatusCode.FORBIDDEN);
   }
 
   transferQuiz.quizOwner = transferUser.userId;
