@@ -16,7 +16,7 @@ beforeEach(() => {
 // quizViewTrash tests
 describe('quizViewTrash - Success Cases', () => {
   let session1: Response, quiz1: Response, trashedQuiz1: Response;
-  test('valid authUserId, quizId and name', () => {
+  test('valid token', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
@@ -44,7 +44,7 @@ describe('quizViewTrash - Error Cases', () => {
 // quizRestoreTrash tests
 describe('quizRestoreTrash - Success Cases', () => {
   let session1: Response, quiz1: Response, trashedQuiz1: Response;
-  test('valid authUserId, quizId and name', () => {
+  test('valid token, quizId', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
