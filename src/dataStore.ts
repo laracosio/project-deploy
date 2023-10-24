@@ -2,6 +2,18 @@ export interface ErrorObject {
   error: string
 }
 
+export interface AnswerCreate {
+  answer: string,
+  correct: boolean,
+}
+
+export interface QuestionCreate {
+  question: string,
+  duration: number,
+  points: number,
+  answers: AnswerCreate[],
+}
+
 export const Colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
 
 export interface User {
@@ -13,13 +25,15 @@ export interface User {
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
 }
+export interface CreateQuestionReturn {
+  questionId: number,
+}
+
 export interface Answer {
   answerId: number,
   answer: string,
   correct: boolean,
-  position: number,
-  timeCreated: number,
-  timeLastEdited: number,
+  colour: string,
 }
 
 export interface Question {
@@ -27,7 +41,7 @@ export interface Question {
   question: string,
   duration: number,
   points: number,
-  answers: Answer[]
+  answers: Answer[],
 }
 
 export interface Quiz {

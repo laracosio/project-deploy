@@ -1,9 +1,19 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
+import { QuestionCreate } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
+// other requests
+const clearRequest = (): Response => {
+  return request(
+    'DELETE',
+    SERVER_URL + '/v1/clear'
+  );
+};
+
+// auth requests
 const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): Response => {
   return request(
     'POST',
@@ -36,7 +46,7 @@ const authLoginRequest = (email: string, password: string): Response => {
 const authUserDetailsRequest = (token: string): Response => {
   return request(
     'GET',
-    SERVER_URL + '/v1/admin/auth/details',
+    SERVER_URL + '/v1/admin/user/details',
     {
       qs: {
         token: token,
@@ -45,13 +55,7 @@ const authUserDetailsRequest = (token: string): Response => {
   );
 };
 
-const clearRequest = (): Response => {
-  return request(
-    'DELETE',
-    SERVER_URL + '/v1/clear'
-  );
-};
-
+// quiz requests
 const quizCreateRequest = (token: string, name: string, description: string): Response => {
   return request(
     'POST',
@@ -131,6 +135,18 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
   );
 };
 
+const createQuizQuestionRequest = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question`,
+    {
+      json: {
+        token: token,
+        questionBody: questionBody,
+      },
+    }
+  );
+};
 const quizViewTrashRequest = (token: string): Response => {
   return request(
     'GET'
@@ -170,4 +186,4 @@ const quizEmptyTrashRequest = (token: string, quizId: number): Response => {
   )
 }
 
-export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizViewTrashRequest, quizRestoreTrashRequest, quizEmptyTrashRequest };
+export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, createQuizQuestionRequest, quizViewTrashRequest, quizRestoreTrashRequest, quizEmptyTrashRequest };
