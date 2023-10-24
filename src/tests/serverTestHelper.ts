@@ -45,7 +45,7 @@ const authLoginRequest = (email: string, password: string): Response => {
 const authUserDetailsRequest = (token: string): Response => {
   return request(
     'GET',
-    SERVER_URL + '/v1/admin/auth/details',
+    SERVER_URL + '/v1/admin/user/details',
     {
       qs: {
         token: token,
