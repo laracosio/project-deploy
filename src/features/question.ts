@@ -16,10 +16,10 @@ import { findQuestionbyQuiz, findQuizById, findToken, tokenValidation } from './
  * @param sessionId - sessionId contained within a token
  * @param quizId - quizId where question exists
  * @param questionId - question to move
- * @param newPostion - position to move question to
+ * @param newPosition - position to move question to
  * @returns - {} OR error
  */
-function moveQuestion(sessionId: string, quizId: number, questionId: number, newPosition: number): object {
+function adminMoveQuestion(sessionId: string, quizId: number, questionId: number, newPosition: number): object {
   const dataStore = getData();
 
   // quiz invalid
@@ -59,4 +59,4 @@ function moveQuestion(sessionId: string, quizId: number, questionId: number, new
   return {};
 }
 
-export { moveQuestion };
+export { adminMoveQuestion };
