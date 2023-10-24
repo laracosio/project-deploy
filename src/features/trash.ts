@@ -95,13 +95,16 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  // check quizId refers to quiz in trash
-  if (!dataStore.trash.some((quiz) => quiz.quizId === quizId)) {
+  // check quizId refers to quiz in trash'
+  const matchedQuiz = dataStore.trash.find((quiz) => quiz.quizId === quizId);
+  // if (!dataStore.trash.some((quiz) => quiz.quizId === quizId)) {
+  if (matchedQuiz === undefined) {
     throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
   }
 
-  // check quiz name doesn't already exist in current user's list
-  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === dataStore.quizzes[index].name ))) {
+  // check quiz name doesn't already exist in current user's lists
+  // if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === dataStore.quizzes[index].name ))) {
+    if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === matchedQuiz.name ))) {
     throw new ApiError('Quiz name already exists', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -112,8 +115,8 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   }
 
 //restores specified quiz from trash
-  const restoreQuiz = dataStore.quizzes.splice(index, 1)[0];
-  dataStore.trash.push(restoreQuiz);
+  const restoreQuiz = dataStore.trash.splice(index, 1)[0];
+  dataStore.quizzes.push(restoreQuiz);
 
 //Update time quiz lasted edited
   const date = getUnixTime(new Date());
