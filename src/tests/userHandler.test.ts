@@ -47,14 +47,19 @@ describe('adminAuthDetails - Unsuccessful Route', () => {
 });
 
 // tests for user/password
-
-describe('PUT /v1/admin/user/password - Error Cases', () => {
+describe.only('PUT /v1/admin/user/password - Error Cases', () => {
   test('Old Password is not the correct old password', () => {
+    console.log('1');
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    console.log('2');
     const userData = JSON.parse(user.body.toString());
+    console.log('3');
     const response = userUpdatePasswordRequest(userData.token, `${person1.password}m`, 'd1sn3yl4nd');
+    console.log(response);
     expect(response.statusCode).toStrictEqual(400);
+    console.log('5');
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Old Password is incorrect' });
+    console.log('6');
   });
   test('New Password = Old Password', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -110,4 +115,14 @@ describe('PUT /v1/admin/user/password - Error Cases', () => {
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Password must contain at least one number and at least one letter' });
   });
+});
+
+describe('PUT /v1/admin/user/password - Passed Cases', () => {
+  test('valid inputs', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = userUpdatePasswordRequest(userData.token, person1.password, person2.password);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({});
+  })
 });
