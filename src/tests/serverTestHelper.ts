@@ -43,6 +43,7 @@ const authLoginRequest = (email: string, password: string): Response => {
   );
 };
 
+// user requests
 const authUserDetailsRequest = (token: string): Response => {
   return request(
     'GET',
@@ -51,6 +52,22 @@ const authUserDetailsRequest = (token: string): Response => {
       qs: {
         token: token,
       }
+    }
+  );
+};
+
+const userUpdateDetailsResponse = (token: string, email: string, nameFirst: string, nameLast: string): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/user/details`,
+    {
+      body: JSON.stringify({
+        token: token,
+        email: email,
+        nameFirst: nameFirst,
+        nameLast: nameLast
+      }),
+      headers: { 'Content-type': 'application/json' },
     }
   );
 };
@@ -165,8 +182,8 @@ const createQuizQuestionRequest = (quizId: number, token: string, questionBody: 
 };
 
 export {
-  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
-  quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest, userUpdateDetailsResponse,
+  clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
   quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest,
   createQuizQuestionRequest
 };

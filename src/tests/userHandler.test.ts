@@ -1,5 +1,5 @@
 import { person1, person2 } from '../testingData';
-import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest } from './serverTestHelper';
+import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest, userUpdateDetailsResponse } from './serverTestHelper';
 
 beforeEach(() => {
   clearRequest();
