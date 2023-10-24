@@ -4,6 +4,15 @@ import { port, url } from '../config.json';
 
 const SERVER_URL = `${url}:${port}`;
 
+// other requests
+const clearRequest = (): Response => {
+  return request(
+    'DELETE',
+    SERVER_URL + '/v1/clear'
+  );
+};
+
+// auth requests
 const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): Response => {
   return request(
     'POST',
@@ -36,7 +45,7 @@ const authLoginRequest = (email: string, password: string): Response => {
 const authUserDetailsRequest = (token: string): Response => {
   return request(
     'GET',
-    SERVER_URL + '/v1/admin/auth/details',
+    SERVER_URL + '/v1/admin/user/details',
     {
       qs: {
         token: token,
@@ -45,13 +54,7 @@ const authUserDetailsRequest = (token: string): Response => {
   );
 };
 
-const clearRequest = (): Response => {
-  return request(
-    'DELETE',
-    SERVER_URL + '/v1/clear'
-  );
-};
-
+// quiz requests
 const quizCreateRequest = (token: string, name: string, description: string): Response => {
   return request(
     'POST',
@@ -131,4 +134,10 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
   );
 };
 
-export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest };
+// question requests
+
+export {
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
+  quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest,
+  quizDescriptUpdateRequest
+};
