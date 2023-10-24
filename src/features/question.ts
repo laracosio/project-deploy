@@ -230,7 +230,6 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
   questionToUpdate.answers = arrayOfAnswers;
   quiz.quizDuration = getTotalDurationOfQuiz(quiz.quizId);
 
-
   setData(dataStore);
   return {};
 }

@@ -191,7 +191,7 @@ const updateQuizQuestionRequest = (quizId: number, questionId: number, token: st
   );
 };
 
-export { 
+export {
   authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
   quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
   quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest, quizTransferRequest,
