@@ -264,7 +264,7 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
  * @param userEmail - email of user to change quiz to
  * @returns '{}'
 */
-function quizTransferOwner(sessionId: string, quizId: number, userEmail: string): object {
+function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: string): object {
   const dataStore = getData();
 
   const transferUser = dataStore.users.find((user) => user.email === userEmail);
@@ -309,5 +309,5 @@ function quizTransferOwner(sessionId: string, quizId: number, userEmail: string)
 
 export {
   adminQuizInfo, adminQuizList, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate,
-  quizTransferOwner
+  adminQuizTransferOwner
 };

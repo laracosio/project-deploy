@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, quizTransferOwner } from '../features/quiz';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../features/quiz';
 
 export const quizRouter = Router();
 
@@ -21,7 +21,7 @@ quizRouter.get('/:quizId', (req: Request, res: Response) => {
 quizRouter.post('/:quizid/transfer', (req: Request, res: Response) => {
   const { token, userEmail } = req.body;
   const quizId = parseInt(req.params.quizid);
-  res.json(quizTransferOwner(token, quizId, userEmail));
+  res.json(adminQuizTransferOwner(token, quizId, userEmail));
 });
 
 quizRouter.post('/', (req: Request, res: Response) => {
