@@ -266,10 +266,10 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
 */
 function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: string): object {
   const dataStore = getData();
-  
+
   const transferUser = dataStore.users.find((user) => user.email === userEmail);
-  const transferQuiz = findQuizById(quizId)
-  
+  const transferQuiz = findQuizById(quizId);
+
   const tokenUser = findToken(sessionId);
   // check quizId
   if (transferQuiz === undefined) {
@@ -284,7 +284,7 @@ function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: st
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
   }
-  
+
   // valid token but user is not owner
   if (tokenUser.userId !== transferQuiz.quizOwner) {
     throw new ApiError('User does not own quiz to change owner', HttpStatusCode.FORBIDDEN);

@@ -1,3 +1,4 @@
+
 import { getData, setData, User, Token, Quiz, Question } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
@@ -135,7 +136,33 @@ function findQuestionByQuiz (quiz: Quiz, questionId: number): Question {
   return quiz.questions.find((question) => question.questionId === questionId);
 }
 
-export {
-  clear, helperAdminRegister, createSessionId, tokenValidation,
-  findToken, findUserById, findQuizById, findQuestionByQuiz
-};
+function getTotalDurationOfQuiz (quizId: number): number {
+  const dataStore = getData();
+  let totalDuration = 0;
+
+  const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
+
+  for (const question of quiz.questions) {
+    totalDuration = totalDuration + question.duration;
+  }
+  return totalDuration;
+}
+
+function getRandomColorAndRemove(availableColours: string[]): string | null {
+  if (availableColours.length === 0) {
+    // Array is empty, return null or handle as desired
+    return null;
+  }
+  // Generate a random index
+  const randomIndex = Math.floor(Math.random() * availableColours.length);
+
+  // Get the random color
+  const randomColor = availableColours[randomIndex];
+
+  // Remove the color from the array
+  availableColours.splice(randomIndex, 1);
+
+  return randomColor;
+}
+
+export { clear, helperAdminRegister, createSessionId, tokenValidation, findQuestionByQuiz, findQuizById, findUserById, findToken, getTotalDurationOfQuiz, getRandomColorAndRemove };
