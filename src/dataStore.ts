@@ -25,11 +25,15 @@ export interface User {
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
 }
+export interface CreateQuestionReturn {
+  questionId: number,
+}
+
 export interface Answer {
   answerId: number,
   answer: string,
   correct: boolean,
-  colour: string
+  colour: string,
 }
 
 export interface Question {
@@ -37,7 +41,7 @@ export interface Question {
   question: string,
   duration: number,
   points: number,
-  answers: Answer[]
+  answers: Answer[],
 }
 
 export interface Quiz {

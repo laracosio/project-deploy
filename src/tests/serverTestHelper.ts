@@ -1,6 +1,7 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
+import { QuestionCreate } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -134,10 +135,16 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
   );
 };
 
-// question requests
-
-export {
-  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
-  quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest,
-  quizDescriptUpdateRequest
+const createQuizQuestionRequest = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question`,
+    {
+      json: {
+        token: token,
+        questionBody: questionBody,
+      },
+    }
+  );
 };
+export { authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, createQuizQuestionRequest };
