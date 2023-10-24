@@ -1,3 +1,5 @@
+import { assert } from 'console';
+import { getData } from '../dataStore';
 import { person1, person2, person3, validQuizDescription, validQuizName } from '../testingData';
 import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest, quizCreateRequest } from './serverTestHelper';
 
@@ -157,4 +159,27 @@ describe('adminAuthDetails - Unsuccessful Route', () => {
     const data = JSON.parse(resDetails.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
+});
+
+describe('POST /v1/admin/auth/logout - Error Cases', () => {
+  test('Invalid token', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    authLoginRequest(person1.email, person1.password);
+    const response = authLogoutRequest(userData.token + 1);
+    expect(response.statusCode).toStrictEqual(401);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
+  });
+});
+
+describe('POST /v1/admin/auth/logout - Success Cases', () => {
+  test('Token was successfully removed from dataStore', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = authLogoutRequest(userData.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({});
+    const dataStore = getData();
+    console.assert(dataStore.tokens.find(user => user.sessionId === userData.token), 'error: token was not removed after userLogout');
+  })
 });
