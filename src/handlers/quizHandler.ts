@@ -1,12 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../features/quiz';
-<<<<<<< HEAD
-import { quizCreateQuestion } from '../features/question'; import { adminMoveQuestion } from '../features/question';
-
-=======
-import { quizCreateQuestion, quizUpdateQuestion } from '../features/question';
->>>>>>> 89a9cf0 (Fixed conflicts)
+import { quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../features/question';
 export const quizRouter = Router();
 
 // get routers

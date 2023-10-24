@@ -5,16 +5,35 @@ import { getData, setData, CreateQuestionReturn, Question, Answer, QuestionCreat
 =======
 import { Question, Answer, QuestionCreate, Colours } from '../dataStore';
 import { tokenValidation, getTotalDurationOfQuiz, getRandomColorAndRemove } from './other';
+<<<<<<< HEAD
 import { getData, setData, QuestionReturn } from '../dataStore';
 >>>>>>> 55d36cb (updateQuestion: Working code and passing all tests)
+=======
+import { getData, setData } from '../dataStore';
+>>>>>>> d9730b5 (fixed code according to carmens comments)
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { findQuestionByQuiz, findQuizById, findToken, tokenValidation, getTotalDurationOfQuiz, getRandomColorAndRemove } from './other';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): CreateQuestionReturn {
 =======
 // code
+=======
+
+interface QuestionReturn {
+  questionId: number,
+}
+
+/**
+ * 
+ * @param quizId 
+ * @param token 
+ * @param questionBody 
+ * @returns QuestionReturn
+ */
+>>>>>>> d9730b5 (fixed code according to carmens comments)
 function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): QuestionReturn {
 >>>>>>> 55d36cb (updateQuestion: Working code and passing all tests)
   const dataStore = getData();
@@ -100,6 +119,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     questionId: questionId,
   };
 }
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 /**
@@ -147,6 +167,16 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
   matchedQuiz.questions.splice(newPosition, 0, questionToMove);
   matchedQuiz.timeLastEdited = getUnixTime(new Date());
 =======
+=======
+/**
+ * 
+ * @param quizId 
+ * @param questionId 
+ * @param token 
+ * @param questionBody 
+ * @returns empty object 
+ */
+>>>>>>> d9730b5 (fixed code according to carmens comments)
 function quizUpdateQuestion (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
   const dataStore = getData();
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
@@ -213,9 +243,7 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
     arrayOfAnswers.push(questionAnswerBody);
   }
 
-  const question = quiz.questions.find(question => question.questionId === questionId);
-
-  const questionToUpdate = question;
+  const questionToUpdate = quiz.questions.find(question => question.questionId === questionId);
   questionToUpdate.question = questionBody.question;
   questionToUpdate.points = questionBody.points;
   questionToUpdate.duration = questionBody.duration;
