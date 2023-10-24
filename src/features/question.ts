@@ -6,7 +6,7 @@ import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { getUnixTime } from 'date-fns';
 
-interface duplicateQuestionReturn {
+interface adminDuplicateQuestionReturn {
   newQuestionId: number
 }
 
@@ -114,7 +114,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
  * @param quizId - quizId of question to be duplicated
  * @param questionId - question within quiz to be duplicated
 */
-function duplicateQuestion (sessionId: string, quizId: number, questionId: number): duplicateQuestionReturn {
+function adminDuplicateQuestion (sessionId: string, quizId: number, questionId: number): adminDuplicateQuestionReturn {
   return { newQuestionId: 123 }
   // const dataStore = getData();
   // const quizBody = dataStore.quizzes.find((quiz) => quiz.quizId === quizId);
@@ -157,4 +157,4 @@ function duplicateQuestion (sessionId: string, quizId: number, questionId: numbe
   // return { newQuestionId: duplicatedQuestion.questionId }
 }
 
-export { quizCreateQuestion, duplicateQuestion };
+export { quizCreateQuestion, adminDuplicateQuestion };

@@ -56,6 +56,21 @@ const authUserDetailsRequest = (token: string): Response => {
 };
 
 // quiz requests
+// must go before create!
+const quizTransferRequest = (token: string, quizId: number, userEmail: string): Response => {
+  return request(
+    'POST',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/transfer',
+    {
+      body: JSON.stringify({
+        token: token,
+        userEmail: userEmail
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
 const quizCreateRequest = (token: string, name: string, description: string): Response => {
   return request(
     'POST',
@@ -98,42 +113,57 @@ const quizListRequest = (token: string): Response => {
 const quizInfoRequest = (token: string, quizId: number): Response => {
   return request(
     'GET',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}`,
-    {
-      qs: {
-        token: token
-      }
-    }
+          `${SERVER_URL}/v1/admin/quiz/${quizId}`,
+          {
+            qs: {
+              token: token
+            }
+          }
   );
 };
 
 const quizNameUpdateRequest = (token: string, quizId: number, name: string): Response => {
   return request(
     'PUT',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/name`,
-    {
-      body: JSON.stringify({
-        token: token,
-        name: name,
-      }),
-      headers: { 'Content-type': 'application/json' },
-    }
+      `${SERVER_URL}/v1/admin/quiz/${quizId}/name`,
+      {
+        body: JSON.stringify({
+          token: token,
+          name: name,
+        }),
+        headers: { 'Content-type': 'application/json' },
+      }
   );
 };
 
 const quizDescriptUpdateRequest = (token: string, quizId: number, description: string): Response => {
   return request(
     'PUT',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/description`,
-    {
-      body: JSON.stringify({
-        token: token,
-        description: description,
-      }),
-      headers: { 'Content-type': 'application/json' },
-    }
+        `${SERVER_URL}/v1/admin/quiz/${quizId}/description`,
+        {
+          body: JSON.stringify({
+            token: token,
+            description: description,
+          }),
+          headers: { 'Content-type': 'application/json' },
+        }
   );
 };
+
+// question requests
+const createQuizQuestionRequest = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question`,
+    {
+      json: {
+        token: token,
+        questionBody: questionBody,
+      },
+    }
+    );
+  };
+  
 
 const duplicateQuestionRequest = (token: string, quizId: number, questionId: number): Response => {
   return request(
@@ -148,20 +178,7 @@ const duplicateQuestionRequest = (token: string, quizId: number, questionId: num
   )
 }
 
-const createQuizQuestionRequest = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
-  return request(
-    'POST',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/question`,
-    {
-      json: {
-        token: token,
-        questionBody: questionBody,
-      },
-    }
-  );
-};
-
 export { authRegisterRequest, authLoginRequest, authUserDetailsRequest,
   clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
   quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest,
-  createQuizQuestionRequest, duplicateQuestionRequest };
+  quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest };
