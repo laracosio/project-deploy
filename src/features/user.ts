@@ -1,7 +1,7 @@
 import { getData } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { tokenValidation } from './other';
+import { findToken, findUserById, tokenValidation } from './other';
 
 interface UserDetailReturn {
   user: {
@@ -18,9 +18,9 @@ interface UserDetailReturn {
  * "name" is the first and last name concatenated with a single space between them
  * @param {string} sessionId - calling user's Id
  * @returns {user: {userId: number, email: string,
-*              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
-* @returns {{error: string}} on error
-*/
+ *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
+ * @returns {{error: string}} on error
+ */
 function adminUserDetails(sessionId: string): UserDetailReturn {
   const dataStore = getData();
   // invalid Token
@@ -43,6 +43,51 @@ function adminUserDetails(sessionId: string): UserDetailReturn {
   };
 }
 
+/**
+ * Given an admin user's authUserId, return details about the user.
+ * "name" is the first and last name concatenated with a single space between them
+ * @param {string} sessionId - current session id from token
+ * @param {string} oldPassword - user's current password (before update)
+ * @param {string} newPassword - new password to replace the current password
+ * @returns {}
+ * @returns {{ error: string }} on error
+ */
+function adminUserUpdatePassword(sessionId: string, oldPassword: string, newPassword: string) {
+  const dataStore = getData();
+  
+  const userToken = findToken(sessionId);
+  const user = findUserById(userToken.userId);
+  
+  // check oldPassword is correct
+  if (oldPassword = user.password) {
+    throw new ApiError('Old Password is incorrect', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // check newPassword doesn't match oldPassword
+  if (oldPassword === newPassword) {
+    throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // check newPassword hasn't been used by this user in the past
+  if (user.oldPasswords.some((p) => p === newPassword)) {
+    throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // check newPassword is not less than 8 characters
+  if (newPassword.length < 8) {
+    throw new ApiError('Password must be at least 8 characters', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // check newPassword contains at least one number and at least one letter
+  const pwLetterRegex = /[a-zA-Z]/;
+  const pwNumRegex = /\d/;
+  if (!pwLetterRegex.test(newPassword) || !pwNumRegex.test(newPassword)) {
+    throw new ApiError('Password must contain at least one number and at least one letter', HttpStatusCode.BAD_REQUEST);
+  }
+
+}
+
 export {
-  adminUserDetails
+  adminUserDetails,
+  adminUserUpdatePassword,
 };
