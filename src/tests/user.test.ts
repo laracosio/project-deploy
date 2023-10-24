@@ -3,6 +3,7 @@ import { adminAuthRegister, adminAuthLogin } from '../features/auth';
 import { clear } from '../features/other';
 import { adminUserDetails } from '../features/user';
 import { ApiError } from '../errors/ApiError';
+import { authRegisterRequest } from './serverTestHelper';
 
 beforeEach(() => {
   clear();
@@ -61,3 +62,60 @@ describe('Testing adminAuthDetails', () => {
     expect(adminAuthDetailsFunc).toThrow('Token is invalid');
   });
 });
+
+// tests for user/password
+
+describe('PUT /v1/admin/user/password - Error Cases', () => {
+  test('Old Password is not the correct old password', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = updatePasswordRequest(userData.token, `${person1.password}m`, 'd1sn3yl4nd');
+    expect(response.StatusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Old Password is incorrect' });
+  });
+  test('New Password = Old Password', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = updatePasswordRequest(userData.token, person1.password, person1.password);
+    expect(response.StatusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'New Password cannot be the same as old password' });
+  });
+  test('New Password has already been used before by this user', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    updatePasswordRequest(userData.token, person1.password, person2.password);
+    updatePasswordRequest(userData.token, person2.password, person3.password);
+    updatePasswordRequest(userData.token, person3.password, person4.password);
+    const response = updatePasswordRequest(userData.token, person4.password, person1.password);
+    expect(response.StatusCode).toStrictEqual(400);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'New Password cannot be the same as old password' });
+  });
+  test('New Password is less than 8 characters', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = updatePasswordRequest(userData.token, person1.password, 'disney7');
+  });
+  test('New Password does not contain at least one number and at least one letter - all letters', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = updatePasswordRequest(userData.token, person1.password, 'disneyland');
+  });
+  test('New Password does not contain at least one number and at least one letter - all numbers', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = updatePasswordRequest(userData.token, person1.password, '12345678');
+  });
+  test('New Password does not contain at least one number and at least one letter - all special', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = updatePasswordRequest(userData.token, person1.password, '!@#$%^&*');
+  });
+  test('Invalid token', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = updatePasswordRequest(userData.token + 1, person1.password, 'd1sn3yl4nd');
+    expect(response.statusCode).toStrictEqual(401);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
+
+  });
+})
