@@ -1,30 +1,9 @@
-// import statements
-<<<<<<< HEAD
 import { getUnixTime } from 'date-fns';
-import { getData, setData, CreateQuestionReturn, Question, Answer, QuestionCreate, Colours } from '../dataStore';
-=======
-import { Question, Answer, QuestionCreate, Colours } from '../dataStore';
-import { tokenValidation, getTotalDurationOfQuiz, getRandomColorAndRemove } from './other';
-<<<<<<< HEAD
-import { getData, setData, QuestionReturn } from '../dataStore';
->>>>>>> 55d36cb (updateQuestion: Working code and passing all tests)
-=======
-import { getData, setData } from '../dataStore';
->>>>>>> d9730b5 (fixed code according to carmens comments)
+import { getData, setData, Question, Answer, QuestionCreate, Colours } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { findQuestionByQuiz, findQuizById, findToken, tokenValidation, getTotalDurationOfQuiz, getRandomColorAndRemove } from './other';
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): CreateQuestionReturn {
-=======
-// code
-=======
-
-=======
->>>>>>> 06c42f0 (Fixed quizHandler)
 interface QuestionReturn {
   questionId: number,
 }
@@ -36,9 +15,8 @@ interface QuestionReturn {
  * @param questionBody
  * @returns QuestionReturn
  */
->>>>>>> d9730b5 (fixed code according to carmens comments)
+
 function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): QuestionReturn {
->>>>>>> 55d36cb (updateQuestion: Working code and passing all tests)
   const dataStore = getData();
 
   if (questionBody.question.length < 5 || questionBody.question.length > 50) {
@@ -122,9 +100,6 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     questionId: questionId,
   };
 }
-<<<<<<< HEAD
-
-<<<<<<< HEAD
 /**
  * Move a question from one particular position in the quiz to another
  * When this route is called, the timeLastEdited is updated
@@ -169,8 +144,10 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
   const questionToMove = matchedQuiz.questions.splice(currentIndex, 1)[0];
   matchedQuiz.questions.splice(newPosition, 0, questionToMove);
   matchedQuiz.timeLastEdited = getUnixTime(new Date());
-=======
-=======
+  setData(dataStore);
+  return {};
+}
+
 /**
  *
  * @param quizId
@@ -179,7 +156,7 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
  * @param questionBody
  * @returns empty object
  */
->>>>>>> d9730b5 (fixed code according to carmens comments)
+
 function quizUpdateQuestion (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
   const dataStore = getData();
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
@@ -252,13 +229,10 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
   questionToUpdate.duration = questionBody.duration;
   questionToUpdate.answers = arrayOfAnswers;
   quiz.quizDuration = getTotalDurationOfQuiz(quiz.quizId);
->>>>>>> 55d36cb (updateQuestion: Working code and passing all tests)
+
 
   setData(dataStore);
   return {};
 }
-<<<<<<< HEAD
-export { quizCreateQuestion, adminMoveQuestion };
-=======
-export { quizCreateQuestion, quizUpdateQuestion };
->>>>>>> 55d36cb (updateQuestion: Working code and passing all tests)
+
+export { quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion };

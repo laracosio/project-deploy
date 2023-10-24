@@ -7,7 +7,7 @@ beforeEach(() => {
   clearRequest();
 });
 
-// create Question - Lara
+// create Question
 describe('Successful tests: Create a quiz question', () => {
   test('Create a Quiz Question test', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -461,6 +461,7 @@ describe('Unsuccessful tests (403): Create a quiz question', () => {
   });
 });
 
+<<<<<<< HEAD
 describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Success', () => {
   let sess1: Response, quiz1: Response;
   beforeEach(() => {
@@ -586,6 +587,9 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () =>
 });
 
 //updateQuestion
+=======
+// updateQuestion
+>>>>>>> 4094dae (updateQuestion: Ready for merging!)
 describe('Successful tests: Update a quiz question', () => {
   test('Update a quiz question test', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
