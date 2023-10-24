@@ -1,6 +1,6 @@
 import { Question, Quiz, getData, setData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
-import { findToken, tokenValidation } from './other';
+import { findQuizById, findToken, tokenValidation } from './other';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 
@@ -257,6 +257,56 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
   return {};
 }
 
+/**
+ * Transfer ownership of a quiz to a different user based on their email
+ * @param sessionId - string of sessionId
+ * @param quizId - quizId to change ownership of
+ * @param userEmail - email of user to change quiz to
+ * @returns '{}'
+*/
+function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: string): object {
+  const dataStore = getData();
+
+  const transferUser = dataStore.users.find((user) => user.email === userEmail);
+  const transferQuiz = findQuizById(quizId);
+
+  const tokenUser = findToken(sessionId);
+  // check quizId
+  if (transferQuiz === undefined) {
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // check whether email is valid
+  if (transferUser === undefined) {
+    throw new ApiError('userEmail is not a real user', HttpStatusCode.BAD_REQUEST);
+  }
+  // invalid token
+  if (!tokenValidation(sessionId)) {
+    throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
+  }
+
+  // valid token but user is not owner
+  if (tokenUser.userId !== transferQuiz.quizOwner) {
+    throw new ApiError('User does not own quiz to change owner', HttpStatusCode.FORBIDDEN);
+  }
+
+  // check if tokenUser is the same as transferUser
+  if (tokenUser.userId === transferUser.userId) {
+    throw new ApiError('userEmail is the current logged in user', HttpStatusCode.BAD_REQUEST);
+  }
+  // duplicate name
+  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === transferUser.userId && quiz.name === transferQuiz.name))) {
+    throw new ApiError('Quiz ID refers to a quiz that has a name that is already used by the target user', HttpStatusCode.BAD_REQUEST);
+  }
+
+  transferQuiz.quizOwner = transferUser.userId;
+  transferQuiz.timeLastEdited = getUnixTime(new Date());
+  setData(dataStore);
+
+  return {};
+}
+
 export {
   adminQuizInfo, adminQuizList, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate,
+  adminQuizTransferOwner
 };

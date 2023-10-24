@@ -1,5 +1,4 @@
 // import statements
-
 import { Question, Answer, QuestionCreate, Colours } from '../dataStore';
 import { tokenValidation, getTotalDurationOfQuiz, getRandomColorAndRemove } from './other';
 import { getData, setData, CreateQuestionReturn } from '../dataStore';
