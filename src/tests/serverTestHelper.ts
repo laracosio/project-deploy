@@ -43,7 +43,7 @@ const authLoginRequest = (email: string, password: string): Response => {
   );
 };
 
-const authLogoutRequest = (token: token): Response => {
+const authLogoutRequest = (token: string): Response => {
   return request(
     'POST',
     SERVER_URL + '/v1/admin/auth/logout',
