@@ -1,5 +1,4 @@
 import { adminAuthRegister, adminAuthLogin } from '../features/auth';
-import { adminUserDetails } from '../features/user';
 import { Router, Request, Response } from 'express';
 
 export const authRouter = Router();
