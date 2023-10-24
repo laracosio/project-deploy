@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../features/quiz';
-import { adminMoveQuestion } from '../features/question';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../features/quiz';
+import { quizCreateQuestion } from '../features/question'; import { adminMoveQuestion } from '../features/question';
 
 export const quizRouter = Router();
 
@@ -18,6 +18,18 @@ quizRouter.get('/:quizId', (req: Request, res: Response) => {
 });
 
 // post routers - quizCreate must go last!
+quizRouter.post('/:quizid/transfer', (req: Request, res: Response) => {
+  const { token, userEmail } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  res.json(adminQuizTransferOwner(token, quizId, userEmail));
+});
+
+quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { token, questionBody } = req.body;
+  res.json(quizCreateQuestion(quizId, token, questionBody));
+});
+
 quizRouter.post('/', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
   res.json(adminQuizCreate(token, name, description));
@@ -36,13 +48,13 @@ quizRouter.put('/:quizId/description', (req: Request, res: Response) => {
   res.json(adminQuizDescriptionUpdate(sessionToken, quizId, req.body.description));
 });
 
-quizRouter.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
+quizRouter.put('/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const sessionToken = req.body.token as string;
   const newPostion = req.body.newPosition as number;
-  const quizId =  parseInt(req.params.quizId);
-  const questionId = parseInt(req.params.questionId);
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
   res.json(adminMoveQuestion(sessionToken, quizId, questionId, newPostion));
-})
+});
 
 // delete routers
 quizRouter.delete('/:quizid', (req: Request, res: Response) => {

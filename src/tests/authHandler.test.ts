@@ -93,8 +93,8 @@ describe('adminAuthRegister Server - error', () => {
   });
 });
 
-describe('adminAuthLogin - Successful Root', () => {
-  test('adminAuthLogin - Successful Root', () => {
+describe('adminAuthLogin - Successful Route', () => {
+  test('adminAuthLogin - Successful Route', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const resLogin = authLoginRequest(person1.email, person1.password);
     const data = JSON.parse(resLogin.body.toString());
@@ -102,7 +102,7 @@ describe('adminAuthLogin - Successful Root', () => {
   });
 });
 
-describe('adminAuthLogin - Unsuccessful Root', () => {
+describe('adminAuthLogin - Unsuccessful Route', () => {
   test('Unsuccessful Root (400): Email address does not exist', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const resLogin = authLoginRequest(person2.email, person1.password);
@@ -139,8 +139,8 @@ describe('adminAuthDetails - Successful Root', () => {
   });
 });
 
-describe('adminAuthDetails - Unsuccessful Root', () => {
-  test('Unsuccessful Root (401): Token is empty', () => {
+describe('adminAuthDetails - Unsuccessful Route', () => {
+  test('Unsuccessful Route (401): Token is empty', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     authLoginRequest(person1.email, person1.password);
     const token = '';
@@ -149,7 +149,7 @@ describe('adminAuthDetails - Unsuccessful Root', () => {
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 
-  test('Unsuccessful Root (401): Token is invalid', () => {
+  test('Unsuccessful Route (401): Token is invalid', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     authLoginRequest(person1.email, person1.password);
     const token = 'lkgjlaksjglaksjgla';

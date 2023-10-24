@@ -1,9 +1,19 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
+import { QuestionCreate } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
+// other requests
+const clearRequest = (): Response => {
+  return request(
+    'DELETE',
+    SERVER_URL + '/v1/clear'
+  );
+};
+
+// auth requests
 const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): Response => {
   return request(
     'POST',
@@ -36,7 +46,7 @@ const authLoginRequest = (email: string, password: string): Response => {
 const authUserDetailsRequest = (token: string): Response => {
   return request(
     'GET',
-    SERVER_URL + '/v1/admin/auth/details',
+    SERVER_URL + '/v1/admin/user/details',
     {
       qs: {
         token: token,
@@ -45,10 +55,19 @@ const authUserDetailsRequest = (token: string): Response => {
   );
 };
 
-const clearRequest = (): Response => {
+// quiz requests
+// must go before create!
+const quizTransferRequest = (token: string, quizId: number, userEmail: string): Response => {
   return request(
-    'DELETE',
-    SERVER_URL + '/v1/clear'
+    'POST',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/transfer',
+    {
+      body: JSON.stringify({
+        token: token,
+        userEmail: userEmail
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
   );
 };
 
@@ -94,39 +113,53 @@ const quizListRequest = (token: string): Response => {
 const quizInfoRequest = (token: string, quizId: number): Response => {
   return request(
     'GET',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}`,
-    {
-      qs: {
-        token: token
-      }
-    }
+          `${SERVER_URL}/v1/admin/quiz/${quizId}`,
+          {
+            qs: {
+              token: token
+            }
+          }
   );
 };
 
 const quizNameUpdateRequest = (token: string, quizId: number, name: string): Response => {
   return request(
     'PUT',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/name`,
-    {
-      body: JSON.stringify({
-        token: token,
-        name: name,
-      }),
-      headers: { 'Content-type': 'application/json' },
-    }
+      `${SERVER_URL}/v1/admin/quiz/${quizId}/name`,
+      {
+        body: JSON.stringify({
+          token: token,
+          name: name,
+        }),
+        headers: { 'Content-type': 'application/json' },
+      }
   );
 };
 
 const quizDescriptUpdateRequest = (token: string, quizId: number, description: string): Response => {
   return request(
     'PUT',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/description`,
+        `${SERVER_URL}/v1/admin/quiz/${quizId}/description`,
+        {
+          body: JSON.stringify({
+            token: token,
+            description: description,
+          }),
+          headers: { 'Content-type': 'application/json' },
+        }
+  );
+};
+
+// question requests
+const createQuizQuestionRequest = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question`,
     {
-      body: JSON.stringify({
+      json: {
         token: token,
-        description: description,
-      }),
-      headers: { 'Content-type': 'application/json' },
+        questionBody: questionBody,
+      },
     }
   );
 };
@@ -145,7 +178,9 @@ const moveQuestionRequest = (token: string, quizId: number, questionId: number, 
   );
 };
 
-export { authRegisterRequest, authLoginRequest, authUserDetailsRequest };
-export { clearRequest };
-export { quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest };
-export { quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest };
+export {
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
+  quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
+  quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest, quizTransferRequest,
+  createQuizQuestionRequest
+};

@@ -38,4 +38,6 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
   return {};
 }
 
-export { adminQuizRemove };
+export {
+  adminQuizRemove
+};
