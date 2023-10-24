@@ -88,9 +88,10 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
 function adminAuthLogout(token: string): object {
   const dataStore = getData();
   
+  console.log('hello');
   // check if token is valid
   if (!dataStore.tokens.some(user =>user.sessionId === token)) {
-    throw new ApiError('Invalid token', HttpStatusCode.BAD_REQUEST);
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
   // remove token from dataStore
@@ -103,5 +104,5 @@ function adminAuthLogout(token: string): object {
 }
 
 export {
-  adminAuthRegister, adminAuthLogin
+  adminAuthRegister, adminAuthLogin, adminAuthLogout
 };
