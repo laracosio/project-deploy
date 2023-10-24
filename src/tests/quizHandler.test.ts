@@ -1,6 +1,7 @@
 import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest, quizListRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest, authLoginRequest } from './serverTestHelper';
 import { person1, person2, person3, person4, person5, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription, newvalidQuizName, newvalidQuizDescription } from '../testingData';
 import { Response } from 'sync-request-curl';
+import { getUnixTime } from 'date-fns';
 
 beforeEach(() => {
   clearRequest();
@@ -509,6 +510,10 @@ describe('POST /v1/admin/quiz/{quizId}/transfer - Success', () => {
     const sess2Data = JSON.parse(sess2.body.toString());
     const res = quizTransferRequest(sess1Data.token, quiz1Data.quizId, person2.email);
     expect(JSON.parse(res.body.toString())).toStrictEqual({});
+
+    const quizInfo1 = quizInfoRequest(sess2Data.token, quiz1Data.quizId);
+    expect(quizInfo1.statusCode).toStrictEqual(200);
+    expect(JSON.parse(quizInfo1.body.toString()).timeLastEdited).toBeGreaterThanOrEqual(getUnixTime(new Date()));
 
     const sess3 = authRegisterRequest(person3.email, person3.password, person3.nameFirst, person3.nameLast);
     const sess3Data = JSON.parse(sess3.body.toString());
