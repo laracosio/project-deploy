@@ -1,7 +1,7 @@
 import { assert } from 'console';
 import { getData } from '../dataStore';
 import { person1, person2, person3, validQuizDescription, validQuizName } from '../testingData';
-import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest, quizCreateRequest } from './serverTestHelper';
+import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest, quizCreateRequest, authLogoutRequest } from './serverTestHelper';
 
 beforeEach(() => {
   clearRequest();

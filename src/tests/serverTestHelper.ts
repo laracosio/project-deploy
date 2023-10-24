@@ -177,7 +177,7 @@ const createQuizQuestionRequest = (quizId: number, token: string, questionBody: 
 };
 
 export {
-  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest, authLogoutRequest, clearRequest,
   quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
   quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest,
   createQuizQuestionRequest
