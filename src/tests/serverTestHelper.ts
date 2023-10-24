@@ -131,7 +131,21 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
   );
 };
 
+const moveQuestionRequest = (token: string, quizId: number, questionId: number, newPosition: number): Response => {
+  return request(
+    'PUT',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move',
+    {
+      body: JSON.stringify({
+        token: token,
+        newPosition: newPosition,
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
 export { authRegisterRequest, authLoginRequest, authUserDetailsRequest };
 export { clearRequest };
 export { quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest };
-export { quizNameUpdateRequest, quizDescriptUpdateRequest };
+export { quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest };
