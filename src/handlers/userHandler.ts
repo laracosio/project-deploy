@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { adminUserDetails } from '../features/user';
+import { adminUserDetails, adminUserUpdatePassword } from '../features/user';
 
 export const userRouter = Router();
 
@@ -12,5 +12,9 @@ userRouter.get('/details', (req: Request, res: Response) => {
 // post routers
 
 // put routers
+userRouter.get('/password', (req: Request, res: Response) => {
+  const token = req.query.token.toString();
+  res.json(adminUserUpdatePassword(token, req.body.oldPassword, req.body.newPassword));
+})
 
 // delete routers
