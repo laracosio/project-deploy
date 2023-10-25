@@ -585,7 +585,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () =>
 });
 
 // duplicate Question - needs createQuestion
-describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Error', () => {
+describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Success', () => {
   let sess1: Response, quiz1: Response, quest1: Response;
   beforeEach(() => {
     sess1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);

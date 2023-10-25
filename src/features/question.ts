@@ -162,6 +162,7 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
  * @param sessionId - sessionId of token
  * @param quizId - quizId of question to be duplicated
  * @param questionId - question within quiz to be duplicated
+ * @returns: adminDuplicateQuestion which contains newQuestionId key with a number value
 */
 function adminDuplicateQuestion (sessionId: string, quizId: number, questionId: number): adminDuplicateQuestionReturn {
   const dataStore = getData();
