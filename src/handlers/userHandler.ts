@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { adminUserDetails } from '../features/user';
+import { userUpdateDetailsResponse } from '../tests/serverTestHelper';
 
 export const userRouter = Router();
 
@@ -12,5 +13,9 @@ userRouter.get('/details', (req: Request, res: Response) => {
 // post routers
 
 // put routers
+userRouter.put('/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  res.json(userUpdateDetails(token, email, nameFirst, nameLast));
+})
 
 // delete routers
