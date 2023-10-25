@@ -167,6 +167,19 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
 };
 
 // question requests
+const duplicateQuestionRequest = (token: string, quizId: number, questionId: number): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`,
+    {
+      body: JSON.stringify({
+        token: token,
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
 const createQuizQuestionRequest = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
   return request(
     'POST',
@@ -180,9 +193,37 @@ const createQuizQuestionRequest = (quizId: number, token: string, questionBody: 
   );
 };
 
+const moveQuestionRequest = (token: string, quizId: number, questionId: number, newPosition: number): Response => {
+  return request(
+    'PUT',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move',
+    {
+      body: JSON.stringify({
+        token: token,
+        newPosition: newPosition,
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
+const updateQuizQuestionRequest = (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`,
+    {
+      json: {
+        token: token,
+        questionBody: questionBody,
+      },
+    }
+  );
+};
+
 export {
-  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
-  quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
-  quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest,
-  createQuizQuestionRequest, userUpdatePasswordRequest,
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest,
+  userUpdatePasswordRequest,
+  clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
+  quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest,
+  quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest
 };

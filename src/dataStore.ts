@@ -26,9 +26,6 @@ export interface User {
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
 }
-export interface CreateQuestionReturn {
-  questionId: number,
-}
 
 export interface Answer {
   answerId: number,
