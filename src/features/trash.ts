@@ -100,7 +100,7 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
 
   // check quizId refers to quiz in trash'
   const matchedQuiz = dataStore.trash.find((quiz) => quiz.quizId === quizId);
-  // if (!dataStore.trash.some((quiz) => quiz.quizId === quizId)) {
+  //if (!dataStore.trash.some((quiz) => quiz.quizId === quizId)) {
   console.log('currenttrash', dataStore.trash);
   console.log(matchedQuiz);
   if (matchedQuiz === undefined) {
