@@ -56,10 +56,11 @@ function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: n
   }
 
   const questionIndex: number = quiz.questions.findIndex(question => question.questionId === questionId);
-  quiz.questions.splice(questionIndex, 1);
+  const quizDeleted = quiz.questions.splice(questionIndex, 1)[0];
 
   quiz.timeLastEdited = getUnixTime(new Date());
-
+  quiz.quizDuration = quiz.quizDuration - quizDeleted.duration;
+  quiz.numQuestions--;
   setData(dataStore);
 
   return {};

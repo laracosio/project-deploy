@@ -1560,7 +1560,7 @@ describe('Successful tests: Delete a quiz question', () => {
 
     const questionCreate2 = {
       question: 'Who is laras best girl cat?',
-      duration: 1,
+      duration: 10,
       points: 2,
       answers: answerCreate2,
     };
