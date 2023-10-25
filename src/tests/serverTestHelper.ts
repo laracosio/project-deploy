@@ -191,9 +191,22 @@ const moveQuestionRequest = (token: string, quizId: number, questionId: number, 
   );
 };
 
+const updateQuizQuestionRequest = (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`,
+    {
+      json: {
+        token: token,
+        questionBody: questionBody,
+      },
+    }
+  );
+};
+
 export {
   authRegisterRequest, authLoginRequest, authUserDetailsRequest,
   clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
   quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest,
-  quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest
+  quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest
 };
