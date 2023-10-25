@@ -49,6 +49,7 @@ describe('quizRestoreTrash - Success Cases', () => {
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
+    console.log(quiz1Data);
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
     const trashedQuiz1Data = JSON.parse(trashedQuiz1.body.toString());
     const response = quizRestoreTrashRequest(session1Data.token, trashedQuiz1Data.quizId);

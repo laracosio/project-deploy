@@ -21,6 +21,7 @@ interface userTrashQuizList {
  */
 function adminQuizRemove(sessionId: string, quizId: number): object {
   const dataStore = getData();
+
   const matchedQuiz = findQuizById(quizId);
   // check that quizId is not empty or is valid
   if (!quizId || matchedQuiz === undefined) {
@@ -87,6 +88,8 @@ function adminQuizViewTrash(sessionId: string): userTrashQuizList {
 function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   const dataStore = getData();
 
+  console.log('quizid', quizId);
+
   //declare index to access quiz in array that the quizId parameter refers to
   const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
 
@@ -98,6 +101,8 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   // check quizId refers to quiz in trash'
   const matchedQuiz = dataStore.trash.find((quiz) => quiz.quizId === quizId);
   // if (!dataStore.trash.some((quiz) => quiz.quizId === quizId)) {
+  console.log('currenttrash', dataStore.trash);
+  console.log(matchedQuiz);
   if (matchedQuiz === undefined) {
     throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
   }
