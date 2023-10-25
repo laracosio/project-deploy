@@ -59,7 +59,7 @@ describe('PUT /v1/admin/user/details - Error Cases', () => {
   test('Email does not satisfy: (validator.isEmail)', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
-    const response = userUpdateDetailsResponse(userData.token, 'h.simpson@springfield.com', person1.nameFirst, person1.nameLast);
+    const response = userUpdateDetailsResponse(userData.token, 'h.simpson@@springfield.com', person1.nameFirst, person1.nameLast);
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid email' });
   });
@@ -122,7 +122,9 @@ describe('PUT /v1/admin/user/details - Error Cases', () => {
   test('Invalid token', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
+    console.log(userData);
     const response = userUpdateDetailsResponse(userData.token + 1, person1.email, person1.nameFirst, person1.nameLast);
+    // console.log(response);
     expect(response.statusCode).toStrictEqual(401);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
   });

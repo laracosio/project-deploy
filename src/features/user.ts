@@ -46,44 +46,48 @@ function adminUserDetails(sessionId: string): UserDetailReturn {
 
 function adminUserUpdateDetails(token: string, email: string, nameFirst: string, nameLast: string): object {
   const dataStore = getData();
-  // check new email is not currently used by another user
-  if (!validator.isEmail(email)) {
-    throw new ApiError('', HttpStatusCode.BAD_REQUEST);
-  }
 
-  const userToken = findToken(token);
-  const userId = userToken.userId;
-  const user = findUserById(userId);
-  const currentUserEmail = user.email;
-
+  // check new email is not currently used by another user (excluding current user)
+  console.log('bagel');
+  // for (const user of dataStore.users) {
+  //   if (user.email === email) {
+  //     throw new ApiError('Email is currently used by another user', HttpStatusCode.BAD_REQUEST);
+  //   }
+  // }
+  console.log('bagel1');
   // check email satisfies (validator.isEmail)
-  for (const user of dataStore.users) {
-    if (user.email === email && email !== currentUserEmail) {
-      throw new ApiError('Email is currently used by another user', HttpStatusCode.BAD_REQUEST);
-    }
+  if (!validator.isEmail(email)) {
+    throw new ApiError('Invalid email', HttpStatusCode.BAD_REQUEST);
   }
-
+  console.log('bagel2');
   // check names are between 2 and 20 characters
   if (nameFirst.length < 2 || nameLast.length < 2 ||
     nameFirst.length > 20 || nameLast.length > 20) {
       throw new ApiError('Name must be between 2 and 20 characters', HttpStatusCode.BAD_REQUEST);
   }
-    
-    // check names contains only lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
+  console.log('bagel3');
+  // check names contains only lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
   const regex = /^[a-zA-Z\s\-']+$/;
   if (!regex.test(nameFirst) || !regex.test(nameLast)) {
     throw new ApiError('Name must only contain lowercase letters, uppercase letters, spaces, hyphens, or apostrophes', HttpStatusCode.BAD_REQUEST);
   }
-
+  console.log('bagel4');
   // check token is valid
   if(!tokenValidation(token)) {
+    console.log('poop');
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
-
+  console.log('bagel5');
   // find user and update their details
+  const userToken = findToken(token);
+  const userId = userToken.userId;
+  const user = findUserById(userId);
+  console.log('bagel6');
   user.email = email;
   user.nameFirst = nameFirst;
   user.nameLast = nameLast;
+
+  console.log(user);
 
   // save changes to dataStore
   setData(dataStore);
