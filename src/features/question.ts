@@ -135,6 +135,7 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
     throw new ApiError('Quiz ID does not refer to a valid quiz', HttpStatusCode.BAD_REQUEST);
   }
   // question invalid
+
   const matchedQuestion = findQuestionByQuiz(matchedQuiz, questionId);
   if (matchedQuestion === undefined) {
     throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
