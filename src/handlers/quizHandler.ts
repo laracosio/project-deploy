@@ -34,9 +34,9 @@ quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   res.json(quizCreateQuestion(quizId, token, questionBody));
 });
 
-quizRouter.post('/:quizid/restore', (req: Request, res: Response) => {
+quizRouter.post('/:quizId/restore', (req: Request, res: Response) => {
   const { token } = req.body;
-  const quizId = parseInt(req.params.quizid);
+  const quizId = parseInt(req.params.quizId);
   res.json(adminQuizRestoreTrash(token, quizId));
 });
 

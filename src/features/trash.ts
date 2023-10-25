@@ -50,13 +50,14 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
 
 /**
  * Provide a list of all quizzes in the trash that are owned by the currently logged in user.
- * @param {string} sessionId - unique token containing sessionId
+ * @param {string} sessionId
+ * @returns {quizzes: [{quizId: number, name: string}]}
  * @returns {{error: string}}
  */
 function adminQuizViewTrash(sessionId: string): userTrashQuizList {
   const dataStore = getData();
 
-  // check that sessionId is not empty or is valid
+  // check that token is not empty or is valid
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
@@ -88,11 +89,6 @@ function adminQuizViewTrash(sessionId: string): userTrashQuizList {
 function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   const dataStore = getData();
 
-  console.log('quizid', quizId);
-
-  //declare index to access quiz in array that the quizId parameter refers to
-  const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
-
   // check sessionId is valid
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
@@ -100,32 +96,38 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
 
   // check quizId refers to quiz in trash'
   const matchedQuiz = dataStore.trash.find((quiz) => quiz.quizId === quizId);
-  //if (!dataStore.trash.some((quiz) => quiz.quizId === quizId)) {
-  console.log('currenttrash', dataStore.trash);
-  console.log(matchedQuiz);
   if (matchedQuiz === undefined) {
     throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
   }
 
   // check quiz name doesn't already exist in current user's lists
-  // if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === dataStore.quizzes[index].name ))) {
+  const tokenUser = findToken(sessionId);
+  //console.log('Token user id', tokenUser.userId);
+  //console.log('matched quiz name', matchedQuiz.name);
+  //console.log('Data store quizzes', dataStore.quizzes);
+  //console.log('Trashed quizzes', dataStore.trash);
+
+
     if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === matchedQuiz.name ))) {
+    //console.log('currenttrash', dataStore.trash);
+    //console.log(matchedQuiz);
     throw new ApiError('Quiz name already exists', HttpStatusCode.BAD_REQUEST);
   }
 
   // check valid quizId is owned by the current user associated with token
-  const tokenUser = findToken(sessionId);
   if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }
 
 //restores specified quiz from trash
-  const restoreQuiz = dataStore.trash.splice(index, 1)[0];
+  const index1 = dataStore.trash.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
+  const restoreQuiz = dataStore.trash.splice(index1, 1)[0];
   dataStore.quizzes.push(restoreQuiz);
 
 //Update time quiz lasted edited
-  const date = getUnixTime(new Date());
-  dataStore.quizzes[index].timeLastEdited = date;
+const index2 = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));  
+const date = getUnixTime(new Date());
+  dataStore.quizzes[index2].timeLastEdited = date;
 
   setData(dataStore);
   return {};

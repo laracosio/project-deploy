@@ -167,12 +167,11 @@ const createQuizQuestionRequest = (quizId: number, token: string, questionBody: 
 const quizViewTrashRequest = (token: string): Response => {
   return request(
     'GET',
-    `${SERVER_URL}/v1/admin/quiz/trash`,
+    SERVER_URL + '/v1/admin/quiz/trash',
     {
-      body: JSON.stringify({
-        token: token,
-      }),
-      headers: { 'Content-type': 'application/json' },
+      qs: {
+        token: token
+      }
     }
   );
 };

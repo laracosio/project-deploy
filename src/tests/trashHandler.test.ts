@@ -1,10 +1,3 @@
-// // DELETE THIS LATER
-test('REMOVE ME - added to pass testing pipeline!', () => {
-  const number = 1;
-  expect(number).toBeGreaterThanOrEqual(1);
-});
-
-
 import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizViewTrashRequest, quizRestoreTrashRequest } from './serverTestHelper';
 import { person1, person2, person3, person4, person5, validQuizName, validQuizDescription } from '../testingData';
 import { Response } from 'sync-request-curl';
@@ -24,7 +17,16 @@ describe('quizViewTrash - Success Cases', () => {
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
     const response = quizViewTrashRequest(session1Data.token);
     const responseData = JSON.parse(response.body.toString());
-    expect(responseData).toStrictEqual({});
+    expect(responseData).toStrictEqual(
+      {
+        quizzes: [
+          {
+            quizId: session1Data.quizId,
+            name: session1Data.name,
+          },
+        ]
+      }
+    );
   });
 });
 
@@ -52,22 +54,21 @@ describe('quizRestoreTrash - Success Cases', () => {
     console.log(quiz1Data);
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
     const trashedQuiz1Data = JSON.parse(trashedQuiz1.body.toString());
-    const response = quizRestoreTrashRequest(session1Data.token, trashedQuiz1Data.quizId);
+    const response = quizRestoreTrashRequest(session1Data.token, quiz1Data.quizId);
     const responseData = JSON.parse(response.body.toString());
     expect(responseData).toStrictEqual({});
   });
 });
 
 describe('quizRestoreTrash - Error Cases', () => {
-  let session1: Response, session2: Response, quiz1: Response, trashedQuiz1: Response;
+  let session1: Response, session2: Response, quiz1: Response, quiz2: Response, trashedQuiz1: Response;
   test('invalid token', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
-    const trashedQuiz1Data = JSON.parse(trashedQuiz1.body.toString());
-    const response = quizRestoreTrashRequest(session1Data.token + 1, trashedQuiz1Data.quizId);
+    const response = quizRestoreTrashRequest(session1Data.token + 1, quiz1Data.quizId);
     expect(response.statusCode).toStrictEqual(401);
   });
   test('QuizId not owned by this user', () => {
@@ -78,8 +79,7 @@ describe('quizRestoreTrash - Error Cases', () => {
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
-    const trashedQuiz1Data = JSON.parse(trashedQuiz1.body.toString());
-    const response = quizRestoreTrashRequest(session2Data.token, trashedQuiz1Data.quizId);
+    const response = quizRestoreTrashRequest(session2Data.token, quiz1Data.quizId);
     expect(response.statusCode).toStrictEqual(403);
   });
   test('Name already in use by other active quiz', () => {
@@ -88,8 +88,7 @@ describe('quizRestoreTrash - Error Cases', () => {
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
-    const trashedQuiz1Data = JSON.parse(trashedQuiz1.body.toString());
-    const response = quizRestoreTrashRequest(session1Data.token, trashedQuiz1Data.quizId);
+    const response = quizRestoreTrashRequest(session1Data.token, quiz1Data.quizId);
     expect(response.statusCode).toStrictEqual(400);
   });
   test('QuizId not in trash', () => {
