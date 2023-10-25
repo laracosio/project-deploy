@@ -919,7 +919,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
     const questionCreateUpdate = {
       question: 'Who is laras best girl cat?',
       duration: 10,
-      points: 153,
+      points: 2,
       answers: answerCreateUpdate,
     };
 
@@ -961,7 +961,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
     const questionCreateUpdate = {
       question: 'Who is laras best girl cat?',
       duration: 10,
-      points: 153,
+      points: 3,
       answers: answerCreateUpdate,
     };
 
@@ -1004,7 +1004,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
     const questionCreateUpdate = {
       question: 'Who is laras best girl cat?',
       duration: 10,
-      points: 153,
+      points: 2,
       answers: answerCreateUpdate,
     };
 
@@ -1038,7 +1038,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
 
     const answerCreateUpdate = [
       { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
+      { answer: 'Coco', correct: false },
       { answer: 'Bob', correct: false },
       { answer: 'Frankie', correct: false },
     ];
@@ -1046,7 +1046,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
     const questionCreateUpdate = {
       question: 'Who is laras best girl cat?',
       duration: 10,
-      points: 153,
+      points: 1,
       answers: answerCreateUpdate,
     };
 
@@ -1747,8 +1747,8 @@ describe('Unsuccessful tests (403): Delete a quiz question', () => {
       answers: answerCreate,
     };
 
-    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
-
+    const questionId = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const questionIdParsed = JSON.parse(questionId.body.toString());
     const answerCreate2 = [
       { answer: 'Hamlet', correct: false },
       { answer: 'Coco', correct: true },
@@ -1763,9 +1763,9 @@ describe('Unsuccessful tests (403): Delete a quiz question', () => {
     };
 
     // second question
-    createQuizQuestionRequest(quizIdParsed.quizId, validNotOwnerParsed.token, questionCreate2);
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
 
-    const res = deleteQuizQuestionRequest(personLoginParsed.token, quizIdParsed.quizId, 23);
+    const res = deleteQuizQuestionRequest(validNotOwnerParsed.token, quizIdParsed.quizId, questionIdParsed.questionId);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
