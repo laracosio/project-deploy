@@ -21,12 +21,10 @@ export interface User {
   nameFirst: string,
   nameLast: string,
   password: string,
+  oldPasswords: string[];
   email: string,
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
-}
-export interface CreateQuestionReturn {
-  questionId: number,
 }
 
 export interface Answer {
