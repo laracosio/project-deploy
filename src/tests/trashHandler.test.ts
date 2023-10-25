@@ -53,7 +53,6 @@ describe('quizRestoreTrash - Success Cases', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
     console.log(quiz1Data);
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
-    const trashedQuiz1Data = JSON.parse(trashedQuiz1.body.toString());
     const response = quizRestoreTrashRequest(session1Data.token, quiz1Data.quizId);
     const responseData = JSON.parse(response.body.toString());
     expect(responseData).toStrictEqual({});
@@ -88,6 +87,7 @@ describe('quizRestoreTrash - Error Cases', () => {
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
+    quiz2 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const response = quizRestoreTrashRequest(session1Data.token, quiz1Data.quizId);
     expect(response.statusCode).toStrictEqual(400);
   });

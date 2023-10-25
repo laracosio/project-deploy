@@ -56,9 +56,11 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
  */
 function adminQuizViewTrash(sessionId: string): userTrashQuizList {
   const dataStore = getData();
-
+console.log('hello there');
   // check that token is not empty or is valid
   if (!tokenValidation(sessionId)) {
+    console.log('hello there');
+
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
@@ -102,15 +104,8 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
 
   // check quiz name doesn't already exist in current user's lists
   const tokenUser = findToken(sessionId);
-  //console.log('Token user id', tokenUser.userId);
-  //console.log('matched quiz name', matchedQuiz.name);
-  //console.log('Data store quizzes', dataStore.quizzes);
-  //console.log('Trashed quizzes', dataStore.trash);
-
 
     if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === matchedQuiz.name ))) {
-    //console.log('currenttrash', dataStore.trash);
-    //console.log(matchedQuiz);
     throw new ApiError('Quiz name already exists', HttpStatusCode.BAD_REQUEST);
   }
 
