@@ -1,9 +1,26 @@
+// import statements
 import { getUnixTime } from 'date-fns';
 import { getData, setData, Question, Answer, QuestionCreate, Colours } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { findQuestionByQuiz, findQuizById, findToken, tokenValidation, getTotalDurationOfQuiz, getRandomColorAndRemove } from './other';
+import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, tokenValidation } from './other';
 
+interface adminDuplicateQuestionReturn {
+  newQuestionId: number
+}
+
+export interface CreateQuestionReturn {
+  questionId: number,
+}
+
+/**
+ * Create a new stub question for a particular quiz.
+ * When this route is called, and a question is created, the timeLastEdited is set as the same as the created time, and the colours of all answers of that question are randomly generated.
+ * @param quizId
+ * @param token
+ * @param questionBody
+ * @returns - CreateQuestionReturn returns a questionId
+ */
 interface QuestionReturn {
   questionId: number,
 }
@@ -234,4 +251,53 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
   return {};
 }
 
-export { quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion };
+/**
+ * A particular question gets duplicated to immediately after where the source question is
+ * When this route is called, the timeLastEdited is update
+ * @param sessionId - sessionId of token
+ * @param quizId - quizId of question to be duplicated
+ * @param questionId - question within quiz to be duplicated
+ * @returns: adminDuplicateQuestion which contains newQuestionId key with a number value
+*/
+function adminDuplicateQuestion (sessionId: string, quizId: number, questionId: number): adminDuplicateQuestionReturn {
+  const dataStore = getData();
+
+  // invalid token
+  if (!tokenValidation(sessionId)) {
+    throw new ApiError('Token is empty or invalid (does not refer to valid logged in user session)', HttpStatusCode.UNAUTHORISED);
+  }
+  const tokenUser = findToken(sessionId);
+  const matchedQuiz = findQuizById(quizId);
+  // token user is not the owner of question
+  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
+    throw new ApiError('User does not own quiz to change owner', HttpStatusCode.FORBIDDEN);
+  }
+  // invalid quiz
+  if (matchedQuiz === undefined) {
+    throw new ApiError('Quiz ID does not refer to a valid quiz', HttpStatusCode.BAD_REQUEST);
+  }
+  // invalid question in quiz
+  const questionToCopy = findQuestionByQuiz(matchedQuiz, questionId);
+  if (questionToCopy === undefined) {
+    throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const duplicatedQuestion: Question = {
+    questionId: matchedQuiz.numQuestions + 1,
+    question: questionToCopy.question,
+    duration: questionToCopy.duration,
+    points: questionToCopy.points,
+    answers: questionToCopy.answers,
+  };
+
+  const questionIndex = matchedQuiz.questions.findIndex((question) => question.questionId === questionId);
+  matchedQuiz.questions.splice((questionIndex + 1), 0, duplicatedQuestion);
+  matchedQuiz.timeLastEdited = getUnixTime(new Date());
+  matchedQuiz.numQuestions = matchedQuiz.questions.length;
+  matchedQuiz.quizDuration = getTotalDurationOfQuiz(quizId);
+  setData(dataStore);
+
+  return { newQuestionId: duplicatedQuestion.questionId };
+}
+
+export { quizCreateQuestion, adminDuplicateQuestion, quizUpdateQuestion, adminMoveQuestion };

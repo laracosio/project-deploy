@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove } from '../features/trash';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../features/quiz';
-import { quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../features/question';
+import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../features/question';
+
 export const quizRouter = Router();
 
 // get routers
@@ -21,6 +22,13 @@ quizRouter.post('/:quizid/transfer', (req: Request, res: Response) => {
   const { token, userEmail } = req.body;
   const quizId = parseInt(req.params.quizid);
   res.json(adminQuizTransferOwner(token, quizId, userEmail));
+});
+
+quizRouter.post('/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token } = req.body;
+  res.json(adminDuplicateQuestion(token, quizId, questionId));
 });
 
 quizRouter.post('/:quizId/question', (req: Request, res: Response) => {

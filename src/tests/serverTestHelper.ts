@@ -151,6 +151,19 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
 };
 
 // question requests
+const duplicateQuestionRequest = (token: string, quizId: number, questionId: number): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`,
+    {
+      body: JSON.stringify({
+        token: token,
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
 const createQuizQuestionRequest = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
   return request(
     'POST',
@@ -192,8 +205,8 @@ const updateQuizQuestionRequest = (quizId: number, questionId: number, token: st
 };
 
 export {
-  authRegisterRequest, authLoginRequest, authUserDetailsRequest, clearRequest,
-  quizRemoveRequest, quizCreateRequest, quizListRequest, quizInfoRequest,
-  quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest, quizTransferRequest,
-  createQuizQuestionRequest, updateQuizQuestionRequest
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest,
+  clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
+  quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest,
+  quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest
 };
