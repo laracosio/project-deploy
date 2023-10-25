@@ -1,4 +1,4 @@
-import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest, moveQuestionRequest, quizInfoRequest, updateQuizQuestionRequest, duplicateQuestionRequest } from './serverTestHelper';
+import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest, moveQuestionRequest, quizInfoRequest, updateQuizQuestionRequest, duplicateQuestionRequest, deleteQuizQuestionRequest } from './serverTestHelper';
 import { person1, person2, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../testingData';
 import { Response } from 'sync-request-curl';
 import { getUnixTime } from 'date-fns';
@@ -1523,5 +1523,242 @@ describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Error',
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(403);
+  });
+});
+
+// delete question
+describe('Successful tests: Delete a quiz question', () => {
+  test('Delete a Quiz Question test', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const personLogin = authLoginRequest(person1.email, person1.password);
+    const personLoginParsed = JSON.parse(personLogin.body.toString());
+    const quizName = 'My first quiz';
+    const quizDescription = 'This is my first quiz';
+    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizIdParsed = JSON.parse(quizId.body.toString());
+    const answerCreate = [
+      { answer: 'Hamlet', correct: true },
+      { answer: 'Coco', correct: false },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate = {
+      question: 'Who is laras best boy cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate,
+    };
+
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestionParsed = JSON.parse(createQuestion.body.toString());
+
+    const answerCreate2 = [
+      { answer: 'Hamlet', correct: false },
+      { answer: 'Coco', correct: true },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate2 = {
+      question: 'Who is laras best girl cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate2,
+    };
+
+    // second question
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
+
+    const res = deleteQuizQuestionRequest(personLoginParsed.token, quizIdParsed.quizId, createQuestionParsed.questionId);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({});
+  });
+});
+
+describe('Unsuccessful tests (400): Delete a quiz question', () => {
+  test('Unsucessful (400): Question Id does not refer to a valid question within this quiz', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const personLogin = authLoginRequest(person1.email, person1.password);
+    const personLoginParsed = JSON.parse(personLogin.body.toString());
+    const quizName = 'My first quiz';
+    const quizDescription = 'This is my first quiz';
+    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizIdParsed = JSON.parse(quizId.body.toString());
+    const answerCreate = [
+      { answer: 'Hamlet', correct: true },
+      { answer: 'Coco', correct: false },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate = {
+      question: 'Who is laras best boy cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate,
+    };
+
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+
+    const answerCreate2 = [
+      { answer: 'Hamlet', correct: false },
+      { answer: 'Coco', correct: true },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate2 = {
+      question: 'Who is laras best girl cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate2,
+    };
+
+    // second question
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
+
+    const res = deleteQuizQuestionRequest(personLoginParsed.token, quizIdParsed.quizId, 23);
+
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+  });
+});
+
+describe('Unsuccessful tests (401): Delete a quiz question', () => {
+  test('Unsucessful (401): Token is empty', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const personLogin = authLoginRequest(person1.email, person1.password);
+    const personLoginParsed = JSON.parse(personLogin.body.toString());
+    const quizName = 'My first quiz';
+    const quizDescription = 'This is my first quiz';
+    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizIdParsed = JSON.parse(quizId.body.toString());
+    const answerCreate = [
+      { answer: 'Hamlet', correct: true },
+      { answer: 'Coco', correct: false },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate = {
+      question: 'Who is laras best boy cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate,
+    };
+
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestionParsed = JSON.parse(createQuestion.body.toString());
+
+    const answerCreate2 = [
+      { answer: 'Hamlet', correct: false },
+      { answer: 'Coco', correct: true },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate2 = {
+      question: 'Who is laras best girl cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate2,
+    };
+
+    // second question
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
+    const invalidToken = '';
+    const res = deleteQuizQuestionRequest(invalidToken, quizIdParsed.quizId, createQuestionParsed.questionId);
+
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+  });
+  test('Unsucessful (401): Token is invalid', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const personLogin = authLoginRequest(person1.email, person1.password);
+    const personLoginParsed = JSON.parse(personLogin.body.toString());
+    const quizName = 'My first quiz';
+    const quizDescription = 'This is my first quiz';
+    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizIdParsed = JSON.parse(quizId.body.toString());
+    const answerCreate = [
+      { answer: 'Hamlet', correct: true },
+      { answer: 'Coco', correct: false },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate = {
+      question: 'Who is laras best boy cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate,
+    };
+
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestionParsed = JSON.parse(createQuestion.body.toString());
+
+    const answerCreate2 = [
+      { answer: 'Hamlet', correct: false },
+      { answer: 'Coco', correct: true },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate2 = {
+      question: 'Who is laras best girl cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate2,
+    };
+
+    // second question
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
+    const invalidToken = 'gjsdlglksdTAYLORTRAVIS143';
+    const res = deleteQuizQuestionRequest(invalidToken, quizIdParsed.quizId, createQuestionParsed.questionId);
+
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+  });
+});
+
+describe('Unsuccessful tests (403): Delete a quiz question', () => {
+  test('Unsucessful (403): Valid token is provided, but user is not an owner of this quiz', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const validNotOwner = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const validNotOwnerParsed = JSON.parse(validNotOwner.body.toString());
+    const personLogin = authLoginRequest(person1.email, person1.password);
+    const personLoginParsed = JSON.parse(personLogin.body.toString());
+    const quizName = 'My first quiz';
+    const quizDescription = 'This is my first quiz';
+    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizIdParsed = JSON.parse(quizId.body.toString());
+    const answerCreate = [
+      { answer: 'Hamlet', correct: true },
+      { answer: 'Coco', correct: false },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate = {
+      question: 'Who is laras best boy cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate,
+    };
+
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+
+    const answerCreate2 = [
+      { answer: 'Hamlet', correct: false },
+      { answer: 'Coco', correct: true },
+      { answer: 'Bob', correct: false },
+    ];
+
+    const questionCreate2 = {
+      question: 'Who is laras best girl cat?',
+      duration: 1,
+      points: 2,
+      answers: answerCreate2,
+    };
+
+    // second question
+    createQuizQuestionRequest(quizIdParsed.quizId, validNotOwnerParsed.token, questionCreate2);
+
+    const res = deleteQuizQuestionRequest(personLoginParsed.token, quizIdParsed.quizId, 23);
+
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
