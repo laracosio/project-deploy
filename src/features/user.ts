@@ -49,36 +49,35 @@ function adminUserDetails(sessionId: string): UserDetailReturn {
  * @param {string} sessionId - current session id from token
  * @param {string} oldPassword - user's current password (before update)
  * @param {string} newPassword - new password to replace the current password
- * @returns {}
+ * @returns {{}}
  * @returns {{ error: string }} on error
  */
 function adminUserUpdatePassword(token: string, oldPassword: string, newPassword: string): object {
   const dataStore = getData();
-  
-  const userToken = findToken(token);
-  const user = findUserById(userToken.userId);
 
-  // check oldPassword is correct
-  if (oldPassword !== user.password) {
-    console.log('curr incorrect');
-    throw new ApiError('Old Password is incorrect', HttpStatusCode.BAD_REQUEST);
+  if (tokenValidation(token)) {
+    const userToken = findToken(token);
+    const user = findUserById(userToken.userId);
+
+    // check oldPassword is correct
+    if (oldPassword !== user.password) {
+      throw new ApiError('Old Password is incorrect', HttpStatusCode.BAD_REQUEST);
+    }
   }
 
   // check newPassword doesn't match oldPassword
   if (newPassword === oldPassword) {
-    console.log('same as curr');
     throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
   }
 
-  console.log(user.oldPasswords.includes(newPassword));
-  console.log(`old: ${oldPassword} new: ${newPassword}`);
-
   // check newPassword hasn't been used by this user in the past
-  if (user.oldPasswords.includes(newPassword)) {
-    console.log('same as old');
-    console.log(newPassword);
-    console.log('^ should be quickend');
-    throw new ApiError('poop', HttpStatusCode.BAD_REQUEST);
+  if (tokenValidation(token)) {
+    const userToken = findToken(token);
+    const user = findUserById(userToken.userId);
+
+    if (user.oldPasswords.includes(newPassword)) {
+      throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
+    }
   }
 
   // check newPassword is not less than 8 characters
@@ -93,12 +92,18 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
     throw new ApiError('Password must contain at least one number and at least one letter', HttpStatusCode.BAD_REQUEST);
   }
 
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+
   // store old password in user details
-  console.log('reset password');
+  const userToken = findToken(token);
+  const user = findUserById(userToken.userId);
+
   user.oldPasswords.push(oldPassword);
   user.password = newPassword;
-  // update new password
 
+  // update new password
   setData(dataStore);
   return {};
 }

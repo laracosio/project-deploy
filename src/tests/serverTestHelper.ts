@@ -57,7 +57,7 @@ const authUserDetailsRequest = (token: string): Response => {
 
 // user requests
 const userUpdatePasswordRequest = (token: string, oldPassword: string, newPassword: string): Response => {
-  return request (
+  return request(
     'PUT',
     SERVER_URL + '/v1/admin/user/password',
     {

@@ -69,7 +69,6 @@ describe('PUT /v1/admin/user/password - Error Cases', () => {
     userUpdatePasswordRequest(userData.token, person2.password, person3.password);
     userUpdatePasswordRequest(userData.token, person3.password, person4.password);
     const response = userUpdatePasswordRequest(userData.token, person4.password, person2.password);
-    console.log(response);
     expect(response.statusCode).toStrictEqual(400);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'New Password cannot be the same as old password' });
   });
@@ -117,5 +116,5 @@ describe('PUT /v1/admin/user/password - Passed Cases', () => {
     const response = userUpdatePasswordRequest(userData.token, person1.password, person2.password);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
-  })
+  });
 });
