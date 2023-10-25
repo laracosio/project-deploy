@@ -199,7 +199,7 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
   if (answerMap.size !== questionBody.answers.length) {
     throw new ApiError('Answer strings are duplicates of one another', HttpStatusCode.BAD_REQUEST);
   }
-  console.log('No correct Answer: ?', (questionBody.answers.find(answer => answer.correct === true)));
+
   if (!(questionBody.answers.find(answer => answer.correct === true))) {
     throw new ApiError('There are no correct answers', HttpStatusCode.BAD_REQUEST);
   }
