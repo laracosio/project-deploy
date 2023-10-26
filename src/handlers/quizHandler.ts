@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { adminQuizRemove, quizRemoveQuestion } from '../features/trash';
+import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizViewTrash } from '../features/trash';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../features/quiz';
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../features/question';
 
@@ -9,6 +9,11 @@ export const quizRouter = Router();
 quizRouter.get('/list', (req: Request, res: Response) => {
   const token: string = req.query.token as string;
   res.json(adminQuizList(token));
+});
+
+quizRouter.get('/trash', (req: Request, res: Response) => {
+  const token: string = req.query.token as string;
+  res.json(adminQuizViewTrash(token));
 });
 
 quizRouter.get('/:quizId', (req: Request, res: Response) => {
@@ -40,6 +45,12 @@ quizRouter.post('/:quizid/question/:questionid/duplicate', (req: Request, res: R
   const questionId = parseInt(req.params.questionid);
   const { token } = req.body;
   res.json(adminDuplicateQuestion(token, quizId, questionId));
+});
+
+quizRouter.post('/:quizId/restore', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const quizId = parseInt(req.params.quizId);
+  res.json(adminQuizRestoreTrash(token, quizId));
 });
 
 // put routers

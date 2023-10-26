@@ -175,4 +175,14 @@ function getRandomColorAndRemove(availableColours: string[]): string | null {
   return randomColor;
 }
 
-export { clear, helperAdminRegister, createSessionId, tokenValidation, findQuestionByQuiz, findQuizById, findUserById, findToken, getTotalDurationOfQuiz, getRandomColorAndRemove };
+/**
+ * Returns a quiz from the dataStore based on passed in quizId
+ * @param quizId - identifies quiz based on quizId
+ * @returns Quiz | undefined(if not found)
+ */
+function findTrashedQuizById (quizId: number): Quiz {
+  const dataStore = getData();
+  return dataStore.trash.find((quiz) => quiz.quizId === quizId);
+}
+
+export { clear, helperAdminRegister, createSessionId, tokenValidation, findQuestionByQuiz, findQuizById, findUserById, findToken, getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById };

@@ -43,6 +43,18 @@ const authLoginRequest = (email: string, password: string): Response => {
   );
 };
 
+const authLogoutRequest = (token: string): Response => {
+  return request(
+    'POST',
+    SERVER_URL + '/v1/admin/auth/logout',
+    {
+      json: {
+        token: token,
+      }
+    }
+  );
+};
+
 // user requests
 const authUserDetailsRequest = (token: string): Response => {
   return request(
@@ -183,6 +195,32 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
   );
 };
 
+const quizViewTrashRequest = (token: string): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/trash`,
+    {
+      qs: {
+        token: token
+      },
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
+const quizRestoreTrashRequest = (token: string, quizId: number): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/restore`,
+    {
+      body: JSON.stringify({
+        token: token,
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
 // question requests
 const duplicateQuestionRequest = (token: string, quizId: number, questionId: number): Response => {
   return request(
@@ -249,10 +287,10 @@ const deleteQuizQuestionRequest = (sessionId: string, quizId: number, questionId
 };
 
 export {
-  authRegisterRequest, authLoginRequest, authUserDetailsRequest, userUpdateDetailsResponse,
-  userUpdatePasswordRequest,
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest, authLogoutRequest,
+  userUpdateDetailsResponse, userUpdatePasswordRequest,
   clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
   quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest,
   quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest,
-  deleteQuizQuestionRequest
+  deleteQuizQuestionRequest, quizViewTrashRequest, quizRestoreTrashRequest
 };

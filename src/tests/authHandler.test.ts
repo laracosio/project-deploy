@@ -1,5 +1,5 @@
 import { person1, person2, person3, validQuizDescription, validQuizName } from '../testingData';
-import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest, quizCreateRequest } from './serverTestHelper';
+import { authLoginRequest, authUserDetailsRequest, clearRequest, authRegisterRequest, quizCreateRequest, authLogoutRequest } from './serverTestHelper';
 
 beforeEach(() => {
   clearRequest();
@@ -156,5 +156,73 @@ describe('adminAuthDetails - Unsuccessful Route', () => {
     const resDetails = authUserDetailsRequest(token);
     const data = JSON.parse(resDetails.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
+  });
+});
+
+describe('POST /v1/admin/auth/logout - Error Cases', () => {
+  test('Invalid token for one logged in user', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    authLoginRequest(person1.email, person1.password);
+    const response = authLogoutRequest(userData.token + 1);
+    expect(response.statusCode).toStrictEqual(401);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
+  });
+  test('Invalid token when multiple users are logged in', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const user = authRegisterRequest(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    authLoginRequest(person3.email, person3.password);
+    const response = authLogoutRequest(userData.token + 1);
+    expect(response.statusCode).toStrictEqual(401);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
+  });
+  test('Invalid token trying to log out immediately after logging out', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    authLoginRequest(person1.email, person1.password);
+    authLogoutRequest(userData.token);
+    const response = authLogoutRequest(userData.token);
+    expect(response.statusCode).toStrictEqual(401);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid token' });
+  });
+});
+
+describe('POST /v1/admin/auth/logout - Success Cases', () => {
+  test('Token was successfully removed from dataStore - only session', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const response = authLogoutRequest(userData.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({});
+  });
+  test('Token was successfully removed from dataStore - single logout from multiple sessions for same user', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    authLoginRequest(person1.email, person1.password);
+    authLoginRequest(person1.email, person1.password);
+    const sessionId = authLoginRequest(person1.email, person1.password);
+    const sessionData = JSON.parse(sessionId.body.toString());
+    const response = authLogoutRequest(sessionData.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({});
+  });
+  test('Token was successfully removed from dataStore - multiple logouts from multiple sessions for same user', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1 = authLoginRequest(person1.email, person1.password);
+    const session1Data = JSON.parse(session1.body.toString());
+
+    const session2 = authLoginRequest(person1.email, person1.password);
+    const session2Data = JSON.parse(session2.body.toString());
+
+    const session3 = authLoginRequest(person1.email, person1.password);
+    const session3Data = JSON.parse(session3.body.toString());
+
+    authLogoutRequest(session1Data.token);
+    authLogoutRequest(session2Data.token);
+    const response = authLogoutRequest(session3Data.token);
+
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({});
   });
 });
