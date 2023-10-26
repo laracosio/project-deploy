@@ -24,12 +24,14 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
   }
 
   const newUserId = dataStore.users.length + 1;
+  const oldPasswords: string[] = [];
   const newUser = {
     userId: newUserId,
     nameFirst: nameFirst,
     nameLast: nameLast,
-    email: email,
     password: password,
+    oldPasswords: oldPasswords,
+    email: email,
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
   };
