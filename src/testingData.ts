@@ -66,8 +66,6 @@ const longQuizDescription = 'Lorem ipsum dolor sit amet, consectetuer adipiscing
 const stringOf1QuizIDs = '1';
 const stringOf2QuizIDs = '1,2';
 const stringOf3QuizIDs = '1,2,3';
-const stringOf4QuizIDs = '1,2,3,4';
-
 const validQuestionInput1: QuestionCreate = {
   question: 'Who is the Monarch of England?',
   duration: 4,
@@ -147,7 +145,6 @@ export {
   stringOf1QuizIDs,
   stringOf2QuizIDs,
   stringOf3QuizIDs,
-  stringOf4QuizIDs,
   validQuestionInput1,
   validQuestionInput2,
   validQuestionInput3
