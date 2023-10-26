@@ -1,4 +1,4 @@
-import { getData, setData } from '../dataStore';
+import { getData, setData, Quiz } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { tokenValidation, findToken, findQuizById } from './other';
@@ -11,6 +11,9 @@ interface BriefTrashQuizInfo {
 
 interface userTrashQuizList {
   quizzes: BriefTrashQuizInfo[]
+} 
+interface quizzesArray {
+  quizzes: Quiz[]
 }
 
 /**
@@ -153,4 +156,60 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   return {};
 }
 
-export { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash };
+/**
+ * Given a string of quiz IDs, permanently empty/remove it from trash.
+ * @param {string} sessionId
+ * @param {number} quizIds
+ * @returns {{error: string}}
+ */
+function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
+  const dataStore = getData();
+  
+  // convert the string of quizIds into an array of numbers
+  const numbersArray = quizIds.split(',').map(Number);
+
+  // // covert the array of numbers to an array of quizzes
+  // numbersArray.forEach(numbersArray.find(quiz => ()))
+ 
+ 
+ 
+  // for (let i = 0; i < numbersArray.length; i++) {
+  //   // const tokenUser = findToken(sessionId);
+  //   const quizIdsArray: Array<quizzesArray> = [];
+  //   numbersArray.forEach((quiz) => {
+  //     if (quiz.quizOwner === tokenUser.userId) {
+  //       const obj = {
+  //         quizId: quiz.quizId,
+  //         name: quiz.name,
+  //       };
+  //       quizIdsArray.push(obj);
+  //     }
+  //   });
+  // }
+
+  // check sessionId is valid
+  if (!tokenValidation(sessionId)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+
+  // check valid quizIds are owned by the current user associated with token
+  const tokenUser = findToken(sessionId);
+  if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
+    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
+  }
+
+if (numbersArray.some((quizIds) => ((dataStore.quizzes.forEach((quiz) => (quiz.quizOwner)) !== tokenUser.userId && === quizIds) || ( !== tokenUser.userId && === quizIds))))  
+
+  // check quizId refers to quiz in trash'
+  const matchedQuiz = dataStore.trash.find((quiz) => quiz.quizId === quizId);
+  if (matchedQuiz === undefined) {
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
+  }
+
+
+
+  setData(dataStore);
+  return {};
+}
+
+export { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash };
