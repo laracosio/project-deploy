@@ -18,7 +18,7 @@ describe('quizViewTrash - Success Cases', () => {
     const response = quizViewTrashRequest(session1Data.token);
     const responseData = JSON.parse(response.body.toString());
     expect(responseData).toStrictEqual({
-      trash: [
+      quizzes: [
         {
           quizId: quiz1Data.quizId,
           name: 'My Quiz 1'

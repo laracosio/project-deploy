@@ -10,7 +10,7 @@ interface BriefTrashQuizInfo {
 }
 
 interface userTrashQuizList {
-  trash: BriefTrashQuizInfo[]
+  quizzes: BriefTrashQuizInfo[]
 }
 
 /**
@@ -103,7 +103,7 @@ function adminQuizViewTrash(sessionId: string): userTrashQuizList {
   });
 
   return {
-    trash: userTrashQuizList
+    quizzes: userTrashQuizList
   };
 }
 
