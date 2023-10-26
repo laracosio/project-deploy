@@ -143,7 +143,7 @@ describe('quizEmptyTrash - Success Cases', () => {
 });
 
 describe('quizEmptyTrash - Error Cases', () => {
-  let session1: Response, quiz1: Response, quiz2: Response, quiz3: Response;
+  let session1: Response, session2: Response, quiz1: Response, quiz2: Response, quiz3: Response;
   test('invalid token', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
