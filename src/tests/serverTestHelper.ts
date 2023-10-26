@@ -43,6 +43,18 @@ const authLoginRequest = (email: string, password: string): Response => {
   );
 };
 
+const authLogoutRequest = (token: string): Response => {
+  return request(
+    'POST',
+    SERVER_URL + '/v1/admin/auth/logout',
+    {
+      json: {
+        token: token,
+      }
+    }
+  );
+};
+
 // user requests
 const authUserDetailsRequest = (token: string): Response => {
   return request(
@@ -249,8 +261,8 @@ const deleteQuizQuestionRequest = (sessionId: string, quizId: number, questionId
 };
 
 export {
-  authRegisterRequest, authLoginRequest, authUserDetailsRequest, userUpdateDetailsResponse,
-  userUpdatePasswordRequest,
+  authRegisterRequest, authLoginRequest, authUserDetailsRequest, authLogoutRequest,
+  userUpdateDetailsResponse, userUpdatePasswordRequest,
   clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
   quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest,
   quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest,
