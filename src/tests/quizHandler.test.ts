@@ -579,7 +579,6 @@ describe('POST /v1/admin/quiz/{quizId}/transfer - Error', () => {
   test('Token is invalid (does not refer to valid logged in user session)', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const sess2Data = JSON.parse(sess2.body.toString());
     authLogoutRequest(sess1Data.token);
     const res = quizTransferRequest(sess1Data.token, quiz1Data.quizId, person2.email);
     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });

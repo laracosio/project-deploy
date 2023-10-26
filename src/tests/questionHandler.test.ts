@@ -1227,8 +1227,8 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Success', () 
           points: validQuestionInput1.points,
           answers: expect.any(Array)
         }
-      ],
-    )
+      ]
+    );
   });
 });
 
@@ -1308,8 +1308,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () =>
   test('Token is invalid (does not refer to valid logged in user session)', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const quest1 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
-    const quest1Data = JSON.parse(quest1.body.toString());
+    createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
     const quest2 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput2);
     const quest2Data = JSON.parse(quest2.body.toString());
     authLogoutRequest(sess1Data.token);
@@ -1333,7 +1332,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () =>
   });
 });
 
-// duplicate Question 
+// duplicate Question
 describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Success', () => {
   let sess1: Response, quiz1: Response, quest1: Response;
   beforeEach(() => {
@@ -1385,8 +1384,8 @@ describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Success
           }
         ]
       }
-      );
-    });
+    );
+  });
   test('Remove 1 twice duplicated question', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
@@ -1400,7 +1399,7 @@ describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Success
     // remove first duplicated question. second duplicate to remain
     deleteQuizQuestionRequest(sess1Data.token, quiz1Data.quizId, firstDupQData.newQuestionId);
     const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
-    expect(JSON.parse(quizInfo.body.toString()).questions).toStrictEqual(  
+    expect(JSON.parse(quizInfo.body.toString()).questions).toStrictEqual(
       [
         {
           questionId: quest1Data.questionId,

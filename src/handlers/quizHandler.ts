@@ -96,4 +96,3 @@ quizRouter.delete('/:quizid/question/:questionId', (req: Request, res: Response)
   const response = quizRemoveQuestion(sessionToken, quizId, questionId);
   res.json(response);
 });
-
