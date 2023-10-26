@@ -1,4 +1,4 @@
-import { Question, Quiz, getData, setData } from '../dataStore';
+import { Question, Quiz, getData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
 import { findQuizById, findToken, setAndSave, tokenValidation } from './other';
 import { ApiError } from '../errors/ApiError';

@@ -1,6 +1,6 @@
 // import statements
 import { getUnixTime } from 'date-fns';
-import { getData, setData, Question, Answer, QuestionCreate, Colours } from '../dataStore';
+import { getData, Question, Answer, QuestionCreate, Colours } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, setAndSave, tokenValidation } from './other';

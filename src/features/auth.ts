@@ -1,8 +1,7 @@
 import { helperAdminRegister, createSessionId, setAndSave } from './other';
-import { getData, setData, Token } from '../dataStore';
+import { getData, Token } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import fs from 'fs';
 interface AuthReturn {
   token: string
 }
@@ -41,6 +40,8 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
     sessionId: newSessionId,
     userId: newUserId
   };
+  dataStore.users.push(newUser);
+  dataStore.tokens.push(newToken);
 
   setAndSave(dataStore);
 
@@ -83,7 +84,7 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   dataStore.tokens.push(newToken);
 
   setAndSave(dataStore);
-  
+
   return { token: newSessionId };
 }
 

@@ -19,7 +19,6 @@ function clear(): object {
   dataStore.quizzes = [];
   dataStore.tokens = [];
   dataStore.trash = [];
-  setAndSave(dataStore);
   return {};
 }
 
@@ -29,7 +28,7 @@ function clear(): object {
  * @param dataStore = stores user, quiz, tokens and trash information
  */
 export function setAndSave(dataStore: Datastore) {
-  setData(dataStore)
+  setData(dataStore);
   fs.writeFileSync('datastore.json', JSON.stringify(dataStore));
 }
 

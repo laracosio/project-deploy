@@ -1,4 +1,4 @@
-import { getData, setData } from '../dataStore';
+import { getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { tokenValidation, findToken, findQuizById, setAndSave } from './other';
