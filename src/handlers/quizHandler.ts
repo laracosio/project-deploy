@@ -17,18 +17,16 @@ quizRouter.get('/:quizId', (req: Request, res: Response) => {
   res.json(adminQuizInfo(token, quizId));
 });
 
-// post routers - quizCreate must go last!
+// post routers
+quizRouter.post('/', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  res.json(adminQuizCreate(token, name, description));
+});
+
 quizRouter.post('/:quizid/transfer', (req: Request, res: Response) => {
   const { token, userEmail } = req.body;
   const quizId = parseInt(req.params.quizid);
   res.json(adminQuizTransferOwner(token, quizId, userEmail));
-});
-
-quizRouter.post('/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const questionId = parseInt(req.params.questionid);
-  const { token } = req.body;
-  res.json(adminDuplicateQuestion(token, quizId, questionId));
 });
 
 quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
@@ -37,9 +35,11 @@ quizRouter.post('/:quizId/question', (req: Request, res: Response) => {
   res.json(quizCreateQuestion(quizId, token, questionBody));
 });
 
-quizRouter.post('/', (req: Request, res: Response) => {
-  const { token, name, description } = req.body;
-  res.json(adminQuizCreate(token, name, description));
+quizRouter.post('/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token } = req.body;
+  res.json(adminDuplicateQuestion(token, quizId, questionId));
 });
 
 // put routers
@@ -55,6 +55,13 @@ quizRouter.put('/:quizId/description', (req: Request, res: Response) => {
   res.json(adminQuizDescriptionUpdate(sessionToken, quizId, req.body.description));
 });
 
+quizRouter.put('/:quizId/question/:questionId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const { token, questionBody } = req.body;
+  res.json(quizUpdateQuestion(quizId, questionId, token, questionBody));
+});
+
 quizRouter.put('/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const sessionToken = req.body.token as string;
   const newPostion = req.body.newPosition as number;
@@ -63,25 +70,18 @@ quizRouter.put('/:quizid/question/:questionid/move', (req: Request, res: Respons
   res.json(adminMoveQuestion(sessionToken, quizId, questionId, newPostion));
 });
 
-quizRouter.put('/:quizId/question/:questionId', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizId);
-  const questionId = parseInt(req.params.questionId);
-  const { token, questionBody } = req.body;
-  res.json(quizUpdateQuestion(quizId, questionId, token, questionBody));
-});
-
 // delete routers
-quizRouter.delete('/:quizid', (req: Request, res: Response) => {
-  const sessionToken = req.query.token as string;
-  const quizId = parseInt(req.params.quizid);
-  const response = adminQuizRemove(sessionToken, quizId);
-  res.json(response);
-});
-
 quizRouter.delete('/:quizid/question/:questionId', (req: Request, res: Response) => {
   const sessionToken = req.query.sessionId as string;
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionId);
   const response = quizRemoveQuestion(sessionToken, quizId, questionId);
+  res.json(response);
+});
+
+quizRouter.delete('/:quizid', (req: Request, res: Response) => {
+  const sessionToken = req.query.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const response = adminQuizRemove(sessionToken, quizId);
   res.json(response);
 });
