@@ -149,7 +149,7 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   const date = getUnixTime(new Date());
   dataStore.quizzes[index2].timeLastEdited = date;
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
