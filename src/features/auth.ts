@@ -7,7 +7,7 @@ interface AuthReturn {
 }
 
 /**
- * Register a new admin User 
+ * Register a new admin User
  * @param {string} email - unique email address
  * @param {string} password - password of user's choice
  * @param {string} nameFirst - user's first name
