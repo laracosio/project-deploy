@@ -1,8 +1,8 @@
-import { helperAdminRegister, createSessionId } from './other';
+import { helperAdminRegister, createSessionId, setAndSave } from './other';
 import { getData, setData, Token } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-
+import fs from 'fs';
 interface AuthReturn {
   token: string
 }
@@ -41,10 +41,17 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
     sessionId: newSessionId,
     userId: newUserId
   };
-
+  
   dataStore.users.push(newUser);
   dataStore.tokens.push(newToken);
   setData(dataStore);
+
+  setAndSave(dataStore);
+  // console.log(dataStore);
+  // const datastr = fs.readFileSync('./datastore.json');
+  // const data = JSON.parse(String(datastr));
+  // console.log('data', data);
+
   return { token: newSessionId };
 }
 
@@ -84,6 +91,7 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   dataStore.tokens.push(newToken);
 
   setData(dataStore);
+  
   return { token: newSessionId };
 }
 

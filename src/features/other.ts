@@ -1,7 +1,8 @@
 
-import { getData, setData, User, Token, Quiz, Question } from '../dataStore';
+import { getData, setData, User, Token, Quiz, Question, Datastore } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -21,6 +22,17 @@ function clear(): object {
   setData(store);
   return {};
 }
+
+
+/**
+ * Function which sets data and saves to datastore.json as JSONified string
+ * @param dataStore = stores user, quiz, tokens and trash information
+ */
+export function setAndSave(dataStore: Datastore) {
+  setData(dataStore)
+  fs.writeFileSync('datastore.json', JSON.stringify(dataStore));
+}
+
 
 /**
  * Helper function to validate user data for registration.
