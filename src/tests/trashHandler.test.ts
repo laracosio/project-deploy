@@ -153,7 +153,9 @@ describe('quizEmptyTrash - Error Cases', () => {
     const response = quizEmptyTrashRequest(session1Data.token + 1, stringOf1QuizIDs);
     expect(response.statusCode).toStrictEqual(401);
   });
-  test('QuizId not owned by this user', () => {
+
+  //Error tests for if one or more of the Quiz IDs do not belong to the current user
+  test('1 out of 1 quizzes referred to in string not owned by current user', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
     session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
@@ -164,25 +166,44 @@ describe('quizEmptyTrash - Error Cases', () => {
     const response = quizEmptyTrashRequest(session2Data.token, stringOf1QuizIDs);
     expect(response.statusCode).toStrictEqual(403);
   });
-
-  //Error tests for if one or more of the Quiz IDs is not currently in the trash
-  test('QuizId not in trash', () => {
+  test('1 out of 2 quizzes referred to in string not owned by current user', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
+    session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const session2Data = JSON.parse(session2.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const response = quizEmptyTrashRequest(session1Data.token, quiz1Data.quizId);
-    expect(response.statusCode).toStrictEqual(400);
+    quizRemoveRequest(session1Data.token, quiz1Data.quizId);
+    quiz2 = quizCreateRequest(session2Data.token, validQuizName, validQuizDescription);
+    const quiz2Data = JSON.parse(quiz2.body.toString());
+    quizRemoveRequest(session2Data.token, quiz2Data.quizId);
+    const response = quizEmptyTrashRequest(session1Data.token, stringOf2QuizIDs);
+    expect(response.statusCode).toStrictEqual(403);
+  });
+  test('2 out of 2 quizzes referred to in string not owned by current user', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const session2Data = JSON.parse(session2.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    quizRemoveRequest(session1Data.token, quiz1Data.quizId);
+    quiz2 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz2Data = JSON.parse(quiz2.body.toString());
+    quizRemoveRequest(session1Data.token, quiz2Data.quizId);
+    const response = quizEmptyTrashRequest(session2Data.token, stringOf2QuizIDs);
+    expect(response.statusCode).toStrictEqual(403);
   });
 
-  test('1 out of 1 quizzes in string not currently in trash', () => {
+  //Error tests for if one or more of the Quiz IDs is not currently in the trash
+  test('1 out of 1 quizzes referred to in string not currently in trash', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const response = quizEmptyTrashRequest(session1Data.token, stringOf1QuizIDs);
     expect(response.statusCode).toStrictEqual(400);
   });
-  test('1 out of 2 quizzes in string not currently in trash', () => {
+  test('1 out of 2 quizzes referred to in string not currently in trash', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
@@ -192,7 +213,7 @@ describe('quizEmptyTrash - Error Cases', () => {
     const response = quizEmptyTrashRequest(session1Data.token, stringOf2QuizIDs);
     expect(response.statusCode).toStrictEqual(400);
   });
-  test('2 out of 2 quizzes in string not currently in trash', () => {
+  test('2 out of 2 quizzes referred to in string not currently in trash', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
