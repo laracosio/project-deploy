@@ -56,11 +56,8 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
  */
 function adminQuizViewTrash(sessionId: string): userTrashQuizList {
   const dataStore = getData();
-console.log('hello there');
   // check that token is not empty or is valid
   if (!tokenValidation(sessionId)) {
-    console.log('hello there');
-
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 

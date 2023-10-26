@@ -10,15 +10,16 @@ quizRouter.get('/list', (req: Request, res: Response) => {
   res.json(adminQuizList(token));
 });
 
-quizRouter.get('/:quizId', (req: Request, res: Response) => {
-  const token: string = req.query.token as string;
-  const quizId: number = parseInt(req.params.quizId);
-  res.json(adminQuizInfo(token, quizId));
-});
 
 quizRouter.get('/trash', (req: Request, res: Response) => {
   const token: string = req.query.token as string;
   res.json(adminQuizViewTrash(token));
+});
+
+quizRouter.get('/:quizId', (req: Request, res: Response) => {
+  const token: string = req.query.token as string;
+  const quizId: number = parseInt(req.params.quizId);
+  res.json(adminQuizInfo(token, quizId));
 });
 
 // post routers - quizCreate must go last!

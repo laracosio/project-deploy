@@ -17,16 +17,14 @@ describe('quizViewTrash - Success Cases', () => {
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
     const response = quizViewTrashRequest(session1Data.token);
     const responseData = JSON.parse(response.body.toString());
-    expect(responseData).toStrictEqual(
-      {
-        quizzes: [
-          {
-            quizId: session1Data.quizId,
-            name: session1Data.name,
-          },
-        ]
-      }
-    );
+    expect(responseData).toStrictEqual({
+      trash: [
+        {
+          quizId: quiz1Data.quizId,
+          name: 'My Quiz 1'
+        },  
+      ]
+    });
   });
 });
 
@@ -51,7 +49,6 @@ describe('quizRestoreTrash - Success Cases', () => {
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    console.log(quiz1Data);
     trashedQuiz1 = quizRemoveRequest(session1Data.token, quiz1Data.quizId);
     const response = quizRestoreTrashRequest(session1Data.token, quiz1Data.quizId);
     const responseData = JSON.parse(response.body.toString());

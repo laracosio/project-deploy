@@ -169,9 +169,9 @@ const quizViewTrashRequest = (token: string): Response => {
     'GET',
     `${SERVER_URL}/v1/admin/quiz/trash`,
     {
-      body: JSON.stringify({
-        token: token,
-      }),
+      qs: {
+        token: token
+      },
       headers: { 'Content-type': 'application/json' },
     }
   );
