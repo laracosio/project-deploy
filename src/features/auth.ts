@@ -7,7 +7,7 @@ interface AuthReturn {
 }
 
 /**
- * Register a user with an email, password, and names, then returns their authUserId value.
+ * Register a new admin User 
  * @param {string} email - unique email address
  * @param {string} password - password of user's choice
  * @param {string} nameFirst - user's first name
@@ -49,7 +49,7 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
 }
 
 /**
- * Given a registered user's email and password returns their authUserId value.
+ * Logs in an admin user
  * @param {number} email - unique email address
  * @param {number} password - user's password
  * @returns {{authUserId: number}} on successful log in
@@ -57,11 +57,10 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
 */
 function adminAuthLogin(email:string, password: string): AuthReturn {
   const dataStore = getData();
-
   const authUser = dataStore.users.find(user => user.email === email);
 
   // email does not belong to a user
-  if (!authUser) {
+  if (authUser === undefined) {
     throw new ApiError('email does not belong to a user', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -88,6 +87,12 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   return { token: newSessionId };
 }
 
+/**
+ * Logs out an admin user with an active session
+ * @param token - sessionId identifying user
+ * @returns {}
+ * @returns { error: string}
+ */
 function adminAuthLogout(token: string): object {
   const dataStore = getData();
 
