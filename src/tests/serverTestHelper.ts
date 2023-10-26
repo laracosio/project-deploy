@@ -221,6 +221,20 @@ const quizRestoreTrashRequest = (token: string, quizId: number): Response => {
   );
 };
 
+const quizEmptyTrashRequest = (token: string, quizIds: string): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/trash/empty`,
+    {
+      qs: {
+        token: token,
+        quizIds: quizIds
+      },
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
 // question requests
 const duplicateQuestionRequest = (token: string, quizId: number, questionId: number): Response => {
   return request(
@@ -292,5 +306,5 @@ export {
   clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
   quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest,
   quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest,
-  deleteQuizQuestionRequest, quizViewTrashRequest, quizRestoreTrashRequest
+  deleteQuizQuestionRequest, quizViewTrashRequest, quizRestoreTrashRequest, quizEmptyTrashRequest
 };
