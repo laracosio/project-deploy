@@ -195,6 +195,32 @@ const quizDescriptUpdateRequest = (token: string, quizId: number, description: s
   );
 };
 
+const quizViewTrashRequest = (token: string): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/trash`,
+    {
+      qs: {
+        token: token
+      },
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
+const quizRestoreTrashRequest = (token: string, quizId: number): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/restore`,
+    {
+      body: JSON.stringify({
+        token: token,
+      }),
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
+
 // question requests
 const duplicateQuestionRequest = (token: string, quizId: number, questionId: number): Response => {
   return request(
@@ -266,5 +292,5 @@ export {
   clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
   quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest,
   quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest,
-  deleteQuizQuestionRequest
+  deleteQuizQuestionRequest, quizViewTrashRequest, quizRestoreTrashRequest
 };
