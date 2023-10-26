@@ -1,4 +1,4 @@
-import { adminAuthRegister, adminAuthLogin } from '../features/auth';
+import { adminAuthRegister, adminAuthLogin, adminAuthLogout } from '../features/auth';
 import { Router, Request, Response } from 'express';
 
 export const authRouter = Router();
@@ -16,6 +16,11 @@ authRouter.post('/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const response = adminAuthLogin(email, password);
   res.json(response);
+});
+
+authRouter.post('/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
+  res.json(adminAuthLogout(token));
 });
 
 // put Routers
