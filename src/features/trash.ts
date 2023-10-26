@@ -130,7 +130,7 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   // check quiz name doesn't already exist in current user's lists
   const tokenUser = findToken(sessionId);
 
-    if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === matchedQuiz.name ))) {
+  if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === matchedQuiz.name))) {
     throw new ApiError('Quiz name already exists', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -139,14 +139,14 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }
 
-//restores specified quiz from trash
+  // restores specified quiz from trash
   const index1 = dataStore.trash.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
   const restoreQuiz = dataStore.trash.splice(index1, 1)[0];
   dataStore.quizzes.push(restoreQuiz);
 
-//Update time quiz lasted edited
-const index2 = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));  
-const date = getUnixTime(new Date());
+  // Update time quiz lasted edited
+  const index2 = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.quizId === quizId));
+  const date = getUnixTime(new Date());
   dataStore.quizzes[index2].timeLastEdited = date;
 
   setData(dataStore);
@@ -154,5 +154,3 @@ const date = getUnixTime(new Date());
 }
 
 export { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash };
-
-

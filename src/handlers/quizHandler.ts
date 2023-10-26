@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizViewTrash} from '../features/trash';
+import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizViewTrash } from '../features/trash';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../features/quiz';
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../features/question';
 
@@ -10,7 +10,6 @@ quizRouter.get('/list', (req: Request, res: Response) => {
   const token: string = req.query.token as string;
   res.json(adminQuizList(token));
 });
-
 
 quizRouter.get('/trash', (req: Request, res: Response) => {
   const token: string = req.query.token as string;
@@ -53,7 +52,6 @@ quizRouter.post('/', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
   res.json(adminQuizCreate(token, name, description));
 });
-
 
 // put routers
 quizRouter.put('/:quizId/name', (req: Request, res: Response) => {
