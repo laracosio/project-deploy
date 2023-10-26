@@ -150,7 +150,7 @@ describe('quizEmptyTrash - Error Cases', () => {
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
     quizRemoveRequest(session1Data.token, quiz1Data.quizId);
-    const response = quizEmptyTrashRequest(session1Data.token + 1, quiz1Data.quizId);
+    const response = quizEmptyTrashRequest(session1Data.token + 1, stringOf1QuizIDs);
     expect(response.statusCode).toStrictEqual(401);
   });
   test('QuizId not owned by this user', () => {
@@ -161,7 +161,7 @@ describe('quizEmptyTrash - Error Cases', () => {
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
     quizRemoveRequest(session1Data.token, quiz1Data.quizId);
-    const response = quizEmptyTrashRequest(session2Data.token, quiz1Data.quizId);
+    const response = quizEmptyTrashRequest(session2Data.token, stringOf1QuizIDs);
     expect(response.statusCode).toStrictEqual(403);
   });
 
