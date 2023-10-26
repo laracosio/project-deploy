@@ -14,25 +14,24 @@ const MINPWLEN = 8;
  * @returns {void}
  */
 function clear(): object {
-  const store = getData();
-  store.users = [];
-  store.quizzes = [];
-  store.tokens = [];
-  store.trash = [];
-  setData(store);
+  const dataStore = getData();
+  dataStore.users = [];
+  dataStore.quizzes = [];
+  dataStore.tokens = [];
+  dataStore.trash = [];
+  setAndSave(dataStore);
   return {};
 }
 
-
 /**
- * Function which sets data and saves to datastore.json as JSONified string
+ * Function which sets data to the DataStore and saves changes to
+ * datastore.json as JSONified string
  * @param dataStore = stores user, quiz, tokens and trash information
  */
 export function setAndSave(dataStore: Datastore) {
   setData(dataStore)
   fs.writeFileSync('datastore.json', JSON.stringify(dataStore));
 }
-
 
 /**
  * Helper function to validate user data for registration.

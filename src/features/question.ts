@@ -3,7 +3,7 @@ import { getUnixTime } from 'date-fns';
 import { getData, setData, Question, Answer, QuestionCreate, Colours } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, tokenValidation } from './other';
+import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, setAndSave, tokenValidation } from './other';
 
 interface adminDuplicateQuestionReturn {
   newQuestionId: number
@@ -111,7 +111,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
   quiz.quizDuration = getTotalDurationOfQuiz(quiz.quizId);
   quiz.numQuestions++;
 
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {
     questionId: questionId,
@@ -162,7 +162,8 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
   const questionToMove = matchedQuiz.questions.splice(currentIndex, 1)[0];
   matchedQuiz.questions.splice(newPosition, 0, questionToMove);
   matchedQuiz.timeLastEdited = getUnixTime(new Date());
-  setData(dataStore);
+  setAndSave(dataStore);
+
   return {};
 }
 
@@ -248,7 +249,7 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
   questionToUpdate.answers = arrayOfAnswers;
   quiz.quizDuration = getTotalDurationOfQuiz(quiz.quizId);
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
@@ -296,7 +297,7 @@ function adminDuplicateQuestion (sessionId: string, quizId: number, questionId: 
   matchedQuiz.timeLastEdited = getUnixTime(new Date());
   matchedQuiz.numQuestions = matchedQuiz.questions.length;
   matchedQuiz.quizDuration = getTotalDurationOfQuiz(quizId);
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return { newQuestionId: duplicatedQuestion.questionId };
 }

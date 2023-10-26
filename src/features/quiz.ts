@@ -1,6 +1,6 @@
 import { Question, Quiz, getData, setData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
-import { findQuizById, findToken, tokenValidation } from './other';
+import { findQuizById, findToken, setAndSave, tokenValidation } from './other';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 
@@ -86,7 +86,7 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
   };
 
   dataStore.quizzes.push(newQuiz);
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {
     quizId: newQuizId
@@ -212,7 +212,7 @@ function adminQuizNameUpdate (sessionId: string, quizId: number, name: string): 
   const date = getUnixTime(new Date());
   dataStore.quizzes[index].timeLastEdited = date;
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
@@ -253,7 +253,7 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
   const date = getUnixTime(new Date());
   dataStore.quizzes[index].timeLastEdited = date;
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
@@ -301,7 +301,7 @@ function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: st
 
   transferQuiz.quizOwner = transferUser.userId;
   transferQuiz.timeLastEdited = getUnixTime(new Date());
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {};
 }

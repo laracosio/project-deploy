@@ -1,7 +1,7 @@
 import { getData, setData } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { findToken, findUserById, tokenValidation } from './other';
+import { findToken, findUserById, setAndSave, tokenValidation } from './other';
 import validator from 'validator';
 
 interface UserDetailReturn {
@@ -100,7 +100,7 @@ function adminUserUpdateDetails(token: string, email: string, nameFirst: string,
   user.nameLast = nameLast;
 
   // save changes to dataStore
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {};
 }
@@ -166,7 +166,7 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
   user.password = newPassword;
 
   // update new password
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 

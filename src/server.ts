@@ -81,15 +81,11 @@ app.use((req: Request, res: Response) => {
 const server = app.listen(PORT, HOST, () => {
   // Persistence - code sourced from
   // https://nw-syd-gitlab.cseunsw.tech/COMP1531/23T3/comp1531-lecturecode-23t3/-/blob/main/week3-9/src/5.1_4persistence.ts?ref_type=heads
-  // const datastr = fs.readFileSync('./datastore.json');
-  // const data = JSON.parse(String(datastr));
-
   if (fs.existsSync('datastore.json')) {
     const datastr = fs.readFileSync('./datastore.json');
     const data = JSON.parse(String(datastr));
     setData(data);
   }
-
 
   // DO NOT CHANGE THIS LINE
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
