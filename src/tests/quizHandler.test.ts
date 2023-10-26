@@ -1,4 +1,4 @@
-import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest, quizListRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest, authLoginRequest } from './serverTestHelper';
+import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest, quizListRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest, authLoginRequest, authLogoutRequest } from './serverTestHelper';
 import { person1, person2, person3, person4, person5, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription, newvalidQuizName, newvalidQuizDescription } from '../testingData';
 import { Response } from 'sync-request-curl';
 import { getUnixTime } from 'date-fns';
@@ -576,16 +576,15 @@ describe('POST /v1/admin/quiz/{quizId}/transfer - Error', () => {
     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(401);
   });
-  //   // NEEDS LOG OUT
-  //   test('Token is invalid (does not refer to valid logged in user session)', () => {
-  //     const sess1Data = JSON.parse(sess1.body.toString());
-  //     const quiz1Data = JSON.parse(quiz1.body.toString());
-  //     const sess2Data = JSON.parse(sess2.body.toString());
-  //     quizLogout(sess2Data.token);
-  //     const res = quizTransferRequest(quiz1Data.quizId, sess2Data.token, person2.email);
-  //     expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
-  //     expect(res.statusCode).toStrictEqual(401);
-  //   });
+  test('Token is invalid (does not refer to valid logged in user session)', () => {
+    const sess1Data = JSON.parse(sess1.body.toString());
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const sess2Data = JSON.parse(sess2.body.toString());
+    authLogoutRequest(sess1Data.token);
+    const res = quizTransferRequest(sess1Data.token, quiz1Data.quizId, person2.email);
+    expect(JSON.parse(res.body.toString())).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(401);
+  });
   test('Valid token is provided, but user is not an owner of this quiz', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
     const sess2Data = JSON.parse(sess2.body.toString());

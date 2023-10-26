@@ -100,7 +100,7 @@ function adminAuthLogout(token: string): object {
   const tokenIndex: number = dataStore.tokens.findIndex(user => user.sessionId === token);
   dataStore.tokens.splice(tokenIndex, 1);
 
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {};
 }
