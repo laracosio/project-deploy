@@ -32,7 +32,8 @@ interface QuizListReturn {
  * @param {string} sessionId - unique token
  * @param {string} name - of quiz
  * @param {string} description - of quiz
- * @returns {quizId: 2}
+ * @returns { quizId: number }
+ * @returns { error: string }
 */
 function adminQuizCreate(sessionId: string, name: string, description: string): QuizCreateReturn {
   const dataStore = getData();
@@ -80,9 +81,9 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
     timeLastEdited: date,
     description: description,
     quizOwner: matchedToken.userId,
-    numQuestions: 0, // questionCreate to update
-    questions: [], // questionCreate to update
-    quizDuration: 0, // questionCreate to update
+    numQuestions: 0,
+    questions: [],
+    quizDuration: 0,
   };
 
   dataStore.quizzes.push(newQuiz);
@@ -262,7 +263,8 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
  * @param sessionId - string of sessionId
  * @param quizId - quizId to change ownership of
  * @param userEmail - email of user to change quiz to
- * @returns '{}'
+ * @returns {}
+ * @returns { error: string }
 */
 function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: string): object {
   const dataStore = getData();
