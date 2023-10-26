@@ -1,4 +1,3 @@
-
 import { getData, setData, User, Token, Quiz, Question, Datastore } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,6 +18,7 @@ function clear(): object {
   dataStore.quizzes = [];
   dataStore.tokens = [];
   dataStore.trash = [];
+  setAndSave(dataStore);
   return {};
 }
 
