@@ -106,8 +106,7 @@ function adminUserUpdateDetails(token: string, email: string, nameFirst: string,
 }
 
 /**
- * Given an admin user's authUserId, return details about the user.
- * "name" is the first and last name concatenated with a single space between them
+ * Given details relating to a password change, update the password of a logged in user.
  * @param {string} sessionId - current session id from token
  * @param {string} oldPassword - user's current password (before update)
  * @param {string} newPassword - new password to replace the current password
@@ -127,7 +126,7 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
     }
   }
 
-  // check newPassword doesn't match oldPassword
+  // check newPassword matches oldPassword
   if (newPassword === oldPassword) {
     throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
   }
