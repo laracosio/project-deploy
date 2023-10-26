@@ -59,7 +59,7 @@ export interface Token {
   userId: number
 }
 
-interface Datastore {
+export interface Datastore {
   users: User[],
   quizzes: Quiz[],
   tokens: Token[],

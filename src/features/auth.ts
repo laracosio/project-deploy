@@ -1,8 +1,7 @@
-import { helperAdminRegister, createSessionId } from './other';
-import { getData, setData, Token } from '../dataStore';
+import { helperAdminRegister, createSessionId, setAndSave } from './other';
+import { getData, Token } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-
 interface AuthReturn {
   token: string
 }
@@ -41,10 +40,11 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
     sessionId: newSessionId,
     userId: newUserId
   };
-
   dataStore.users.push(newUser);
   dataStore.tokens.push(newToken);
-  setData(dataStore);
+
+  setAndSave(dataStore);
+
   return { token: newSessionId };
 }
 
@@ -83,7 +83,8 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   };
   dataStore.tokens.push(newToken);
 
-  setData(dataStore);
+  setAndSave(dataStore);
+
   return { token: newSessionId };
 }
 
@@ -99,7 +100,7 @@ function adminAuthLogout(token: string): object {
   const tokenIndex: number = dataStore.tokens.findIndex(user => user.sessionId === token);
   dataStore.tokens.splice(tokenIndex, 1);
 
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {};
 }

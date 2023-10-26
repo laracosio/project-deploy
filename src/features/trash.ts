@@ -1,7 +1,7 @@
-import { getData, setData } from '../dataStore';
+import { getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { tokenValidation, findToken, findQuizById } from './other';
+import { tokenValidation, findToken, findQuizById, setAndSave } from './other';
 import { getUnixTime } from 'date-fns';
 
 interface BriefTrashQuizInfo {
@@ -44,7 +44,7 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
   trashQuiz.timeLastEdited = getUnixTime(new Date());
   dataStore.trash.push(trashQuiz);
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
@@ -71,7 +71,7 @@ function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: n
   quiz.timeLastEdited = getUnixTime(new Date());
   quiz.quizDuration = quiz.quizDuration - quizDeleted.duration;
   quiz.numQuestions--;
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {};
 }
@@ -149,7 +149,7 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   const date = getUnixTime(new Date());
   dataStore.quizzes[index2].timeLastEdited = date;
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
