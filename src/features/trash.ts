@@ -38,6 +38,34 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
   return {};
 }
 
+function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: number): object {
+  const dataStore = getData();
+
+  const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz.questions.some((question) => question.questionId === questionId)) {
+    throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
+  }
+
+  if (!tokenValidation(sessionToken)) {
+    throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
+  }
+
+  const authUser = dataStore.tokens.find(user => user.sessionId === sessionToken);
+  if (quiz.quizOwner !== authUser.userId) {
+    throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
+  }
+
+  const questionIndex: number = quiz.questions.findIndex(question => question.questionId === questionId);
+  const quizDeleted = quiz.questions.splice(questionIndex, 1)[0];
+
+  quiz.timeLastEdited = getUnixTime(new Date());
+  quiz.quizDuration = quiz.quizDuration - quizDeleted.duration;
+  quiz.numQuestions--;
+  setData(dataStore);
+
+  return {};
+}
+
 export {
-  adminQuizRemove
+  adminQuizRemove, quizRemoveQuestion
 };

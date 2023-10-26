@@ -248,11 +248,23 @@ const updateQuizQuestionRequest = (quizId: number, questionId: number, token: st
     }
   );
 };
+const deleteQuizQuestionRequest = (sessionId: string, quizId: number, questionId: number): Response => {
+  return request(
+    'DELETE',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`,
+    {
+      qs: {
+        sessionId: sessionId
+      },
+    }
+  );
+};
 
 export {
   authRegisterRequest, authLoginRequest, authUserDetailsRequest, authLogoutRequest,
   userUpdateDetailsResponse, userUpdatePasswordRequest,
   clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
   quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest,
-  quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest
+  quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest,
+  deleteQuizQuestionRequest
 };
