@@ -174,19 +174,14 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
 function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
   const dataStore = getData();
   const parsedArray: Array<number> = JSON.parse(quizIds);
-  console.log(parsedArray);
   // check sessionId is valid
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
   const tokenUser = findToken(sessionId);
   // elements should be the individual quizIds of the parsed
-  console.log(`trash has: ${dataStore.trash[0].quizId}`);
-  console.log(`trash has: ${dataStore.trash[1].quizId}`);
-  console.log(`trash has: ${dataStore.trash[2].quizId}`);
   let i = 0;
   for (const element of parsedArray) {
-    console.log(`checking element ${parsedArray[i]}`);
     // check valid quizIds are owned by the current user associated with token
     if ((dataStore.trash.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId)) || (dataStore.quizzes.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId))) {
       throw new ApiError(
