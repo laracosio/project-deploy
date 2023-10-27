@@ -1,9 +1,8 @@
-import { getData, Quiz } from '../dataStore';
+import { getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { tokenValidation, findToken, findQuizById, setAndSave } from './other';
 import { getUnixTime } from 'date-fns';
-import { parse } from 'path';
 
 interface BriefTrashQuizInfo {
   quizId: number,
@@ -12,9 +11,6 @@ interface BriefTrashQuizInfo {
 
 interface userTrashQuizList {
   quizzes: BriefTrashQuizInfo[]
-} 
-interface quizzesArray {
-  quizzes: Quiz[]
 }
 
 /**
@@ -180,12 +176,11 @@ function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
   }
   const tokenUser = findToken(sessionId);
   // elements should be the individual quizIds of the parsed
-  let i = 0;
   for (const element of parsedArray) {
     // check valid quizIds are owned by the current user associated with token
     if ((dataStore.trash.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId)) || (dataStore.quizzes.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId))) {
       throw new ApiError(
-        'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own', 
+        'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own',
         HttpStatusCode.FORBIDDEN);
     }
     // parsed quizId does not appear in trash
@@ -195,11 +190,9 @@ function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
 
     const matchedQuizIndex = dataStore.trash.findIndex((quiz) => quiz.quizId === element);
     dataStore.trash.splice(matchedQuizIndex, 0);
-    i++;
   }
   setAndSave(dataStore);
   return {};
 }
-
 
 export { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash };
