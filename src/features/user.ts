@@ -60,13 +60,13 @@ function adminUserUpdateDetails(token: string, email: string, nameFirst: string,
   if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
-  
+
   // find user's details
   const userToken = findToken(token);
   const userId = userToken.userId;
   const user = findUserById(userId);
   const currentUserEmail = user.email;
-  
+
   // check new email is not currently used by another user (excluding current user)
   if (dataStore.users.some(user => user.email === email && user.email !== currentUserEmail)) {
     throw new ApiError('Email is currently used by another user', HttpStatusCode.BAD_REQUEST);

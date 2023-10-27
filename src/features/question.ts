@@ -26,6 +26,16 @@ interface QuestionReturn {
 function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): QuestionReturn {
   const dataStore = getData();
 
+  if (!tokenValidation(token)) {
+    throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
+  }
+
+  const authUser = dataStore.tokens.find(user => user.sessionId === token);
+  const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
+  if (quiz.quizOwner !== authUser.userId) {
+    throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
+  }
+
   if (questionBody.question.length < 5 || questionBody.question.length > 50) {
     throw new ApiError('Question string is less than 5 characters in length or greater than 50 characters in length', HttpStatusCode.BAD_REQUEST);
   }
@@ -55,18 +65,9 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
   if (!(questionBody.answers.find(answer => answer.correct === true))) {
     throw new ApiError('There are no correct answers', HttpStatusCode.BAD_REQUEST);
   }
-  if (!tokenValidation(token)) {
-    throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
-  }
 
   if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
     throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
-  }
-
-  const authUser = dataStore.tokens.find(user => user.sessionId === token);
-  const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
-  if (quiz.quizOwner !== authUser.userId) {
-    throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
 
   // edit timeLastEdited
@@ -121,11 +122,23 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
 function adminMoveQuestion(sessionId: string, quizId: number, questionId: number, newPosition: number): object {
   const dataStore = getData();
 
-  // quiz invalid
+  // invalid token
+  if (!tokenValidation(sessionId)) {
+    throw new ApiError('Token is empty or invalid (does not refer to valid logged in user session)', HttpStatusCode.UNAUTHORISED);
+  }
+
   const matchedQuiz = findQuizById(quizId);
+  // quiz invalid
   if (matchedQuiz === undefined) {
     throw new ApiError('Quiz ID does not refer to a valid quiz', HttpStatusCode.BAD_REQUEST);
   }
+
+  // valid token but not quizOwner
+  const matchedToken = findToken(sessionId);
+  if (matchedToken.userId !== matchedQuiz.quizOwner) {
+    throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
+  }
+
   // question invalid
   const matchedQuestion = findQuestionByQuiz(matchedQuiz, questionId);
   if (matchedQuestion === undefined) {
@@ -139,15 +152,6 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
   const currentIndex = matchedQuiz.questions.findIndex(element => element.questionId === questionId);
   if (currentIndex === newPosition) {
     throw new ApiError('NewPosition is the position of the current question', HttpStatusCode.BAD_REQUEST);
-  }
-  // invalid token
-  if (!tokenValidation(sessionId)) {
-    throw new ApiError('Token is empty or invalid (does not refer to valid logged in user session)', HttpStatusCode.UNAUTHORISED);
-  }
-  // valid token but not quizOwner
-  const matchedToken = findToken(sessionId);
-  if (matchedToken.userId !== matchedQuiz.quizOwner) {
-    throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
 
   const questionToMove = matchedQuiz.questions.splice(currentIndex, 1)[0];
@@ -170,6 +174,15 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
 function quizUpdateQuestion (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
   const dataStore = getData();
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!tokenValidation(token)) {
+    throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
+  }
+
+  const authUser = dataStore.tokens.find(user => user.sessionId === token);
+  if (quiz.quizOwner !== authUser.userId) {
+    throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
+  }
 
   if (!quiz.questions.some((question) => question.questionId === questionId)) {
     throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
@@ -203,17 +216,9 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
   if (!(questionBody.answers.find(answer => answer.correct === true))) {
     throw new ApiError('There are no correct answers', HttpStatusCode.BAD_REQUEST);
   }
-  if (!tokenValidation(token)) {
-    throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
-  }
 
   if (!dataStore.quizzes.some((quiz) => quiz.quizId === quizId)) {
     throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
-  }
-
-  const authUser = dataStore.tokens.find(user => user.sessionId === token);
-  if (quiz.quizOwner !== authUser.userId) {
-    throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
 
   quiz.timeLastEdited = getUnixTime(new Date());
