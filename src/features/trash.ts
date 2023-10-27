@@ -168,6 +168,35 @@ function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
   // convert the string of quizIds into an array of numbers
   const numbersArray = quizIds.split(',').map(Number);
 
+  const parsedArray: Array<number> = JSON.parse(quizIds);
+
+/**  NEW CODE BLOCK
+  // check sessionId is valid
+  if (!tokenValidation(sessionId)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+
+  const tokenUser = findToken(sessionId);
+  // elements should be the individual quizIds of the parsedArray
+  for (const element of parsedArray) {
+    // parsed quizId does not appear in trash
+    if (!dataStore.trash.some(quiz => quiz.quizId === element)) {
+      throw new ApiError('One or more of the Quiz IDs is not currently in the trash', HttpStatusCode.BAD_REQUEST);
+    }
+    // check valid quizIds are owned by the current user associated with token
+    if (dataStore.trash.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId)) {
+      throw new ApiError(
+        'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own', 
+        HttpStatusCode.FORBIDDEN);
+    }
+    const matchedQuizIndex = dataStore.trash.findIndex((quiz) => quiz.quizId === element);
+    dataStore.trash.splice(matchedQuizIndex, 0);
+  }
+  setAndSave(dataStore);
+  return {};
+
+  END OF NEW CODE BLOCK */ 
+  
   // // covert the array of numbers to an array of quizzes
   // numbersArray.forEach(numbersArray.find(quiz => ()))
  
