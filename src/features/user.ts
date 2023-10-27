@@ -56,16 +56,20 @@ function adminUserDetails(sessionId: string): UserDetailReturn {
 function adminUserUpdateDetails(token: string, email: string, nameFirst: string, nameLast: string): object {
   const dataStore = getData();
 
-  // if token is valid, find current user and check email
+  // check token is valid
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+  
+  // find user's details
+  const userToken = findToken(token);
+  const userId = userToken.userId;
+  const user = findUserById(userId);
+  const currentUserEmail = user.email;
+  
   // check new email is not currently used by another user (excluding current user)
-  if (tokenValidation(token)) {
-    const userToken = findToken(token);
-    const userId = userToken.userId;
-    const user = findUserById(userId);
-    const currentUserEmail = user.email;
-    if (dataStore.users.some(user => user.email === email && user.email !== currentUserEmail)) {
-      throw new ApiError('Email is currently used by another user', HttpStatusCode.BAD_REQUEST);
-    }
+  if (dataStore.users.some(user => user.email === email && user.email !== currentUserEmail)) {
+    throw new ApiError('Email is currently used by another user', HttpStatusCode.BAD_REQUEST);
   }
 
   // check email satisfies (validator.isEmail)
@@ -85,16 +89,7 @@ function adminUserUpdateDetails(token: string, email: string, nameFirst: string,
     throw new ApiError('Name must only contain lowercase letters, uppercase letters, spaces, hyphens, or apostrophes', HttpStatusCode.BAD_REQUEST);
   }
 
-  // check token is valid
-  if (!tokenValidation(token)) {
-    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
-  }
-
-  // find user and update their details
-  const userToken = findToken(token);
-  const userId = userToken.userId;
-  const user = findUserById(userId);
-
+  // update user's details
   user.email = email;
   user.nameFirst = nameFirst;
   user.nameLast = nameLast;
@@ -116,14 +111,17 @@ function adminUserUpdateDetails(token: string, email: string, nameFirst: string,
 function adminUserUpdatePassword(token: string, oldPassword: string, newPassword: string): object {
   const dataStore = getData();
 
-  if (tokenValidation(token)) {
-    const userToken = findToken(token);
-    const user = findUserById(userToken.userId);
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
 
-    // check oldPassword is correct
-    if (oldPassword !== user.password) {
-      throw new ApiError('Old Password is incorrect', HttpStatusCode.BAD_REQUEST);
-    }
+  // find user's details (list of old passwords)
+  const userToken = findToken(token);
+  const user = findUserById(userToken.userId);
+
+  // check oldPassword is correct
+  if (oldPassword !== user.password) {
+    throw new ApiError('Old Password is incorrect', HttpStatusCode.BAD_REQUEST);
   }
 
   // check newPassword matches oldPassword
@@ -132,13 +130,8 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
   }
 
   // check newPassword hasn't been used by this user in the past
-  if (tokenValidation(token)) {
-    const userToken = findToken(token);
-    const user = findUserById(userToken.userId);
-
-    if (user.oldPasswords.includes(newPassword)) {
-      throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
-    }
+  if (user.oldPasswords.includes(newPassword)) {
+    throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
   }
 
   // check newPassword is not less than 8 characters
@@ -153,14 +146,7 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
     throw new ApiError('Password must contain at least one number and at least one letter', HttpStatusCode.BAD_REQUEST);
   }
 
-  if (!tokenValidation(token)) {
-    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
-  }
-
   // store old password in user details
-  const userToken = findToken(token);
-  const user = findUserById(userToken.userId);
-
   user.oldPasswords.push(oldPassword);
   user.password = newPassword;
 

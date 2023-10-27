@@ -22,23 +22,23 @@ interface userTrashQuizList {
 function adminQuizRemove(sessionId: string, quizId: number): object {
   const dataStore = getData();
 
-  const matchedQuiz = findQuizById(quizId);
-  // check that quizId is not empty or is valid
-  if (!quizId || matchedQuiz === undefined) {
-    throw new ApiError('Invalid quizId', HttpStatusCode.BAD_REQUEST);
-  }
-
   // check that sessionId is not empty or is valid
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
+  const matchedQuiz = findQuizById(quizId);
+  // check that quizId is not empty or is valid
+  if (!quizId || matchedQuiz === undefined) {
+    throw new ApiError('Invalid quizId', HttpStatusCode.BAD_REQUEST);
+  }
+  
   // find user associated with token and checks whether they are the quiz owner
   const matchedToken = findToken(sessionId);
   if (matchedQuiz.quizOwner !== matchedToken.userId) {
     throw new ApiError('User does not own quiz to remove', HttpStatusCode.FORBIDDEN);
   }
-
+  
   const quizIndex: number = dataStore.quizzes.findIndex(quiz => quiz.quizId === quizId);
   const trashQuiz = dataStore.quizzes.splice(quizIndex, 1)[0];
   trashQuiz.timeLastEdited = getUnixTime(new Date());
@@ -129,6 +129,12 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
+  const tokenUser = findToken(sessionId);
+  // check valid quizId is owned by the current user associated with token
+  if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
+    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
+  }
+
   // check quizId refers to quiz in trash'
   const matchedQuiz = dataStore.trash.find((quiz) => quiz.quizId === quizId);
   if (matchedQuiz === undefined) {
@@ -136,15 +142,8 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   }
 
   // check quiz name doesn't already exist in current user's lists
-  const tokenUser = findToken(sessionId);
-
   if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === matchedQuiz.name))) {
     throw new ApiError('Quiz name already exists', HttpStatusCode.BAD_REQUEST);
-  }
-
-  // check valid quizId is owned by the current user associated with token
-  if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
-    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }
 
   // restores specified quiz from trash

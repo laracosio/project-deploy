@@ -15,12 +15,11 @@ describe('clear - Success Cases', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const quiz1 = adminQuizCreate(session.token, 'Misc Quiz Name', 'Misc Description');
     expect(clear()).toStrictEqual({});
-
     function adminQuizRemoveFunc() {
       adminQuizRemove(session.token, quiz1.quizId);
     }
     expect(adminQuizRemoveFunc).toThrow(ApiError);
-    expect(adminQuizRemoveFunc).toThrow('Invalid quizId');
+    expect(adminQuizRemoveFunc).toThrow('Invalid token');
   });
   test('clear - multiple users and quizzes', () => {
     const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
