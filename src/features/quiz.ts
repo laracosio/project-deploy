@@ -1,6 +1,6 @@
-import { Question, Quiz, getData, setData } from '../dataStore';
+import { Question, Quiz, getData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
-import { findQuizById, findToken, tokenValidation } from './other';
+import { findQuizById, findToken, setAndSave, tokenValidation } from './other';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 
@@ -32,7 +32,8 @@ interface QuizListReturn {
  * @param {string} sessionId - unique token
  * @param {string} name - of quiz
  * @param {string} description - of quiz
- * @returns {quizId: 2}
+ * @returns { quizId: number }
+ * @returns { error: string }
 */
 function adminQuizCreate(sessionId: string, name: string, description: string): QuizCreateReturn {
   const dataStore = getData();
@@ -80,13 +81,13 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
     timeLastEdited: date,
     description: description,
     quizOwner: matchedToken.userId,
-    numQuestions: 0, // questionCreate to update
-    questions: [], // questionCreate to update
-    quizDuration: 0, // questionCreate to update
+    numQuestions: 0,
+    questions: [],
+    quizDuration: 0,
   };
 
   dataStore.quizzes.push(newQuiz);
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {
     quizId: newQuizId
@@ -212,7 +213,7 @@ function adminQuizNameUpdate (sessionId: string, quizId: number, name: string): 
   const date = getUnixTime(new Date());
   dataStore.quizzes[index].timeLastEdited = date;
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
@@ -253,7 +254,7 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
   const date = getUnixTime(new Date());
   dataStore.quizzes[index].timeLastEdited = date;
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
@@ -262,7 +263,8 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
  * @param sessionId - string of sessionId
  * @param quizId - quizId to change ownership of
  * @param userEmail - email of user to change quiz to
- * @returns '{}'
+ * @returns {}
+ * @returns { error: string }
 */
 function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: string): object {
   const dataStore = getData();
@@ -301,7 +303,7 @@ function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: st
 
   transferQuiz.quizOwner = transferUser.userId;
   transferQuiz.timeLastEdited = getUnixTime(new Date());
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {};
 }

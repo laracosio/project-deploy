@@ -22,7 +22,12 @@ quizRouter.get('/:quizId', (req: Request, res: Response) => {
   res.json(adminQuizInfo(token, quizId));
 });
 
-// post routers - quizCreate must go last!
+// post routers
+quizRouter.post('/', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  res.json(adminQuizCreate(token, name, description));
+});
+
 quizRouter.post('/:quizid/transfer', (req: Request, res: Response) => {
   const { token, userEmail } = req.body;
   const quizId = parseInt(req.params.quizid);
@@ -48,11 +53,6 @@ quizRouter.post('/:quizId/restore', (req: Request, res: Response) => {
   res.json(adminQuizRestoreTrash(token, quizId));
 });
 
-quizRouter.post('/', (req: Request, res: Response) => {
-  const { token, name, description } = req.body;
-  res.json(adminQuizCreate(token, name, description));
-});
-
 // put routers
 quizRouter.put('/:quizId/name', (req: Request, res: Response) => {
   const sessionToken = req.body.token as string;
@@ -66,19 +66,19 @@ quizRouter.put('/:quizId/description', (req: Request, res: Response) => {
   res.json(adminQuizDescriptionUpdate(sessionToken, quizId, req.body.description));
 });
 
+quizRouter.put('/:quizId/question/:questionId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const { token, questionBody } = req.body;
+  res.json(quizUpdateQuestion(quizId, questionId, token, questionBody));
+});
+
 quizRouter.put('/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const sessionToken = req.body.token as string;
   const newPostion = req.body.newPosition as number;
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   res.json(adminMoveQuestion(sessionToken, quizId, questionId, newPostion));
-});
-
-quizRouter.put('/:quizId/question/:questionId', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizId);
-  const questionId = parseInt(req.params.questionId);
-  const { token, questionBody } = req.body;
-  res.json(quizUpdateQuestion(quizId, questionId, token, questionBody));
 });
 
 // delete routers

@@ -1,7 +1,7 @@
-import { getData, setData, Quiz } from '../dataStore';
+import { getData, Quiz } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { tokenValidation, findToken, findQuizById } from './other';
+import { tokenValidation, findToken, findQuizById, setAndSave } from './other';
 import { getUnixTime } from 'date-fns';
 
 interface BriefTrashQuizInfo {
@@ -47,10 +47,18 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
   trashQuiz.timeLastEdited = getUnixTime(new Date());
   dataStore.trash.push(trashQuiz);
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
+/**
+ * Delete a particular question from a quiz
+ * @param sessionToken
+ * @param quizId
+ * @param questionId
+ * @returns {{}}
+ * @returns { error: string }
+ */
 function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: number): object {
   const dataStore = getData();
 
@@ -74,7 +82,7 @@ function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: n
   quiz.timeLastEdited = getUnixTime(new Date());
   quiz.quizDuration = quiz.quizDuration - quizDeleted.duration;
   quiz.numQuestions--;
-  setData(dataStore);
+  setAndSave(dataStore);
 
   return {};
 }
@@ -152,7 +160,7 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   const date = getUnixTime(new Date());
   dataStore.quizzes[index2].timeLastEdited = date;
 
-  setData(dataStore);
+  setAndSave(dataStore);
   return {};
 }
 
@@ -199,49 +207,5 @@ function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
   return {};
 }
 
-  //END OF NEW CODE BLOCK 
-  
-  // // covert the array of numbers to an array of quizzes
-  // numbersArray.forEach(numbersArray.find(quiz => ()))
- 
- 
- 
-  // for (let i = 0; i < numbersArray.length; i++) {
-  //   // const tokenUser = findToken(sessionId);
-  //   const quizIdsArray: Array<quizzesArray> = [];
-  //   numbersArray.forEach((quiz) => {
-  //     if (quiz.quizOwner === tokenUser.userId) {
-  //       const obj = {
-  //         quizId: quiz.quizId,
-  //         name: quiz.name,
-  //       };
-  //       quizIdsArray.push(obj);
-  //     }
-  //   });
-  // }
-
-//   // check sessionId is valid
-//   if (!tokenValidation(sessionId)) {
-//     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
-//   }
-
-//   // check valid quizIds are owned by the current user associated with token
-//   if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
-//     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
-//   }
-
-// if (numbersArray.some((quizIds) => ((dataStore.quizzes.forEach((quiz) => (quiz.quizOwner)) !== tokenUser.userId && === quizIds) || ( !== tokenUser.userId && === quizIds))))  
-
-//   // check quizId refers to quiz in trash'
-//   const matchedQuiz = dataStore.trash.find((quiz) => quiz.quizId === quizId);
-//   if (matchedQuiz === undefined) {
-//     throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
-//   }
-
-
-
-//   setData(dataStore);
-//   return {};
-// }
 
 export { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash };

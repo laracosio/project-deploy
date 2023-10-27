@@ -1,4 +1,4 @@
-import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest, moveQuestionRequest, quizInfoRequest, updateQuizQuestionRequest, duplicateQuestionRequest, deleteQuizQuestionRequest } from './serverTestHelper';
+import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest, moveQuestionRequest, quizInfoRequest, updateQuizQuestionRequest, duplicateQuestionRequest, deleteQuizQuestionRequest, authLogoutRequest } from './serverTestHelper';
 import { person1, person2, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../testingData';
 import { Response } from 'sync-request-curl';
 import { getUnixTime } from 'date-fns';
@@ -919,7 +919,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
     const questionCreateUpdate = {
       question: 'Who is laras best girl cat?',
       duration: 10,
-      points: 153,
+      points: 2,
       answers: answerCreateUpdate,
     };
 
@@ -961,7 +961,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
     const questionCreateUpdate = {
       question: 'Who is laras best girl cat?',
       duration: 10,
-      points: 153,
+      points: 3,
       answers: answerCreateUpdate,
     };
 
@@ -1004,7 +1004,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
     const questionCreateUpdate = {
       question: 'Who is laras best girl cat?',
       duration: 10,
-      points: 153,
+      points: 2,
       answers: answerCreateUpdate,
     };
 
@@ -1038,7 +1038,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
 
     const answerCreateUpdate = [
       { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
+      { answer: 'Coco', correct: false },
       { answer: 'Bob', correct: false },
       { answer: 'Frankie', correct: false },
     ];
@@ -1046,7 +1046,7 @@ describe('Unsuccessful tests (400): Update a quiz question', () => {
     const questionCreateUpdate = {
       question: 'Who is laras best girl cat?',
       duration: 10,
-      points: 153,
+      points: 1,
       answers: answerCreateUpdate,
     };
 
@@ -1200,7 +1200,8 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Success', () 
   test('Move Question 2 to new Position and check lastEdited', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
+    const quest1 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
+    const quest1Data = JSON.parse(quest1.body.toString());
     const quest2 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput2);
     const quest2Data = JSON.parse(quest2.body.toString());
     const res = moveQuestionRequest(sess1Data.token, quiz1Data.quizId, quest2Data.questionId, 0);
@@ -1208,8 +1209,26 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Success', () 
     expect(data).toStrictEqual({});
 
     const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
-    expect(JSON.parse(quizInfo.body.toString()).timeLastEdited).toBeGreaterThanOrEqual(getUnixTime(new Date()));
-    // check hard coded params
+    const quizInfoData = JSON.parse(quizInfo.body.toString());
+    expect(quizInfoData.timeLastEdited).toBeGreaterThanOrEqual(getUnixTime(new Date()));
+    expect(quizInfoData.questions).toStrictEqual(
+      [
+        {
+          questionId: quest2Data.questionId,
+          question: validQuestionInput2.question,
+          duration: validQuestionInput2.duration,
+          points: validQuestionInput2.points,
+          answers: expect.any(Array)
+        },
+        {
+          questionId: quest1Data.questionId,
+          question: validQuestionInput1.question,
+          duration: validQuestionInput1.duration,
+          points: validQuestionInput1.points,
+          answers: expect.any(Array)
+        }
+      ]
+    );
   });
 });
 
@@ -1286,19 +1305,18 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () =>
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(401);
   });
-  // test('Token is invalid (does not refer to valid logged in user session)', () => {
-  //   const sess1Data = JSON.parse(sess1.body.toString());
-  //   const quiz1Data = JSON.parse(quiz1.body.toString());
-  //   const quest1 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
-  //   const quest1Data = JSON.parse(quest1.body.toString());
-  //   const quest2 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput2);
-  //   const quest2Data = JSON.parse(quest2.body.toString());
-  //   // needs log out session1
-  //   const res = moveQuestionRequest(sess1Data.token, quiz1Data.quizId, quest2Data.questionId, 0);
-  //   const data = JSON.parse(res.body.toString());
-  //   expect(data).toStrictEqual({ error: expect.any(String) });
-  //   expect(res.statusCode).toStrictEqual(401);
-  // });
+  test('Token is invalid (does not refer to valid logged in user session)', () => {
+    const sess1Data = JSON.parse(sess1.body.toString());
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
+    const quest2 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput2);
+    const quest2Data = JSON.parse(quest2.body.toString());
+    authLogoutRequest(sess1Data.token);
+    const res = moveQuestionRequest(sess1Data.token, quiz1Data.quizId, quest2Data.questionId, 0);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(401);
+  });
   test('Valid token is provided, but user is not an owner of this quiz', () => {
     const sess2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const sess2Data = JSON.parse(sess2.body.toString());
@@ -1314,7 +1332,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () =>
   });
 });
 
-// duplicate Question - needs createQuestion
+// duplicate Question
 describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Success', () => {
   let sess1: Response, quiz1: Response, quest1: Response;
   beforeEach(() => {
@@ -1368,47 +1386,38 @@ describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Success
       }
     );
   });
-  // test('Remove twice duplicated question', () => {
-  //   const sess1Data = JSON.parse(sess1.body.toString());
-  //   const quiz1Data = JSON.parse(quiz1.body.toString());
-  //   const quest1Data = JSON.parse(quest1.body.toString());
-  //   const firstDupQ = duplicateQuestionRequest(sess1Data.token, quiz1Data.quizId, quest1Data.questionId);
-  //   const firstDupQData = JSON.parse(firstDupQ.body.toString());
-  //   const res = duplicateQuestionRequest(sess1Data.token, quiz1Data.quizId, quest1Data.questionId);
-  //   const data = JSON.parse(res.body.toString());
-  //   expect(data).toStrictEqual({ newQuestionId: expect.any(Number) });
-  //   // remove first duplicated question. second duplicate to remain
-  //   questionRemoveRequest(sess1Data.token, quiz1Data.quizId, firstDupQData.questionId);
+  test('Remove 1 twice duplicated question', () => {
+    const sess1Data = JSON.parse(sess1.body.toString());
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const quest1Data = JSON.parse(quest1.body.toString());
+    const firstDupQ = duplicateQuestionRequest(sess1Data.token, quiz1Data.quizId, quest1Data.questionId);
+    const firstDupQData = JSON.parse(firstDupQ.body.toString());
+    const res = duplicateQuestionRequest(sess1Data.token, quiz1Data.quizId, quest1Data.questionId);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ newQuestionId: expect.any(Number) });
 
-  //   const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
-  //   expect(JSON.parse(quizInfo.body.toString())).toStrictEqual(
-  //     {
-  //       quizId: quiz1Data.quizId,
-  //       name: validQuizName,
-  //       timeCreated: expect.any(Number),
-  //       timeLastEdited: expect.any(Number),
-  //       description: validQuizDescription,
-  //       numQuestions: 2,
-  //       questions: [
-  //         {
-  //           questionId: quest1Data.quizId,
-  //           question: validQuestionInput1.question,
-  //           duration: validQuestionInput1.duration,
-  //           points: validQuestionInput1.points,
-  //           answers: validQuestionInput1.answers
-  //         },
-  //         {
-  //           questionId: data.quizId,
-  //           question: validQuestionInput1.question,
-  //           duration: validQuestionInput1.duration,
-  //           points: validQuestionInput1.points,
-  //           answers: validQuestionInput1.answers
-  //         }
-  //       ],
-  //       duration: (validQuestionInput1.duration * 2)
-  //     }
-  //   );
-  // });
+    // remove first duplicated question. second duplicate to remain
+    deleteQuizQuestionRequest(sess1Data.token, quiz1Data.quizId, firstDupQData.newQuestionId);
+    const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
+    expect(JSON.parse(quizInfo.body.toString()).questions).toStrictEqual(
+      [
+        {
+          questionId: quest1Data.questionId,
+          question: validQuestionInput1.question,
+          duration: validQuestionInput1.duration,
+          points: validQuestionInput1.points,
+          answers: expect.any(Array)
+        },
+        {
+          questionId: data.newQuestionId,
+          question: validQuestionInput1.question,
+          duration: validQuestionInput1.duration,
+          points: validQuestionInput1.points,
+          answers: expect.any(Array)
+        }
+      ]
+    );
+  });
   test('duplicateQuestion appears immediately after', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
@@ -1505,16 +1514,16 @@ describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Error',
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(401);
   });
-  // test('token belongs to a logged out session', () => {
-  //   const sess1Data = JSON.parse(sess1.body.toString());
-  //   const quiz1Data = JSON.parse(quiz1.body.toString());
-  //   const quest1Data = JSON.parse(quest1.body.toString());
-  //   quizLogoutRequest(sess1Data.token);
-  //   const res = duplicateQuestionRequest(sess1Data.token, quiz1Data.quizId, quest1Data.questionId);
-  //   const data = JSON.parse(res.body.toString());
-  //   expect(data).toStrictEqual({ error: expect.any(String) });
-  //   expect(res.statusCode).toStrictEqual(401);
-  // });
+  test('token belongs to a logged out session', () => {
+    const sess1Data = JSON.parse(sess1.body.toString());
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const quest1Data = JSON.parse(quest1.body.toString());
+    authLogoutRequest(sess1Data.token);
+    const res = duplicateQuestionRequest(sess1Data.token, quiz1Data.quizId, quest1Data.questionId);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(401);
+  });
   test('Valid token is provided but user is not an owner', () => {
     const sess2Data = JSON.parse(sess2.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
@@ -1738,8 +1747,8 @@ describe('Unsuccessful tests (403): Delete a quiz question', () => {
       answers: answerCreate,
     };
 
-    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
-
+    const questionId = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const questionIdParsed = JSON.parse(questionId.body.toString());
     const answerCreate2 = [
       { answer: 'Hamlet', correct: false },
       { answer: 'Coco', correct: true },
@@ -1754,9 +1763,9 @@ describe('Unsuccessful tests (403): Delete a quiz question', () => {
     };
 
     // second question
-    createQuizQuestionRequest(quizIdParsed.quizId, validNotOwnerParsed.token, questionCreate2);
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
 
-    const res = deleteQuizQuestionRequest(personLoginParsed.token, quizIdParsed.quizId, 23);
+    const res = deleteQuizQuestionRequest(validNotOwnerParsed.token, quizIdParsed.quizId, questionIdParsed.questionId);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
