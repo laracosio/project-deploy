@@ -110,7 +110,7 @@ describe('adminQuizCreate - Passed Cases', () => {
     const quiz3 = adminQuizCreate(session.token, 'My Quiz 3', validQuizDescription);
     adminQuizRemove(session.token, quiz3.quizId);
     expect(adminQuizCreate(session.token, 'My Quiz 4', validQuizDescription)).toMatchObject({ quizId: quiz3.quizId + 1 });
-  })
+  });
 });
 
 // tests for adminQuizRemove
