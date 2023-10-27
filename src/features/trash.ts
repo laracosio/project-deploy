@@ -48,6 +48,14 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
   return {};
 }
 
+/**
+ * Delete a particular question from a quiz
+ * @param sessionToken
+ * @param quizId
+ * @param questionId
+ * @returns {{}}
+ * @returns { error: string }
+ */
 function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: number): object {
   const dataStore = getData();
 

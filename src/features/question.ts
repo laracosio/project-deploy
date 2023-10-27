@@ -8,8 +8,10 @@ import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, g
 interface adminDuplicateQuestionReturn {
   newQuestionId: number
 }
-
 export interface CreateQuestionReturn {
+  questionId: number,
+}
+interface QuestionReturn {
   questionId: number,
 }
 
@@ -21,18 +23,6 @@ export interface CreateQuestionReturn {
  * @param questionBody
  * @returns - CreateQuestionReturn returns a questionId
  */
-interface QuestionReturn {
-  questionId: number,
-}
-
-/**
- *
- * @param quizId
- * @param token
- * @param questionBody
- * @returns QuestionReturn
- */
-
 function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): QuestionReturn {
   const dataStore = getData();
 
@@ -51,13 +41,13 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
   if (questionBody.points < 1 || questionBody.points > 10) {
     throw new ApiError('The points awarded for the question are less than 1 or greater than 10', HttpStatusCode.BAD_REQUEST);
   }
-  if (questionBody.answers.find(answer => answer.answer.length < 1) || questionBody.answers.find(answer => answer.answer.length > 30)) {
+  if (questionBody.answers.find(element => element.answer.length < 1) || questionBody.answers.find(element => element.answer.length > 30)) {
     throw new ApiError('The length of any answer is shorter than 1 character long, or longer than 30 characters long', HttpStatusCode.BAD_REQUEST);
   }
 
   const answerMap = new Map <string, boolean>();
 
-  questionBody.answers.map(answer => answerMap.set(answer.answer, answer.correct));
+  questionBody.answers.map(element => answerMap.set(element.answer, element.correct));
   if (answerMap.size !== questionBody.answers.length) {
     throw new ApiError('Answer strings are duplicates of one another', HttpStatusCode.BAD_REQUEST);
   }
@@ -117,6 +107,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     questionId: questionId,
   };
 }
+
 /**
  * Move a question from one particular position in the quiz to another
  * When this route is called, the timeLastEdited is updated
@@ -124,7 +115,8 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
  * @param quizId - quizId where question exists
  * @param questionId - question to move
  * @param newPosition - position to move question to
- * @returns - {} OR error
+ * @returns {}
+ * @returns { error: string }
 */
 function adminMoveQuestion(sessionId: string, quizId: number, questionId: number, newPosition: number): object {
   const dataStore = getData();
@@ -135,7 +127,6 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
     throw new ApiError('Quiz ID does not refer to a valid quiz', HttpStatusCode.BAD_REQUEST);
   }
   // question invalid
-
   const matchedQuestion = findQuestionByQuiz(matchedQuiz, questionId);
   if (matchedQuestion === undefined) {
     throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
@@ -168,14 +159,14 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
 }
 
 /**
- *
+ * Update the relevant details of a particular question within a quiz.
+ * When this route is called, the last edited time is updated, and the colours of all answers of that question are randomly generated.
  * @param quizId
  * @param questionId
  * @param token
  * @param questionBody
  * @returns empty object
  */
-
 function quizUpdateQuestion (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
   const dataStore = getData();
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
@@ -183,7 +174,6 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
   if (!quiz.questions.some((question) => question.questionId === questionId)) {
     throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
   }
-
   if (questionBody.question.length < 5 || questionBody.question.length > 50) {
     throw new ApiError('Question string is less than 5 characters in length or greater than 50 characters in length', HttpStatusCode.BAD_REQUEST);
   }
@@ -199,13 +189,13 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
   if (questionBody.points < 1 || questionBody.points > 10) {
     throw new ApiError('The points awarded for the question are less than 1 or greater than 10', HttpStatusCode.BAD_REQUEST);
   }
-  if (questionBody.answers.find(answer => answer.answer.length < 1) || questionBody.answers.find(answer => answer.answer.length > 30)) {
+  if (questionBody.answers.find(element => element.answer.length < 1) || questionBody.answers.find(element => element.answer.length > 30)) {
     throw new ApiError('The length of any answer is shorter than 1 character long, or longer than 30 characters long', HttpStatusCode.BAD_REQUEST);
   }
 
   const answerMap = new Map <string, boolean>();
 
-  questionBody.answers.map(answer => answerMap.set(answer.answer, answer.correct));
+  questionBody.answers.map(element => answerMap.set(element.answer, element.correct));
   if (answerMap.size !== questionBody.answers.length) {
     throw new ApiError('Answer strings are duplicates of one another', HttpStatusCode.BAD_REQUEST);
   }
