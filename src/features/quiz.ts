@@ -63,18 +63,26 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
     throw new ApiError('Description must be less than 100 characters', HttpStatusCode.BAD_REQUEST);
   }
 
-  let newQuizId;
-  if (dataStore.quizzes.length === 0 && dataStore.trash.length === 0) {
-    newQuizId = 1;
+  // find highest quizId from dataStore
+  let newIdFromDataStore;
+  if (dataStore.quizzes.length !== 0) {
+    const maxQuizIdFromDataStore = Math.max(...dataStore.quizzes.map(quiz => quiz.quizId));
+    newIdFromDataStore = maxQuizIdFromDataStore + 1;
   } else {
-    const reversedQuizIds = dataStore.quizzes.map(q => q.quizId).reverse();
-    const currLastQuizId = reversedQuizIds[0];
-    newQuizId = currLastQuizId + 1;
+    newIdFromDataStore = 1;
   }
-
-  const maxQuizIdFromTrash = Math.max(...dataStore.trash.map(trash => trash.quizId));
-  if ((maxQuizIdFromTrash + 1) > newQuizId) {
-    newQuizId = maxQuizIdFromTrash + 1;
+  // find highest quizId from trash
+  let newIdFromTrash;
+  if (dataStore.trash.length !== 0) {
+    const maxQuizIdFromTrash = Math.max(...dataStore.trash.map(trash => trash.quizId));
+    newIdFromTrash = maxQuizIdFromTrash + 1;
+  } else {
+    newIdFromTrash = 1;
+  }
+  // find the highest quizId to assign for the new quiz
+  let newQuizId = newIdFromDataStore;
+  if (newIdFromTrash > newQuizId) {
+    newQuizId = newIdFromTrash;
   }
 
   const date = getUnixTime(new Date());
