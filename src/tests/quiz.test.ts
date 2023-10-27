@@ -103,6 +103,14 @@ describe('adminQuizCreate - Passed Cases', () => {
     adminQuizCreate(session2.token, 'Quiz 3', '');
     expect(adminQuizCreate(session2.token, 'Quiz 4', '')).toMatchObject({ quizId: expect.any(Number) });
   });
+  test('creating a quiz after moving a quiz to trash', () => {
+    const session = adminAuthRegister(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    adminQuizCreate(session.token, 'My Quiz 1', validQuizDescription);
+    adminQuizCreate(session.token, 'My Quiz 2', validQuizDescription);
+    const quiz3 = adminQuizCreate(session.token, 'My Quiz 3', validQuizDescription);
+    adminQuizRemove(session.token, quiz3.quizId);
+    expect(adminQuizCreate(session.token, 'My Quiz 4', validQuizDescription)).toMatchObject({ quizId: quiz3.quizId + 1 });
+  });
 });
 
 // tests for adminQuizRemove
