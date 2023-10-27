@@ -173,6 +173,7 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
 function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
   const dataStore = getData();
   
+  console.log('hello there');
   // convert the string of quizIds into an array of numbers
   const numbersArray = quizIds.split(',').map(Number);
 
