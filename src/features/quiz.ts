@@ -286,23 +286,24 @@ function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: st
   const transferQuiz = findQuizById(quizId);
 
   const tokenUser = findToken(sessionId);
-  // check quizId
-  if (transferQuiz === undefined) {
-    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
-  }
-
-  // check whether email is valid
-  if (transferUser === undefined) {
-    throw new ApiError('userEmail is not a real user', HttpStatusCode.BAD_REQUEST);
-  }
   // invalid token
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
   }
 
+  // check quizId
+  if (transferQuiz === undefined) {
+    throw new ApiError('Invalid quiz ID', HttpStatusCode.BAD_REQUEST);
+  }
+
   // valid token but user is not owner
   if (tokenUser.userId !== transferQuiz.quizOwner) {
     throw new ApiError('User does not own quiz to change owner', HttpStatusCode.FORBIDDEN);
+  }
+
+  // check whether email is valid
+  if (transferUser === undefined) {
+    throw new ApiError('userEmail is not a real user', HttpStatusCode.BAD_REQUEST);
   }
 
   // check if tokenUser is the same as transferUser

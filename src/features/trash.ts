@@ -22,15 +22,15 @@ interface userTrashQuizList {
 function adminQuizRemove(sessionId: string, quizId: number): object {
   const dataStore = getData();
 
+  // check that sessionId is not empty or is valid
+  if (!tokenValidation(sessionId)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+
   const matchedQuiz = findQuizById(quizId);
   // check that quizId is not empty or is valid
   if (!quizId || matchedQuiz === undefined) {
     throw new ApiError('Invalid quizId', HttpStatusCode.BAD_REQUEST);
-  }
-
-  // check that sessionId is not empty or is valid
-  if (!tokenValidation(sessionId)) {
-    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
   // find user associated with token and checks whether they are the quiz owner
@@ -59,18 +59,18 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
 function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: number): object {
   const dataStore = getData();
 
-  const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
-  if (!quiz.questions.some((question) => question.questionId === questionId)) {
-    throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
-  }
-
   if (!tokenValidation(sessionToken)) {
     throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
   }
 
+  const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
   const authUser = dataStore.tokens.find(user => user.sessionId === sessionToken);
   if (quiz.quizOwner !== authUser.userId) {
     throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
+  }
+
+  if (!quiz.questions.some((question) => question.questionId === questionId)) {
+    throw new ApiError('Question Id does not refer to a valid question within this quiz', HttpStatusCode.BAD_REQUEST);
   }
 
   const questionIndex: number = quiz.questions.findIndex(question => question.questionId === questionId);
@@ -129,6 +129,12 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
+  const tokenUser = findToken(sessionId);
+  // check valid quizId is owned by the current user associated with token
+  if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
+    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
+  }
+
   // check quizId refers to quiz in trash'
   const matchedQuiz = dataStore.trash.find((quiz) => quiz.quizId === quizId);
   if (matchedQuiz === undefined) {
@@ -136,15 +142,8 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   }
 
   // check quiz name doesn't already exist in current user's lists
-  const tokenUser = findToken(sessionId);
-
   if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === tokenUser.userId && quiz.name === matchedQuiz.name))) {
     throw new ApiError('Quiz name already exists', HttpStatusCode.BAD_REQUEST);
-  }
-
-  // check valid quizId is owned by the current user associated with token
-  if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
-    throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }
 
   // restores specified quiz from trash
@@ -178,7 +177,8 @@ function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
   // elements should be the individual quizIds of the parsed
   for (const element of parsedArray) {
     // check valid quizIds are owned by the current user associated with token
-    if ((dataStore.trash.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId)) || (dataStore.quizzes.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId))) {
+    if ((dataStore.trash.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId)) ||
+    (dataStore.quizzes.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId))) {
       throw new ApiError(
         'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own',
         HttpStatusCode.FORBIDDEN);
