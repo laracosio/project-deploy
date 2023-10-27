@@ -161,4 +161,38 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
   return {};
 }
 
-export { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash };
+/**
+ * Given a string of quiz IDs, permanently empty/remove it from trash.
+ * @param {string} sessionId
+ * @param {number} quizIds
+ * @returns {{error: string}}
+ */
+function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
+  const dataStore = getData();
+  const parsedArray: Array<number> = JSON.parse(quizIds);
+  // check sessionId is valid
+  if (!tokenValidation(sessionId)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+  const tokenUser = findToken(sessionId);
+  // elements should be the individual quizIds of the parsed
+  for (const element of parsedArray) {
+    // check valid quizIds are owned by the current user associated with token
+    if ((dataStore.trash.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId)) || (dataStore.quizzes.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId))) {
+      throw new ApiError(
+        'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own',
+        HttpStatusCode.FORBIDDEN);
+    }
+    // parsed quizId does not appear in trash
+    if (!dataStore.trash.some(quiz => quiz.quizId === element)) {
+      throw new ApiError('One or more of the Quiz IDs is not currently in the trash', HttpStatusCode.BAD_REQUEST);
+    }
+
+    const matchedQuizIndex = dataStore.trash.findIndex((quiz) => quiz.quizId === element);
+    dataStore.trash.splice(matchedQuizIndex, 0);
+  }
+  setAndSave(dataStore);
+  return {};
+}
+
+export { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash };
