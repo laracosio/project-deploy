@@ -223,7 +223,7 @@ const quizRestoreTrashRequest = (token: string, quizId: number): Response => {
 
 const quizEmptyTrashRequest = (token: string, quizIds: string): Response => {
   return request(
-    'GET',
+    'DELETE',
     `${SERVER_URL}/v1/admin/quiz/trash/empty`,
     {
       qs: {

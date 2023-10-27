@@ -3,6 +3,7 @@ import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { tokenValidation, findToken, findQuizById, setAndSave } from './other';
 import { getUnixTime } from 'date-fns';
+import { parse } from 'path';
 
 interface BriefTrashQuizInfo {
   quizId: number,
@@ -172,30 +173,26 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
  */
 function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
   const dataStore = getData();
-  
-  console.log('hello there');
-  // convert the string of quizIds into an array of numbers
-  const numbersArray = quizIds.split(',').map(Number);
-
   const parsedArray: Array<number> = JSON.parse(quizIds);
-
-//NEW CODE BLOCK
+  console.log(parsedArray);
   // check sessionId is valid
   if (!tokenValidation(sessionId)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
-
   const tokenUser = findToken(sessionId);
   // elements should be the individual quizIds of the parsed
+  console.log(`trash has: ${dataStore.trash[0].quizId}`);
+  console.log(`trash has: ${dataStore.trash[1].quizId}`);
+  console.log(`trash has: ${dataStore.trash[2].quizId}`);
+  let i = 0;
   for (const element of parsedArray) {
-
+    console.log(`checking element ${parsedArray[i]}`);
     // check valid quizIds are owned by the current user associated with token
     if ((dataStore.trash.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId)) || (dataStore.quizzes.some(quiz => quiz.quizId === element && quiz.quizOwner !== tokenUser.userId))) {
       throw new ApiError(
         'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own', 
         HttpStatusCode.FORBIDDEN);
     }
-
     // parsed quizId does not appear in trash
     if (!dataStore.trash.some(quiz => quiz.quizId === element)) {
       throw new ApiError('One or more of the Quiz IDs is not currently in the trash', HttpStatusCode.BAD_REQUEST);
@@ -203,6 +200,7 @@ function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
 
     const matchedQuizIndex = dataStore.trash.findIndex((quiz) => quiz.quizId === element);
     dataStore.trash.splice(matchedQuizIndex, 0);
+    i++;
   }
   setAndSave(dataStore);
   return {};

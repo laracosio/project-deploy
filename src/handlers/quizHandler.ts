@@ -98,8 +98,8 @@ quizRouter.delete('/:quizid/question/:questionId', (req: Request, res: Response)
 });
 
 quizRouter.delete('/trash/empty', (req: Request, res: Response) => {
-  const sessionToken = req.query.sessionId as string;
-  const quizIds = req.query.sessionId as string;
+  const sessionToken = req.query.token as string;
+  const quizIds = req.query.quizIds as string;
   const response = adminQuizEmptyTrash(sessionToken, quizIds);
   res.json(response);
 });

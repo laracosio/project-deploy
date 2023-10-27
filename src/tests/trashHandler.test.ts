@@ -124,17 +124,25 @@ describe('quizEmptyTrash - Success Cases', () => {
     const responseData = JSON.parse(response.body.toString());
     expect(responseData).toStrictEqual({});
   });
-  test('3 quizzes in trash, remove 2 quizzes', () => {
+  test.only('3 quizzes in trash, remove 2 quizzes', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
-    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    quiz1 = quizCreateRequest(session1Data.token, 'My Quiz 1', validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
+    console.log(quiz1Data);
+    console.log(quiz1Data.quizId);
     quizRemoveRequest(session1Data.token, quiz1Data.quizId);
-    quiz2 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+
+    quiz2 = quizCreateRequest(session1Data.token, 'My Quiz 2', validQuizDescription);
     const quiz2Data = JSON.parse(quiz2.body.toString());
+    console.log(quiz2Data);
+    console.log(quiz2Data.quizId);
     quizRemoveRequest(session1Data.token, quiz2Data.quizId);
-    quiz3 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+
+    quiz3 = quizCreateRequest(session1Data.token, 'My Quiz 3', validQuizDescription);
     const quiz3Data = JSON.parse(quiz3.body.toString());
+    console.log(quiz3Data);
+    console.log(quiz3Data.quizId);
     quizRemoveRequest(session1Data.token, quiz3Data.quizId);
     const response = quizEmptyTrashRequest(session1Data.token, stringOf2QuizIDs);
     const responseData = JSON.parse(response.body.toString());
