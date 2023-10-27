@@ -64,12 +64,17 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
   }
 
   let newQuizId;
-  if (dataStore.quizzes.length === 0) {
+  if (dataStore.quizzes.length === 0 && dataStore.trash.length === 0) {
     newQuizId = 1;
   } else {
     const reversedQuizIds = dataStore.quizzes.map(q => q.quizId).reverse();
     const currLastQuizId = reversedQuizIds[0];
     newQuizId = currLastQuizId + 1;
+  }
+
+  const maxQuizIdFromTrash = Math.max(...dataStore.trash.map(trash => trash.quizId));
+  if ((maxQuizIdFromTrash + 1) > newQuizId) {
+    newQuizId = maxQuizIdFromTrash + 1;
   }
 
   const date = getUnixTime(new Date());
