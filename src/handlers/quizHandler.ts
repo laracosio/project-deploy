@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizViewTrash } from '../features/trash';
+import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizViewTrash, adminQuizEmptyTrash } from '../features/trash';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../features/quiz';
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../features/question';
 
@@ -94,5 +94,12 @@ quizRouter.delete('/:quizid/question/:questionId', (req: Request, res: Response)
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionId);
   const response = quizRemoveQuestion(sessionToken, quizId, questionId);
+  res.json(response);
+});
+
+quizRouter.delete('/trash/empty', (req: Request, res: Response) => {
+  const sessionToken = req.query.token as string;
+  const quizIds = req.query.quizIds as string;
+  const response = adminQuizEmptyTrash(sessionToken, quizIds);
   res.json(response);
 });

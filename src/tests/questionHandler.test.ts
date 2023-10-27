@@ -1,35 +1,25 @@
 import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest, moveQuestionRequest, quizInfoRequest, updateQuizQuestionRequest, duplicateQuestionRequest, deleteQuizQuestionRequest, authLogoutRequest } from './serverTestHelper';
-import { person1, person2, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../testingData';
+import {
+  person1, person2, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName, validCreateQuestion, invalidQCShortQuestion, invalidQCLongQuestion, invalidQCOneAnswers, invalidQCManyAnswers, invalidQCDurationNegative,
+  invalidQCDurationExceeds, invalidQCNoPoints, invalidQCPointsExceeds, invalidQCEmptyAnswer, invalidQCLongAnswer, invalidQCDuplicateAnswers, invalidQCNoAnswers, validUpdateQuestion, invalidUpdateQuestionShortQuestion, invalidUpdateQuestionLongQuestion,
+  invalidUpdateQuestionManyAnswers, invalidUpdateQuestionOneAnswer, invalidUpdateQuestionNegativeDuration, invalidUpdateQuestionMoreThan180, invalidUpdateQuestionZeroPoints, invalidUpdateQuestionMoreThan10Points, invalidUpdateQuestionBlankAnswer,
+  invalidUpdateQuestionLongAnswer, invalidUpdateQuestionDuplicateAnswer, invalidUpdateQuestionNoCorrectAnswer, validCreateQuestion2
+} from '../testingData';
 import { Response } from 'sync-request-curl';
-import { getUnixTime } from 'date-fns';
 
 beforeEach(() => {
   clearRequest();
 });
-
 // create Question
 describe('Successful tests: Create a quiz question', () => {
   test('Create a Quiz Question test', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
 
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ questionId: expect.any(Number) });
   });
@@ -40,25 +30,10 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
 
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCShortQuestion);
 
     const data = JSON.parse(res.body.toString());
 
@@ -68,25 +43,9 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras bestest boy cat who has short term memory lost but still the best in the world  ?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCLongQuestion);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -95,29 +54,9 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Zuko', correct: false },
-      { answer: 'Katara', correct: false },
-      { answer: 'Aamg', correct: false },
-      { answer: 'Toph', correct: false },
-      { answer: 'Ty lee', correct: false },
-      { answer: 'Sokka', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCManyAnswers);
 
     const data = JSON.parse(res.body.toString());
 
@@ -127,52 +66,21 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true }
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCOneAnswers);
 
     const data = JSON.parse(res.body.toString());
 
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
-
   test('Unsuccessful (400): The question duration is not a positive number', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: -1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCDurationNegative);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -181,25 +89,9 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 190,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCDurationExceeds);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -208,25 +100,9 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 10,
-      points: 0,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCNoPoints);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -235,25 +111,9 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 11,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCPointsExceeds);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -262,25 +122,9 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: '', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCEmptyAnswer);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -289,25 +133,9 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'HamitochondriaHamsterHamletHammyBoy', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCLongAnswer);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -316,26 +144,9 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCDuplicateAnswers);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -344,25 +155,9 @@ describe('Unsuccessful tests (400): Create a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, invalidQCNoAnswers);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -375,25 +170,9 @@ describe('Unsuccessful tests (401): Create a quiz question', () => {
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
     const invalidToken = '';
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, invalidToken, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, invalidToken, validCreateQuestion);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -403,25 +182,9 @@ describe('Unsuccessful tests (401): Create a quiz question', () => {
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
     const invalidToken = 'gj138914TAYLOR23852';
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, invalidToken, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, invalidToken, validCreateQuestion);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -436,802 +199,250 @@ describe('Unsuccessful tests (403): Create a quiz question', () => {
     const person2LoginParsed = JSON.parse(person2Login.body.toString());
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const res = createQuizQuestionRequest(quizIdParsed.quizId, person2LoginParsed.token, questionCreate);
+    const res = createQuizQuestionRequest(quizIdParsed.quizId, person2LoginParsed.token, validCreateQuestion);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
-
 // updateQuestion
 describe('Successful tests: Update a quiz question', () => {
   test('Update a quiz question test', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
 
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false }
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, validUpdateQuestion);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
   });
 });
-
 describe('Unsuccessful tests (400): Update a quiz question', () => {
   test('Unsuccesful (400): Question Id does not refer to a valid question within this quiz', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const invalidCreateQuestion = 42;
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false }
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, invalidCreateQuestion, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, invalidCreateQuestion, personLoginParsed.token, validUpdateQuestion);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): Question string is less than 5 characters in length', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false }
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who',
-      duration: 1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionShortQuestion);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): Question string is greater than 50 characters in length', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false }
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras bestest baby girl cat meowmeow who brings in snakes and frogs and salamanders inside the house?',
-      duration: 1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionLongQuestion);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): The question has more than 6 answers', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false },
-      { answer: 'Haru', correct: false },
-      { answer: 'Nami', correct: false },
-      { answer: 'Blossom', correct: false },
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionManyAnswers);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): The question has less than 2 answers', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Coco', correct: true }
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionOneAnswer);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): The question duration is not a positive number', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false },
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: -1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionNegativeDuration);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): If this question were to be updated, the sum of the question durations in the quiz exceeds 3 minutes', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false },
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras bestest baby girl cat meowmeow who brings in snakes and frogs and salamanders inside the house?',
-      duration: 190,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionMoreThan180);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): The points awarded for the question are less than 1', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false },
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 10,
-      points: 0,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionZeroPoints);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): The points awarded for the question are more than 10', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false },
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 10,
-      points: 153,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionMoreThan10Points);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): The length of any answer is shorter than 1 character long', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: '', correct: false },
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 10,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionBlankAnswer);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
+
   test('Unsuccesful (400): The length of any answer is longer than 30 character long', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'CocoCokesCokieCocoGirl Aling Maliit Best Girl Very Loving', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false },
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 10,
-      points: 3,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionLongAnswer);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): Any answer strings are duplicates of one another (within the same question)', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Frankie', correct: false },
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 10,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionDuplicateAnswer);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccesful (400): There are no correct answers', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false },
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 10,
-      points: 1,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidUpdateQuestionNoCorrectAnswer);
     const data = JSON.parse(res.body.toString());
+
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
-
 describe('Unsuccessful tests (401): Update a quiz question', () => {
   test('Unsuccesful (401): Token is empty', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
     const invalidToken = '';
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false }
-    ];
 
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, invalidToken, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, invalidToken, validUpdateQuestion);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
-  test('Unsuccesful (401): Token is invalid (does not refer to valid logged in user session)', () => {
+  test('Unsuccesful (401): Token is empty', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
     const createQuestionParsed = JSON.parse(createQuestion.body.toString());
     const invalidToken = 'gj138914TAYLOR23852';
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false }
-    ];
 
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, invalidToken, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, invalidToken, validUpdateQuestion);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
-
 describe('Unsuccessful tests (403): Update a quiz question', () => {
   test('Unsuccesful (403): Valid token is provided, but user is unauthorised to complete this action', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
+    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
+    const createQuestionParsed = JSON.parse(createQuestion.body.toString());
+
     const person2Login = authLoginRequest(person2.email, person2.password);
     const person2LoginParsed = JSON.parse(person2Login.body.toString());
-
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
-
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
-    const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-    const answerCreateUpdate = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-      { answer: 'Frankie', correct: false }
-    ];
-
-    const questionCreateUpdate = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreateUpdate,
-    };
-
-    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, person2LoginParsed.token, questionCreateUpdate);
+    const res = updateQuizQuestionRequest(quizIdParsed.quizId, createQuestionParsed.questionId, person2LoginParsed.token, validUpdateQuestion);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
-
-describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Success', () => {
-  let sess1: Response, quiz1: Response;
-  beforeEach(() => {
-    sess1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const sess1Data = JSON.parse(sess1.body.toString());
-    quiz1 = quizCreateRequest(sess1Data.token, validQuizName, validQuizDescription);
-  });
-  test('Move Question 2 to new Position and check lastEdited', () => {
-    const sess1Data = JSON.parse(sess1.body.toString());
-    const quiz1Data = JSON.parse(quiz1.body.toString());
-    const quest1 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
-    const quest1Data = JSON.parse(quest1.body.toString());
-    const quest2 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput2);
-    const quest2Data = JSON.parse(quest2.body.toString());
-    const res = moveQuestionRequest(sess1Data.token, quiz1Data.quizId, quest2Data.questionId, 0);
-    const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({});
-
-    const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
-    const quizInfoData = JSON.parse(quizInfo.body.toString());
-    expect(quizInfoData.timeLastEdited).toBeGreaterThanOrEqual(getUnixTime(new Date()));
-    expect(quizInfoData.questions).toStrictEqual(
-      [
-        {
-          questionId: quest2Data.questionId,
-          question: validQuestionInput2.question,
-          duration: validQuestionInput2.duration,
-          points: validQuestionInput2.points,
-          answers: expect.any(Array)
-        },
-        {
-          questionId: quest1Data.questionId,
-          question: validQuestionInput1.question,
-          duration: validQuestionInput1.duration,
-          points: validQuestionInput1.points,
-          answers: expect.any(Array)
-        }
-      ]
-    );
-  });
-});
-
+// move question
 describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () => {
   let sess1: Response, quiz1: Response;
   beforeEach(() => {
@@ -1331,7 +542,6 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () =>
     expect(res.statusCode).toStrictEqual(403);
   });
 });
-
 // duplicate Question
 describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Success', () => {
   let sess1: Response, quiz1: Response, quest1: Response;
@@ -1534,50 +744,38 @@ describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Error',
     expect(res.statusCode).toStrictEqual(403);
   });
 });
-
 // delete question
 describe('Successful tests: Delete a quiz question', () => {
   test('Delete a Quiz Question test', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
 
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
+    const toDelete = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
+    const toDeleteParsed = JSON.parse(toDelete.body.toString());
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion2);
 
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
-    const createQuestionParsed = JSON.parse(createQuestion.body.toString());
+    const res = deleteQuizQuestionRequest(personLoginParsed.token, quizIdParsed.quizId, toDeleteParsed.questionId);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({});
+  });
+});
 
-    const answerCreate2 = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-    ];
+describe('Successful tests: Delete a quiz question', () => {
+  test('Delete a Quiz Question test', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const personLogin = authLoginRequest(person1.email, person1.password);
+    const personLoginParsed = JSON.parse(personLogin.body.toString());
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
+    const quizIdParsed = JSON.parse(quizId.body.toString());
 
-    const questionCreate2 = {
-      question: 'Who is laras best girl cat?',
-      duration: 10,
-      points: 2,
-      answers: answerCreate2,
-    };
+    const toDelete = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
+    const toDeleteParsed = JSON.parse(toDelete.body.toString());
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion2);
 
-    // second question
-    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
-
-    const res = deleteQuizQuestionRequest(personLoginParsed.token, quizIdParsed.quizId, createQuestionParsed.questionId);
+    const res = deleteQuizQuestionRequest(personLoginParsed.token, quizIdParsed.quizId, toDeleteParsed.questionId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
   });
@@ -1588,40 +786,12 @@ describe('Unsuccessful tests (400): Delete a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
 
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
 
-    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
-
-    const answerCreate2 = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate2 = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate2,
-    };
-
-    // second question
-    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion2);
 
     const res = deleteQuizQuestionRequest(personLoginParsed.token, quizIdParsed.quizId, 23);
 
@@ -1635,43 +805,15 @@ describe('Unsuccessful tests (401): Delete a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
 
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
+    const toDelete = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
+    const toDeleteParsed = JSON.parse(toDelete.body.toString());
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion2);
 
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
-    const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreate2 = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate2 = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate2,
-    };
-
-    // second question
-    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
     const invalidToken = '';
-    const res = deleteQuizQuestionRequest(invalidToken, quizIdParsed.quizId, createQuestionParsed.questionId);
+    const res = deleteQuizQuestionRequest(invalidToken, quizIdParsed.quizId, toDeleteParsed.questionId);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -1680,43 +822,15 @@ describe('Unsuccessful tests (401): Delete a quiz question', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
 
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
+    const toDelete = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
+    const toDeleteParsed = JSON.parse(toDelete.body.toString());
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion2);
 
-    const createQuestion = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
-    const createQuestionParsed = JSON.parse(createQuestion.body.toString());
-
-    const answerCreate2 = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate2 = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate2,
-    };
-
-    // second question
-    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
-    const invalidToken = 'gjsdlglksdTAYLORTRAVIS143';
-    const res = deleteQuizQuestionRequest(invalidToken, quizIdParsed.quizId, createQuestionParsed.questionId);
+    const invalidToken = '492uTRAVIStaylor221';
+    const res = deleteQuizQuestionRequest(invalidToken, quizIdParsed.quizId, toDeleteParsed.questionId);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -1726,46 +840,19 @@ describe('Unsuccessful tests (401): Delete a quiz question', () => {
 describe('Unsuccessful tests (403): Delete a quiz question', () => {
   test('Unsucessful (403): Valid token is provided, but user is not an owner of this quiz', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const validNotOwner = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-    const validNotOwnerParsed = JSON.parse(validNotOwner.body.toString());
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
-    const quizName = 'My first quiz';
-    const quizDescription = 'This is my first quiz';
-    const quizId = quizCreateRequest(personLoginParsed.token, quizName, quizDescription);
+    authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
     const quizIdParsed = JSON.parse(quizId.body.toString());
-    const answerCreate = [
-      { answer: 'Hamlet', correct: true },
-      { answer: 'Coco', correct: false },
-      { answer: 'Bob', correct: false },
-    ];
 
-    const questionCreate = {
-      question: 'Who is laras best boy cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate,
-    };
+    const toDelete = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion);
+    const toDeleteParsed = JSON.parse(toDelete.body.toString());
+    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestion2);
 
-    const questionId = createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate);
-    const questionIdParsed = JSON.parse(questionId.body.toString());
-    const answerCreate2 = [
-      { answer: 'Hamlet', correct: false },
-      { answer: 'Coco', correct: true },
-      { answer: 'Bob', correct: false },
-    ];
-
-    const questionCreate2 = {
-      question: 'Who is laras best girl cat?',
-      duration: 1,
-      points: 2,
-      answers: answerCreate2,
-    };
-
-    // second question
-    createQuizQuestionRequest(quizIdParsed.quizId, personLoginParsed.token, questionCreate2);
-
-    const res = deleteQuizQuestionRequest(validNotOwnerParsed.token, quizIdParsed.quizId, questionIdParsed.questionId);
+    const personLogin2 = authLoginRequest(person2.email, person2.password);
+    const personLoginParsed2 = JSON.parse(personLogin2.body.toString());
+    const res = deleteQuizQuestionRequest(personLoginParsed2.token, quizIdParsed.quizId, toDeleteParsed.questionId);
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });

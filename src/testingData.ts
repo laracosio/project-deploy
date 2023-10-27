@@ -63,6 +63,9 @@ const longQuizName = 'this is longer than thirty characters';
 const validQuizDescription = 'This quiz is awesome';
 const newvalidQuizDescription = 'This new quiz description is awesome';
 const longQuizDescription = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean moon.';
+const stringOf1QuizIDs = '[1]';
+const stringOf2QuizIDs = '[1,2]';
+const stringOf3QuizIDs = '[1,2,3]';
 const validQuestionInput1: QuestionCreate = {
   question: 'Who is the Monarch of England?',
   duration: 4,
@@ -123,6 +126,316 @@ const validQuestionInput3: QuestionCreate = {
   ]
 };
 
+const validCreateQuestion: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+
+const invalidQCShortQuestion: QuestionCreate = {
+  question: 'Who',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+
+const invalidQCLongQuestion: QuestionCreate = {
+  question: 'Who is laras bestest boy cat who has short term memory lost but still the best in the world  ?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+
+const invalidQCOneAnswers: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true }
+  ]
+};
+const invalidQCManyAnswers: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Zuko', correct: false },
+    { answer: 'Katara', correct: false },
+    { answer: 'Aamg', correct: false },
+    { answer: 'Toph', correct: false },
+    { answer: 'Ty lee', correct: false },
+    { answer: 'Sokka', correct: false },
+  ]
+};
+
+const invalidQCDurationNegative: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: -1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+
+const invalidQCDurationExceeds: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 190,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+const invalidQCNoPoints: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 10,
+  points: 0,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+const invalidQCPointsExceeds: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 10,
+  points: 20,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ],
+};
+
+const invalidQCEmptyAnswer: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: '', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+
+const invalidQCLongAnswer: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'HamitochondriaHamsterHamletHammyBoy', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+
+const invalidQCDuplicateAnswers: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+const invalidQCNoAnswers: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ]
+};
+
+// update
+const validUpdateQuestion: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: 'Frankie', correct: false }
+  ]
+};
+const invalidUpdateQuestionShortQuestion: QuestionCreate = {
+  question: 'Who',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: 'Frankie', correct: false }
+  ]
+};
+
+const invalidUpdateQuestionLongQuestion: QuestionCreate = {
+  question: 'Who is laras bestest baby girl cat meowmeow who brings in snakes and frogs and salamanders inside the house?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: 'Frankie', correct: false }
+  ]
+};
+
+const invalidUpdateQuestionManyAnswers: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Coco', correct: true },
+    { answer: 'Zuko', correct: false },
+    { answer: 'Katara', correct: false },
+    { answer: 'Aamg', correct: false },
+    { answer: 'Toph', correct: false },
+    { answer: 'Ty lee', correct: false },
+    { answer: 'Sokka', correct: false }
+  ]
+};
+
+const invalidUpdateQuestionOneAnswer: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Coco', correct: true }
+  ]
+};
+
+const invalidUpdateQuestionNegativeDuration: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: -1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: 'Frankie', correct: false }
+  ]
+};
+
+const invalidUpdateQuestionMoreThan180: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 190,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: 'Frankie', correct: false }
+  ]
+};
+
+const invalidUpdateQuestionZeroPoints: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 5,
+  points: 0,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: 'Frankie', correct: false }
+  ]
+};
+
+const invalidUpdateQuestionMoreThan10Points: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 5,
+  points: 13,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: 'Frankie', correct: false }
+  ]
+};
+
+const invalidUpdateQuestionBlankAnswer: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 10,
+  points: 5,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: '', correct: false },
+  ]
+};
+
+const invalidUpdateQuestionLongAnswer: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 10,
+  points: 3,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'CocoCokesCokieCocoGirl Aling Maliit Best Girl Very Loving', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: 'Frankie', correct: false },
+  ]
+};
+
+const invalidUpdateQuestionDuplicateAnswer: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 10,
+  points: 3,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Bob', correct: false },
+    { answer: 'Coco', correct: true },
+    { answer: 'Frankie', correct: false },
+  ]
+};
+
+const invalidUpdateQuestionNoCorrectAnswer: QuestionCreate = {
+  question: 'Who is laras best girl cat?',
+  duration: 10,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+    { answer: 'Frankie', correct: false },
+  ],
+};
+
+const validCreateQuestion2: QuestionCreate = {
+  question: 'Whos Laras favourite singer?',
+  duration: 10,
+  points: 2,
+  answers: [
+    { answer: 'Taylor Swift', correct: true },
+    { answer: 'The Weeknd', correct: true },
+    { answer: 'Frank Ocean', correct: false }
+  ]
+};
+
 export {
   person1,
   person2,
@@ -139,7 +452,37 @@ export {
   validQuizDescription,
   newvalidQuizDescription,
   longQuizDescription,
+  stringOf1QuizIDs,
+  stringOf2QuizIDs,
+  stringOf3QuizIDs,
   validQuestionInput1,
   validQuestionInput2,
-  validQuestionInput3
+  validQuestionInput3,
+  validCreateQuestion,
+  invalidQCShortQuestion,
+  invalidQCLongQuestion,
+  invalidQCOneAnswers,
+  invalidQCManyAnswers,
+  invalidQCDurationNegative,
+  invalidQCDurationExceeds,
+  invalidQCNoPoints,
+  invalidQCPointsExceeds,
+  invalidQCEmptyAnswer,
+  invalidQCLongAnswer,
+  invalidQCDuplicateAnswers,
+  invalidQCNoAnswers,
+  validUpdateQuestion,
+  invalidUpdateQuestionShortQuestion,
+  invalidUpdateQuestionLongQuestion,
+  invalidUpdateQuestionManyAnswers,
+  invalidUpdateQuestionOneAnswer,
+  invalidUpdateQuestionNegativeDuration,
+  invalidUpdateQuestionMoreThan180,
+  invalidUpdateQuestionZeroPoints,
+  invalidUpdateQuestionMoreThan10Points,
+  invalidUpdateQuestionBlankAnswer,
+  invalidUpdateQuestionLongAnswer,
+  invalidUpdateQuestionDuplicateAnswer,
+  invalidUpdateQuestionNoCorrectAnswer,
+  validCreateQuestion2
 };
