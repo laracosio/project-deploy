@@ -3,6 +3,7 @@ import { echo } from './echo/newecho';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
+import errorHandler from 'middleware-http-errors';
 import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
@@ -38,11 +39,7 @@ const HOST: string = process.env.IP || 'localhost';
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {
   const data = req.query.echo as string;
-  const ret = echo(data);
-  if ('error' in ret) {
-    res.status(400);
-  }
-  return res.json(ret);
+  return res.json(echo(data));
 });
 
 app.use('/v1/admin/quiz', quizRouter);
@@ -76,6 +73,9 @@ app.use((req: Request, res: Response) => {
   `;
   res.status(404).json({ error });
 });
+
+// For handling errors
+app.use(errorHandler());
 
 // start server
 const server = app.listen(PORT, HOST, () => {
