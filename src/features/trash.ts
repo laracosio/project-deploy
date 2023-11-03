@@ -1,7 +1,6 @@
 import { getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { SessionStates } from '../enums/SessionStates';
 import { tokenValidation, findToken, findQuizById, setAndSave, openSessionQuizzesState } from './other';
 import { getUnixTime } from 'date-fns';
 
