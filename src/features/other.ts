@@ -190,7 +190,7 @@ function findTrashedQuizById (quizId: number): Quiz {
 /**
  * sha256 Hash a string
  * @param text - input text
- * @returns string 
+ * @returns string
  */
 function hashText(text: string): string {
   return crypto.createHash('sha256').update(text).digest('hex');
@@ -198,17 +198,19 @@ function hashText(text: string): string {
 
 /**
  * Check whether sessions of with this quizId are in end state
- * Returns true if not all quizzes are ended. 
+ * Returns true if not all quizzes are ended.
  * @param quizId - quizId to find all sessions using this quiz
  * @returns boolean
  */
 function openSessionQuizzesState(quizId: number): boolean {
   const dataStore = getData();
-  return dataStore.sessions.some(element => element.sessionQuiz.quizId === quizId 
-    && element.sessionState !== SessionStates.END)
+  return dataStore.sessions.some(element => element.sessionQuiz.quizId === quizId &&
+    element.sessionState !== SessionStates.END);
 }
 
-export { clear, helperAdminRegister, createSessionId, tokenValidation,
+export {
+  clear, helperAdminRegister, createSessionId, tokenValidation,
   findQuestionByQuiz, findQuizById, findUserById, findToken,
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
-  hashText, openSessionQuizzesState };
+  hashText, openSessionQuizzesState
+};
