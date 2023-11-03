@@ -30,7 +30,7 @@ const quizRemoveRequestV2 = (token: string, quizId: number): Response => {
     SERVER_URL + '/v2/admin/quiz/' + quizId,
     {
       headers: {
-        'token': token
+        token: token
       }
     }
   );
@@ -42,10 +42,10 @@ const quizTransferRequestV2 = (token: string, quizId: number, userEmail: string)
     SERVER_URL + '/v2/admin/quiz/' + quizId + '/transfer',
     {
       body: JSON.stringify({ userEmail: userEmail }),
-      headers: { 
+      headers: {
         'Content-type': 'application/json',
-        'token': token
-     },
+        token: token
+      },
     }
   );
 };
@@ -58,9 +58,9 @@ const moveQuestionRequestV2 = (token: string, quizId: number, questionId: number
       body: JSON.stringify({
         newPosition: newPosition,
       }),
-      headers: { 
+      headers: {
         'Content-type': 'application/json',
-        'token': token 
+        token: token
       },
     }
   );
@@ -71,9 +71,9 @@ const duplicateQuestionRequestV2 = (token: string, quizId: number, questionId: n
     'POST',
     `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`,
     {
-      headers: { 
+      headers: {
         'Content-type': 'application/json',
-        'token': token 
+        token: token
       },
     }
   );
