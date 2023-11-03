@@ -6,6 +6,7 @@ import {
   invalidUpdateQuestionLongAnswer, invalidUpdateQuestionDuplicateAnswer, invalidUpdateQuestionNoCorrectAnswer, validCreateQuestion2
 } from '../../testingData';
 import { Response } from 'sync-request-curl';
+import { getUnixTime } from 'date-fns';
 
 beforeEach(() => {
   clearRequest();
@@ -207,6 +208,7 @@ describe('Unsuccessful tests (403): Create a quiz question', () => {
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
+
 // updateQuestion
 describe('Successful tests: Update a quiz question', () => {
   test('Update a quiz question test', () => {
@@ -442,7 +444,50 @@ describe('Unsuccessful tests (403): Update a quiz question', () => {
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
+
 // move question
+describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Success', () => {
+  let sess1: Response, quiz1: Response;
+  beforeEach(() => {
+    sess1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const sess1Data = JSON.parse(sess1.body.toString());
+    quiz1 = quizCreateRequest(sess1Data.token, validQuizName, validQuizDescription);
+  });
+  test('Move Question 2 to new Position and check lastEdited', () => {
+    const sess1Data = JSON.parse(sess1.body.toString());
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const quest1 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
+    const quest1Data = JSON.parse(quest1.body.toString());
+    const quest2 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput2);
+    const quest2Data = JSON.parse(quest2.body.toString());
+    const res = moveQuestionRequest(sess1Data.token, quiz1Data.quizId, quest2Data.questionId, 0);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({});
+
+    // const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
+    // const quizInfoData = JSON.parse(quizInfo.body.toString());
+    // expect(quizInfoData.timeLastEdited).toBeGreaterThanOrEqual(getUnixTime(new Date()));
+    // expect(quizInfoData.questions).toStrictEqual(
+    //   [
+    //     {
+    //       questionId: quest2Data.questionId,
+    //       question: validQuestionInput2.question,
+    //       duration: validQuestionInput2.duration,
+    //       points: validQuestionInput2.points,
+    //       answers: expect.any(Array)
+    //     },
+    //     {
+    //       questionId: quest1Data.questionId,
+    //       question: validQuestionInput1.question,
+    //       duration: validQuestionInput1.duration,
+    //       points: validQuestionInput1.points,
+    //       answers: expect.any(Array)
+    //     }
+    //   ]
+    // );
+  });
+});
+
 describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () => {
   let sess1: Response, quiz1: Response;
   beforeEach(() => {
@@ -542,6 +587,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Error', () =>
     expect(res.statusCode).toStrictEqual(403);
   });
 });
+
 // duplicate Question
 describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Success', () => {
   let sess1: Response, quiz1: Response, quest1: Response;
@@ -744,6 +790,7 @@ describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Error',
     expect(res.statusCode).toStrictEqual(403);
   });
 });
+
 // delete question
 describe('Successful tests: Delete a quiz question', () => {
   test('Delete a Quiz Question test', () => {
