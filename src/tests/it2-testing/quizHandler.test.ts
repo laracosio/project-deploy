@@ -1,5 +1,5 @@
-import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest, quizListRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest, authLoginRequest, authLogoutRequest } from './serverTestHelper';
-import { person1, person2, person3, person4, person5, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription, newvalidQuizName, newvalidQuizDescription } from '../testingData';
+import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizInfoRequest, quizListRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, quizTransferRequest, authLoginRequest, authLogoutRequest } from './serverTestHelperIt2';
+import { person1, person2, person3, person4, person5, validQuizName, validQuizDescription, shortQuizName, invalidQuizName, longQuizName, longQuizDescription, newvalidQuizName, newvalidQuizDescription } from '../../testingData';
 import { Response } from 'sync-request-curl';
 import { getUnixTime } from 'date-fns';
 

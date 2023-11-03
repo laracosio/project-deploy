@@ -10,13 +10,13 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { ApiError } from './errors/ApiError';
-import { authRouterV1 } from './handlers/it2-V1Handlers/authHandlerV1';
-import { quizRouterV1 } from './handlers/it2-V1Handlers/quizHandlerV1';
-import { userRouterV1 } from './handlers/it2-V1Handlers/userHandlerV1';
-import { otherRouter } from './handlers/otherHandler';
-import { authRouterV2 } from './handlers/authHandlerV2';
-import { quizRouterV2 } from './handlers/quizHandlerV2';
-import { userRouterV2 } from './handlers/userHandlerV2';
+import { authRouterV1 } from './handlers/V1 Handlers/authHandlerV1';
+import { quizRouterV1 } from './handlers/V1 Handlers/quizHandlerV1';
+import { userRouterV1 } from './handlers/V1 Handlers/userHandlerV1';
+import { otherRouter } from './handlers/V1 Handlers/otherHandler';
+import { authRouterV2 } from './handlers/V2 Handlers/authHandlerV2';
+import { quizRouterV2 } from './handlers/V2 Handlers/quizHandlerV2';
+import { userRouterV2 } from './handlers/V2 Handlers/userHandlerV2';
 import { setData } from './dataStore';
 
 // Set up web app

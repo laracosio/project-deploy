@@ -1,7 +1,7 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
-import { port, url } from '../config.json';
-import { QuestionCreate } from '../dataStore';
+import { port, url } from '../../config.json';
+import { QuestionCreate } from '../../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -13,7 +13,7 @@ const clearRequest = (): Response => {
   );
 };
 
-// auth requests
+// #region auth requests
 const authRegisterRequest = (email: string, password: string, nameFirst: string, nameLast: string): Response => {
   return request(
     'POST',
@@ -54,16 +54,19 @@ const authLogoutRequest = (token: string): Response => {
     }
   );
 };
+// #endregion
 
-// user requests
+// #region user requests
 const authUserDetailsRequest = (token: string): Response => {
   return request(
     'GET',
-    SERVER_URL + '/v2/admin/user/details',
+    SERVER_URL + '/v1/admin/user/details',
     {
+      qs: {
+        token: token,
+      },
       headers: {
         'Content-type': 'application/json',
-        token: token
       }
     }
   );
@@ -85,7 +88,6 @@ const userUpdateDetailsResponse = (token: string, email: string, nameFirst: stri
   );
 };
 
-// user requests
 const userUpdatePasswordRequest = (token: string, oldPassword: string, newPassword: string): Response => {
   return request(
     'PUT',
@@ -100,9 +102,9 @@ const userUpdatePasswordRequest = (token: string, oldPassword: string, newPasswo
     }
   );
 };
+// #endregion
 
-// quiz requests
-// must go before create!
+// #region quiz requests
 const quizTransferRequest = (token: string, quizId: number, userEmail: string): Response => {
   return request(
     'POST',
@@ -236,7 +238,6 @@ const quizEmptyTrashRequest = (token: string, quizIds: string): Response => {
   );
 };
 
-// question requests
 const duplicateQuestionRequest = (token: string, quizId: number, questionId: number): Response => {
   return request(
     'POST',
@@ -289,6 +290,7 @@ const updateQuizQuestionRequest = (quizId: number, questionId: number, token: st
     }
   );
 };
+
 const deleteQuizQuestionRequest = (sessionId: string, quizId: number, questionId: number): Response => {
   return request(
     'DELETE',
@@ -300,6 +302,7 @@ const deleteQuizQuestionRequest = (sessionId: string, quizId: number, questionId
     }
   );
 };
+// #endregion
 
 export {
   authRegisterRequest, authLoginRequest, authUserDetailsRequest, authLogoutRequest,

@@ -1,8 +1,8 @@
 // functions/data to import
-import { person1, person2, person3, person4, person5, person6, person7 } from '../testingData';
-import { adminAuthRegister, adminAuthLogin } from '../features/auth';
-import { clear } from '../features/other';
-import { ApiError } from '../errors/ApiError';
+import { person1, person2, person3, person4, person5, person6, person7 } from '../../testingData';
+import { adminAuthRegister, adminAuthLogin } from '../../features/auth';
+import { clear } from '../../features/other';
+import { ApiError } from '../../errors/ApiError';
 
 const TOKEN = { token: expect.any(String) };
 
