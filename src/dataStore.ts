@@ -67,7 +67,7 @@ export interface Player {
 export interface Session {
   sessionId: number,
   sessionQuiz: Quiz
-  sessionState: string,
+  sessionState: number,
   autoStartNum: number,
   atQuestion: number,
   sessionPlayers: Player[]
