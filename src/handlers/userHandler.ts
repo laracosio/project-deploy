@@ -5,7 +5,8 @@ export const userRouter = Router();
 
 // get routers
 userRouter.get('/details', (req: Request, res: Response) => {
-  const token = req.query.token.toString();
+  //const token = req.query.token.toString();
+  const token = req.header('token');
   const response = adminUserDetails(token);
   res.send(response);
 });

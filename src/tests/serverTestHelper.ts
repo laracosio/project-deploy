@@ -61,8 +61,9 @@ const authUserDetailsRequest = (token: string): Response => {
     'GET',
     SERVER_URL + '/v1/admin/user/details',
     {
-      qs: {
-        token: token,
+      headers: {
+        'Content-type': 'application/json',
+        'token': token
       }
     }
   );
