@@ -559,7 +559,7 @@ describe('POST /v1/admin/quiz/{quizid}/question/{questionid}/duplicate - Success
     const res = duplicateQuestionRequest(sess1Data.token, quiz1Data.quizId, quest1Data.questionId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ newQuestionId: expect.any(Number) });
-    const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
+    // const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
     // const infoData = JSON.parse(quizInfo.body.toString());
     // expect(infoData.questions[1]).toStrictEqual(
     //   {
