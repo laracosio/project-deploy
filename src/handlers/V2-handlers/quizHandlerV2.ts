@@ -1,4 +1,5 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
+import { adminQuizRemove } from '../../features/trash';
 
 export const quizRouterV2 = Router();
 
@@ -15,5 +16,10 @@ export const quizRouterV2 = Router();
 // #endregion
 
 // #region quiz delete routers
-// place code here and delete this message
+quizRouterV2.delete('/:quizid', (req: Request, res: Response) => {
+    const userToken = req.header('token');
+    const quizId = parseInt(req.params.quizid);
+    const response = adminQuizRemove(userToken, quizId);
+    res.json(response);
+});
 // #endregion
