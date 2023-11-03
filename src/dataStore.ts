@@ -82,7 +82,8 @@ export interface Datastore {
   users: User[],
   quizzes: Quiz[],
   tokens: Token[],
-  trash: Quiz[]
+  trash: Quiz[],
+  sessions:[]
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
@@ -90,7 +91,8 @@ let data: Datastore = {
   users: [],
   quizzes: [],
   tokens: [],
-  trash: []
+  trash: [],
+  sessions: []
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
