@@ -38,8 +38,11 @@ export interface Question {
   questionId: number,
   question: string,
   duration: number,
+  thumbnailUrl: string,
   points: number,
   answers: Answer[],
+  averageAnswerTime: number, 
+  percentCorrect: number
 }
 
 export interface Quiz {
@@ -51,7 +54,23 @@ export interface Quiz {
   quizOwner: number,
   numQuestions: number,
   questions: Question[],
-  quizDuration: number
+  quizDuration: number,
+  thumbnailUrl: string
+}
+
+export interface player {
+  playerId: number, 
+  playerName: string,
+  playerScore: number
+}
+
+export interface Session {
+  sessionId: number,
+  sessionQuiz: Quiz
+  sessionState: string,
+  autoStartNum: number,
+  atQuestion: number,
+  sessionPlayers: player[]
 }
 
 export interface Token {
