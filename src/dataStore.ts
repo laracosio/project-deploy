@@ -41,7 +41,7 @@ export interface Question {
   thumbnailUrl: string,
   points: number,
   answers: Answer[],
-  averageAnswerTime: number, 
+  averageAnswerTime: number,
   percentCorrect: number
 }
 
@@ -59,7 +59,7 @@ export interface Quiz {
 }
 
 export interface player {
-  playerId: number, 
+  playerId: number,
   playerName: string,
   playerScore: number
 }
