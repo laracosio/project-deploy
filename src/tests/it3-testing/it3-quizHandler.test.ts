@@ -10,7 +10,7 @@ beforeEach(() => {
 });
 
 // quizRemove
-describe('DELETE /v2/admin/quiz/{quizid} - Success', () => {
+describe('DELETE /v2/admin/quiz/{quizid}', () => {
   let sess1: Response, quiz1: Response;
   beforeEach(() => {
     const { email, password, nameFirst, nameLast } = person1;
@@ -18,7 +18,7 @@ describe('DELETE /v2/admin/quiz/{quizid} - Success', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     quiz1 = quizCreateRequest(sess1Data.token, validQuizName, validQuizDescription);
   });
-  test('Testing v2 route - 1 quiz created - 1 removed', () => {
+  test('Success - v2 route - 1 quiz created - 1 removed', () => {
     // needs to be updated to V2 when created
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1data = JSON.parse(quiz1.body.toString());
@@ -39,7 +39,7 @@ describe('DELETE /v2/admin/quiz/{quizid} - Success', () => {
 });
 
 // quizTransfer
-describe('POST /v2/admin/quiz/{quizId}/transfer - Success', () => {
+describe('POST /v2/admin/quiz/{quizId}/transfer', () => {
   let sess1: Response, sess2: Response, quiz1: Response;
   beforeEach(() => {
     const { email, password, nameFirst, nameLast } = person1;
@@ -49,7 +49,7 @@ describe('POST /v2/admin/quiz/{quizId}/transfer - Success', () => {
     quiz1 = quizCreateRequest(sess1Data.token, validQuizName, validQuizDescription);
     sess2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
   });
-  test('transfer to from person1 to person2 and then to person3', () => {
+  test('success - transfer to from person1 to person2 and then to person3', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
     const sess2Data = JSON.parse(sess2.body.toString());
@@ -68,7 +68,7 @@ describe('POST /v2/admin/quiz/{quizId}/transfer - Success', () => {
     expect(JSON.parse(trashQuiz.body.toString())).toStrictEqual({});
   });
   // NEEDS AN OPEN SESSION - TEST AFTER SESSIONS HAVE BEEN CREATED!
-  // test('tesing v2 route - open session error', () => {
+  // test('error - tesing v2 route - open session error', () => {
   //   const sess1Data = JSON.parse(sess1.body.toString());
   //   const quiz1Data = JSON.parse(quiz1.body.toString());
   //   const sess2Data = JSON.parse(sess2.body.toString());
