@@ -83,7 +83,7 @@ export interface Datastore {
   quizzes: Quiz[],
   tokens: Token[],
   trash: Quiz[],
-  sessions:[]
+  sessions: Session[]
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
