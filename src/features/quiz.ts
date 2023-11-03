@@ -1,6 +1,6 @@
 import { Question, Quiz, getData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
-import { findQuizById, findToken, setAndSave, tokenValidation } from './other';
+import { findQuizById, findToken, openSessionQuizzesState, setAndSave, tokenValidation } from './other';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 
@@ -314,6 +314,10 @@ function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: st
   // duplicate name
   if (dataStore.quizzes.some((quiz) => (quiz.quizOwner === transferUser.userId && quiz.name === transferQuiz.name))) {
     throw new ApiError('Quiz ID refers to a quiz that has a name that is already used by the target user', HttpStatusCode.BAD_REQUEST);
+  }
+  // open Session Quiz exists
+  if (openSessionQuizzesState(quizId)) {
+    throw new ApiError('All sessions for this quiz must be in END state', HttpStatusCode.BAD_REQUEST);
   }
 
   transferQuiz.quizOwner = transferUser.userId;
