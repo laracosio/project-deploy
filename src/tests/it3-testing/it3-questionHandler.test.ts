@@ -1,11 +1,11 @@
-import { getUnixTime } from "date-fns";
-import { person1, validQuestionInput1, validQuestionInput2, validQuizDescription, validQuizName } from "../../testingData";
-import { authRegisterRequest, clearRequest, createQuizQuestionRequest, quizCreateRequest, quizInfoRequest } from "../it2-testing/serverTestHelperIt2";
+import { getUnixTime } from 'date-fns';
+import { person1, validQuestionInput1, validQuestionInput2, validQuizDescription, validQuizName } from '../../testingData';
+import { authRegisterRequest, clearRequest, createQuizQuestionRequest, quizCreateRequest, quizInfoRequest } from '../it2-testing/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { duplicateQuestionRequestV2, moveQuestionRequestV2 } from "../serverTestHelperIt3";
+import { duplicateQuestionRequestV2, moveQuestionRequestV2 } from '../serverTestHelperIt3';
 
 beforeEach(() => {
-    clearRequest();
+  clearRequest();
 });
 
 // move question
@@ -53,7 +53,7 @@ describe('PUT /v2/admin/quiz/{quizid}/question/{questionid}/move', () => {
     //     }
     //   ]
     // );
-  })
+  });
 });
 
 describe('POST /v2/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {

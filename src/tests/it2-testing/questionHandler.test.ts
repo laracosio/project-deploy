@@ -456,17 +456,20 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move - Success', () 
   test('Move Question 2 to new Position and check lastEdited', () => {
     const sess1Data = JSON.parse(sess1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const quest1 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
-    const quest1Data = JSON.parse(quest1.body.toString());
+    // const quest1 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
+    // delete the below after
+    createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
+    // needed for quizInfo
+    // const quest1Data = JSON.parse(quest1.body.toString());
     const quest2 = createQuizQuestionRequest(quiz1Data.quizId, sess1Data.token, validQuestionInput2);
     const quest2Data = JSON.parse(quest2.body.toString());
     const res = moveQuestionRequest(sess1Data.token, quiz1Data.quizId, quest2Data.questionId, 0);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
 
-    // const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
-    // const quizInfoData = JSON.parse(quizInfo.body.toString());
-    // expect(quizInfoData.timeLastEdited).toBeGreaterThanOrEqual(getUnixTime(new Date()));
+    const quizInfo = quizInfoRequest(sess1Data.token, quiz1Data.quizId);
+    const quizInfoData = JSON.parse(quizInfo.body.toString());
+    expect(quizInfoData.timeLastEdited).toBeGreaterThanOrEqual(getUnixTime(new Date()));
     // expect(quizInfoData.questions).toStrictEqual(
     //   [
     //     {

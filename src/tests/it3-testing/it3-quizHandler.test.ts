@@ -1,12 +1,12 @@
-import { person1, person2, person3, validQuizDescription, validQuizName } from "../../testingData";
-import { authRegisterRequest, clearRequest, quizCreateRequest, quizInfoRequest } from "../it2-testing/serverTestHelperIt2";
+import { person1, person2, person3, validQuizDescription, validQuizName } from '../../testingData';
+import { authRegisterRequest, clearRequest, quizCreateRequest, quizInfoRequest } from '../it2-testing/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizTransferRequestV2 } from "../serverTestHelperIt3";
-import { getUnixTime } from "date-fns";
+import { quizRemoveRequestV2, quizTransferRequestV2 } from '../serverTestHelperIt3';
+import { getUnixTime } from 'date-fns';
 // import { HttpStatusCode } from "../../enums/HttpStatusCode";
 
 beforeEach(() => {
-    clearRequest();
+  clearRequest();
 });
 
 // quizRemove
@@ -30,12 +30,12 @@ describe('DELETE /v2/admin/quiz/{quizid}', () => {
   // test('tesing v2 route - open session', () => {
   //   const sess1Data = JSON.parse(sess1.body.toString());
   //   const quiz1data = JSON.parse(quiz1.body.toString());
-  //   // open a session 
+  //   // open a session
   //   const res = quizRemoveRequestV2(sess1Data.token, quiz1data.quizId);
   //   const data = JSON.parse(res.body.toString());
   //   expect(data).toStrictEqual({ error: expect.any(String) });
   //   expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  // }) 
+  // })
 });
 
 // quizTransfer
@@ -72,10 +72,10 @@ describe('POST /v2/admin/quiz/{quizId}/transfer', () => {
   //   const sess1Data = JSON.parse(sess1.body.toString());
   //   const quiz1Data = JSON.parse(quiz1.body.toString());
   //   const sess2Data = JSON.parse(sess2.body.toString());
-  //   // open a session 
+  //   // open a session
   //   const res = quizTransferRequestV2(sess1Data.token, quiz1Data.quizId, person2.email);
   //   const data = JSON.parse(res.body.toString());
   //   expect(data).toStrictEqual({ error: expect.any(String) });
   //   expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  // }) 
+  // })
 });
