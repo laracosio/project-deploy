@@ -2,6 +2,7 @@ import { getData, setData, User, Token, Quiz, Question, Datastore } from '../dat
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
+import crypto from 'crypto';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -185,4 +186,11 @@ function findTrashedQuizById (quizId: number): Quiz {
   return dataStore.trash.find((quiz) => quiz.quizId === quizId);
 }
 
-export { clear, helperAdminRegister, createSessionId, tokenValidation, findQuestionByQuiz, findQuizById, findUserById, findToken, getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById };
+function hashText(text: string): string {
+  return crypto.createHash('sha256').update(text).digest('hex');
+}
+
+export { clear, helperAdminRegister, createSessionId, tokenValidation,
+  findQuestionByQuiz, findQuizById, findUserById, findToken,
+  getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
+  hashText };
