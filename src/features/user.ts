@@ -1,7 +1,7 @@
 import { getData } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { findToken, findUserById, setAndSave, tokenValidation } from './other';
+import { findToken, findUserById, hashText, setAndSave, tokenValidation } from './other';
 import validator from 'validator';
 
 interface UserDetailReturn {
@@ -115,12 +115,15 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
+  const hashedOldPW = hashText(oldPassword);
+  const hashedNewPW = hashText(newPassword);
+
   // find user's details (list of old passwords)
   const userToken = findToken(token);
   const user = findUserById(userToken.userId);
 
   // check oldPassword is correct
-  if (oldPassword !== user.password) {
+  if (hashedOldPW !== user.password) {
     throw new ApiError('Old Password is incorrect', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -130,7 +133,7 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
   }
 
   // check newPassword hasn't been used by this user in the past
-  if (user.oldPasswords.includes(newPassword)) {
+  if (user.oldPasswords.includes(hashedNewPW)) {
     throw new ApiError('New Password cannot be the same as old password', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -147,8 +150,8 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
   }
 
   // store old password in user details
-  user.oldPasswords.push(oldPassword);
-  user.password = newPassword;
+  user.oldPasswords.push(hashedOldPW);
+  user.password = hashedNewPW;
 
   // update new password
   setAndSave(dataStore);

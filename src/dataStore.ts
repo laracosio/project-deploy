@@ -67,7 +67,7 @@ export interface Player {
 export interface Session {
   sessionId: number,
   sessionQuiz: Quiz
-  sessionState: string,
+  sessionState: number,
   autoStartNum: number,
   atQuestion: number,
   sessionPlayers: Player[]
@@ -83,7 +83,7 @@ export interface Datastore {
   quizzes: Quiz[],
   tokens: Token[],
   trash: Quiz[],
-  sessions:[]
+  sessions: Session[]
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW

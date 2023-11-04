@@ -1,7 +1,7 @@
 import { getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { tokenValidation, findToken, findQuizById, setAndSave } from './other';
+import { tokenValidation, findToken, findQuizById, setAndSave, openSessionQuizzesState } from './other';
 import { getUnixTime } from 'date-fns';
 
 interface BriefTrashQuizInfo {
@@ -29,7 +29,7 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
 
   const matchedQuiz = findQuizById(quizId);
   // check that quizId is not empty or is valid
-  if (!quizId || matchedQuiz === undefined) {
+  if (!quizId || !matchedQuiz) {
     throw new ApiError('Invalid quizId', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -37,6 +37,11 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
   const matchedToken = findToken(sessionId);
   if (matchedQuiz.quizOwner !== matchedToken.userId) {
     throw new ApiError('User does not own quiz to remove', HttpStatusCode.FORBIDDEN);
+  }
+
+  // check END state of session quizzes matching this quizId
+  if (openSessionQuizzesState(quizId)) {
+    throw new ApiError('All sessions for this quiz must be in END state', HttpStatusCode.BAD_REQUEST);
   }
 
   const quizIndex: number = dataStore.quizzes.findIndex(quiz => quiz.quizId === quizId);

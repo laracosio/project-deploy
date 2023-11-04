@@ -1,4 +1,4 @@
-import { helperAdminRegister, createSessionId, setAndSave } from './other';
+import { helperAdminRegister, createSessionId, setAndSave, hashText } from './other';
 import { getData, Token } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
@@ -23,12 +23,13 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
   }
 
   const newUserId = dataStore.users.length + 1;
+  const hashedPassword = hashText(password);
   const oldPasswords: string[] = [];
   const newUser = {
     userId: newUserId,
     nameFirst: nameFirst,
     nameLast: nameLast,
-    password: password,
+    password: hashedPassword,
     oldPasswords: oldPasswords,
     email: email,
     numSuccessfulLogins: 1,
@@ -60,12 +61,12 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   const authUser = dataStore.users.find(user => user.email === email);
 
   // email does not belong to a user
-  if (authUser === undefined) {
+  if (!authUser) {
     throw new ApiError('email does not belong to a user', HttpStatusCode.BAD_REQUEST);
   }
 
   // if password is incorrect
-  if (authUser.password !== password) {
+  if (authUser.password !== hashText(password)) {
     authUser.numFailedPasswordsSinceLastLogin++;
     throw new ApiError('password is incorrect', HttpStatusCode.BAD_REQUEST);
   }

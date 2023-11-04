@@ -2,6 +2,8 @@ import { getData, setData, User, Token, Quiz, Question, Datastore } from '../dat
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
+import crypto from 'crypto';
+import { SessionStates } from '../enums/SessionStates';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -185,4 +187,30 @@ function findTrashedQuizById (quizId: number): Quiz {
   return dataStore.trash.find((quiz) => quiz.quizId === quizId);
 }
 
-export { clear, helperAdminRegister, createSessionId, tokenValidation, findQuestionByQuiz, findQuizById, findUserById, findToken, getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById };
+/**
+ * sha256 Hash a string
+ * @param text - input text
+ * @returns string
+ */
+function hashText(text: string): string {
+  return crypto.createHash('sha256').update(text).digest('hex');
+}
+
+/**
+ * Check whether sessions of with this quizId are in end state
+ * Returns true if not all quizzes are ended.
+ * @param quizId - quizId to find all sessions using this quiz
+ * @returns boolean
+ */
+function openSessionQuizzesState(quizId: number): boolean {
+  const dataStore = getData();
+  return dataStore.sessions.some(element => element.sessionQuiz.quizId === quizId &&
+    element.sessionState !== SessionStates.END);
+}
+
+export {
+  clear, helperAdminRegister, createSessionId, tokenValidation,
+  findQuestionByQuiz, findQuizById, findUserById, findToken,
+  getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
+  hashText, openSessionQuizzesState
+};
