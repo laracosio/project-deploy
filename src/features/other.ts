@@ -208,9 +208,19 @@ function openSessionQuizzesState(quizId: number): boolean {
     element.sessionState !== SessionStates.END);
 }
 
+/**
+ *
+ * @param thumbnailUrl
+ * @returns boolean
+ */
+function isImageUrlValid(thumbnailUrl: string): boolean {
+  const imageRegex = /\.(png|jpg|jpeg)$/i;
+
+  return imageRegex.test(thumbnailUrl);
+}
 export {
   clear, helperAdminRegister, createSessionId, tokenValidation,
   findQuestionByQuiz, findQuizById, findUserById, findToken,
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
-  hashText, openSessionQuizzesState
+  hashText, openSessionQuizzesState, isImageUrlValid
 };
