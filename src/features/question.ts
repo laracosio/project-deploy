@@ -96,7 +96,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     duration: questionBody.duration,
     points: questionBody.points,
     answers: arrayOfAnswers,
-    thumbnailUrl: '', // question create to update - please remove later
+    thumbnailUrl: '', // question create to update - please remove comment later
     averageAnswerTime: 0,
     percentCorrect: 0
   };
