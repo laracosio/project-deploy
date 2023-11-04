@@ -38,8 +38,11 @@ export interface Question {
   questionId: number,
   question: string,
   duration: number,
+  thumbnailUrl: string,
   points: number,
   answers: Answer[],
+  averageAnswerTime: number,
+  percentCorrect: number
 }
 
 export interface Quiz {
@@ -51,7 +54,23 @@ export interface Quiz {
   quizOwner: number,
   numQuestions: number,
   questions: Question[],
-  quizDuration: number
+  quizDuration: number,
+  thumbnailUrl: string
+}
+
+export interface Player {
+  playerId: number,
+  playerName: string,
+  playerScore: number
+}
+
+export interface Session {
+  sessionId: number,
+  sessionQuiz: Quiz
+  sessionState: string,
+  autoStartNum: number,
+  atQuestion: number,
+  sessionPlayers: Player[]
 }
 
 export interface Token {
@@ -63,7 +82,8 @@ export interface Datastore {
   users: User[],
   quizzes: Quiz[],
   tokens: Token[],
-  trash: Quiz[]
+  trash: Quiz[],
+  sessions:[]
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
@@ -71,7 +91,8 @@ let data: Datastore = {
   users: [],
   quizzes: [],
   tokens: [],
-  trash: []
+  trash: [],
+  sessions: []
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

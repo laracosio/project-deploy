@@ -96,6 +96,9 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     duration: questionBody.duration,
     points: questionBody.points,
     answers: arrayOfAnswers,
+    thumbnailUrl: '', // question create to update - please remove comment later
+    averageAnswerTime: 0,
+    percentCorrect: 0
   };
 
   quiz.questions.push(newQuestion);
@@ -285,6 +288,9 @@ function adminDuplicateQuestion (sessionId: string, quizId: number, questionId: 
     duration: questionToCopy.duration,
     points: questionToCopy.points,
     answers: questionToCopy.answers,
+    thumbnailUrl: questionToCopy.thumbnailUrl,
+    averageAnswerTime: questionToCopy.averageAnswerTime,
+    percentCorrect: questionToCopy.percentCorrect
   };
 
   const questionIndex = matchedQuiz.questions.findIndex((question) => question.questionId === questionId);
