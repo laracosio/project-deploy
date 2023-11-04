@@ -70,7 +70,7 @@ export interface Session {
   sessionState: string,
   autoStartNum: number,
   atQuestion: number,
-  sessionPlayers: player[]
+  sessionPlayers: Player[]
 }
 
 export interface Token {
