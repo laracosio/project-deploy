@@ -59,10 +59,11 @@ const authLogoutRequest = (token: string): Response => {
 const authUserDetailsRequest = (token: string): Response => {
   return request(
     'GET',
-    SERVER_URL + '/v1/admin/user/details',
+    SERVER_URL + '/v2/admin/user/details',
     {
-      qs: {
-        token: token,
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     }
   );

@@ -12,7 +12,7 @@ import process from 'process';
 import { ApiError } from './errors/ApiError';
 import { authRouter } from './handlers/authHandler';
 import { quizRouter } from './handlers/quizHandler';
-import { userRouter } from './handlers/userHandler';
+import { userRouter, userRouterV2 } from './handlers/userHandler';
 import { otherRouter } from './handlers/otherHandler';
 import { setData } from './dataStore';
 
@@ -46,6 +46,9 @@ app.use('/v1/admin/quiz', quizRouter);
 app.use('/v1/admin/auth', authRouter);
 app.use('/v1/admin/user', userRouter);
 app.use('/v1/clear', otherRouter);
+
+// v2
+app.use('/v2/admin/user', userRouterV2);
 
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ApiError) {
