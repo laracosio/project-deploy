@@ -3,8 +3,11 @@ import { adminUserDetails, adminUserUpdateDetails, adminUserUpdatePassword } fro
 
 export const userRouter = Router();
 
+// v2
+export const userRouterV2 = Router();
+
 // get routers
-userRouter.get('/details', (req: Request, res: Response) => {
+userRouterV2.get('/details', (req: Request, res: Response) => {
   const token = req.header('token');
   const response = adminUserDetails(token);
   res.send(response);
