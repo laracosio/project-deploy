@@ -58,7 +58,7 @@ export interface Quiz {
   thumbnailUrl: string
 }
 
-export interface player {
+export interface Player {
   playerId: number,
   playerName: string,
   playerScore: number
