@@ -1,6 +1,6 @@
 import { Response } from 'sync-request-curl';
-import { person1, person2, validQuizDescription, validQuizName } from '../testingData';
-import { authRegisterRequest, clearRequest, quizRemoveRequest, quizCreateRequest } from './serverTestHelper';
+import { person1, person2, validQuizDescription, validQuizName } from '../../testingData';
+import { authRegisterRequest, clearRequest, quizRemoveRequest, quizCreateRequest } from './serverTestHelperIt2';
 
 describe('Clear - Success', () => {
   let user1: Response, user2: Response, quiz1: Response;

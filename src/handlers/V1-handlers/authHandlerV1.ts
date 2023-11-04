@@ -1,24 +1,24 @@
-import { adminAuthRegister, adminAuthLogin, adminAuthLogout } from '../features/auth';
+import { adminAuthRegister, adminAuthLogin, adminAuthLogout } from '../../features/auth';
 import { Router, Request, Response } from 'express';
 
-export const authRouter = Router();
+export const authRouterV1 = Router();
 
 // get Routers
 
 // post Routers
-authRouter.post('/register', (req: Request, res: Response) => {
+authRouterV1.post('/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const response = adminAuthRegister(email, password, nameFirst, nameLast);
   res.json(response);
 });
 
-authRouter.post('/login', (req: Request, res: Response) => {
+authRouterV1.post('/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const response = adminAuthLogin(email, password);
   res.json(response);
 });
 
-authRouter.post('/logout', (req: Request, res: Response) => {
+authRouterV1.post('/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   res.json(adminAuthLogout(token));
 });

@@ -1,10 +1,10 @@
-import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest, moveQuestionRequest, quizInfoRequest, updateQuizQuestionRequest, duplicateQuestionRequest, deleteQuizQuestionRequest, authLogoutRequest } from './serverTestHelper';
+import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest, moveQuestionRequest, quizInfoRequest, updateQuizQuestionRequest, duplicateQuestionRequest, deleteQuizQuestionRequest, authLogoutRequest } from './serverTestHelperIt2';
 import {
   person1, person2, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName, validCreateQuestion, invalidQCShortQuestion, invalidQCLongQuestion, invalidQCOneAnswers, invalidQCManyAnswers, invalidQCDurationNegative,
   invalidQCDurationExceeds, invalidQCNoPoints, invalidQCPointsExceeds, invalidQCEmptyAnswer, invalidQCLongAnswer, invalidQCDuplicateAnswers, invalidQCNoAnswers, validUpdateQuestion, invalidUpdateQuestionShortQuestion, invalidUpdateQuestionLongQuestion,
   invalidUpdateQuestionManyAnswers, invalidUpdateQuestionOneAnswer, invalidUpdateQuestionNegativeDuration, invalidUpdateQuestionMoreThan180, invalidUpdateQuestionZeroPoints, invalidUpdateQuestionMoreThan10Points, invalidUpdateQuestionBlankAnswer,
   invalidUpdateQuestionLongAnswer, invalidUpdateQuestionDuplicateAnswer, invalidUpdateQuestionNoCorrectAnswer, validCreateQuestion2
-} from '../testingData';
+} from '../../testingData';
 import { Response } from 'sync-request-curl';
 
 beforeEach(() => {

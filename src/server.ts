@@ -10,10 +10,13 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { ApiError } from './errors/ApiError';
-import { authRouter } from './handlers/authHandler';
-import { quizRouter } from './handlers/quizHandler';
-import { userRouter, userRouterV2 } from './handlers/userHandler';
-import { otherRouter } from './handlers/otherHandler';
+import { authRouterV1 } from './handlers/V1-handlers/authHandlerV1';
+import { quizRouterV1 } from './handlers/V1-handlers/quizHandlerV1';
+import { userRouterV1 } from './handlers/V1-handlers/userHandlerV1';
+import { otherRouter } from './handlers/V1-handlers/otherHandler';
+import { authRouterV2 } from './handlers/V2-handlers/authHandlerV2';
+import { quizRouterV2 } from './handlers/V2-handlers/quizHandlerV2';
+import { userRouterV2 } from './handlers/V2-handlers/userHandlerV2';
 import { setData } from './dataStore';
 
 // Set up web app
@@ -42,12 +45,14 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(echo(data));
 });
 
-app.use('/v1/admin/quiz', quizRouter);
-app.use('/v1/admin/auth', authRouter);
-app.use('/v1/admin/user', userRouter);
+// kept for backwards compatibility
+app.use('/v1/admin/quiz', quizRouterV1);
+app.use('/v1/admin/auth', authRouterV1);
+app.use('/v1/admin/user', userRouterV1);
 app.use('/v1/clear', otherRouter);
 
-// v2
+app.use('/v2/admin/quiz', quizRouterV2);
+app.use('/v2/admin/auth', authRouterV2);
 app.use('/v2/admin/user', userRouterV2);
 
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {

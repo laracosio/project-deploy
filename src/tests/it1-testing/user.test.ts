@@ -1,8 +1,8 @@
-import { person1, person2, person3, person4 } from '../testingData';
-import { adminAuthRegister, adminAuthLogin } from '../features/auth';
-import { clear } from '../features/other';
-import { adminUserDetails } from '../features/user';
-import { ApiError } from '../errors/ApiError';
+import { person1, person2, person3, person4 } from '../../testingData';
+import { adminAuthRegister, adminAuthLogin } from '../../features/auth';
+import { clear } from '../../features/other';
+import { adminUserDetails } from '../../features/user';
+import { ApiError } from '../../errors/ApiError';
 
 beforeEach(() => {
   clear();

@@ -1,14 +1,11 @@
 import { Router, Request, Response } from 'express';
-import { adminUserDetails, adminUserUpdateDetails, adminUserUpdatePassword } from '../features/user';
+import { adminUserDetails, adminUserUpdateDetails, adminUserUpdatePassword } from '../../features/user';
 
-export const userRouter = Router();
-
-// v2
-export const userRouterV2 = Router();
+export const userRouterV1 = Router();
 
 // get routers
-userRouterV2.get('/details', (req: Request, res: Response) => {
-  const token = req.header('token');
+userRouterV1.get('/details', (req: Request, res: Response) => {
+  const token = req.query.token.toString();
   const response = adminUserDetails(token);
   res.send(response);
 });
@@ -16,12 +13,12 @@ userRouterV2.get('/details', (req: Request, res: Response) => {
 // post routers
 
 // put routers
-userRouter.put('/details', (req: Request, res: Response) => {
+userRouterV1.put('/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
   res.json(adminUserUpdateDetails(token, email, nameFirst, nameLast));
 });
 
-userRouter.put('/password', (req: Request, res: Response) => {
+userRouterV1.put('/password', (req: Request, res: Response) => {
   const { token, oldPassword, newPassword } = req.body;
   res.json(adminUserUpdatePassword(token, oldPassword, newPassword));
 });
