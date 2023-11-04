@@ -115,7 +115,7 @@ const updateQuizQuestionRequestV2 = (quizId: number, questionId: number, token: 
 const deleteQuizQuestionRequestV2 = (sessionId: string, quizId: number, questionId: number): Response => {
   return request(
     'DELETE',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`,
+    `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}`,
     {
       headers: {
         sessionId: sessionId
