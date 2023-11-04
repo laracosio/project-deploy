@@ -63,7 +63,7 @@ const authUserDetailsRequest = (token: string): Response => {
     {
       headers: {
         'Content-type': 'application/json',
-        'token': token
+        token: token
       }
     }
   );
