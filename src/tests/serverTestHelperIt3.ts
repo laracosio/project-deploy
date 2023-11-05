@@ -1,6 +1,7 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
+import { QuestionCreate } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -78,6 +79,50 @@ const duplicateQuestionRequestV2 = (token: string, quizId: number, questionId: n
     }
   );
 };
+
+const createQuizQuestionRequestV2 = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v2/admin/quiz/${quizId}/question`,
+    {
+      json: {
+        questionBody: questionBody,
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    }
+  );
+};
+
+const updateQuizQuestionRequestV2 = (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}`,
+    {
+      json: {
+        questionBody: questionBody,
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    }
+  );
+};
+
+const deleteQuizQuestionRequestV2 = (sessionId: string, quizId: number, questionId: number): Response => {
+  return request(
+    'DELETE',
+    `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}`,
+    {
+      headers: {
+        sessionId: sessionId
+      }
+    }
+  );
+};
 // #endregion
 
 // #region player handlers
@@ -85,5 +130,6 @@ const duplicateQuestionRequestV2 = (token: string, quizId: number, questionId: n
 // #endregion
 
 export {
-  authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2
+  authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
+  createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2
 };

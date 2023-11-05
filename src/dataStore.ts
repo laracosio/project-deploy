@@ -12,6 +12,7 @@ export interface QuestionCreate {
   duration: number,
   points: number,
   answers: AnswerCreate[],
+  thumbnailUrl?: string,
 }
 
 export const Colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];

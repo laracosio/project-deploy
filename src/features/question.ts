@@ -3,7 +3,8 @@ import { getUnixTime } from 'date-fns';
 import { getData, Question, Answer, QuestionCreate, Colours } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, setAndSave, tokenValidation } from './other';
+import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './other';
+import request from 'sync-request-curl';
 
 interface adminDuplicateQuestionReturn {
   newQuestionId: number
@@ -25,6 +26,20 @@ interface QuestionReturn {
  */
 function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): QuestionReturn {
   const dataStore = getData();
+
+  if (questionBody.thumbnailUrl !== undefined) {
+    if (questionBody.thumbnailUrl === '') {
+      throw new ApiError('THe thumbnailUrl is an empty string', HttpStatusCode.BAD_REQUEST);
+    }
+    if (!isImageUrlValid(questionBody.thumbnailUrl)) {
+      throw new ApiError('The thumbnailUrl, when fetched, is not a JPG or PNG file type', HttpStatusCode.BAD_REQUEST);
+    }
+    try {
+      request('GET', questionBody.thumbnailUrl);
+    } catch (error) {
+      throw new ApiError('The thumbnailUrl does not return to a valid type', HttpStatusCode.BAD_REQUEST);
+    }
+  }
 
   if (!tokenValidation(token)) {
     throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
@@ -177,6 +192,20 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
 function quizUpdateQuestion (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
   const dataStore = getData();
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (questionBody.thumbnailUrl !== undefined) {
+    if (questionBody.thumbnailUrl === '') {
+      throw new ApiError('THe thumbnailUrl is an empty string', HttpStatusCode.BAD_REQUEST);
+    }
+    if (!isImageUrlValid(questionBody.thumbnailUrl)) {
+      throw new ApiError('The thumbnailUrl, when fetched, is not a JPG or PNG file type', HttpStatusCode.BAD_REQUEST);
+    }
+    try {
+      request('GET', questionBody.thumbnailUrl);
+    } catch (error) {
+      throw new ApiError('The thumbnailUrl does not return to a valid type', HttpStatusCode.BAD_REQUEST);
+    }
+  }
 
   if (!tokenValidation(token)) {
     throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);

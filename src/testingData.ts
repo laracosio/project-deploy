@@ -436,6 +436,114 @@ const validCreateQuestion2: QuestionCreate = {
   ]
 };
 
+const validCreateQuestionV2PNG: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ],
+  thumbnailUrl: 'https://www.fnordware.com/superpng/pnggrad16rgb.png'
+};
+
+const invalidCreateQuestionV2EmptyURL: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ],
+  thumbnailUrl: ''
+};
+
+const invalidCreateQuestionV2InvalidURL: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ],
+  thumbnailUrl: 'klrgjoirjgioerhbie.jpg'
+};
+
+const invalidCreateQuestionV2NotJPGPNG: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ],
+  thumbnailUrl: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzduNXllYWFjaGd6emV3bmtvanRvMTFmanhjYnFxN2ZzNDA4ZjgxdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0G16FRujv2fiD3Ne/giphy.gif'
+};
+
+const validCreateQuestionV2JPG: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ],
+  thumbnailUrl: 'https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg'
+};
+
+const validUpdateQuestionV2PNG: QuestionCreate = {
+  question: 'Who is laras OG best boy cat ?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: false },
+    { answer: 'Salem', correct: true },
+    { answer: 'Bob', correct: false },
+  ],
+  thumbnailUrl: 'https://www.fnordware.com/superpng/pnggrad16rgb.png'
+};
+
+const invalidCreateQuestionV2URLEmpty: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ],
+  thumbnailUrl: ''
+};
+
+const invalidCreateQuestionV2URLInvalid: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ],
+  thumbnailUrl: 'https://www.fnordware.conggrad16rgb.png'
+};
+
+const invalidCreateQuestionV2URLNotPNGJPG: QuestionCreate = {
+  question: 'Who is laras best boy cat?',
+  duration: 1,
+  points: 2,
+  answers: [
+    { answer: 'Hamlet', correct: true },
+    { answer: 'Coco', correct: false },
+    { answer: 'Bob', correct: false },
+  ],
+  thumbnailUrl: 'https://media.giphy.com/media/l0G16FRujv2fiD3Ne/giphy.gif'
+};
+
 export {
   person1,
   person2,
@@ -484,5 +592,14 @@ export {
   invalidUpdateQuestionLongAnswer,
   invalidUpdateQuestionDuplicateAnswer,
   invalidUpdateQuestionNoCorrectAnswer,
-  validCreateQuestion2
+  validCreateQuestion2,
+  invalidCreateQuestionV2URLNotPNGJPG,
+  invalidCreateQuestionV2URLInvalid,
+  invalidCreateQuestionV2URLEmpty,
+  validUpdateQuestionV2PNG,
+  validCreateQuestionV2JPG,
+  invalidCreateQuestionV2NotJPGPNG,
+  invalidCreateQuestionV2InvalidURL,
+  invalidCreateQuestionV2EmptyURL,
+  validCreateQuestionV2PNG
 };
