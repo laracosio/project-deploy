@@ -89,7 +89,7 @@ quizRouterV2.delete('/trash/empty', (req: Request, res: Response) => {
 });
 // #endregion
 
-//#region quiz get routers
+// #region quiz get routers
 quizRouterV2.get('/trash', (req: Request, res: Response) => {
   const token = req.header('token');
   res.json(adminQuizViewTrash(token));
