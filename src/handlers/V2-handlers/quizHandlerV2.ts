@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { adminQuizRemove, quizRemoveQuestion } from '../../features/trash';
-import { adminQuizTransferOwner } from '../../features/quiz';
+import { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash } from '../../features/trash';
+import { adminQuizTransferOwner, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../../features/quiz';
 import { adminDuplicateQuestion, adminMoveQuestion, quizUpdateQuestion, quizCreateQuestion } from '../../features/question';
 
 export const quizRouterV2 = Router();
@@ -30,6 +30,12 @@ quizRouterV2.post('/:quizid/question/:questionid/duplicate', (req: Request, res:
   const token = req.header('token');
   res.json(adminDuplicateQuestion(token, quizId, questionId));
 });
+
+quizRouterV2.post('/:quizId/restore', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const quizId = parseInt(req.params.quizId);
+  res.json(adminQuizRestoreTrash(token, quizId));
+});
 // #endregion
 
 // #region quiz put routers
@@ -47,6 +53,18 @@ quizRouterV2.put('/:quizId/question/:questionId', (req: Request, res: Response) 
   const { questionBody } = req.body;
   res.json(quizUpdateQuestion(quizId, questionId, token, questionBody));
 });
+
+quizRouterV2.put('/:quizId/name', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const quizId = parseInt(req.params.quizId);
+  res.json(adminQuizNameUpdate(token, quizId, req.body.name));
+});
+
+quizRouterV2.put('/:quizId/description', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const quizId = parseInt(req.params.quizId);
+  res.json(adminQuizDescriptionUpdate(token, quizId, req.body.description));
+});
 // #endregion
 
 // #region quiz delete routers
@@ -61,5 +79,19 @@ quizRouterV2.delete('/:quizid/question/:questionId', (req: Request, res: Respons
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionId);
   res.json(quizRemoveQuestion(sessionToken, quizId, questionId));
+});
+
+quizRouterV2.delete('/trash/empty', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const quizIds = req.query.quizIds as string;
+  const response = adminQuizEmptyTrash(token, quizIds);
+  res.json(response);
+});
+// #endregion
+
+// #region quiz get routers
+quizRouterV2.get('/trash', (req: Request, res: Response) => {
+  const token = req.header('token');
+  res.json(adminQuizViewTrash(token));
 });
 // #endregion

@@ -1,7 +1,7 @@
-import { person1, person2, person3, validQuizDescription, validQuizName } from '../../testingData';
+import { person1, person2, person3, validQuizDescription, validQuizName, newvalidQuizName } from '../../testingData';
 import { authRegisterRequest, clearRequest, quizCreateRequest, quizInfoRequest } from '../it2-testing/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizTransferRequestV2 } from '../serverTestHelperIt3';
+import { quizRemoveRequestV2, quizTransferRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2 } from '../serverTestHelperIt3';
 import { getUnixTime } from 'date-fns';
 // import { HttpStatusCode } from "../../enums/HttpStatusCode";
 
@@ -78,4 +78,32 @@ describe('POST /v2/admin/quiz/{quizId}/transfer', () => {
   //   expect(data).toStrictEqual({ error: expect.any(String) });
   //   expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   // })
+});
+
+// adminQuizNameUpdate tests
+describe('adminQuizNameUpdate - Success Cases', () => {
+  let session1: Response, quiz1: Response;
+  test('valid authUserId, quizId and name', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const response = quizNameUpdateRequestV2(session1Data.token, quiz1Data.quizId, newvalidQuizName);
+    const responseData = JSON.parse(response.body.toString());
+    expect(responseData).toStrictEqual({});
+  });
+});
+
+// adminQuizDescriptionUpdate tests
+describe('adminQuizDescriptionUpdate - Success Cases', () => {
+  let session1: Response, quiz1: Response;
+  test('valid authUserId, quizId and name', () => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const response = quizDescriptUpdateRequestV2(session1Data.token, quiz1Data.quizId, newvalidQuizName);
+    const responseData = JSON.parse(response.body.toString());
+    expect(responseData).toStrictEqual({});
+  });
 });
