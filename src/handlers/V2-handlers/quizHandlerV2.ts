@@ -29,12 +29,12 @@ quizRouterV2.post('/:quizid/question/:questionid/duplicate', (req: Request, res:
   const questionId = parseInt(req.params.questionid);
   const token = req.header('token');
   res.json(adminDuplicateQuestion(token, quizId, questionId));
+});
 
-  quizRouterV2.post('/:quizId/restore', (req: Request, res: Response) => {
-    const token = req.header('token');
-    const quizId = parseInt(req.params.quizId);
-    res.json(adminQuizRestoreTrash(token, quizId));
-  });
+quizRouterV2.post('/:quizId/restore', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const quizId = parseInt(req.params.quizId);
+  res.json(adminQuizRestoreTrash(token, quizId));
 });
 // #endregion
 

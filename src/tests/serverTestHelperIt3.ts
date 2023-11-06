@@ -127,10 +127,9 @@ const deleteQuizQuestionRequestV2 = (sessionId: string, quizId: number, question
 const quizNameUpdateRequestV2 = (token: string, quizId: number, name: string): Response => {
   return request(
     'PUT',
-      `${SERVER_URL}/v1/admin/quiz/${quizId}/name`,
+      `${SERVER_URL}/v2/admin/quiz/${quizId}/name`,
       {
         body: JSON.stringify({
-          token: token,
           name: name,
         }),
         headers: {
@@ -144,10 +143,9 @@ const quizNameUpdateRequestV2 = (token: string, quizId: number, name: string): R
 const quizDescriptUpdateRequestV2 = (token: string, quizId: number, description: string): Response => {
   return request(
     'PUT',
-        `${SERVER_URL}/v1/admin/quiz/${quizId}/description`,
+        `${SERVER_URL}/v2/admin/quiz/${quizId}/description`,
         {
           body: JSON.stringify({
-            token: token,
             description: description,
           }),
           headers: {
@@ -163,9 +161,6 @@ const quizViewTrashRequestV2 = (token: string): Response => {
     'GET',
     `${SERVER_URL}/v2/admin/quiz/trash`,
     {
-      qs: {
-        token: token
-      },
       headers: {
         'Content-type': 'application/json',
         token: token
@@ -179,9 +174,6 @@ const quizRestoreTrashRequestV2 = (token: string, quizId: number): Response => {
     'POST',
     `${SERVER_URL}/v2/admin/quiz/${quizId}/restore`,
     {
-      body: JSON.stringify({
-        token: token,
-      }),
       headers: {
         'Content-type': 'application/json',
         token: token
@@ -196,10 +188,12 @@ const quizEmptyTrashRequestV2 = (token: string, quizIds: string): Response => {
     `${SERVER_URL}/v2/admin/quiz/trash/empty`,
     {
       qs: {
-        token: token,
         quizIds: quizIds
       },
-      headers: { 'Content-type': 'application/json' },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
     }
   );
 };
@@ -211,6 +205,6 @@ const quizEmptyTrashRequestV2 = (token: string, quizIds: string): Response => {
 
 export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
-  createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, 
+  createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2
 };
