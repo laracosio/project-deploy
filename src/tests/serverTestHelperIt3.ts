@@ -123,6 +123,86 @@ const deleteQuizQuestionRequestV2 = (sessionId: string, quizId: number, question
     }
   );
 };
+
+const quizNameUpdateRequestV2 = (token: string, quizId: number, name: string): Response => {
+  return request(
+    'PUT',
+      `${SERVER_URL}/v1/admin/quiz/${quizId}/name`,
+      {
+        body: JSON.stringify({
+          token: token,
+          name: name,
+        }),
+        headers: {
+          'Content-type': 'application/json',
+          token: token
+        }
+      }
+  );
+};
+
+const quizDescriptUpdateRequestV2 = (token: string, quizId: number, description: string): Response => {
+  return request(
+    'PUT',
+        `${SERVER_URL}/v1/admin/quiz/${quizId}/description`,
+        {
+          body: JSON.stringify({
+            token: token,
+            description: description,
+          }),
+          headers: {
+            'Content-type': 'application/json',
+            token: token
+          }
+        }
+  );
+};
+
+const quizViewTrashRequestV2 = (token: string): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v2/admin/quiz/trash`,
+    {
+      qs: {
+        token: token
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    }
+  );
+};
+
+const quizRestoreTrashRequestV2 = (token: string, quizId: number): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v2/admin/quiz/${quizId}/restore`,
+    {
+      body: JSON.stringify({
+        token: token,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    }
+  );
+};
+
+const quizEmptyTrashRequestV2 = (token: string, quizIds: string): Response => {
+  return request(
+    'DELETE',
+    `${SERVER_URL}/v2/admin/quiz/trash/empty`,
+    {
+      qs: {
+        token: token,
+        quizIds: quizIds
+      },
+      headers: { 'Content-type': 'application/json' },
+    }
+  );
+};
 // #endregion
 
 // #region player handlers
@@ -131,5 +211,6 @@ const deleteQuizQuestionRequestV2 = (sessionId: string, quizId: number, question
 
 export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
-  createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2
+  createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, 
+  quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2
 };
