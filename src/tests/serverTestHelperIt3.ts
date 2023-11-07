@@ -197,6 +197,23 @@ const quizEmptyTrashRequestV2 = (token: string, quizIds: string): Response => {
     }
   );
 };
+
+const quizCreateRequestV2 = (token: string, name: string, description: string): Response => {
+  return request(
+    'POST',
+    SERVER_URL + 'v2/admin/quiz',
+    {
+      body: JSON.stringify({
+        name: name,
+        description: description
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
 // #endregion
 
 // #region player handlers
@@ -206,5 +223,5 @@ const quizEmptyTrashRequestV2 = (token: string, quizIds: string): Response => {
 export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
-  quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2
+  quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2
 };
