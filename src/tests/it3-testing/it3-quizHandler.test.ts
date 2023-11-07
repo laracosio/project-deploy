@@ -107,3 +107,35 @@ describe('adminQuizDescriptionUpdate - Success Cases', () => {
     expect(responseData).toStrictEqual({});
   });
 });
+
+// adminQuizCreate tests
+describe('POST /v2/admin/quiz - Success Cases', () => {
+  let session1: Response, session2: Response, session3: Response;
+  beforeEach(() => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+  });
+  test('valid quiz details', () => {
+    const session1Data = JSON.parse(session1.body.toString());
+    const response = quizCreateRequestV2(session1Data.token, validQuizName, validQuizDescription);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ quizId: expect.any(Number) });
+  });
+  test('valid multiple quiz details', () => {
+    const session1Data = JSON.parse(session1.body.toString());
+    quizCreateRequestV2(session1Data.token + 1, 'Quiz 1', validQuizDescription);
+    quizCreateRequestV2(session1Data.token + 1, 'Quiz 2', validQuizDescription);
+    quizCreateRequestV2(session1Data.token + 1, 'Quiz 3', validQuizDescription);
+    const response = quizCreateRequestV2(session1Data.token, 'Quiz 4', validQuizDescription);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ quizId: expect.any(Number) });
+  });
+  test('existing name under different user', () => {
+    const session1Data = JSON.parse(session1.body.toString());
+    quizCreateRequestV2(session1Data.token, validQuizName, validQuizDescription);
+    const session2Data = JSON.parse(session2.body.toString());
+    const response = quizCreateRequestV2(session2Data.token, validQuizName, validQuizDescription);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ quizId: expect.any(Number) });
+  });
+})
