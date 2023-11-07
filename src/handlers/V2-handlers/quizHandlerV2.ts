@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash } from '../../features/trash';
-import { adminQuizTransferOwner, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizList } from '../../features/quiz';
+import { adminQuizTransferOwner, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizList, adminQuizInfo } from '../../features/quiz';
 import { adminDuplicateQuestion, adminMoveQuestion, quizUpdateQuestion, quizCreateQuestion } from '../../features/question';
 
 export const quizRouterV2 = Router();
@@ -11,7 +11,7 @@ export const quizRouterV2 = Router();
 
 // #region quiz post routers
 quizRouterV2.post('/', (req: Request, res: Response) => {
-  const token = req.header('token');
+  const token: string = req.header('token');
   const { name, description } = req.body;
   res.json(adminQuizCreate(token, name, description));
 })
@@ -102,7 +102,13 @@ quizRouterV2.get('/trash', (req: Request, res: Response) => {
 });
 
 quizRouterV2.get('/list', (req: Request, res: Response) => {
-  const token = req.header('token');
+  const token: string = req.header('token');
   res.json(adminQuizList(token));
+})
+
+quizRouterV2.get('/:quizId', (req: Request, res: Response) => {
+  const token: string = req.header('token');
+  const quizId: number = parseInt(req.params.quizId);
+  res.json(adminQuizInfo(token, quizId));
 })
 // #endregion

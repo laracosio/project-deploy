@@ -227,7 +227,7 @@ describe('GET /v2/admin/quiz/list - Success Cases', () => {
 // adminQuizInfo tests
 describe('GET /v2/admin/quiz/{quizid} - Success Cases', () => {
   let session1: Response, session2: Response, session3: Response;
-  let s1Quiz1: Response, s1Quiz2: Response, s2Quiz1: Response, s2Quiz2: Response, s3Quiz1: Response, s3Quiz2: Response;
+  let s1Quiz1: Response, s2Quiz1: Response, s3Quiz1: Response;
   beforeEach(() => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());

@@ -227,10 +227,10 @@ const quizListRequestV2 = (token: string): Response => {
   )
 }
 
-const quizInfoRequestV2 = (token:string, quizId: number): Response => {
+const quizInfoRequestV2 = (token: string, quizId: number): Response => {
   return request(
     'GET',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}`,
+    `${SERVER_URL}/v2/admin/quiz/${quizId}`,
     {
       headers: {
         token: token
