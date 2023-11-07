@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { adminUserDetails, adminUserUpdateDetails } from '../../features/user';
+import { adminUserDetails, adminUserUpdateDetails, adminUserUpdatePassword } from '../../features/user';
 
 // v2
 export const userRouterV2 = Router();
@@ -18,6 +18,12 @@ userRouterV2.put('/details', (req: Request, res: Response) => {
   const token = req.header('token');
   const { email, nameFirst, nameLast } = req.body;
   res.json(adminUserUpdateDetails(token, email, nameFirst, nameLast));
-})
+});
+
+userRouterV2.put('/password', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const { oldPassword, newPassword } = req.body;
+  res.json(adminUserUpdatePassword(token, oldPassword, newPassword));
+});
 
 // delete routers
