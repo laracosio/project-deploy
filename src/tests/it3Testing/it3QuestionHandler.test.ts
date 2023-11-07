@@ -1,6 +1,6 @@
 import { getUnixTime } from 'date-fns';
 import { person1, validQuestionInput1, validQuestionInput2, validQuizDescription, validQuizName } from '../../testingData';
-import { authRegisterRequest, clearRequest, createQuizQuestionRequest, quizCreateRequest, quizInfoRequest } from '../it2-testing/serverTestHelperIt2';
+import { authRegisterRequest, clearRequest, createQuizQuestionRequest, quizCreateRequest, quizInfoRequest } from '../it2Testing/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
 import { duplicateQuestionRequestV2, moveQuestionRequestV2 } from '../serverTestHelperIt3';
 

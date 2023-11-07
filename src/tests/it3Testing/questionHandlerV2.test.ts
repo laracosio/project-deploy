@@ -1,4 +1,4 @@
-import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../it2-testing/serverTestHelperIt2';
+import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../it2Testing/serverTestHelperIt2';
 import {
   person1, validQuizDescription, validQuizName, validCreateQuestionV2PNG, validCreateQuestionV2JPG, invalidCreateQuestionV2URLNotPNGJPG, invalidCreateQuestionV2URLEmpty, invalidCreateQuestionV2URLInvalid, validUpdateQuestionV2PNG,
   invalidCreateQuestionV2InvalidURL, invalidCreateQuestionV2EmptyURL, invalidCreateQuestionV2NotJPGPNG

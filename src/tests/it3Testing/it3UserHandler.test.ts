@@ -1,5 +1,5 @@
 import { Response } from 'sync-request-curl';
-import { authRegisterRequest, clearRequest } from '../it2-testing/serverTestHelperIt2';
+import { authRegisterRequest, clearRequest } from '../it2Testing/serverTestHelperIt2';
 import { person1, person2 } from '../../testingData';
 import { Datastore, User } from '../../dataStore';
 import fs from 'fs';
