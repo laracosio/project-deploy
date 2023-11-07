@@ -44,7 +44,7 @@ const userUpdateDetailsRequestV2 = (token: string, email: string, nameFirst: str
         nameFirst: nameFirst,
         nameLast: nameLast
       }),
-      headers: { 
+      headers: {
         'Content-type': 'application/json',
         token: token
       }
@@ -270,8 +270,8 @@ const quizListRequestV2 = (token: string): Response => {
         token: token
       }
     }
-  )
-}
+  );
+};
 
 const quizInfoRequestV2 = (token: string, quizId: number): Response => {
   return request(
@@ -282,8 +282,8 @@ const quizInfoRequestV2 = (token: string, quizId: number): Response => {
         token: token
       }
     }
-  )
-}
+  );
+};
 // #endregion
 
 // #region player handlers

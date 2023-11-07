@@ -4,6 +4,7 @@ import { person1, person2 } from '../../testingData';
 import { Datastore, User } from '../../dataStore';
 import fs from 'fs';
 import { userUpdateDetailsRequestV2, userUpdatePasswordRequestV2 } from '../serverTestHelperIt3';
+import { hashText } from '../../features/other';
 
 beforeEach(() => {
   clearRequest();
@@ -82,7 +83,7 @@ describe('PUT /v2/user/password - Success Cases', () => {
       const data: Datastore = JSON.parse(String(datastr));
       const userToken = data.tokens.find(t => t.sessionId === session1Data.token);
       const user: User = data.users.find(u => u.userId === userToken.userId);
-      expect(user.password).toStrictEqual(person2.password);
+      expect(user.password).toStrictEqual(hashText(person2.password));
     }
   });
 });
