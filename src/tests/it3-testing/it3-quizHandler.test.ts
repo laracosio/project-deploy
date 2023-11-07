@@ -1,7 +1,7 @@
 import { person1, person2, person3, validQuizDescription, validQuizName, newvalidQuizName, person4 } from '../../testingData';
-import { authRegisterRequest, clearRequest, quizCreateRequest, quizInfoRequest } from '../it2-testing/serverTestHelperIt2';
+import { authRegisterRequest, clearRequest, quizCreateRequest } from '../it2-testing/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizTransferRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2 } from '../serverTestHelperIt3';
+import { quizRemoveRequestV2, quizTransferRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2, quizInfoRequestV2 } from '../serverTestHelperIt3';
 import { getUnixTime } from 'date-fns';
 // import { HttpStatusCode } from "../../enums/HttpStatusCode";
 
@@ -55,8 +55,7 @@ describe('POST /v2/admin/quiz/{quizId}/transfer', () => {
     const sess2Data = JSON.parse(sess2.body.toString());
     const res = quizTransferRequestV2(sess1Data.token, quiz1Data.quizId, person2.email);
     expect(JSON.parse(res.body.toString())).toStrictEqual({});
-    // route to be updated once v2 made
-    const quizInfo1 = quizInfoRequest(sess2Data.token, quiz1Data.quizId);
+    const quizInfo1 = quizInfoRequestV2(sess2Data.token, quiz1Data.quizId);
     expect(quizInfo1.statusCode).toStrictEqual(200);
     expect(JSON.parse(quizInfo1.body.toString()).timeLastEdited).toBeGreaterThanOrEqual(getUnixTime(new Date()));
 
@@ -245,7 +244,7 @@ describe('GET /v2/admin/quiz/{quizid} - Success Cases', () => {
   test('valid quizId for user1', () => {
     const session1Data = JSON.parse(session1.body.toString());
     const s1QuizData = JSON.parse(s1Quiz1.body.toString());
-    const response = quizInfoRequest(session1Data.token, s1QuizData.quizId);
+    const response = quizInfoRequestV2(session1Data.token, s1QuizData.quizId);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual(
       {
@@ -263,7 +262,7 @@ describe('GET /v2/admin/quiz/{quizid} - Success Cases', () => {
   test('valid quizId for user2', () => {
     const session2Data = JSON.parse(session2.body.toString());
     const s2QuizData = JSON.parse(s2Quiz1.body.toString());
-    const response = quizInfoRequest(session2Data.token, s2QuizData.quizId);
+    const response = quizInfoRequestV2(session2Data.token, s2QuizData.quizId);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual(
       {
@@ -281,7 +280,7 @@ describe('GET /v2/admin/quiz/{quizid} - Success Cases', () => {
   test('valid quizId for user3', () => {
     const session3Data = JSON.parse(session3.body.toString());
     const s3QuizData = JSON.parse(s3Quiz1.body.toString());
-    const response = quizInfoRequest(session3Data.token, s3QuizData.quizId);
+    const response = quizInfoRequestV2(session3Data.token, s3QuizData.quizId);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual(
       {
