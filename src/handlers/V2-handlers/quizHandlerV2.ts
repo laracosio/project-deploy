@@ -14,7 +14,7 @@ quizRouterV2.post('/', (req: Request, res: Response) => {
   const token: string = req.header('token');
   const { name, description } = req.body;
   res.json(adminQuizCreate(token, name, description));
-})
+});
 
 quizRouterV2.post('/:quizid/transfer', (req: Request, res: Response) => {
   const token = req.header('token');
@@ -104,11 +104,11 @@ quizRouterV2.get('/trash', (req: Request, res: Response) => {
 quizRouterV2.get('/list', (req: Request, res: Response) => {
   const token: string = req.header('token');
   res.json(adminQuizList(token));
-})
+});
 
 quizRouterV2.get('/:quizId', (req: Request, res: Response) => {
   const token: string = req.header('token');
   const quizId: number = parseInt(req.params.quizId);
   res.json(adminQuizInfo(token, quizId));
-})
+});
 // #endregion

@@ -9,7 +9,7 @@ export const authRouterV2 = Router();
 authRouterV2.post('/logout', (req: Request, res: Response) => {
   const token: string = req.header('token');
   res.json(adminAuthLogout(token));
-})
+});
 
 // put Routers
 

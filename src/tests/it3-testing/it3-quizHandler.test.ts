@@ -148,12 +148,12 @@ describe('GET /v2/admin/quiz/list - Success Cases', () => {
     const session1Data = JSON.parse(session1.body.toString());
     s1Quiz1 = quizCreateRequestV2(session1Data.token, 'User1 Quiz1', validQuizDescription);
     s1Quiz2 = quizCreateRequestV2(session1Data.token, 'User1 Quiz2', validQuizDescription);
-    
+
     session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const session2Data = JSON.parse(session2.body.toString());
     s2Quiz1 = quizCreateRequestV2(session2Data.token, 'User2 Quiz1', validQuizDescription);
     s2Quiz2 = quizCreateRequestV2(session2Data.token, 'User2 Quiz2', validQuizDescription);
-    
+
     session3 = authRegisterRequest(person3.email, person3.password, person3.nameFirst, person3.nameLast);
     const session3Data = JSON.parse(session3.body.toString());
     s3Quiz1 = quizCreateRequestV2(session3Data.token, 'User3 Quiz1', validQuizDescription);
@@ -232,11 +232,11 @@ describe('GET /v2/admin/quiz/{quizid} - Success Cases', () => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const session1Data = JSON.parse(session1.body.toString());
     s1Quiz1 = quizCreateRequestV2(session1Data.token, 'User1 Quiz1', validQuizDescription);
-    
+
     session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const session2Data = JSON.parse(session2.body.toString());
     s2Quiz1 = quizCreateRequestV2(session2Data.token, 'User2 Quiz1', validQuizDescription);
-    
+
     session3 = authRegisterRequest(person3.email, person3.password, person3.nameFirst, person3.nameLast);
     const session3Data = JSON.parse(session3.body.toString());
     s3Quiz1 = quizCreateRequestV2(session3Data.token, 'User3 Quiz1', validQuizDescription);

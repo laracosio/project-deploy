@@ -21,7 +21,7 @@ describe('PUT /v2/user/details - Success Cases', () => {
     const response = userUpdateDetailsRequestV2(session1Data.token, person2.email, person1.nameFirst, person1.nameLast);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
-    
+
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
@@ -37,7 +37,7 @@ describe('PUT /v2/user/details - Success Cases', () => {
     const response = userUpdateDetailsRequestV2(session1Data.token, person1.email, person2.nameFirst, person1.nameLast);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
-    
+
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
@@ -53,7 +53,7 @@ describe('PUT /v2/user/details - Success Cases', () => {
     const response = userUpdateDetailsRequestV2(session1Data.token, person1.email, person1.nameFirst, person2.nameLast);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
-    
+
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
@@ -77,7 +77,7 @@ describe('PUT /v2/user/password - Success Cases', () => {
     const response = userUpdatePasswordRequestV2(session1Data.token, person1.password, person2.password);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
-    
+
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));

@@ -5,7 +5,6 @@ import { Datastore } from '../../dataStore';
 import { authLogoutRequestV2 } from '../serverTestHelperIt3';
 import fs from 'fs';
 
-
 beforeEach(() => {
   clearRequest();
 });
@@ -26,7 +25,7 @@ describe('POST /v2/admin/auth/logout - Success Cases', () => {
     const response: Response = authLogoutRequestV2(session3Data.token);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
-    
+
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
@@ -39,7 +38,7 @@ describe('POST /v2/admin/auth/logout - Success Cases', () => {
     const session1Data = JSON.parse(session1.body.toString());
     const session2Data = JSON.parse(session2.body.toString());
     const session3Data = JSON.parse(session3.body.toString());
-    
+
     authLogoutRequestV2(session1Data.token);
     authLogoutRequestV2(session2Data.token);
     const response: Response = authLogoutRequestV2(session3Data.token);
