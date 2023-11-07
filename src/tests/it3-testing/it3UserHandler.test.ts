@@ -3,7 +3,7 @@ import { authRegisterRequest, clearRequest } from '../it2-testing/serverTestHelp
 import { person1, person2 } from '../../testingData';
 import { Datastore, User } from '../../dataStore';
 import fs from 'fs';
-import { userUpdateDetailsRequestV2 } from '../serverTestHelperIt3';
+import { userUpdateDetailsRequestV2, userUpdatePasswordRequestV2 } from '../serverTestHelperIt3';
 
 beforeEach(() => {
   clearRequest();

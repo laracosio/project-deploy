@@ -51,6 +51,23 @@ const userUpdateDetailsRequestV2 = (token: string, email: string, nameFirst: str
     }
   );
 };
+
+const userUpdatePasswordRequestV2 = (token: string, oldPassword: string, newPassword: string): Response => {
+  return request(
+    'PUT',
+    SERVER_URL + '/v2/admin/user/password',
+    {
+      body: JSON.stringify({
+        oldPassword: oldPassword,
+        newPassword: newPassword
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
 // #endregion
 
 // #region quiz handlers
@@ -277,5 +294,5 @@ export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
-  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2,
+  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2
 };
