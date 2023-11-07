@@ -72,7 +72,7 @@ const authUserDetailsRequest = (token: string): Response => {
   );
 };
 
-const userUpdateDetailsResponse = (token: string, email: string, nameFirst: string, nameLast: string): Response => {
+const userUpdateDetailsRequest = (token: string, email: string, nameFirst: string, nameLast: string): Response => {
   return request(
     'PUT',
     `${SERVER_URL}/v1/admin/user/details`,
@@ -306,7 +306,7 @@ const deleteQuizQuestionRequest = (sessionId: string, quizId: number, questionId
 
 export {
   authRegisterRequest, authLoginRequest, authUserDetailsRequest, authLogoutRequest,
-  userUpdateDetailsResponse, userUpdatePasswordRequest,
+  userUpdateDetailsRequest, userUpdatePasswordRequest,
   clearRequest, quizRemoveRequest, quizCreateRequest, quizListRequest,
   quizInfoRequest, quizNameUpdateRequest, quizDescriptUpdateRequest, moveQuestionRequest,
   quizTransferRequest, createQuizQuestionRequest, duplicateQuestionRequest, updateQuizQuestionRequest,

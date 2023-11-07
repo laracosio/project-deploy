@@ -1,7 +1,7 @@
 import { Response } from 'sync-request-curl';
 import { authLoginRequest, authRegisterRequest, clearRequest } from '../it2-testing/serverTestHelperIt2';
 import { person1 } from '../../testingData';
-import { getData } from '../../dataStore';
+import { Datastore } from '../../dataStore';
 import { authLogoutRequestV2 } from '../serverTestHelperIt3';
 import fs from 'fs';
 
@@ -28,11 +28,11 @@ describe('POST /v2/admin/auth/logout - Success Cases', () => {
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
     
     if (fs.existsSync('datastore.json')) {
-      const datastr = fs.readFileSync('./datastore.json');
-      const data = JSON.parse(String(datastr));
-      expect(data.tokens.includes(session1Data.token)).toStrictEqual(true);
-      expect(data.tokens.includes(session2Data.token)).toStrictEqual(true);
-      expect(data.tokens.includes(session3Data.token)).toStrictEqual(false);
+      const datastr: Buffer = fs.readFileSync('./datastore.json');
+      const dataStore: Datastore = JSON.parse(String(datastr));
+      expect(dataStore.tokens.some(user => user.sessionId === session1Data.token)).toStrictEqual(true);
+      expect(dataStore.tokens.some(user => user.sessionId === session2Data.token)).toStrictEqual(true);
+      expect(dataStore.tokens.some(user => user.sessionId === session3Data.token)).toStrictEqual(false);
     }
   });
   test('Token was successfully removed from dataStore - multiple logouts from multiple sessions for same user', () => {
@@ -47,11 +47,11 @@ describe('POST /v2/admin/auth/logout - Success Cases', () => {
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
 
     if (fs.existsSync('datastore.json')) {
-      const datastr = fs.readFileSync('./datastore.json');
-      const data = JSON.parse(String(datastr));
-      expect(data.tokens.includes(session1Data.token)).toStrictEqual(false);
-      expect(data.tokens.includes(session2Data.token)).toStrictEqual(false);
-      expect(data.tokens.includes(session3Data.token)).toStrictEqual(false);
+      const datastr: Buffer = fs.readFileSync('./datastore.json');
+      const dataStore: Datastore = JSON.parse(String(datastr));
+      expect(dataStore.tokens.some(user => user.sessionId === session1Data.token)).toStrictEqual(false);
+      expect(dataStore.tokens.some(user => user.sessionId === session2Data.token)).toStrictEqual(false);
+      expect(dataStore.tokens.some(user => user.sessionId === session3Data.token)).toStrictEqual(false);
     }
   });
 });
