@@ -64,3 +64,25 @@ describe('PUT /v2/user/details - Success Cases', () => {
     }
   });
 });
+
+// updateUserPassword test
+describe('PUT /v2/user/password - Success Cases', () => {
+  let session1: Response;
+  beforeEach(() => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+  });
+  test('password updated', () => {
+    const session1Data = JSON.parse(session1.body.toString());
+    const response = userUpdatePasswordRequestV2(session1Data.token, person1.password, person2.password);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({});
+    
+    if (fs.existsSync('datastore.json')) {
+      const datastr: Buffer = fs.readFileSync('./datastore.json');
+      const data: Datastore = JSON.parse(String(datastr));
+      const userToken = data.tokens.find(t => t.sessionId === session1Data.token);
+      const user: User = data.users.find(u => u.userId === userToken.userId);
+      expect(user.password).toStrictEqual(person2.password);
+    }
+  });
+});
