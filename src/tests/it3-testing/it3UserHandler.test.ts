@@ -23,9 +23,9 @@ describe('PUT /v2/user/details - Success Cases', () => {
     
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
-      const dataStore: Datastore = JSON.parse(String(datastr));
-      console.log(dataStore.tokens.find(t => t.sessionId === session1Data.token));
-      const user: User = dataStore.users.find(u => u.userId === session1Data.userId);
+      const data: Datastore = JSON.parse(String(datastr));
+      const userToken = data.tokens.find(t => t.sessionId === session1Data.token);
+      const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.email).toStrictEqual(person2.email);
       expect(user.nameFirst).toStrictEqual(person1.nameFirst);
       expect(user.nameLast).toStrictEqual(person1.nameLast);
@@ -39,9 +39,9 @@ describe('PUT /v2/user/details - Success Cases', () => {
     
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
-      const dataStore: Datastore = JSON.parse(String(datastr));
-      console.log(dataStore.tokens.find(t => t.sessionId === session1Data.token));
-      const user: User = dataStore.users.find(u => u.userId === session1Data.userId);
+      const data: Datastore = JSON.parse(String(datastr));
+      const userToken = data.tokens.find(t => t.sessionId === session1Data.token);
+      const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.email).toStrictEqual(person1.email);
       expect(user.nameFirst).toStrictEqual(person2.nameFirst);
       expect(user.nameLast).toStrictEqual(person1.nameLast);
@@ -55,9 +55,9 @@ describe('PUT /v2/user/details - Success Cases', () => {
     
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
-      const dataStore: Datastore = JSON.parse(String(datastr));
-      console.log(dataStore.tokens.find(t => t.sessionId === session1Data.token));
-      const user: User = dataStore.users.find(u => u.userId === session1Data.userId);
+      const data: Datastore = JSON.parse(String(datastr));
+      const userToken = data.tokens.find(t => t.sessionId === session1Data.token);
+      const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.email).toStrictEqual(person1.email);
       expect(user.nameFirst).toStrictEqual(person1.nameFirst);
       expect(user.nameLast).toStrictEqual(person2.nameLast);
