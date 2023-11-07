@@ -214,6 +214,18 @@ const quizCreateRequestV2 = (token: string, name: string, description: string): 
     }
   );
 };
+
+const quizListRequestV2 = (token: string): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v2/admin/quiz/list`,
+    {
+      headers: {
+        token: token
+      }
+    }
+  )
+}
 // #endregion
 
 // #region player handlers
@@ -223,5 +235,5 @@ const quizCreateRequestV2 = (token: string, name: string, description: string): 
 export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
-  quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2
+  quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2
 };
