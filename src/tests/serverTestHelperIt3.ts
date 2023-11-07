@@ -18,6 +18,19 @@ const authUserDetailsRequestV2 = (token: string): Response => {
     }
   );
 };
+
+const authLogoutRequestV2 = (token: string): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v2/admin/auth/logout`,
+    {
+      headers: {
+        token: token
+      }
+    }
+  );
+};
+
 // #endregion
 
 // #region user handlers
@@ -248,5 +261,5 @@ export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
-  quizInfoRequestV2
+  quizInfoRequestV2, authLogoutRequestV2
 };
