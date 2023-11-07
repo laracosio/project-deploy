@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash } from '../../features/trash';
-import { adminQuizTransferOwner, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizCreate } from '../../features/quiz';
+import { adminQuizTransferOwner, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizList } from '../../features/quiz';
 import { adminDuplicateQuestion, adminMoveQuestion, quizUpdateQuestion, quizCreateQuestion } from '../../features/question';
 
 export const quizRouterV2 = Router();
@@ -100,4 +100,9 @@ quizRouterV2.get('/trash', (req: Request, res: Response) => {
   const token = req.header('token');
   res.json(adminQuizViewTrash(token));
 });
+
+quizRouterV2.get('/list', (req: Request, res: Response) => {
+  const token = req.header('token');
+  res.json(adminQuizList(token));
+})
 // #endregion
