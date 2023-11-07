@@ -201,7 +201,7 @@ const quizEmptyTrashRequestV2 = (token: string, quizIds: string): Response => {
 const quizCreateRequestV2 = (token: string, name: string, description: string): Response => {
   return request(
     'POST',
-    SERVER_URL + 'v2/admin/quiz',
+    `${SERVER_URL}/v2/admin/quiz`,
     {
       body: JSON.stringify({
         name: name,

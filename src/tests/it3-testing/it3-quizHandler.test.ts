@@ -110,7 +110,7 @@ describe('adminQuizDescriptionUpdate - Success Cases', () => {
 
 // adminQuizCreate tests
 describe('POST /v2/admin/quiz - Success Cases', () => {
-  let session1: Response, session2: Response, session3: Response;
+  let session1: Response, session2: Response;
   beforeEach(() => {
     session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
@@ -138,4 +138,86 @@ describe('POST /v2/admin/quiz - Success Cases', () => {
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({ quizId: expect.any(Number) });
   });
-})
+});
+
+// adminQuizList tests
+describe('GET /v2/admin/quiz/list - Success Cases', () => {
+  let session1: Response, session2: Response, session3: Response;
+  let s1Quiz1: Response, s1Quiz2: Response, s2Quiz1: Response, s2Quiz2: Response, s3Quiz1: Response, s3Quiz2: Response;
+  beforeEach(() => {
+    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const session1Data = JSON.parse(session1.body.toString());
+    s1Quiz1 = quizCreateRequestV2(session1Data.token, 'User1 Quiz1', validQuizDescription);
+    s1Quiz2 = quizCreateRequestV2(session1Data.token, 'User1 Quiz2', validQuizDescription);
+    
+    session2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const session2Data = JSON.parse(session2.body.toString());
+    s2Quiz1 = quizCreateRequestV2(session2Data.token, 'User2 Quiz1', validQuizDescription);
+    s2Quiz2 = quizCreateRequestV2(session2Data.token, 'User2 Quiz2', validQuizDescription);
+    
+    session3 = authRegisterRequest(person3.email, person3.password, person3.nameFirst, person3.nameLast);
+    const session3Data = JSON.parse(session3.body.toString());
+    s3Quiz1 = quizCreateRequestV2(session3Data.token, 'User3 Quiz1', validQuizDescription);
+    s3Quiz2 = quizCreateRequestV2(session3Data.token, 'User3 Quiz2', validQuizDescription);
+  });
+  test('valid user1 list', () => {
+    const s1Quiz1Data = JSON.parse(s1Quiz1.body.toString());
+    const s1Quiz2Data = JSON.parse(s1Quiz2.body.toString());
+    const response = quizListRequestV2(userData.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual(
+      {
+        quizzes: [
+          {
+            quizId: s1Quiz1Data.quizId,
+            name: 'User1 Quiz1',
+          },
+          {
+            quizId: s1Quiz2Data.quizId,
+            name: 'User1 Quiz2',
+          },
+        ]
+      }
+    );
+  });
+  test('valid user2 list', () => {
+    const s2Quiz1Data = JSON.parse(s2Quiz1.body.toString());
+    const s2Quiz2Data = JSON.parse(s2Quiz2.body.toString());
+    const response = quizListRequestV2(userData.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual(
+      {
+        quizzes: [
+          {
+            quizId: s2Quiz1Data.quizId,
+            name: 'User2 Quiz1',
+          },
+          {
+            quizId: s2Quiz2Data.quizId,
+            name: 'User2 Quiz2',
+          },
+        ]
+      }
+    );
+  });
+  test('valid user3 list', () => {
+    const s3Quiz1Data = JSON.parse(s3Quiz1.body.toString());
+    const s3Quiz2Data = JSON.parse(s3Quiz2.body.toString());
+    const response = quizListRequestV2(userData.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual(
+      {
+        quizzes: [
+          {
+            quizId: s3Quiz1Data.quizId,
+            name: 'User3 Quiz1',
+          },
+          {
+            quizId: s3Quiz2Data.quizId,
+            name: 'User3 Quiz2',
+          },
+        ]
+      }
+    );
+  });
+});
