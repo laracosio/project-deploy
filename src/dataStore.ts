@@ -39,7 +39,7 @@ export interface Question {
   questionId: number,
   question: string,
   duration: number,
-  thumbnailUrl: string,
+  thumbnailUrl?: string,
   points: number,
   answers: Answer[],
   playersCorrectList: string[],
@@ -57,7 +57,7 @@ export interface Quiz {
   numQuestions: number,
   questions: Question[],
   quizDuration: number,
-  thumbnailUrl: string
+  thumbnailUrl?: string
 }
 
 export interface Player {

@@ -1,7 +1,7 @@
-import { person1, person2, person3, validQuizDescription, validQuizName, newvalidQuizName } from '../../../testingData';
-import { authRegisterRequest, clearRequest, quizCreateRequest } from '../../it2Testing/serverTestHelperIt2';
+import { person1, person2, person3, validQuizDescription, validQuizName, newvalidQuizName, validQuestionInput1, validQuestionInput2, validQuestionInput1V2, validQuestionInput2V2 } from '../../../testingData';
+import { authRegisterRequest, clearRequest, createQuizQuestionRequest, quizCreateRequest, quizInfoRequest } from '../../it2Testing/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizTransferRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2, quizInfoRequestV2 } from '../../serverTestHelperIt3';
+import { quizRemoveRequestV2, quizTransferRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2, quizInfoRequestV2, createQuizQuestionRequestV2 } from '../../serverTestHelperIt3';
 import { getUnixTime } from 'date-fns';
 // import { HttpStatusCode } from "../../enums/HttpStatusCode";
 
@@ -266,4 +266,125 @@ describe('GET /v2/admin/quiz/{quizid} - Success Cases', () => {
       }
     );
   });
+});
+
+describe('Testing V1 vs V2 differences with thumbnailurl for quizInfo', () => {
+  test('QuizInfo v1 - no thumbnails', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const quiz = quizCreateRequest(userData.token, validQuizName, validQuizDescription);
+    const quizData = JSON.parse(quiz.body.toString());
+    const quest1 = createQuizQuestionRequest(quizData.quizId, userData.token, validQuestionInput1);
+    const quest2 = createQuizQuestionRequest(quizData.quizId, userData.token, validQuestionInput2);
+    const quest1Data = JSON.parse(quest1.body.toString());
+    const quest2Data = JSON.parse(quest2.body.toString());
+    const response = quizInfoRequest(userData.token, quizData.quizId);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({
+      quizId: quizData.quizId,
+      name: validQuizName,
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: validQuizDescription,
+      numQuestions: expect.any(Number),
+      questions: [
+        {
+          questionId: quest1Data.questionId,
+          question: validQuestionInput1.question,
+          duration: validQuestionInput1.duration,
+          points: validQuestionInput1.points,
+          answers: expect.any(Array),
+        },
+        {
+          questionId: quest2Data.questionId,
+          question: validQuestionInput2.question,
+          duration: validQuestionInput2.duration,
+          points: validQuestionInput2.points,
+          answers: expect.any(Array),
+        }
+      ],
+      duration: validQuestionInput1.duration + validQuestionInput2.duration,
+    });
+  });
+  test('QuizInfo v2 - no quiz thumbnail, yes question thumbnail', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const quiz = quizCreateRequestV2(userData.token, validQuizName, validQuizDescription);
+    const quizData = JSON.parse(quiz.body.toString());
+    const quest1 = createQuizQuestionRequestV2(quizData.quizId, userData.token, validQuestionInput1V2);
+    const quest2 = createQuizQuestionRequestV2(quizData.quizId, userData.token, validQuestionInput2V2);
+    const quest1Data = JSON.parse(quest1.body.toString());
+    const quest2Data = JSON.parse(quest2.body.toString());
+    const response = quizInfoRequestV2(userData.token, quizData.quizId);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({
+      quizId: quizData.quizId,
+      name: validQuizName,
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: validQuizDescription,
+      numQuestions: expect.any(Number),
+      questions: [
+        {
+          questionId: quest1Data.questionId,
+          question: validQuestionInput1V2.question,
+          duration: validQuestionInput1V2.duration,
+          points: validQuestionInput1V2.points,
+          answers: expect.any(Array),
+          thumbnailUrl: validQuestionInput1V2.thumbnailUrl
+        },
+        {
+          questionId: quest2Data.questionId,
+          question: validQuestionInput2V2.question,
+          duration: validQuestionInput2V2.duration,
+          points: validQuestionInput2V2.points,
+          answers: expect.any(Array),
+          thumbnailUrl: validQuestionInput2V2.thumbnailUrl
+        }
+      ],
+      duration: validQuestionInput1.duration + validQuestionInput2.duration,
+    });
+  });
+// test('QuizInfo v2 - yes quiz thumbnail, yes question thumbnail', () => {
+//   const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+//   const userData = JSON.parse(user.body.toString());
+//   const quiz = quizCreateRequestV2(userData.token, validQuizName, validQuizDescription);
+//   const quizData = JSON.parse(quiz.body.toString());
+//   const quest1 = createQuizQuestionRequestV2(quizData.quizId, userData.token, validQuestionInput1V2);
+//   const quest2 = createQuizQuestionRequestV2(quizData.quizId, userData.token, validQuestionInput2V2);
+//   const quest1Data = JSON.parse(quest1.body.toString());
+//   const quest2Data = JSON.parse(quest2.body.toString());
+//   // INCLUDE CODE TO ADD A QUIZ THUMBNAIL
+//   const response = quizInfoRequestV2(userData.token, quizData.quizId);
+//   expect(response.statusCode).toStrictEqual(200);
+//   console.log('v2', JSON.parse(response.body.toString()));
+//   expect(JSON.parse(response.body.toString())).toStrictEqual({
+//       quizId: quizData.quizId,
+//       name: validQuizName,
+//       timeCreated: expect.any(Number),
+//       timeLastEdited: expect.any(Number),
+//       description: validQuizDescription,
+//       numQuestions: expect.any(Number),
+//       questions: [
+//         {
+//           questionId: quest1Data.questionId,
+//           question: validQuestionInput1V2.question,
+//           duration: validQuestionInput1V2.duration,
+//           points: validQuestionInput1V2.points,
+//           answers: expect.any(Array),
+//           thumbnailUrl: validQuestionInput1V2.thumbnailUrl
+//         },
+//         {
+//           questionId: quest2Data.questionId,
+//           question: validQuestionInput2V2.question,
+//           duration: validQuestionInput2V2.duration,
+//           points: validQuestionInput2V2.points,
+//           answers: expect.any(Array),
+//           thumbnailUrl: validQuestionInput2V2.thumbnailUrl
+//         }
+//       ],
+//       duration: validQuestionInput1.duration + validQuestionInput2.duration,
+//       thumbnail: // INCLUDE SOME STRING HERE
+//   });
+//   });
 });
