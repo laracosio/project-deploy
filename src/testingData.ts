@@ -126,6 +126,69 @@ const validQuestionInput3: QuestionCreate = {
   ]
 };
 
+const validQuestionInput1V2: QuestionCreate = {
+  question: 'Who is the Monarch of England?',
+  duration: 4,
+  points: 5,
+  answers: [
+    { answer: 'Prince Charles', correct: true },
+    { answer: 'Shrek', correct: false },
+    { answer: 'Prince Charming', correct: false },
+    { answer: 'Rumpelstiltskin', correct: false },
+  ],
+  thumbnailUrl: 'http://google.com/some/image/path1.jpg'
+};
+
+const validQuestionInput2V2: QuestionCreate = {
+  question: 'Who ended the War of Roses?',
+  duration: 5,
+  points: 6,
+  answers: [
+    {
+      answer: 'Margaret Beaufort',
+      correct: false
+    },
+    {
+      answer: 'Thomas Cromwell',
+      correct: false
+    },
+    {
+      answer: 'Henry Tudor',
+      correct: true
+    },
+    {
+      answer: 'Richard Plantagenet',
+      correct: false
+    }
+  ],
+  thumbnailUrl: 'http://google.com/some/image/path2.jpg'
+};
+
+const validQuestionInput3V2: QuestionCreate = {
+  question: 'Who was Queen Victoria married to?',
+  duration: 2,
+  points: 4,
+  answers: [
+    {
+      answer: 'George Windsor',
+      correct: false
+    },
+    {
+      answer: 'Leopold I',
+      correct: false
+    },
+    {
+      answer: 'Philip of Greece',
+      correct: false
+    },
+    {
+      answer: 'Albert of SCG',
+      correct: true
+    }
+  ],
+  thumbnailUrl: 'http://google.com/some/image/path3.jpg'
+};
+
 const validCreateQuestion: QuestionCreate = {
   question: 'Who is laras best boy cat?',
   duration: 1,
@@ -566,6 +629,9 @@ export {
   validQuestionInput1,
   validQuestionInput2,
   validQuestionInput3,
+  validQuestionInput1V2,
+  validQuestionInput2V2,
+  validQuestionInput3V2,
   validCreateQuestion,
   invalidQCShortQuestion,
   invalidQCLongQuestion,
