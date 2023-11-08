@@ -532,7 +532,7 @@ const invalidCreateQuestionV2InvalidURL: QuestionCreate = {
     { answer: 'Coco', correct: false },
     { answer: 'Bob', correct: false },
   ],
-  thumbnailUrl: 'klrgjoirjgioerhbie.jpg'
+  thumbnailUrl: 'https://www.google.com/some/picture/ad16rgb.png'
 };
 
 const invalidCreateQuestionV2NotJPGPNG: QuestionCreate = {
@@ -592,7 +592,7 @@ const invalidCreateQuestionV2URLInvalid: QuestionCreate = {
     { answer: 'Coco', correct: false },
     { answer: 'Bob', correct: false },
   ],
-  thumbnailUrl: 'https://www.fnordware.conggrad16rgb.png'
+  thumbnailUrl: 'https://www.fnordware.com/ggrad16rgb.png'
 };
 
 const invalidCreateQuestionV2URLNotPNGJPG: QuestionCreate = {

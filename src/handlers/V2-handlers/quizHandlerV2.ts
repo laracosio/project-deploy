@@ -24,6 +24,7 @@ quizRouterV2.post('/:quizid/transfer', (req: Request, res: Response) => {
 });
 
 quizRouterV2.post('/:quizId/question', (req: Request, res: Response) => {
+  console.log('Entered server');
   const quizId = parseInt(req.params.quizId);
   const token = req.header('token');
   const { questionBody } = req.body;
