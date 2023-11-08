@@ -18,6 +18,7 @@ import { authRouterV2 } from './handlers/V2-handlers/authHandlerV2';
 import { quizRouterV2 } from './handlers/V2-handlers/quizHandlerV2';
 import { userRouterV2 } from './handlers/V2-handlers/userHandlerV2';
 import { setData } from './dataStore';
+import { playerRouter } from './handlers/V1-handlers/playerHandlerV1';
 
 // Set up web app
 const app = express();
@@ -50,6 +51,7 @@ app.use('/v1/admin/quiz', quizRouterV1);
 app.use('/v1/admin/auth', authRouterV1);
 app.use('/v1/admin/user', userRouterV1);
 app.use('/v1/clear', otherRouter);
+app.use('/v1/player', playerRouter);
 
 app.use('/v2/admin/quiz', quizRouterV2);
 app.use('/v2/admin/auth', authRouterV2);

@@ -112,6 +112,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     points: questionBody.points,
     answers: arrayOfAnswers,
     thumbnailUrl: '', // question create to update - please remove comment later
+    playersCorrectList: [],
     averageAnswerTime: 0,
     percentCorrect: 0
   };
@@ -318,6 +319,7 @@ function adminDuplicateQuestion (sessionId: string, quizId: number, questionId: 
     points: questionToCopy.points,
     answers: questionToCopy.answers,
     thumbnailUrl: questionToCopy.thumbnailUrl,
+    playersCorrectList: questionToCopy.playersCorrectList,
     averageAnswerTime: questionToCopy.averageAnswerTime,
     percentCorrect: questionToCopy.percentCorrect
   };
