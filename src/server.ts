@@ -51,7 +51,7 @@ app.use('/v1/admin/quiz', quizRouterV1);
 app.use('/v1/admin/auth', authRouterV1);
 app.use('/v1/admin/user', userRouterV1);
 app.use('/v1/clear', otherRouter);
-app.use('/v1/player', playerRouter)
+app.use('/v1/player', playerRouter);
 
 app.use('/v2/admin/quiz', quizRouterV2);
 app.use('/v2/admin/auth', authRouterV2);
