@@ -1,8 +1,16 @@
-import { Question, Quiz, getData } from '../dataStore';
+import { Answer, Question, Quiz, getData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
 import { findQuizById, findToken, openSessionQuizzesState, setAndSave, tokenValidation } from './other';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
+interface QuestionInfoReturn {
+  questionId: number,
+  question: string,
+  duration: number, 
+  thumbnailUrl?: string, 
+  points: number, 
+  answers: Answer[],
+}
 
 interface QuizInfoReturn {
   quizId: number,
@@ -11,8 +19,9 @@ interface QuizInfoReturn {
   timeLastEdited: number,
   description: string,
   numQuestions: number,
-  questions: Question[],
+  questions: QuestionInfoReturn[],
   duration: number,
+  thumbnailUrl?: string
 }
 
 interface QuizCreateReturn {
@@ -136,6 +145,15 @@ function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
 
   const quizMatch = dataStore.quizzes.find((q) => (q.quizOwner === matchedToken.userId && q.quizId === quizId));
 
+  const filteredQuestionInfo: QuestionInfoReturn[] = quizMatch.questions.map(key => ({
+    questionId: key.questionId,
+    question: key.question,
+    duration: key.duration, 
+    thumbnailUrl: key.thumbnailUrl, 
+    points: key.points,
+    answers: key.answers
+  }));
+
   return {
     quizId: quizMatch.quizId,
     name: quizMatch.name,
@@ -143,8 +161,9 @@ function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
     timeLastEdited: quizMatch.timeLastEdited,
     description: quizMatch.description,
     numQuestions: quizMatch.numQuestions,
-    questions: quizMatch.questions,
-    duration: quizMatch.quizDuration
+    questions: filteredQuestionInfo,
+    duration: quizMatch.quizDuration,
+    thumbnailUrl: quizMatch.thumbnailUrl
   };
 }
 
