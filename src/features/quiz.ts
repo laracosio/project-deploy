@@ -1,4 +1,4 @@
-import { Answer, Question, Quiz, getData } from '../dataStore';
+import { Answer, Quiz, getData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
 import { findQuizById, findToken, openSessionQuizzesState, setAndSave, tokenValidation } from './other';
 import { ApiError } from '../errors/ApiError';
@@ -6,9 +6,9 @@ import { HttpStatusCode } from '../enums/HttpStatusCode';
 interface QuestionInfoReturn {
   questionId: number,
   question: string,
-  duration: number, 
-  thumbnailUrl?: string, 
-  points: number, 
+  duration: number,
+  thumbnailUrl?: string,
+  points: number,
   answers: Answer[],
 }
 
@@ -148,13 +148,13 @@ function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
   const filteredQuestionInfo: QuestionInfoReturn[] = quizMatch.questions.map(key => ({
     questionId: key.questionId,
     question: key.question,
-    duration: key.duration, 
-    thumbnailUrl: key.thumbnailUrl, 
+    duration: key.duration,
+    thumbnailUrl: key.thumbnailUrl,
     points: key.points,
     answers: key.answers
   }));
 
-  return {
+  const filteredQuizInfo: QuizInfoReturn = {
     quizId: quizMatch.quizId,
     name: quizMatch.name,
     timeCreated: quizMatch.timeCreated,
@@ -163,8 +163,13 @@ function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
     numQuestions: quizMatch.numQuestions,
     questions: filteredQuestionInfo,
     duration: quizMatch.quizDuration,
-    thumbnailUrl: quizMatch.thumbnailUrl
   };
+
+  if (quizMatch.thumbnailUrl) {
+    filteredQuizInfo.thumbnailUrl = quizMatch.thumbnailUrl;
+  }
+
+  return filteredQuizInfo;
 }
 
 /**
