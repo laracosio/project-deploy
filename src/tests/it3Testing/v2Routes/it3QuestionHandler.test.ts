@@ -3,7 +3,7 @@ import { invalidCreateQuestionV2EmptyURL, invalidCreateQuestionV2InvalidURL, inv
 import { authLoginRequest, authRegisterRequest, clearRequest, createQuizQuestionRequest, quizCreateRequest, quizInfoRequest } from '../../it2Testing/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
 import { createQuizQuestionRequestV2, duplicateQuestionRequestV2, moveQuestionRequestV2, updateQuizQuestionRequestV2 } from '../../serverTestHelperIt3';
-
+import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 beforeEach(() => {
   clearRequest();
 });
@@ -125,6 +125,7 @@ describe('Successful tests: Create a quiz question V2', () => {
 
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ questionId: expect.any(Number) });
+    expect(res.statusCode).toBe(HttpStatusCode.OK);
   });
   test('Create a Quiz Question test - png', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
@@ -136,6 +137,7 @@ describe('Successful tests: Create a quiz question V2', () => {
     const res = createQuizQuestionRequestV2(quizIdParsed.quizId, personLoginParsed.token, validCreateQuestionV2JPG);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ questionId: expect.any(Number) });
+    expect(res.statusCode).toBe(HttpStatusCode.OK);
   });
 });
 
@@ -151,9 +153,10 @@ describe('Unsuccessful tests (400): Create a quiz question V2', () => {
 
     const data = JSON.parse(res.body.toString());
 
+    expect(res.statusCode).toBe(HttpStatusCode.BAD_REQUEST);
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
-  test('Unsuccessful (400): The thumbnailUrl is an JPG/PNG', () => {
+  test('Unsuccessful (400): The thumbnailUrl is  not an JPG/PNG', () => {
     authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
@@ -163,7 +166,7 @@ describe('Unsuccessful tests (400): Create a quiz question V2', () => {
     const res = createQuizQuestionRequestV2(quizIdParsed.quizId, personLoginParsed.token, invalidCreateQuestionV2URLNotPNGJPG);
 
     const data = JSON.parse(res.body.toString());
-
+    expect(res.statusCode).toBe(HttpStatusCode.BAD_REQUEST);
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccessful (400): The thumbnailUrl is invalid', () => {
@@ -176,7 +179,7 @@ describe('Unsuccessful tests (400): Create a quiz question V2', () => {
     const res = createQuizQuestionRequestV2(quizIdParsed.quizId, personLoginParsed.token, invalidCreateQuestionV2URLInvalid);
 
     const data = JSON.parse(res.body.toString());
-
+    expect(res.statusCode).toBe(HttpStatusCode.BAD_REQUEST);
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });
@@ -194,6 +197,7 @@ describe('Successful tests: Update a quiz question V2', () => {
 
     const res = updateQuizQuestionRequestV2(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, validUpdateQuestionV2PNG);
     const data = JSON.parse(res.body.toString());
+    expect(res.statusCode).toBe(HttpStatusCode.OK);
     expect(data).toStrictEqual({});
   });
 });
@@ -201,6 +205,7 @@ describe('Successful tests: Update a quiz question V2', () => {
 // update
 describe('Unsuccessful tests (400): Update a quiz question V2', () => {
   test('Unsuccessful (400): The thumbnailUrl is an empty string', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
     const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
@@ -210,9 +215,11 @@ describe('Unsuccessful tests (400): Update a quiz question V2', () => {
 
     const res = updateQuizQuestionRequestV2(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidCreateQuestionV2EmptyURL);
     const data = JSON.parse(res.body.toString());
+    expect(res.statusCode).toBe(HttpStatusCode.BAD_REQUEST);
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccessful (400): The thumbnailUrl is an JPG/PNG', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
     const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
@@ -222,9 +229,11 @@ describe('Unsuccessful tests (400): Update a quiz question V2', () => {
 
     const res = updateQuizQuestionRequestV2(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidCreateQuestionV2NotJPGPNG);
     const data = JSON.parse(res.body.toString());
+    expect(res.statusCode).toBe(HttpStatusCode.BAD_REQUEST);
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
   test('Unsuccessful (400): The thumbnailUrl is invalid', () => {
+    authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const personLogin = authLoginRequest(person1.email, person1.password);
     const personLoginParsed = JSON.parse(personLogin.body.toString());
     const quizId = quizCreateRequest(personLoginParsed.token, validQuizName, validQuizDescription);
@@ -234,6 +243,7 @@ describe('Unsuccessful tests (400): Update a quiz question V2', () => {
 
     const res = updateQuizQuestionRequestV2(quizIdParsed.quizId, createQuestionParsed.questionId, personLoginParsed.token, invalidCreateQuestionV2InvalidURL);
     const data = JSON.parse(res.body.toString());
+    expect(res.statusCode).toBe(HttpStatusCode.BAD_REQUEST);
     expect(data).toStrictEqual({ error: expect.any(String) });
   });
 });

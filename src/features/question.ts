@@ -272,6 +272,7 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
 
   const questionToUpdate = quiz.questions.find(question => question.questionId === questionId);
   questionToUpdate.question = questionBody.question;
+  questionToUpdate.thumbnailUrl = questionBody.thumbnailUrl;
   questionToUpdate.points = questionBody.points;
   questionToUpdate.duration = questionBody.duration;
   questionToUpdate.answers = arrayOfAnswers;
