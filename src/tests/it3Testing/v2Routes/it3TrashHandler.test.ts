@@ -1,7 +1,7 @@
-import { person1, validQuizDescription, validQuizName, stringOf1QuizIDs, stringOf2QuizIDs } from '../../testingData';
-import { authRegisterRequest, clearRequest, quizCreateRequest } from '../it2Testing/serverTestHelperIt2';
+import { person1, validQuizDescription, validQuizName, stringOf1QuizIDs, stringOf2QuizIDs } from '../../../testingData';
+import { authRegisterRequest, clearRequest, quizCreateRequest } from '../../it2Testing/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, quizEmptyTrashRequestV2 } from '../serverTestHelperIt3';
+import { quizRemoveRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, quizEmptyTrashRequestV2 } from '../../serverTestHelperIt3';
 // import { HttpStatusCode } from "../../enums/HttpStatusCode";
 
 beforeEach(() => {

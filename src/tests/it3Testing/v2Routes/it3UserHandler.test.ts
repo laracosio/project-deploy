@@ -1,10 +1,10 @@
 import { Response } from 'sync-request-curl';
-import { authRegisterRequest, clearRequest } from '../it2Testing/serverTestHelperIt2';
-import { person1, person2 } from '../../testingData';
-import { Datastore, User } from '../../dataStore';
+import { authRegisterRequest, clearRequest } from '../../it2Testing/serverTestHelperIt2';
+import { person1, person2 } from '../../../testingData';
+import { Datastore, User } from '../../../dataStore';
 import fs from 'fs';
-import { userUpdateDetailsRequestV2, userUpdatePasswordRequestV2 } from '../serverTestHelperIt3';
-import { hashText } from '../../features/other';
+import { userUpdateDetailsRequestV2, userUpdatePasswordRequestV2 } from '../../serverTestHelperIt3';
+import { hashText } from '../../../features/other';
 
 beforeEach(() => {
   clearRequest();

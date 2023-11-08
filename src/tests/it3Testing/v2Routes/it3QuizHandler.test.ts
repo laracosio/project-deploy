@@ -1,7 +1,7 @@
-import { person1, person2, person3, validQuizDescription, validQuizName, newvalidQuizName } from '../../testingData';
-import { authRegisterRequest, clearRequest, quizCreateRequest } from '../it2Testing/serverTestHelperIt2';
+import { person1, person2, person3, validQuizDescription, validQuizName, newvalidQuizName } from '../../../testingData';
+import { authRegisterRequest, clearRequest, quizCreateRequest } from '../../it2Testing/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizTransferRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2, quizInfoRequestV2 } from '../serverTestHelperIt3';
+import { quizRemoveRequestV2, quizTransferRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2, quizInfoRequestV2 } from '../../serverTestHelperIt3';
 import { getUnixTime } from 'date-fns';
 // import { HttpStatusCode } from "../../enums/HttpStatusCode";
 
