@@ -136,7 +136,7 @@ const validQuestionInput1V2: QuestionCreate = {
     { answer: 'Prince Charming', correct: false },
     { answer: 'Rumpelstiltskin', correct: false },
   ],
-  thumbnailUrl: 'http://google.com/some/image/path1.jpg'
+  thumbnailUrl: 'https://i.imgur.com/LIEpjAp.jpg'
 };
 
 const validQuestionInput2V2: QuestionCreate = {
@@ -161,7 +161,7 @@ const validQuestionInput2V2: QuestionCreate = {
       correct: false
     }
   ],
-  thumbnailUrl: 'http://google.com/some/image/path2.jpg'
+  thumbnailUrl: 'https://www.historic-uk.com/wp-content/uploads/2018/11/henry-Vii.jpg'
 };
 
 const validQuestionInput3V2: QuestionCreate = {
@@ -186,7 +186,7 @@ const validQuestionInput3V2: QuestionCreate = {
       correct: true
     }
   ],
-  thumbnailUrl: 'http://google.com/some/image/path3.jpg'
+  thumbnailUrl: 'https://i.redd.it/ke4avpej4a481.jpg'
 };
 
 const validCreateQuestion: QuestionCreate = {
