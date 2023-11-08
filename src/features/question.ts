@@ -111,7 +111,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     duration: questionBody.duration,
     points: questionBody.points,
     answers: arrayOfAnswers,
-    thumbnailUrl: '', // question create to update - please remove comment later
+    thumbnailUrl: questionBody.thumbnailUrl,
     playersCorrectList: [],
     averageAnswerTime: 0,
     percentCorrect: 0
@@ -272,6 +272,7 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
 
   const questionToUpdate = quiz.questions.find(question => question.questionId === questionId);
   questionToUpdate.question = questionBody.question;
+  questionToUpdate.thumbnailUrl = questionBody.thumbnailUrl;
   questionToUpdate.points = questionBody.points;
   questionToUpdate.duration = questionBody.duration;
   questionToUpdate.answers = arrayOfAnswers;
