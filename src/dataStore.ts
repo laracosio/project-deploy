@@ -42,6 +42,7 @@ export interface Question {
   thumbnailUrl: string,
   points: number,
   answers: Answer[],
+  playersCorrectList: string[],
   averageAnswerTime: number,
   percentCorrect: number
 }
@@ -65,6 +66,13 @@ export interface Player {
   playerScore: number
 }
 
+export interface Message {
+  messagebody: string,
+  playerId: number,
+  playerName: string,
+  timeSent: number
+}
+
 export interface Session {
   sessionId: number,
   sessionQuiz: Quiz
@@ -72,6 +80,7 @@ export interface Session {
   autoStartNum: number,
   atQuestion: number,
   sessionPlayers: Player[]
+  messages: Message[]
 }
 
 export interface Token {
