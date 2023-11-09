@@ -106,7 +106,6 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
     numQuestions: 0,
     questions: [],
     quizDuration: 0,
-    thumbnailUrl: '' // quizCreate to update - please remove comment later
   };
 
   dataStore.quizzes.push(newQuiz);
@@ -163,11 +162,8 @@ function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
     numQuestions: quizMatch.numQuestions,
     questions: filteredQuestionInfo,
     duration: quizMatch.quizDuration,
+    thumbnailUrl: quizMatch.thumbnailUrl,
   };
-
-  if (quizMatch.thumbnailUrl) {
-    filteredQuizInfo.thumbnailUrl = quizMatch.thumbnailUrl;
-  }
 
   return filteredQuizInfo;
 }
