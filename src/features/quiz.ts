@@ -162,8 +162,11 @@ function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
     numQuestions: quizMatch.numQuestions,
     questions: filteredQuestionInfo,
     duration: quizMatch.quizDuration,
-    thumbnailUrl: quizMatch.thumbnailUrl,
   };
+
+  if (quizMatch.thumbnailUrl) {
+    filteredQuizInfo.thumbnailUrl = quizMatch.thumbnailUrl;
+  }
 
   return filteredQuizInfo;
 }
