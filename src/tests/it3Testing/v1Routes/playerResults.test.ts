@@ -3,6 +3,7 @@ test('placeholder', () => {
   expect((1 + 1)).toBe(2);
 });
 
+/**
 
 import { Response } from 'sync-request-curl';
 import { authRegisterRequest, clearRequest, quizInfoRequest } from '../../it2Testing/serverTestHelperIt2';
@@ -10,7 +11,6 @@ import { person1, validQuestionInput1, validQuestionInput2, validQuestionInput3,
 import { createQuizQuestionRequestV2, quizCreateRequestV2 } from '../../serverTestHelperIt3';
 import { AdminActions } from '../../../enums/AdminActions';
 
-/**
 let session1: Response, quiz1: Response, player1: Response, player2: Response, player3: Response;
 let game1: Response, quizInfo: Response;
 beforeEach(() => {
