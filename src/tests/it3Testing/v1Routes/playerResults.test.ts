@@ -3,8 +3,7 @@ test('placeholder', () => {
   expect((1 + 1)).toBe(2);
 });
 
-/**
- * 
+
 import { Response } from 'sync-request-curl';
 import { authRegisterRequest, clearRequest } from '../../it2Testing/serverTestHelperIt2';
 import { person1, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../../../testingData';
@@ -32,23 +31,43 @@ beforeEach(() => {
 
 // get results for a particular question of a session a player is playing in
 describe('GET /v1/player/:playerid/question/:questionposition/results - success', () => {
-  // success case - checking Q1
-  
-  // success case - checking Q3 (need admin to go to next Q)
-  // admin skips Q2
-  // skips countdown
-  // players submit answers - add timer
-  // admin changes to answerShow state
+  test('checking Q1 details', () => {
+    // call playerQuestionResults - check against return values 
+    // {
+    //   'questionId':,
+    //   'playersCorrectList':,
+    //   'averageAnswerTime':,
+    //   'percentCorrect': 
+    // }
+    // 
+  })
+  test('check Q3 details', () => {
+    // admin skips Q2
+    // skips countdown
+    // players submit answers - add timer
+    // admin changes to answerShow state
+  })  
 })
 
 describe('GET /v1/player/:playerid/question/:questionposition/results - error', () => {
-  // invalid playerId
-  // try with invalid 4th player
-  // question position doesnt exist (< 0)
-  
-  // question position doesnt exist (exceeds #Questions)
-  // session is not in ANSWER_SHOW state
-  // session isnt on the input question
+  test('invalid playerId', () => {
+
+  });
+  test('invalid 4th player', () => {
+
+  });
+  test('question position doesnt exist (< 0)', () => {
+
+  });
+  test('question position doesnt exist (exceeds #Questions)', () => {
+
+  });
+  test('session is not in ANSWER_SHOW state', () => {
+
+  });
+  test('session isnt on the input question', () => {
+
+  })
 })
 
 // Get the final results for a whole session a player is playing in
@@ -62,4 +81,5 @@ describe('GET /v1/player/:playerid/results - error', () => {
   // not in final results stage
 })
 
-*/
+
+
