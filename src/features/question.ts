@@ -34,9 +34,9 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     if (!isImageUrlValid(questionBody.thumbnailUrl)) {
       throw new ApiError('The thumbnailUrl, when fetched, is not a JPG or PNG file type', HttpStatusCode.BAD_REQUEST);
     }
-    try {
-      request('GET', questionBody.thumbnailUrl);
-    } catch (error) {
+
+    const resThumbnail = request('GET', questionBody.thumbnailUrl);
+    if (resThumbnail.statusCode !== 200) {
       throw new ApiError('The thumbnailUrl does not return to a valid type', HttpStatusCode.BAD_REQUEST);
     }
   }
@@ -70,7 +70,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     throw new ApiError('The length of any answer is shorter than 1 character long, or longer than 30 characters long', HttpStatusCode.BAD_REQUEST);
   }
 
-  const answerMap = new Map <string, boolean>();
+  const answerMap = new Map<string, boolean>();
 
   questionBody.answers.map(element => answerMap.set(element.answer, element.correct));
   if (answerMap.size !== questionBody.answers.length) {
@@ -111,7 +111,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     duration: questionBody.duration,
     points: questionBody.points,
     answers: arrayOfAnswers,
-    thumbnailUrl: '', // question create to update - please remove comment later
+    thumbnailUrl: questionBody.thumbnailUrl,
     playersCorrectList: [],
     averageAnswerTime: 0,
     percentCorrect: 0
@@ -190,7 +190,7 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
  * @param questionBody
  * @returns empty object
  */
-function quizUpdateQuestion (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
+function quizUpdateQuestion(quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
   const dataStore = getData();
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
 
@@ -201,9 +201,9 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
     if (!isImageUrlValid(questionBody.thumbnailUrl)) {
       throw new ApiError('The thumbnailUrl, when fetched, is not a JPG or PNG file type', HttpStatusCode.BAD_REQUEST);
     }
-    try {
-      request('GET', questionBody.thumbnailUrl);
-    } catch (error) {
+
+    const resThumbnail = request('GET', questionBody.thumbnailUrl);
+    if (resThumbnail.statusCode !== 200) {
       throw new ApiError('The thumbnailUrl does not return to a valid type', HttpStatusCode.BAD_REQUEST);
     }
   }
@@ -239,7 +239,7 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
     throw new ApiError('The length of any answer is shorter than 1 character long, or longer than 30 characters long', HttpStatusCode.BAD_REQUEST);
   }
 
-  const answerMap = new Map <string, boolean>();
+  const answerMap = new Map<string, boolean>();
 
   questionBody.answers.map(element => answerMap.set(element.answer, element.correct));
   if (answerMap.size !== questionBody.answers.length) {
@@ -272,6 +272,7 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
 
   const questionToUpdate = quiz.questions.find(question => question.questionId === questionId);
   questionToUpdate.question = questionBody.question;
+  questionToUpdate.thumbnailUrl = questionBody.thumbnailUrl;
   questionToUpdate.points = questionBody.points;
   questionToUpdate.duration = questionBody.duration;
   questionToUpdate.answers = arrayOfAnswers;
@@ -289,7 +290,7 @@ function quizUpdateQuestion (quizId: number, questionId: number, token: string, 
  * @param questionId - question within quiz to be duplicated
  * @returns: adminDuplicateQuestion which contains newQuestionId key with a number value
 */
-function adminDuplicateQuestion (sessionId: string, quizId: number, questionId: number): adminDuplicateQuestionReturn {
+function adminDuplicateQuestion(sessionId: string, quizId: number, questionId: number): adminDuplicateQuestionReturn {
   const dataStore = getData();
 
   // invalid token
