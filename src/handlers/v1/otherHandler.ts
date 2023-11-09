@@ -1,4 +1,4 @@
-import { clear } from '../../features/other';
+import { clear } from '../../services/otherService';
 import { Router, Request, Response } from 'express';
 
 export const otherRouter = Router();

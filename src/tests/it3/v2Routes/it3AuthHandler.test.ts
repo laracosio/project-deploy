@@ -1,5 +1,5 @@
 import { Response } from 'sync-request-curl';
-import { authLoginRequest, authRegisterRequest, clearRequest } from '../../it2Testing/serverTestHelperIt2';
+import { authLoginRequest, authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
 import { person1 } from '../../../testingData';
 import { Datastore } from '../../../dataStore';
 import { authLogoutRequestV2 } from '../../serverTestHelperIt3';

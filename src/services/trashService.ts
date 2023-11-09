@@ -1,7 +1,7 @@
 import { getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { tokenValidation, findToken, findQuizById, setAndSave, openSessionQuizzesState } from './other';
+import { tokenValidation, findToken, findQuizById, setAndSave, openSessionQuizzesState } from './otherService';
 import { getUnixTime } from 'date-fns';
 
 interface BriefTrashQuizInfo {
