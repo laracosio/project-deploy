@@ -7,58 +7,75 @@ test('placeholder', () => {
 import { Response } from 'sync-request-curl';
 import { clearRequest } from '../../it2Testing/serverTestHelperIt2';
 
-
+let session1: Response, quiz1: Response, player1: Response, player2: Response, player3: Response;
+let game1: Response;
 beforeEach(() => {
-    clearRequest();
+  clearRequest();
+  session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+  const sess1Data = JSON.parse(session1.body.toString());
+  quiz1 = quizCreateRequestV2(sess1Data.token, validQuizName, validQuizDescription);
+  const quiz1Data = JSON.parse(quiz1.body.toString());
+  createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
+  createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput2);
+  createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput3);
+  const game1 = sessionStart(quiz1Data.quizId, sess1Data.token, game1body);
+  const game1Data = JSON.parse(game1.body.toString());
+  const player1 = playerJoin(game1body.sessionId, 'Gizmo');
+  const player1Data = JSON.parse(player1.body.toString());
+  const player2 = playerJoin(game1body.sessionId, 'Pumpkin');
+  const player2Data = JSON.parse(player2.body.toString());
+  const player3 = playerJoin(game1body.sessionId, 'Dave');
+  const player3Data = JSON.parse(player3.body.toString());
 });
 
-let session1: Response, quiz1: Response, player1: Response, player2: Response, player3: Response;
 describe('GET /v1/player/:playerid/chat - success', () => {
-  beforeEach(() => {
-    // create user
-    // create question and add multiple quiz questions
-    // user starts session for quiz
-    // 3 players join the session
-  })
-  // add 1 message
-  // multiple users adding different messages
+  test('send 1 message', () => {
+    addMessages(playerId, 'This is the first message');
+    // check all messages
+  }) 
+  test('send multiple messages', () => {
+    addMessages(playerId, 'This is the first message');
+    addMessages(playerId2, 'This is the second message');
+    addMessages(playerId3, 'This is the third message');
+    // check all messages
+  }) 
 })
 
 describe('GET /v1/player/:playerid/chat - error', () => {
-  beforeEach(() => {
-    // create user
-    // create question and add multiple quiz questions
-    // user starts session for quiz
-    // 3 players join the session
-    // start game
-    // play game
-  })
   // add 1 message - get 4th player (not joined) to read message
+  test('send 1 message', () => {
+    addMessages(playerId, 'This is the first message');
+    checkmessages(someInvalidId)
+  })
 })
 
 describe('POST /v1/player/:playerid/chat - success', () => {
-  beforeEach(() => {
-    // create user
-    // create question and add multiple quiz questions
-    // user starts session for quiz
-    // 3 players join the session
-    // start game
-    // play game
-  })
-  // add 1 message
-  // add multiple messages
+  test('send 1 message', () => {
+    addMessages(playerId, 'This is the first message');
+    expect no issues
+  }) 
+  test('send multiple messages', () => {
+    addMessages(playerId, 'This is the first message');
+    addMessages(playerId2, 'This is the second message');
+    addMessages(playerId3, 'This is the third message');
+    expect no issues
+  }) 
 })
 
 describe('POST /v1/player/:playerid/chat - error', () => {
-  beforeEach(() => {
-    // create user
-    // create question and add multiple quiz questions
-    // user starts session for quiz
-    // 3 players join the session
-    // start game
-    // play game
-  })
-  // add 1 message - get 4th player (not joined) to read message
-  // invalid message
+  test('send 1 message', () => {
+    addMessages(playerId3 + 1, 'This is the first message');
+    expect to return 400
+  }) 
+  // empty message
+  test('send 1 message', () => {
+    addMessages(playerId, '');
+    expect to return 400
+  }) 
+  test('send 1 message', () => {
+    addMessages(playerId, include a very long message);
+    expect to return 400
+  }) 
 })
+
 */
