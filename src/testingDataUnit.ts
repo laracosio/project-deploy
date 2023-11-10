@@ -288,7 +288,7 @@ export const unitTestLobby: Datastore = {
       messages: []
     }
   ],
-  playerIdSessionIds: [
+  sessionPlayerIndex: [
     {
       sessionId: 1,
       playerId: 1
