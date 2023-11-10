@@ -30,15 +30,19 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 	if(sessionIdHolder.sessionState !== 1) {
 		throw new ApiError('Session is not in LOBBY state', HttpStatusCode.BAD_REQUEST);
 	}
+
 	
 	if (name === '') {
-		let newName = generateRandomString();
-		//loop thru
+		let isTaken;
+		do {
+			name = generateRandomString();
+			isTaken = dataStore.sessions[sessionIdIndex].sessionPlayers.some(player => player.playerName === name);
+		} while (isTaken);
 	}
 	
 	//generate playerId
 	const playerId = 0;
-
+	
 	const newPlayer: Player = {
 		'playerId': playerId,
 		'playerName': name,
