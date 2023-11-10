@@ -2,10 +2,19 @@
 import { getData } from "../dataStore";
 import { ApiError } from "../errors/ApiError";
 import { HttpStatusCode } from "../enums/HttpStatusCode";
+import { Player } from "../dataStore";
 import { SessionStates } from "../enums/SessionStates";
+import { getUnixTime } from 'date-fns';
+import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './otherService';
+import request from 'sync-request-curl';
+import { generateRandomString } from "./otherService";
 
-/*
-function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn {
+interface joinGuestPlayerReturn {
+	PlayerId: number
+  }
+  
+
+function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn | void {
 	const dataStore = getData();
 	const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === sessionId);
 	const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
@@ -28,15 +37,17 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 	}
 	
 	//generate playerId
-	
-	const newPlayer: Player {
+	const playerId = 0;
+
+	const newPlayer: Player = {
 		'playerId': playerId,
 		'playerName': name,
-		'playerScore': 0;
+		'playerScore': 0,
 	}
 	
-	dataStore.session[sessionIdIndex].sessionPlayers.push(newPlayer);
-	return { playerId: playerId }
+
+	dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
+	return { 'PlayerId': playerId }
+
 }
 
-*/

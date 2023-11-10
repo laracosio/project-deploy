@@ -221,9 +221,32 @@ function isImageUrlValid(thumbnailUrl: string): boolean {
 
   return imageRegex.test(thumbnailUrl);
 }
+
+function generateRandomString() {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  let randomLetters = '';
+  let randomNumbers = '';
+
+  // Generate 5 random letters
+  for (let i = 0; i < 5; i++) {
+    const randomIndex = Math.floor(Math.random() * letters.length);
+    randomLetters += letters.charAt(randomIndex);
+  }
+
+  // Generate 3 random numbers
+  for (let i = 0; i < 3; i++) {
+    const randomNumber = Math.floor(Math.random() * 10);
+    randomNumbers += randomNumber.toString();
+  }
+
+  let newName = randomLetters + randomNumbers
+  return newName;
+}
+
+
 export {
   clear, helperAdminRegister, createSessionId, tokenValidation,
   findQuestionByQuiz, findQuizById, findUserById, findToken,
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
-  hashText, openSessionQuizzesState, isImageUrlValid
+  hashText, openSessionQuizzesState, isImageUrlValid, generateRandomString
 };
