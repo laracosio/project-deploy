@@ -97,4 +97,4 @@ function GuestPlayerStatus (playerId: Number): GuestPlayerStatusReturn {
 }
 
 
-export { joinGuestPlayer }
+export { joinGuestPlayer, GuestPlayerStatus }
