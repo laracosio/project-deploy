@@ -19,6 +19,7 @@ import { quizRouterV2 } from './handlers/v2/quizHandlerV2';
 import { userRouterV2 } from './handlers/v2/userHandlerV2';
 import { setData } from './dataStore';
 import { playerRouter } from './handlers/v1/playerHandlerV1';
+import { setAndSave } from './services/otherService';
 
 // Set up web app
 const app = express();
@@ -56,6 +57,11 @@ app.use('/v1/player', playerRouter);
 app.use('/v2/admin/quiz', quizRouterV2);
 app.use('/v2/admin/auth', authRouterV2);
 app.use('/v2/admin/user', userRouterV2);
+
+app.put('/setdata', (req: Request, res: Response) => {
+  const { dataStore } = req.body;
+  return res.json(setAndSave(dataStore));
+});
 
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ApiError) {

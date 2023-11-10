@@ -1,7 +1,7 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
-import { QuestionCreate } from '../dataStore';
+import { QuestionCreate, InputMessage, Datastore } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -287,14 +287,11 @@ const quizInfoRequestV2 = (token: string, quizId: number): Response => {
 // #endregion
 
 // #region player handlers
-const sendMsgRequest = (playerId: number, message: number): Response => {
+const sendMsgRequest = (playerId: number, message: InputMessage): Response => {
   return request(
     'POST',
-    `${SERVER_URL}/v1/player/:playerid/chat`,
+    `${SERVER_URL}/v1/player/${playerId}/chat`,
     {
-      qs: {
-        playerId: playerId
-      },
       body: JSON.stringify({
         message: message
       }),
@@ -306,9 +303,20 @@ const sendMsgRequest = (playerId: number, message: number): Response => {
 };
 // #endregion
 
+const setDataRequest = (dataStore: Datastore): Response => {
+  return request(
+    'PUT',
+    SERVER_URL + '/setdata',
+    { 
+      body: JSON.stringify({ dataStore }), 
+      headers: { 'Content-type': 'application/json' }
+    }
+  )
+};
+
 export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
-  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, sendMsgRequest
+  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, sendMsgRequest, setDataRequest
 };
