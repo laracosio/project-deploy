@@ -6,11 +6,11 @@ export const unitTestLobby: Datastore = {
   users: [
     {
       userId: 1,
-      nameFirst: person1.nameFirst,
-      nameLast: person1.nameLast,
+      nameFirst: 'Pumpkin',
+      nameLast: 'Pothos',
       password: hashText(person1.password),
       oldPasswords: [],
-      email: person1.email,
+      email: 'p.pothos@unsw@unsw.edu.au',
       numSuccessfulLogins: 1,
       numFailedPasswordsSinceLastLogin: 0
     }
