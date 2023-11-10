@@ -1,9 +1,63 @@
-import request from 'sync-request-curl';
+import request, { HttpVerb, Options } from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
 import { QuestionCreate } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
+
+interface ParsedResponse extends Response {
+  parsedBody: any;
+}
+
+const apiGet = (url: string, headers: any): ParsedResponse => {
+  const httpUrl = SERVER_URL + url;
+  const httpOptions = {
+    headers: {
+      ...headers,
+      'Content-type': 'application/json'
+    }
+  }
+  const res = request('GET', httpUrl, httpOptions);
+  const parsedResponse: ParsedResponse = {
+    ...res,
+    parsedBody: res.body ? JSON.parse(res.body.toString()): null
+  }
+  return parsedResponse;
+}
+
+const apiPut = (url: string, body: any, headers: any): ParsedResponse => {
+  const httpUrl = SERVER_URL + url;
+  const httpOptions = {
+    headers: headers ? {
+      ...headers,
+      'Content-type': 'application/json'
+    } : null,
+    body: body ? JSON.stringify(body) : null
+  }
+  const res = request('PUT', httpUrl, httpOptions);
+  const parsedResponse: ParsedResponse = {
+    ...res,
+    parsedBody: res.body ? JSON.parse(res.body.toString()): null
+  }
+  return parsedResponse;
+}
+
+const apiPost = (url: string, body: any, headers: any): ParsedResponse => {
+  const httpUrl = SERVER_URL + url;
+  const httpOptions = {
+    headers: headers ? {
+      ...headers,
+      'Content-type': 'application/json'
+    } : null,
+    body: body ? JSON.stringify(body) : null
+  }
+  const res: Response = request('POST', httpUrl, httpOptions);
+  const parsedResponse: ParsedResponse = {
+    ...res,
+    parsedBody: res.body ? JSON.parse(res.body.toString()): null
+  }
+  return parsedResponse;
+}
 
 // #region auth handlers
 const authUserDetailsRequestV2 = (token: string): Response => {
@@ -294,5 +348,5 @@ export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
-  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2
+  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, apiGet, apiPost, apiPut
 };

@@ -56,7 +56,7 @@ export interface Quiz {
   quizOwner: number,
   numQuestions: number,
   questions: Question[],
-  quizDuration: number,
+  duration: number,
   thumbnailUrl?: string
 }
 
@@ -94,6 +94,13 @@ export interface Datastore {
   tokens: Token[],
   trash: Quiz[],
   sessions: Session[]
+}
+
+export interface SessionStatus {
+  state: string;
+  atQuestion: number;
+  players: string[];
+  metadata: Quiz
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
