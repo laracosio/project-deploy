@@ -11,27 +11,29 @@ import { generateRandomString } from "./otherService";
 
 interface joinGuestPlayerReturn {
 	PlayerId: number
-  }
-  
+}
+
 
 function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn | void {
 	const dataStore = getData();
 	const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === sessionId);
 	const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
-	if(!sessionIdIndex) {
-		throw new ApiError('Session is not in LOBBY state', HttpStatusCode.BAD_REQUEST);
-	}
-	
-	const takenName = dataStore.sessions[sessionIdIndex].sessionPlayers.find(player => player.playerName === name);
-	if(takenName) {
-		throw new ApiError('Name of user entered is not unique (compared to other users who have already joined)', HttpStatusCode.BAD_REQUEST);
-	}
-	
-	if(sessionIdHolder.sessionState !== 1) {
+	if (!sessionIdIndex) {
 		throw new ApiError('Session is not in LOBBY state', HttpStatusCode.BAD_REQUEST);
 	}
 
-	
+	//check if name is already taken
+	const takenName = dataStore.sessions[sessionIdIndex].sessionPlayers.some(player => player.playerName === name);
+	if (takenName) {
+		throw new ApiError('Name of user entered is not unique (compared to other users who have already joined)', HttpStatusCode.BAD_REQUEST);
+	}
+
+	//check if session state is in lobby
+	if (sessionIdHolder.sessionState !== SessionStates.LOBBY) {
+		throw new ApiError('Session is not in LOBBY state', HttpStatusCode.BAD_REQUEST);
+	}
+
+	//generate name if name is empty string
 	if (name === '') {
 		let isTaken;
 		do {
@@ -39,19 +41,20 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 			isTaken = dataStore.sessions[sessionIdIndex].sessionPlayers.some(player => player.playerName === name);
 		} while (isTaken);
 	}
-	
+
 	//generate playerId
-	const playerId = 0;
-	
+	const playerId = dataStore.maxPlayerId + 1;
+
 	const newPlayer: Player = {
 		'playerId': playerId,
 		'playerName': name,
 		'playerScore': 0,
 	}
-	
 
+	
 	dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
 	return { 'PlayerId': playerId }
 
 }
 
+export { joinGuestPlayer }
