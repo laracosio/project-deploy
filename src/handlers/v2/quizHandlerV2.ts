@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash } from '../../features/trash';
-import { adminQuizTransferOwner, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizList, adminQuizInfo } from '../../features/quiz';
-import { adminDuplicateQuestion, adminMoveQuestion, quizUpdateQuestion, quizCreateQuestion } from '../../features/question';
+import { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash } from '../../services/trashService';
+import { adminQuizTransferOwner, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizList, adminQuizInfo } from '../../services/quizService';
+import { adminDuplicateQuestion, adminMoveQuestion, quizUpdateQuestion, quizCreateQuestion } from '../../services/questionService';
 
 export const quizRouterV2 = Router();
 
