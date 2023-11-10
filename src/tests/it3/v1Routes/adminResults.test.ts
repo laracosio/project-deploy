@@ -1,15 +1,16 @@
 import { Response } from 'sync-request-curl';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
-import { createQuizQuestionRequestV2, quizFinalResults } from '../../serverTestHelperIt3';
-import { person1 } from '../../../testingData';
-import { authRegisterRequest, quizCreateRequest } from '../../it2Testing/serverTestHelperIt2';
+import { createQuizQuestionRequestV2, quizFinalResultsRequest } from '../../serverTestHelperIt3';
+import { person1, person2 } from '../../../testingData';
+import { authRegisterRequest, quizCreateRequest } from '../../it2/serverTestHelperIt2';
 import { Datastore, Player, QuestionCreate, Quiz, Session } from '../../../dataStore';
 import fs from 'fs';
-import { setAndSave } from '../../../features/other';
+import { setAndSave } from '../../../services/otherService';
 
 // quizFinalResults tests
 describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
-  let admin: Response, quiz: Response, q1: Response, q2: Response, q3: Response, quizSession: Session;
+  let admin: Response, quiz: Response, q1: Response, q2: Response, q3: Response;
+  let quizSession: Session;
   beforeEach(() => {
     const { email, password, nameFirst, nameLast } = person1;
     admin = authRegisterRequest(email, password, nameFirst, nameLast);
@@ -70,7 +71,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
     const q2Data = JSON.parse(q1.body.toString());
     const q3Data = JSON.parse(q1.body.toString());
 
-    const response: Response = quizFinalResults(quizData.quizid, quizSession.sessionId, adminData.token);
+    const response: Response = quizFinalResultsRequest(quizData.quizid, quizSession.sessionId, adminData.token);
 
     expect(response.statusCode).toStrictEqual(HttpStatusCode.OK);
     expect(JSON.parse(response.body.toString())).toStrictEqual(
@@ -136,7 +137,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
     const q2Data = JSON.parse(q1.body.toString());
     const q3Data = JSON.parse(q1.body.toString());
 
-    const response: Response = quizFinalResults(quizData.quizid, quizSession.sessionId, adminData.token);
+    const response: Response = quizFinalResultsRequest(quizData.quizid, quizSession.sessionId, adminData.token);
 
     expect(response.statusCode).toStrictEqual(HttpStatusCode.OK);
     expect(JSON.parse(response.body.toString())).toStrictEqual(
@@ -192,7 +193,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
 });
 
 describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results - Error Cases', () => {
-  let admin: Response, quiz: Response, quizSession: Session;
+  let admin: Response, admin2: Response, quiz: Response, quiz2: Response, quizSession: Session, quiz2Session: Session;
   beforeEach(() => {
     const { email, password, nameFirst, nameLast } = person1;
     admin = authRegisterRequest(email, password, nameFirst, nameLast);
@@ -201,9 +202,15 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results - Error Cases'
     quiz = quizCreateRequest(adminData.token, 'Name That Professor', 'Hogwarts Professors');
     const quizData = JSON.parse(quiz.body.toString());
 
+    admin2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const admin2Data = JSON.parse(admin2.body.toString());
+    quiz2 = quizCreateRequest(admin2Data.token, 'Name That Potato', 'Types of Potatoes');
+    const quiz2Data = JSON.parse(quiz2.body.toString());
+
     const datastr: Buffer = fs.readFileSync('./datastore.json');
     const data: Datastore = JSON.parse(String(datastr));
     const quizProf: Quiz = data.quizzes.find(quiz => quiz.quizId === quizData.quizId);
+    const quizPotato: Quiz = data.quizzes.find(quiz => quiz.quizId === quiz2Data.quizId);
     
     // replace with guestPlayerJoin
     const player1: Player = { playerId: 1, playerName: 'Harry', playerScore: 50 };
@@ -218,37 +225,45 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results - Error Cases'
       sessionPlayers: [player1],
       messages: []
     }
+
+    quiz2Session = {
+      sessionId: 5678,
+      sessionQuiz: quizPotato,
+      sessionState: 1,
+      autoStartNum: 1,
+      atQuestion: 1,
+      sessionPlayers: [player1],
+      messages: []
+    }
   });
   test('Session Id does not refer to a valid session within this quiz', () => {
     const adminData = JSON.parse(admin.body.toString());
     const quizData = JSON.parse(quiz.body.toString());
-    const response: Response = quizFinalResults(quizData.quizid, quizSession.sessionId + 1, adminData.token);
+    const response: Response = quizFinalResultsRequest(quizData.quizid, quizSession.sessionId + 1, adminData.token);
     expect(response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
   test('Session is not in FINAL_RESULTS state', () => {
     const datastr: Buffer = fs.readFileSync('./datastore.json');
     const data: Datastore = JSON.parse(String(datastr));
     const quizProfSession: Session = data.sessions.find(s => s.sessionId === quizSession.sessionId);
-
     // change state to be !FINAL_RESULTS
     quizProfSession.sessionState = 0;
     
     const adminData = JSON.parse(admin.body.toString());
     const quizData = JSON.parse(quiz.body.toString());
-    const response: Response = quizFinalResults(quizData.quizid, quizSession.sessionId, adminData.token);
+    const response: Response = quizFinalResultsRequest(quizData.quizid, quizSession.sessionId, adminData.token);
     expect(response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
   test('Token is empty or invalid (does not refer to valid logged in user session)', () => {
     const adminData = JSON.parse(admin.body.toString());
     const quizData = JSON.parse(quiz.body.toString());
-    const response: Response = quizFinalResults(quizData.quizid, quizSession.sessionId, adminData.token + 1);
+    const response: Response = quizFinalResultsRequest(quizData.quizid, quizSession.sessionId, adminData.token + 1);
     expect(response.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
   });
   test('Valid token is provided, but user is not authorised to view this session', () => {
-    
     const adminData = JSON.parse(admin.body.toString());
     const quizData = JSON.parse(quiz.body.toString());
-    const response: Response = quizFinalResults(quizData.quizid, quizSession.sessionId, adminData.token);
+    const response: Response = quizFinalResultsRequest(quizData.quizid, quiz2Session.sessionId, adminData.token);
     expect(response.statusCode).toStrictEqual(HttpStatusCode.FORBIDDEN);
   });
 });
