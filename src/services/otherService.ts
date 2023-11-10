@@ -1,4 +1,4 @@
-import { getData, setData, User, Token, Quiz, Question, Datastore } from '../dataStore';
+import { getData, setData, User, Token, Quiz, Question, Datastore, Session } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
@@ -21,7 +21,7 @@ function clear(): object {
   dataStore.tokens = [];
   dataStore.trash = [];
   dataStore.sessions = [];
-  dataStore.playerIdSessionIds = [];
+  dataStore.sessionPlayerIndex = [];
   dataStore.maxQuizId = 0;
   dataStore.maxPlayerId = 0;
   setAndSave(dataStore);
@@ -209,11 +209,53 @@ function hashText(text: string): string {
 function openSessionQuizzesState(quizId: number): boolean {
   const dataStore = getData();
   return dataStore.sessions.some(element => element.sessionQuiz.quizId === quizId &&
-    element.sessionState !== SessionStates.END);
+    element.sessionState !== 'END');
 }
 
 /**
- *
+ * Checks whether playerId exists in the playerSession index
+ * @param playerId - integer representing the player
+ * @returns boolean - true if found, false otherwise
+ */
+function playerValidation(playerId: number): boolean {
+  const dataStore = getData();
+  if (!playerId) {
+    return false;
+  }
+  // check whether token exists in dataStore
+  if (!dataStore.sessionPlayerIndex.some(elem => elem.playerId === playerId)) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Finds session that player is participating in 
+ * @param playerId - integer representing the player
+ * @returns Session within dataStore where player is apart of
+ */
+function findSessionByPlayerId(playerId: number): Session {
+  const dataStore = getData();
+  const matchedIndex = dataStore.sessionPlayerIndex.find(elem => elem.playerId === playerId);
+  const matchedSessionId = matchedIndex.sessionId;
+  return dataStore.sessions.find(session => session.sessionId === matchedSessionId);
+}
+
+/**
+ * Finds and returns the name of the player. 
+ * @param playerId - playerId of player to be found
+ * @param sessionId - sessionId player is in
+ * @returns string of name of player
+ */
+function findPlayerName(playerId: number, sessionId: number): string {
+  const dataStore = getData();
+  const matchedSession = dataStore.sessions.find(session => session.sessionId === sessionId);
+  const matchedPlayer = matchedSession.sessionPlayers.find(player => player.playerId === playerId);
+  return matchedPlayer.playerName;
+}
+
+/**
+ * checks whether thumbnailUrl ends with png, jpg or jpeg
  * @param thumbnailUrl
  * @returns boolean
  */
@@ -226,5 +268,6 @@ export {
   clear, helperAdminRegister, createSessionId, tokenValidation,
   findQuestionByQuiz, findQuizById, findUserById, findToken,
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
-  hashText, openSessionQuizzesState, isImageUrlValid
+  hashText, openSessionQuizzesState, isImageUrlValid, playerValidation,
+  findSessionByPlayerId, findPlayerName
 };
