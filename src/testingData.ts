@@ -66,6 +66,8 @@ const longQuizDescription = 'Lorem ipsum dolor sit amet, consectetuer adipiscing
 const stringOf1QuizIDs = '[1]';
 const stringOf2QuizIDs = '[1,2]';
 const stringOf3QuizIDs = '[1,2,3]';
+const validAutoStartNum = '25'
+const invalidAutoStartNum = '51'
 const validQuestionInput1: QuestionCreate = {
   question: 'Who is the Monarch of England?',
   duration: 4,
@@ -667,5 +669,7 @@ export {
   invalidCreateQuestionV2NotJPGPNG,
   invalidCreateQuestionV2InvalidURL,
   invalidCreateQuestionV2EmptyURL,
-  validCreateQuestionV2PNG
+  validCreateQuestionV2PNG,
+  validAutoStartNum,
+  invalidAutoStartNum
 };

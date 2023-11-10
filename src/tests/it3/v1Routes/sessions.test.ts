@@ -1,8 +1,3 @@
-// remove me and add your tests below
-test('placeholder', () => {
-  expect((1 + 1)).toBe(2);
-});
-
 import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../../it2-testing/serverTestHelperIt2';
 import {person1, person2, validQuizDescription, validQuizName, validCreateQuestion } from '../../testingData';
 import { startNewSessionRequest } from '../../serverTestHelperIt3';
@@ -11,10 +6,6 @@ import { quizCreateQuestion } from '../../../services/questionService';
 beforeEach(() => {
   clearRequest();
 });
-
-// add to testing data
-// const validAutoStartNum = '25'
-// const invalidAutoStartNum = '51'
 
 // Start new session tests
 describe('startNewSession - Success cases', () => {
