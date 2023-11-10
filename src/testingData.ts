@@ -1,4 +1,5 @@
-import { QuestionCreate } from './dataStore';
+import { Colours, Datastore, QuestionCreate } from './dataStore';
+import { hashText } from './services/otherService';
 
 const person1 = {
   email: 'h.simpson@springfield.com',
@@ -607,6 +608,8 @@ const invalidCreateQuestionV2URLNotPNGJPG: QuestionCreate = {
   thumbnailUrl: 'https://media.giphy.com/media/l0G16FRujv2fiD3Ne/giphy.gif'
 };
 
+const longMessage = 'Into each life some rain must fall. But too much is falling in mine. Into each heart some tears must fall. But someday the sun will shine.'
+
 export {
   person1,
   person2,
@@ -667,5 +670,6 @@ export {
   invalidCreateQuestionV2NotJPGPNG,
   invalidCreateQuestionV2InvalidURL,
   invalidCreateQuestionV2EmptyURL,
-  validCreateQuestionV2PNG
+  validCreateQuestionV2PNG,
+  longMessage
 };
