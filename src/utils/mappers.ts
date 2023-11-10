@@ -1,5 +1,4 @@
-import { Metadata } from "asar";
-import { Quiz } from "../dataStore";
+import { Quiz } from '../dataStore';
 
 export const quizToMetadata = (quiz: Quiz) => ({
   quizId: quiz.quizId,
@@ -11,4 +10,4 @@ export const quizToMetadata = (quiz: Quiz) => ({
   questions: quiz.questions,
   duration: quiz.quizDuration,
   thumbnailUrl: quiz.thumbnailUrl
-})
+});

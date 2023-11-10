@@ -90,12 +90,25 @@ export interface Token {
   userId: number;
 }
 
+export interface playerIdSessionId {
+  sessionId: number,
+  playerId: number
+}
+
+export interface playerIdSessionId {
+  sessionId: number,
+  playerId: number
+}
+
 export interface Datastore {
   users: User[];
   quizzes: Quiz[];
   tokens: Token[];
   trash: Quiz[];
-  sessions: Session[];
+  sessions: Session[],
+  playerIdSessionIds: playerIdSessionId[],
+  maxQuizId: number,
+  maxPlayerId: number;
 }
 
 export interface Metadata {
@@ -122,7 +135,10 @@ let data: Datastore = {
   quizzes: [],
   tokens: [],
   trash: [],
-  sessions: []
+  sessions: [],
+  playerIdSessionIds: [],
+  maxQuizId: 0,
+  maxPlayerId: 0
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

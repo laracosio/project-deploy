@@ -15,24 +15,32 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
     // make quiz
     const postQuiz = apiPost(
       '/v1/admin/quiz',
-      { token: postRegister.parsedBody.token, name: 'my quiz', description: 'quiz description' },
+      {
+        token: postRegister.getParsedBody().token,
+        name: 'my quiz',
+        description: 'quiz description'
+      },
       {}
     );
     // start session
     const postSession = apiPost(
-      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/start`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
       { autoStartNum: 3 },
-      { token: postRegister.parsedBody.token }
+      { token: postRegister.getParsedBody().token }
     );
     const getSession = apiGet(
-      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/${postSession.parsedBody.sessionId}`,
-      { token: postRegister.parsedBody.token }
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${
+        postSession.getParsedBody().sessionId
+      }`,
+      { token: postRegister.getParsedBody().token }
     );
-    const session: SessionStatus = getSession.parsedBody;
+    const session: SessionStatus = getSession.getParsedBody();
     expect(session.state).toStrictEqual('LOBBY');
     expect(session.atQuestion).toStrictEqual(3);
     expect(session.players).toContain('Hayden');
-    expect(session.metadata.quizId).toStrictEqual(postQuiz.parsedBody.quizId);
+    expect(session.metadata.quizId).toStrictEqual(
+      postQuiz.getParsedBody().quizId
+    );
     expect(session.metadata.name).toStrictEqual('This is the name of a quiz');
     expect(session.metadata.description).toStrictEqual('This is the desc');
     expect(session.metadata.numQuestions).toStrictEqual(1);
@@ -47,21 +55,27 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
     // make quiz
     const postQuiz = apiPost(
       '/v1/admin/quiz',
-      { token: postRegister.parsedBody.token, name: 'my quiz', description: 'quiz description' },
+      {
+        token: postRegister.getParsedBody().token,
+        name: 'my quiz',
+        description: 'quiz description'
+      },
       {}
     );
     // start session
     const postSession = apiPost(
-      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/start`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
       { autoStartNum: 3 },
-      { token: postRegister.parsedBody.token }
+      { token: postRegister.getParsedBody().token }
     );
     const getSession = apiGet(
-      `/v1/admin/quiz/${postQuiz.parsedBody.quizId + 1}/session/${postSession.parsedBody.sessionId + 1}`,
-      { token: postRegister.parsedBody.token }
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId + 1}/session/${
+        postSession.getParsedBody().sessionId + 1
+      }`,
+      { token: postRegister.getParsedBody().token }
     );
 
-    expect(getSession.statusCode).toStrictEqual(400);
+    expect(getSession.response.statusCode).toStrictEqual(400);
   });
 
   test('Error - Token is empty or invalid (does not refer to valid logged in user session)', () => {
@@ -70,23 +84,29 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
     // make quiz
     const postQuiz = apiPost(
       '/v1/admin/quiz',
-      { token: postRegister.parsedBody.token, name: 'my quiz', description: 'quiz description' },
+      {
+        token: postRegister.getParsedBody().token,
+        name: 'my quiz',
+        description: 'quiz description'
+      },
       {}
     );
     // start session
     const postSession = apiPost(
-      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/start`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
       { autoStartNum: 3 },
-      { token: postRegister.parsedBody.token }
+      { token: postRegister.getParsedBody().token }
     );
     const getSession = apiGet(
-      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/${postSession.parsedBody.sessionId}`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${
+        postSession.getParsedBody().sessionId
+      }`,
       {
         token: -1
       }
     );
 
-    expect(getSession.statusCode).toStrictEqual(401);
+    expect(getSession.response.statusCode).toStrictEqual(401);
   });
 
   test('Error - Valid token is provided, but user is not authorised to view this session', () => {
@@ -96,21 +116,27 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
     // make quiz
     const postQuiz = apiPost(
       '/v1/admin/quiz',
-      { token: postRegister.parsedBody.token, name: 'my quiz', description: 'quiz description' },
+      {
+        token: postRegister.getParsedBody().token,
+        name: 'my quiz',
+        description: 'quiz description'
+      },
       {}
     );
     // start session
     const postSession = apiPost(
-      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/start`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
       { autoStartNum: 3 },
-      { token: postRegister.parsedBody.token }
+      { token: postRegister.getParsedBody().token }
     );
     const getSession = apiGet(
-      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/${postSession.parsedBody.sessionId}`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${
+        postSession.getParsedBody().sessionId
+      }`,
       {
-        token: postRegisterInvalid.parsedBody.token
+        token: postRegisterInvalid.getParsedBody().token
       }
     );
-    expect(getSession.statusCode).toStrictEqual(403);
+    expect(getSession.response.statusCode).toStrictEqual(403);
   });
 });

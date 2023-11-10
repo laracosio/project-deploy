@@ -3,11 +3,9 @@ import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { quizToMetadata } from '../utils/mappers';
 import { findToken, tokenValidation } from './otherService';
-import { adminQuizInfo, QuizInfoReturn } from './quizService';
 
 export function getSessionState(quizId: number, sessionId: number, token: string): SessionStatus {
   const dataStore = getData();
-  const quiz: QuizInfoReturn = adminQuizInfo(token, quizId);
   const session: Session = dataStore.sessions.find((elem) => elem.sessionId === sessionId);
 
   // check that sessionId is not empty or is valid
