@@ -12,7 +12,7 @@ interface QuestionInfoReturn {
   answers: Answer[],
 }
 
-export interface QuizInfoReturn {
+interface QuizInfoReturn {
   quizId: number,
   name: string,
   timeCreated: number,
