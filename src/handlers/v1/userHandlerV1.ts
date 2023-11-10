@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { adminUserDetails, adminUserUpdateDetails, adminUserUpdatePassword } from '../../features/user';
+import { adminUserDetails, adminUserUpdateDetails, adminUserUpdatePassword } from '../../services/userService';
 
 export const userRouterV1 = Router();
 

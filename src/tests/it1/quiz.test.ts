@@ -15,10 +15,10 @@ import {
   longQuizDescription,
 } from '../../testingData';
 
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../../features/quiz';
-import { adminQuizRemove } from '../../features/trash';
-import { adminAuthRegister } from '../../features/auth';
-import { clear } from '../../features/other';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate } from '../../services/quizService';
+import { adminQuizRemove } from '../../services/trashService';
+import { adminAuthRegister } from '../../services/authService';
+import { clear } from '../../services/otherService';
 import { ApiError } from '../../errors/ApiError';
 
 // test reset

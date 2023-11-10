@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { adminAuthLogout } from '../../features/auth';
+import { adminAuthLogout } from '../../services/authService';
 
 export const authRouterV2 = Router();
 

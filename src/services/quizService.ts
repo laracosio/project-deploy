@@ -1,6 +1,6 @@
 import { Answer, Quiz, getData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
-import { findQuizById, findToken, openSessionQuizzesState, setAndSave, tokenValidation } from './other';
+import { findQuizById, findToken, openSessionQuizzesState, setAndSave, tokenValidation } from './otherService';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 interface QuestionInfoReturn {

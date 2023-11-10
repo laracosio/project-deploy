@@ -10,15 +10,15 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { ApiError } from './errors/ApiError';
-import { authRouterV1 } from './handlers/V1-handlers/authHandlerV1';
-import { quizRouterV1 } from './handlers/V1-handlers/quizHandlerV1';
-import { userRouterV1 } from './handlers/V1-handlers/userHandlerV1';
-import { otherRouter } from './handlers/V1-handlers/otherHandler';
-import { authRouterV2 } from './handlers/V2-handlers/authHandlerV2';
-import { quizRouterV2 } from './handlers/V2-handlers/quizHandlerV2';
-import { userRouterV2 } from './handlers/V2-handlers/userHandlerV2';
+import { authRouterV1 } from './handlers/v1/authHandlerV1';
+import { quizRouterV1 } from './handlers/v1/quizHandlerV1';
+import { userRouterV1 } from './handlers/v1/userHandlerV1';
+import { otherRouter } from './handlers/v1/otherHandler';
+import { authRouterV2 } from './handlers/v2/authHandlerV2';
+import { quizRouterV2 } from './handlers/v2/quizHandlerV2';
+import { userRouterV2 } from './handlers/v2/userHandlerV2';
 import { setData } from './dataStore';
-import { playerRouter } from './handlers/V1-handlers/playerHandlerV1';
+import { playerRouter } from './handlers/v1/playerHandlerV1';
 
 // Set up web app
 const app = express();

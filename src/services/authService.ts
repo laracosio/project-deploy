@@ -1,4 +1,4 @@
-import { helperAdminRegister, createSessionId, setAndSave, hashText } from './other';
+import { helperAdminRegister, createSessionId, setAndSave, hashText } from './otherService';
 import { getData, Token } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
