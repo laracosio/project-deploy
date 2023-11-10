@@ -2,7 +2,7 @@
 import { getData } from "../dataStore";
 import { ApiError } from "../errors/ApiError";
 import { HttpStatusCode } from "../enums/HttpStatusCode";
-import { Player } from "../dataStore";
+import { Player, playerIdSessionId } from "../dataStore";
 import { SessionStates } from "../enums/SessionStates";
 import { getUnixTime } from 'date-fns';
 import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './otherService';
@@ -49,6 +49,11 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 		'playerId': playerId,
 		'playerName': name,
 		'playerScore': 0,
+	}
+
+	const NewPlayerSession: playerIdSessionId = {
+		'playerId': playerId,
+		'sessionId': sessionId
 	}
 
 	//update maxPlayerId
