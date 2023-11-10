@@ -1,3 +1,4 @@
+import fs from 'fs';
 export interface ErrorObject {
   error: string
 }
@@ -13,6 +14,10 @@ export interface QuestionCreate {
   points: number,
   answers: AnswerCreate[],
   thumbnailUrl?: string,
+}
+
+export interface InputMessage {
+  messageBody: string,
 }
 
 export const Colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
