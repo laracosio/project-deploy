@@ -284,6 +284,30 @@ const quizInfoRequestV2 = (token: string, quizId: number): Response => {
     }
   );
 };
+
+const quizFinalResultsRequest = (quizid: number, sessionid: number, token: string): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results`,
+    {
+      headers: {
+        token: token
+      }
+    }
+  )
+};
+
+const quizFinalResultsCSVRequest = (quizid: number, sessionid: number, token: string): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`,
+    {
+      headers: {
+        token: token
+      }
+    }
+  )
+};
 // #endregion
 
 // #region player handlers
@@ -294,5 +318,6 @@ export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
-  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2
+  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, quizFinalResultsRequest,
+  quizFinalResultsCSVRequest
 };
