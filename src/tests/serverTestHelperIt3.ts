@@ -42,7 +42,17 @@ const apiPut = (url: string, body: any, headers: any): ParsedResponse => {
   return parsedResponse;
 }
 
-const apiPost = (url: string, body: any, headers: any): ParsedResponse => {
+const apiPost = (url: string, body: any, headers: any, mockResponse?: any): ParsedResponse => {
+  if (mockResponse) {
+    return {
+      parsedBody: mockResponse,
+      statusCode: 200,
+      headers: {},
+      url: '',
+      body: '',
+      getBody: null 
+    };
+  }
   const httpUrl = SERVER_URL + url;
   const httpOptions = {
     headers: headers ? {

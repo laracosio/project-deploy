@@ -25,7 +25,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
       { token: postRegister.parsedBody.token }
     );
     const getSession = apiGet(
-      `v1/admin/quiz${postQuiz.parsedBody.quizId}/session/${postSession.parsedBody.sessionId}`,
+      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/${postSession.parsedBody.sessionId}`,
       { token: postRegister.parsedBody.token }
     );
     const session: SessionStatus = getSession.parsedBody;
@@ -57,7 +57,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
       { token: postRegister.parsedBody.token }
     );
     const getSession = apiGet(
-      `v1/admin/quiz${postQuiz.parsedBody.quizId + 1}/session/${postSession.parsedBody.session + 1}`,
+      `/v1/admin/quiz/${postQuiz.parsedBody.quizId + 1}/session/${postSession.parsedBody.sessionId + 1}`,
       { token: postRegister.parsedBody.token }
     );
 
@@ -79,9 +79,12 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
       { autoStartNum: 3 },
       { token: postRegister.parsedBody.token }
     );
-    const getSession = apiGet(`v1/admin/quiz${postQuiz.parsedBody.quizId}/session/${postSession.parsedBody.session}`, {
-      token: -1
-    });
+    const getSession = apiGet(
+      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/${postSession.parsedBody.sessionId}`,
+      {
+        token: -1
+      }
+    );
 
     expect(getSession.statusCode).toStrictEqual(401);
   });
@@ -102,9 +105,12 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
       { autoStartNum: 3 },
       { token: postRegister.parsedBody.token }
     );
-    const getSession = apiGet(`v1/admin/quiz${postQuiz.parsedBody.quizId}/session/${postSession.parsedBody.session}`, {
-      token: postRegisterInvalid.parsedBody.token
-    });
+    const getSession = apiGet(
+      `/v1/admin/quiz/${postQuiz.parsedBody.quizId}/session/${postSession.parsedBody.sessionId}`,
+      {
+        token: postRegisterInvalid.parsedBody.token
+      }
+    );
     expect(getSession.statusCode).toStrictEqual(403);
   });
 });
