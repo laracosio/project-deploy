@@ -51,7 +51,9 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 		'playerScore': 0,
 	}
 
-	
+	//update maxPlayerId
+	dataStore.maxPlayerId = playerId;
+
 	dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
 	return { 'PlayerId': playerId }
 
