@@ -14,7 +14,7 @@ interface joinGuestPlayerReturn {
 }
 
 
-function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn | void {
+function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn {
 	const dataStore = getData();
 	const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === sessionId);
 	const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
@@ -58,5 +58,15 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 	return { 'PlayerId': playerId }
 
 }
+
+/*
+WIP
+function GuestPlayerStatus (playerId: Number) GuestPlayerStatusReturn {
+	const dataStore = getData();
+
+	const validPlayer = dataStore.sessions[someNumberHere].sessionPlayers.some(session => session.playerId === playerId);
+
+}
+*/
 
 export { joinGuestPlayer }
