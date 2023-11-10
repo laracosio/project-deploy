@@ -67,7 +67,7 @@ export interface Player {
 }
 
 export interface Message {
-  messagebody: string,
+  messageBody: string,
   playerId: number,
   playerName: string,
   timeSent: number
@@ -76,7 +76,7 @@ export interface Message {
 export interface Session {
   sessionId: number,
   sessionQuiz: Quiz
-  sessionState: number,
+  sessionState: string,
   autoStartNum: number,
   atQuestion: number,
   sessionPlayers: Player[]
@@ -88,7 +88,7 @@ export interface Token {
   userId: number
 }
 
-export interface playerIdSessionId {
+export interface PSIndex {
   sessionId: number,
   playerId: number
 }
@@ -99,7 +99,7 @@ export interface Datastore {
   tokens: Token[],
   trash: Quiz[],
   sessions: Session[],
-  playerIdSessionIds: playerIdSessionId[],
+  sessionPlayerIndex: PSIndex[],
   maxQuizId: number,
   maxPlayerId: number
 }
@@ -111,7 +111,7 @@ let data: Datastore = {
   tokens: [],
   trash: [],
   sessions: [],
-  playerIdSessionIds: [],
+  sessionPlayerIndex: [],
   maxQuizId: 0,
   maxPlayerId: 0
 };
