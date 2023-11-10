@@ -1,19 +1,19 @@
 import { getUnixTime } from "date-fns";
-import { Message, getData } from "../dataStore";
+import { InputMessage, Message, getData } from "../dataStore";
 import { HttpStatusCode } from "../enums/HttpStatusCode";
 import { ApiError } from "../errors/ApiError";
 import { findPlayerName, findSessionByPlayerId, playerValidation, setAndSave } from "./otherService";
 
 const MAX_LENGTH = 100;
 
-function sendMessage(playerId: number, message: string) {
+function sendMessage(playerId: number, message: InputMessage) {
   const dataStore = getData();
 
   // check message body
-  if (!message) {
+  if (!message.messageBody) {
     throw new ApiError('message too short', HttpStatusCode.BAD_REQUEST);
   };
-  if (message.length > MAX_LENGTH) {
+  if (message.messageBody.length > MAX_LENGTH) {
     throw new ApiError('message too long', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -27,7 +27,7 @@ function sendMessage(playerId: number, message: string) {
   const playerName = findPlayerName(playerId, matchedSession.sessionId);
 
   const newMessage: Message = {
-    messageBody: message,
+    messageBody: message.messageBody,
     playerId: playerId, 
     playerName: playerName,
     timeSent: getUnixTime(new Date())
