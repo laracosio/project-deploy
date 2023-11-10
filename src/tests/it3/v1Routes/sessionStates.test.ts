@@ -1,18 +1,17 @@
 import { SessionStatus } from '../../../dataStore';
+import { AdminActions } from '../../../enums/AdminActions';
+import { SessionStates } from '../../../enums/SessionStates';
 import { person2, person3 } from '../../../testingData';
 import { clearRequest } from '../../it2/serverTestHelperIt2';
 import { apiGet, apiPost, apiPut } from '../../serverTestHelperIt3';
 
-// getSessionStatus tests
 describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
   beforeEach(() => {
     clearRequest();
   });
 
   test('success', () => {
-    // make user
     const postRegister = apiPost('/v1/admin/auth/register', person2, {});
-    // make quiz
     const postQuiz = apiPost(
       '/v1/admin/quiz',
       {
@@ -22,25 +21,20 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
       },
       {}
     );
-    // start session
     const postSession = apiPost(
       `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
       { autoStartNum: 3 },
       { token: postRegister.getParsedBody().token }
     );
     const getSession = apiGet(
-      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${
-        postSession.getParsedBody().sessionId
-      }`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
       { token: postRegister.getParsedBody().token }
     );
     const session: SessionStatus = getSession.getParsedBody();
     expect(session.state).toStrictEqual('LOBBY');
     expect(session.atQuestion).toStrictEqual(3);
     expect(session.players).toContain('Hayden');
-    expect(session.metadata.quizId).toStrictEqual(
-      postQuiz.getParsedBody().quizId
-    );
+    expect(session.metadata.quizId).toStrictEqual(postQuiz.getParsedBody().quizId);
     expect(session.metadata.name).toStrictEqual('This is the name of a quiz');
     expect(session.metadata.description).toStrictEqual('This is the desc');
     expect(session.metadata.numQuestions).toStrictEqual(1);
@@ -69,9 +63,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
       { token: postRegister.getParsedBody().token }
     );
     const getSession = apiGet(
-      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId + 1}/session/${
-        postSession.getParsedBody().sessionId + 1
-      }`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId + 1}/session/${postSession.getParsedBody().sessionId + 1}`,
       { token: postRegister.getParsedBody().token }
     );
 
@@ -98,9 +90,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
       { token: postRegister.getParsedBody().token }
     );
     const getSession = apiGet(
-      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${
-        postSession.getParsedBody().sessionId
-      }`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
       {
         token: -1
       }
@@ -130,13 +120,164 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
       { token: postRegister.getParsedBody().token }
     );
     const getSession = apiGet(
-      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${
-        postSession.getParsedBody().sessionId
-      }`,
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
       {
         token: postRegisterInvalid.getParsedBody().token
       }
     );
     expect(getSession.response.statusCode).toStrictEqual(403);
+  });
+});
+
+// update session state
+
+describe('PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
+  beforeEach(() => {
+    clearRequest();
+  });
+
+  test('200', () => {
+    // given
+    const postRegister = apiPost('/v1/admin/auth/register', person2, {});
+    const postQuiz = apiPost(
+      '/v1/admin/quiz',
+      {
+        token: postRegister.getParsedBody().token,
+        name: 'my quiz',
+        description: 'quiz description'
+      },
+      {}
+    );
+    const postSession = apiPost(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
+      { autoStartNum: 3 },
+      { token: postRegister.getParsedBody().token }
+    );
+    // when
+    const putSession = apiPut(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
+      { action: AdminActions.NEXT_QUESTION },
+      { token: postRegister.getParsedBody().token }
+    );
+    // then
+    const getSession = apiGet(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
+      { token: postRegister.getParsedBody().token }
+    );
+    const getSessionBody: SessionStatus = getSession.getParsedBody();
+    expect(getSessionBody.state).toStrictEqual(SessionStates.QUESTION_COUNTDOWN);
+  });
+
+  test('401 - Invalid token', () => {
+    const putSession = apiPut('/v1/admin/quiz/4/session/5', { action: AdminActions.NEXT_QUESTION }, { token: '1234' });
+    expect(putSession.response.statusCode).toStrictEqual(401);
+  });
+
+  test('403 - Valid token but unauthorized user', () => {
+    // given
+    const postRegister = apiPost('/v1/admin/auth/register', person2, {});
+    const postRegisterInvalid = apiPost('/v1/admin/auth/register', person3, {});
+    const postQuiz = apiPost(
+      '/v1/admin/quiz',
+      {
+        token: postRegister.getParsedBody().token,
+        name: 'my quiz',
+        description: 'quiz description'
+      },
+      {}
+    );
+    const postSession = apiPost(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
+      { autoStartNum: 3 },
+      { token: postRegister.getParsedBody().token }
+    );
+    // when
+    const putSession = apiPut(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
+      { action: AdminActions.NEXT_QUESTION },
+      { token: postRegister.getParsedBody().token }
+    );
+    // then
+    expect(putSession.response.statusCode).toStrictEqual(403);
+  });
+
+  test('400 - Session id invalid', () => {
+    // given
+    const postRegister = apiPost('/v1/admin/auth/register', person2, {});
+    const postQuiz = apiPost(
+      '/v1/admin/quiz',
+      {
+        token: postRegister.getParsedBody().token,
+        name: 'my quiz',
+        description: 'quiz description'
+      },
+      {}
+    );
+    const postSession = apiPost(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
+      { autoStartNum: 3 },
+      { token: postRegister.getParsedBody().token }
+    );
+    // when
+    const putSession = apiPut(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
+      { action: AdminActions.NEXT_QUESTION },
+      { token: postRegister.getParsedBody().token }
+    );
+
+    // then
+    expect(putSession.response.statusCode).toStrictEqual(400);
+  });
+
+  test('400 - Invalid action enum', () => {
+    // given
+    const postRegister = apiPost('/v1/admin/auth/register', person2, {});
+    const postQuiz = apiPost(
+      '/v1/admin/quiz',
+      {
+        token: postRegister.getParsedBody().token,
+        name: 'my quiz',
+        description: 'quiz description'
+      },
+      {}
+    );
+    const postSession = apiPost(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
+      { autoStartNum: 3 },
+      { token: postRegister.getParsedBody().token }
+    );
+    // when
+    const putSession = apiPut(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
+      { action: 'foobar' },
+      { token: postRegister.getParsedBody().token }
+    );
+    expect(putSession.response.statusCode).toStrictEqual(400);
+  });
+
+  test('400 - Action enum invalid in the current state', () => {
+    // given
+    const postRegister = apiPost('/v1/admin/auth/register', person2, {});
+    const postQuiz = apiPost(
+      '/v1/admin/quiz',
+      {
+        token: postRegister.getParsedBody().token,
+        name: 'my quiz',
+        description: 'quiz description'
+      },
+      {}
+    );
+    const postSession = apiPost(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
+      { autoStartNum: 3 },
+      { token: postRegister.getParsedBody().token }
+    );
+    // when
+    const putSession = apiPut(
+      `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
+      { action: AdminActions.GO_TO_ANSWER },
+      { token: postRegister.getParsedBody().token }
+    );
+    expect(putSession.response.statusCode).toStrictEqual(400);
   });
 });
