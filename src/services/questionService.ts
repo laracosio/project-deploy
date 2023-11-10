@@ -3,7 +3,7 @@ import { getUnixTime } from 'date-fns';
 import { getData, Question, Answer, QuestionCreate, Colours } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './other';
+import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './otherService';
 import request from 'sync-request-curl';
 
 interface adminDuplicateQuestionReturn {

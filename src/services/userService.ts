@@ -1,7 +1,7 @@
 import { getData } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { findToken, findUserById, hashText, setAndSave, tokenValidation } from './other';
+import { findToken, findUserById, hashText, setAndSave, tokenValidation } from './otherService';
 import validator from 'validator';
 
 interface UserDetailReturn {

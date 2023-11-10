@@ -1,8 +1,8 @@
-import { adminAuthRegister, adminAuthLogin } from '../../features/auth';
-import { adminQuizCreate } from '../../features/quiz';
-import { adminQuizRemove } from '../../features/trash';
+import { adminAuthRegister, adminAuthLogin } from '../../services/authService';
+import { adminQuizCreate } from '../../services/quizService';
+import { adminQuizRemove } from '../../services/trashService';
 import { person1, person2 } from '../../testingData';
-import { clear, tokenValidation } from '../../features/other';
+import { clear, tokenValidation } from '../../services/otherService';
 import { ApiError } from '../../errors/ApiError';
 
 describe('clear - Success Cases', () => {
