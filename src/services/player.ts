@@ -1,7 +1,7 @@
 
 import { getData } from "../dataStore";
 import { ApiError } from "../errors/ApiError";
-import { HttpStatusCode } from "../enums/HttpStatusCode";
+import { HttpStatusCode } from "../enums/HttpStatusCode"
 import { Player, PSInfo } from "../dataStore";
 import { SessionStates } from "../enums/SessionStates";
 import { generateRandomString } from "./otherService";
@@ -15,7 +15,6 @@ interface GuestPlayerStatusReturn {
 	numQuestions: number,
 	atQuestion: number
 }
-
 
 function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn {
 	const dataStore = getData();
@@ -38,12 +37,14 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 
 	//generate name if name is empty string
 	if (name === '') {
-		let isTaken;
-		do {
-			name = generateRandomString();
-			isTaken = dataStore.sessions[sessionIdIndex].sessionPlayers.some(player => player.playerName === name);
-		} while (isTaken);
+		let newName = generateRandomString();
+		//loop thru
 	}
+	
+	//generate playerId
+	const playerId = 0;
+
+	const newPlayer: Player = {
 
 	//increment maxPlayerId by 1
 	const playerId = dataStore.maxPlayerId + 1;
@@ -55,13 +56,11 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 
 	const NewPlayerSession: PSInfo = {
 		'playerId': playerId,
-		'sessionId': sessionId
+		'playerName': name,
 	}
+	
 
-	//update maxPlayerId
-	dataStore.maxPlayerId = playerId;
-
-	dataStore.mapPS.push(NewPlayerSession);
+>>>>>>> f0ca579 (WIP: Join Player)
 	dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
 	return { 'PlayerId': playerId }
 
