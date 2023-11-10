@@ -4,59 +4,61 @@
 // });
 
 import { Response } from 'sync-request-curl';
-import { setData } from '../../../dataStore';
+import { Datastore, getData, setData } from '../../../dataStore';
 import { unitTestLobby } from '../../../testingDataUnit';
-import { clearRequest } from '../../it2/serverTestHelperIt2';
+import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
-import { longMessage } from '../../../testingData';
+import { longMessage, msg1, msg2, msg3, noMsg, person1 } from '../../../testingData';
+import { sendMsgRequest, setDataRequest } from '../../serverTestHelperIt3';
+import { clear, setAndSave } from '../../../services/otherService';
+import fs from 'fs';
+import { sendMessage } from '../../../services/playerService';
 
 beforeEach(() => {
   clearRequest();
-  const dataStore = unitTestLobby;
-  setData(unitTestLobby);
+  setDataRequest(unitTestLobby);
 });
 
 describe('GET /v1/player/:playerid/chat - success', () => {
   test('send 1 message', () => {
-    const res = addMsgRequest(1, 'This is the first message');
+    const res = sendMsgRequest(1, msg1);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
-    expect(data.statusCode).toStrictEqual(200);
+    console.log(data);
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
     // check all messages
   }) 
   test('send multiple messages', () => {
-    addMsgRequest(1, 'This is the first message');
-    addMsgRequest(2, 'This is the second message');
-    const res = addMsgRequest(3, 'This is the third message');
+    sendMsgRequest(1, msg1);
+    sendMsgRequest(2, msg2);
+    const res = sendMsgRequest(3, msg3);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
-    expect(data.statusCode).toStrictEqual(200);
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
     // check all messages
   }) 
 })
 
 describe('GET /v1/player/:playerid/chat - error', () => {
-  // add 1 message - get 4th player (not joined) to read message
   test('invalid playerId', () => {
-    const res = addMsgRequest(1531, 'This is the first message');
+    const res = sendMsgRequest(1531, msg1);
     const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({});
-    expect(data.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+    expect(data).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
   test('message too short', () => {
-    const res = addMsgRequest(1, '');
+    const res = sendMsgRequest(1, noMsg);
     const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({});
-    expect(data.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+    expect(data).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
   test('message too long', () => {
-    const res = addMsgRequest(1, longMessage);
+    const res = sendMsgRequest(1, longMessage);
     const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({});
-    expect(data.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+    expect(data).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
 })
-
 
 /**
 let session1: Response, quiz1: Response, player1: Response, player2: Response, player3: Response;
@@ -64,7 +66,7 @@ let game1: Response;
 beforeEach(() => {
   clearRequest();
   session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-  const sess1Data = JSON.parse(session1.body.toString());
+  const sess1Data = JSON.parse(authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast).body.toString());
   quiz1 = quizCreateRequestV2(sess1Data.token, validQuizName, validQuizDescription);
   const quiz1Data = JSON.parse(quiz1.body.toString());
   createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
