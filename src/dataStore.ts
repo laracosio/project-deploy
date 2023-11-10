@@ -88,12 +88,18 @@ export interface Token {
   userId: number
 }
 
+export interface playerIdSessionId {
+  sessionId: string,
+  playerId: number
+}
+
 export interface Datastore {
   users: User[],
   quizzes: Quiz[],
   tokens: Token[],
   trash: Quiz[],
   sessions: Session[],
+  playerIdSessionIds: playerIdSessionId[],
   maxQuizId: number,
   maxPlayerId: number
 }
@@ -105,6 +111,7 @@ let data: Datastore = {
   tokens: [],
   trash: [],
   sessions: [],
+  playerIdSessionIds: [],
   maxQuizId: 0,
   maxPlayerId: 0
 };
