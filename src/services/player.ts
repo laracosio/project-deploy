@@ -13,6 +13,12 @@ interface joinGuestPlayerReturn {
 	PlayerId: number
 }
 
+interface GuestPlayerStatusReturn {
+	state: number,
+	numQuestions: number,
+	atQuestion: number
+}
+
 
 function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn {
 	const dataStore = getData();
@@ -42,7 +48,7 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 		} while (isTaken);
 	}
 
-	//generate playerId
+	//increment maxPlayerId by 1
 	const playerId = dataStore.maxPlayerId + 1;
 
 	const newPlayer: Player = {
@@ -59,19 +65,36 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 	//update maxPlayerId
 	dataStore.maxPlayerId = playerId;
 
+	dataStore.playerIdSessionIds.push(NewPlayerSession);
 	dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
 	return { 'PlayerId': playerId }
 
 }
 
-/*
-WIP
-function GuestPlayerStatus (playerId: Number) GuestPlayerStatusReturn {
-	const dataStore = getData();
 
-	const validPlayer = dataStore.sessions[someNumberHere].sessionPlayers.some(session => session.playerId === playerId);
+function GuestPlayerStatus (playerId: Number): GuestPlayerStatusReturn {
+	const dataStore = getData();
+	
+	const validPlayer = dataStore.playerIdSessionIds.some(ps => ps.playerId === playerId);
+	if (!validPlayer) {
+		throw new ApiError('Player ID does not exist', HttpStatusCode.BAD_REQUEST);
+	}
+
+	const playerStatus = dataStore.playerIdSessionIds.find(ps => ps.playerId === playerId);
+
+	const state = dataStore.sessions[playerStatus.sessionId].sessionState;
+	const atQuestion = dataStore.sessions[playerStatus.sessionId].atQuestion;
+	const numQuestions = dataStore.sessions[playerStatus.sessionId].sessionQuiz.numQuestions;
+
+	const getPlayerStatus: GuestPlayerStatusReturn = {
+		state: state,
+		numQuestions: atQuestion,
+		atQuestion: numQuestions
+	}
+
+	return getPlayerStatus;
 
 }
-*/
+
 
 export { joinGuestPlayer }
