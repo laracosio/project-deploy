@@ -1,12 +1,64 @@
 // remove me and add your tests below
-test('placeholder', () => {
-  expect((1 + 1)).toBe(2);
+// test('placeholder', () => {
+//   expect((1 + 1)).toBe(2);
+// });
+
+import { Response } from 'sync-request-curl';
+import { setData } from '../../../dataStore';
+import { unitTestLobby } from '../../../testingDataUnit';
+import { clearRequest } from '../../it2/serverTestHelperIt2';
+import { HttpStatusCode } from '../../../enums/HttpStatusCode';
+import { longMessage } from '../../../testingData';
+
+beforeEach(() => {
+  clearRequest();
+  const dataStore = unitTestLobby;
+  setData(unitTestLobby);
 });
 
-/**
-import { Response } from 'sync-request-curl';
-import { clearRequest } from '../../it2Testing/serverTestHelperIt2';
+describe('GET /v1/player/:playerid/chat - success', () => {
+  test('send 1 message', () => {
+    const res = addMsgRequest(1, 'This is the first message');
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({});
+    expect(data.statusCode).toStrictEqual(200);
+    // check all messages
+  }) 
+  test('send multiple messages', () => {
+    addMsgRequest(1, 'This is the first message');
+    addMsgRequest(2, 'This is the second message');
+    const res = addMsgRequest(3, 'This is the third message');
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({});
+    expect(data.statusCode).toStrictEqual(200);
+    // check all messages
+  }) 
+})
 
+describe('GET /v1/player/:playerid/chat - error', () => {
+  // add 1 message - get 4th player (not joined) to read message
+  test('invalid playerId', () => {
+    const res = addMsgRequest(1531, 'This is the first message');
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({});
+    expect(data.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+  });
+  test('message too short', () => {
+    const res = addMsgRequest(1, '');
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({});
+    expect(data.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+  });
+  test('message too long', () => {
+    const res = addMsgRequest(1, longMessage);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({});
+    expect(data.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+  });
+})
+
+
+/**
 let session1: Response, quiz1: Response, player1: Response, player2: Response, player3: Response;
 let game1: Response;
 beforeEach(() => {
