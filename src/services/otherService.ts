@@ -20,6 +20,10 @@ function clear(): object {
   dataStore.quizzes = [];
   dataStore.tokens = [];
   dataStore.trash = [];
+  dataStore.sessions = [];
+  dataStore.playerIdSessionIds = [];
+  dataStore.maxQuizId = 0;
+  dataStore.maxPlayerId = 0;
   setAndSave(dataStore);
   return {};
 }
