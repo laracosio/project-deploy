@@ -288,4 +288,3 @@ describe('Unsuccessful tests: Status of Guest Player', () => {
   });
 });
 
-*/
