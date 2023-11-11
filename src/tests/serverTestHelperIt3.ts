@@ -286,13 +286,14 @@ const quizInfoRequestV2 = (token: string, quizId: number): Response => {
 };
 
 const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
+  console.log("joinGuestPlayerRequest entered");
   return request(
     'POST',
     `${SERVER_URL}/v1/player/join`,
     {
       body: JSON.stringify({
         sessionId: sessionId,
-        name: name,
+        name: name
       }),
       headers: {
         'Content-type': 'application/json'

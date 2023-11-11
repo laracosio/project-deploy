@@ -7,7 +7,7 @@ import { SessionStates } from "../enums/SessionStates";
 import { generateRandomString } from "./otherService";
 
 interface joinGuestPlayerReturn {
-	PlayerId: number
+	playerId: number
 }
 
 interface GuestPlayerStatusReturn {
@@ -21,9 +21,6 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 	const dataStore = getData();
 	const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === sessionId);
 	const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
-	if (!sessionIdIndex) {
-		throw new ApiError('Session is not in LOBBY state', HttpStatusCode.BAD_REQUEST);
-	}
 
 	//check if name is already taken
 	const takenName = dataStore.sessions[sessionIdIndex].sessionPlayers.some(player => player.playerName === name);
@@ -64,7 +61,7 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 
 	dataStore.playerIdSessionIds.push(NewPlayerSession);
 	dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
-	return { 'PlayerId': playerId }
+	return { 'playerId': playerId }
 
 }
 
