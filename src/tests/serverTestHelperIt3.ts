@@ -320,7 +320,7 @@ const GuestPlayerStatusRequest = (playerid: number): Response => {
 // #endregion
 
 // #region session handlers
-const startNewSessionRequest = (token: string, quizId: number, autoStartNum: number): Response => {
+const sessionCreateRequest = (token: string, quizId: number, autoStartNum: number): Response => {
   return request(
     'POST',
     `${SERVER_URL}/v1/admin/quiz/${quizId}/session/start`,
@@ -341,5 +341,5 @@ export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
-  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, startNewSessionRequest, joinGuestPlayerRequest, GuestPlayerStatusRequest
+  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, sessionCreateRequest, joinGuestPlayerRequest, GuestPlayerStatusRequest
 };

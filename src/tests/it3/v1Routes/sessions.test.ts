@@ -1,6 +1,6 @@
 import { clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../../it2/serverTestHelperIt2';
 import { person1, person2, validQuizDescription, validQuizName, validCreateQuestion, validAutoStartNum, invalidAutoStartNum } from '../../../testingData';
-import { startNewSessionRequest } from '../../serverTestHelperIt3';
+import { sessionCreateRequest } from '../../serverTestHelperIt3';
 import { Response } from 'sync-request-curl';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 
@@ -18,7 +18,7 @@ describe('startNewSession - Success cases', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
     createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
 
-    const response = startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const response = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
     const responseData = JSON.parse(response.body.toString());
     expect(response.statusCode).toStrictEqual(HttpStatusCode.OK);
     expect(responseData).toStrictEqual({ sessionId: expect.any(Number) });
@@ -33,9 +33,9 @@ describe('startNewSession - Success cases', () => {
     const quiz2 = quizCreateRequest(user1Data.token, validQuizName + 'abc', validQuizDescription);
     const quiz2Data = JSON.parse(quiz2.body.toString());
     createQuizQuestionRequest(quiz2Data.quizId, user1Data.token, validCreateQuestion);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
 
-    const response = startNewSessionRequest(user1Data.token, quiz2Data.quizId, validAutoStartNum);
+    const response = sessionCreateRequest(user1Data.token, quiz2Data.quizId, validAutoStartNum);
     const responseData = JSON.parse(response.body.toString());
     expect(response.statusCode).toStrictEqual(HttpStatusCode.OK);
     expect(responseData).toStrictEqual({ sessionId: expect.any(Number) });
@@ -55,7 +55,7 @@ describe('startNewSession - Error cases', () => {
     const user1Data = JSON.parse(user1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
 
-    const response = startNewSessionRequest(user1Data.token + 1, quiz1Data.quizId, validAutoStartNum);
+    const response = sessionCreateRequest(user1Data.token + 1, quiz1Data.quizId, validAutoStartNum);
     const responseData = JSON.parse(response.body.toString());
     expect(responseData).toStrictEqual({ error: expect.any(String) });
     expect(response.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
@@ -65,7 +65,7 @@ describe('startNewSession - Error cases', () => {
     const user2Data = JSON.parse(user2.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
 
-    const response = startNewSessionRequest(user2Data.token, quiz1Data.quizId, validAutoStartNum);
+    const response = sessionCreateRequest(user2Data.token, quiz1Data.quizId, validAutoStartNum);
     const responseData = JSON.parse(response.body.toString());
     expect(responseData).toStrictEqual({ error: expect.any(String) });
     expect(response.statusCode).toStrictEqual(HttpStatusCode.FORBIDDEN);
@@ -74,7 +74,7 @@ describe('startNewSession - Error cases', () => {
     const user1Data = JSON.parse(user1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
 
-    const response = startNewSessionRequest(user1Data.token, quiz1Data.quizId, invalidAutoStartNum);
+    const response = sessionCreateRequest(user1Data.token, quiz1Data.quizId, invalidAutoStartNum);
     const responseData = JSON.parse(response.body.toString());
     expect(responseData).toStrictEqual({ error: expect.any(String) });
     expect(response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
@@ -84,18 +84,18 @@ describe('startNewSession - Error cases', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
 
     // start 10 new sessions for quiz1
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
 
-    const response = startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const response = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
     const responseData = JSON.parse(response.body.toString());
     expect(responseData).toStrictEqual({ error: expect.any(String) });
     expect(response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
@@ -104,7 +104,7 @@ describe('startNewSession - Error cases', () => {
     const user1Data = JSON.parse(user1.body.toString());
     const quiz2 = quizCreateRequest(user1Data.token, validQuizName + 'abc', validQuizDescription);
     const quiz2Data = JSON.parse(quiz2.body.toString());
-    const response = startNewSessionRequest(user1Data.token, quiz2Data.quizId, validAutoStartNum);
+    const response = sessionCreateRequest(user1Data.token, quiz2Data.quizId, validAutoStartNum);
     const responseData = JSON.parse(response.body.toString());
     expect(responseData).toStrictEqual({ error: expect.any(String) });
     expect(response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
