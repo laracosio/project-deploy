@@ -29,9 +29,9 @@ describe('POST /v2/admin/auth/logout - Success Cases', () => {
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      expect(data.tokens.some(user => user.sessionId === session1Data.token)).toStrictEqual(true);
-      expect(data.tokens.some(user => user.sessionId === session2Data.token)).toStrictEqual(true);
-      expect(data.tokens.some(user => user.sessionId === session3Data.token)).toStrictEqual(false);
+      expect(data.utinfo.some(user => user.token === session1Data.token)).toStrictEqual(true);
+      expect(data.utinfo.some(user => user.token === session2Data.token)).toStrictEqual(true);
+      expect(data.utinfo.some(user => user.token === session3Data.token)).toStrictEqual(false);
     }
   });
   test('Token was successfully removed from dataStore - multiple logouts from multiple sessions for same user', () => {
@@ -48,9 +48,9 @@ describe('POST /v2/admin/auth/logout - Success Cases', () => {
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      expect(data.tokens.some(user => user.sessionId === session1Data.token)).toStrictEqual(false);
-      expect(data.tokens.some(user => user.sessionId === session2Data.token)).toStrictEqual(false);
-      expect(data.tokens.some(user => user.sessionId === session3Data.token)).toStrictEqual(false);
+      expect(data.utinfo.some(user => user.token === session1Data.token)).toStrictEqual(false);
+      expect(data.utinfo.some(user => user.token === session2Data.token)).toStrictEqual(false);
+      expect(data.utinfo.some(user => user.token === session3Data.token)).toStrictEqual(false);
     }
   });
 });

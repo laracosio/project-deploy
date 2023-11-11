@@ -90,8 +90,8 @@ export interface Session {
   messages: Message[];
 }
 
-export interface Token {
-  sessionId: string;
+export interface UTInfo {
+  token: string;
   userId: number;
 }
 
@@ -103,7 +103,7 @@ export interface playerIdSessionId {
 export interface Datastore {
   users: User[];
   quizzes: Quiz[];
-  tokens: Token[];
+  utinfo: UTInfo[];
   trash: Quiz[];
   sessions: Session[];
   playerIdSessionIds: playerIdSessionId[];
@@ -115,7 +115,7 @@ export interface Datastore {
 let data: Datastore = {
   users: [],
   quizzes: [],
-  tokens: [],
+  utinfo: [],
   trash: [],
   sessions: [],
   playerIdSessionIds: [],
