@@ -44,7 +44,8 @@ export interface Question {
   answers: Answer[],
   playersCorrectList: string[],
   averageAnswerTime: number,
-  percentCorrect: number
+  percentCorrect: number,
+  numPlayerAnswers: number
 }
 
 export interface Quiz {
@@ -60,10 +61,14 @@ export interface Quiz {
   thumbnailUrl?: string
 }
 
+export interface PlayerAnswers {
+  questionId: number,
+  score: number
+}
 export interface Player {
   playerId: number,
   playerName: string,
-  playerScore: number
+  playerSnwers?: PlayerAnswers[]
 }
 
 export interface Message {
