@@ -105,10 +105,10 @@ const userUpdatePasswordRequest = (token: string, oldPassword: string, newPasswo
 // #endregion
 
 // #region quiz requests
-const quizTransferRequest = (token: string, quizId: number, userEmail: string): Response => {
+const quizTransferRequest = (token: string, quizid: number, userEmail: string): Response => {
   return request(
     'POST',
-    SERVER_URL + '/v1/admin/quiz/' + quizId + '/transfer',
+    SERVER_URL + '/v1/admin/quiz/' + quizid + '/transfer',
     {
       body: JSON.stringify({
         token: token,
@@ -134,10 +134,10 @@ const quizCreateRequest = (token: string, name: string, description: string): Re
   );
 };
 
-const quizRemoveRequest = (token: string, quizId: number): Response => {
+const quizRemoveRequest = (token: string, quizid: number): Response => {
   return request(
     'DELETE',
-    SERVER_URL + '/v1/admin/quiz/' + quizId,
+    SERVER_URL + '/v1/admin/quiz/' + quizid,
     {
       qs: {
         token: token
@@ -158,10 +158,10 @@ const quizListRequest = (token: string): Response => {
   );
 };
 
-const quizInfoRequest = (token: string, quizId: number): Response => {
+const quizInfoRequest = (token: string, quizid: number): Response => {
   return request(
     'GET',
-          `${SERVER_URL}/v1/admin/quiz/${quizId}`,
+          `${SERVER_URL}/v1/admin/quiz/${quizid}`,
           {
             qs: {
               token: token
@@ -170,10 +170,10 @@ const quizInfoRequest = (token: string, quizId: number): Response => {
   );
 };
 
-const quizNameUpdateRequest = (token: string, quizId: number, name: string): Response => {
+const quizNameUpdateRequest = (token: string, quizid: number, name: string): Response => {
   return request(
     'PUT',
-      `${SERVER_URL}/v1/admin/quiz/${quizId}/name`,
+      `${SERVER_URL}/v1/admin/quiz/${quizid}/name`,
       {
         body: JSON.stringify({
           token: token,
@@ -184,10 +184,10 @@ const quizNameUpdateRequest = (token: string, quizId: number, name: string): Res
   );
 };
 
-const quizDescriptUpdateRequest = (token: string, quizId: number, description: string): Response => {
+const quizDescriptUpdateRequest = (token: string, quizid: number, description: string): Response => {
   return request(
     'PUT',
-        `${SERVER_URL}/v1/admin/quiz/${quizId}/description`,
+        `${SERVER_URL}/v1/admin/quiz/${quizid}/description`,
         {
           body: JSON.stringify({
             token: token,
@@ -211,10 +211,10 @@ const quizViewTrashRequest = (token: string): Response => {
   );
 };
 
-const quizRestoreTrashRequest = (token: string, quizId: number): Response => {
+const quizRestoreTrashRequest = (token: string, quizid: number): Response => {
   return request(
     'POST',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/restore`,
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/restore`,
     {
       body: JSON.stringify({
         token: token,
@@ -224,24 +224,24 @@ const quizRestoreTrashRequest = (token: string, quizId: number): Response => {
   );
 };
 
-const quizEmptyTrashRequest = (token: string, quizIds: string): Response => {
+const quizEmptyTrashRequest = (token: string, quizids: string): Response => {
   return request(
     'DELETE',
     `${SERVER_URL}/v1/admin/quiz/trash/empty`,
     {
       qs: {
         token: token,
-        quizIds: quizIds
+        quizids: quizids
       },
       headers: { 'Content-type': 'application/json' },
     }
   );
 };
 
-const duplicateQuestionRequest = (token: string, quizId: number, questionId: number): Response => {
+const duplicateQuestionRequest = (token: string, quizid: number, questionid: number): Response => {
   return request(
     'POST',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`,
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/question/${questionid}/duplicate`,
     {
       body: JSON.stringify({
         token: token,
@@ -251,10 +251,10 @@ const duplicateQuestionRequest = (token: string, quizId: number, questionId: num
   );
 };
 
-const createQuizQuestionRequest = (quizId: number, token: string, questionBody: QuestionCreate): Response => {
+const createQuizQuestionRequest = (quizid: number, token: string, questionBody: QuestionCreate): Response => {
   return request(
     'POST',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/question`,
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/question`,
     {
       json: {
         token: token,
@@ -264,10 +264,10 @@ const createQuizQuestionRequest = (quizId: number, token: string, questionBody: 
   );
 };
 
-const moveQuestionRequest = (token: string, quizId: number, questionId: number, newPosition: number): Response => {
+const moveQuestionRequest = (token: string, quizid: number, questionid: number, newPosition: number): Response => {
   return request(
     'PUT',
-    SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move',
+    SERVER_URL + '/v1/admin/quiz/' + quizid + '/question/' + questionid + '/move',
     {
       body: JSON.stringify({
         token: token,
@@ -278,10 +278,10 @@ const moveQuestionRequest = (token: string, quizId: number, questionId: number, 
   );
 };
 
-const updateQuizQuestionRequest = (quizId: number, questionId: number, token: string, questionBody: QuestionCreate): Response => {
+const updateQuizQuestionRequest = (quizid: number, questionid: number, token: string, questionBody: QuestionCreate): Response => {
   return request(
     'PUT',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`,
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/question/${questionid}`,
     {
       json: {
         token: token,
@@ -291,13 +291,13 @@ const updateQuizQuestionRequest = (quizId: number, questionId: number, token: st
   );
 };
 
-const deleteQuizQuestionRequest = (sessionId: string, quizId: number, questionId: number): Response => {
+const deleteQuizQuestionRequest = (token: string, quizid: number, questionid: number): Response => {
   return request(
     'DELETE',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`,
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/question/${questionid}`,
     {
       qs: {
-        sessionId: sessionId
+        token: token
       },
     }
   );

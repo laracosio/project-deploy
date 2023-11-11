@@ -25,7 +25,7 @@ describe('PUT /v2/user/details - Success Cases', () => {
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      const userToken = data.tokens.find(t => t.sessionId === session1Data.token);
+      const userToken = data.mapUT.find(t => t.token === session1Data.token);
       const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.email).toStrictEqual(person2.email);
       expect(user.nameFirst).toStrictEqual(person1.nameFirst);
@@ -41,7 +41,7 @@ describe('PUT /v2/user/details - Success Cases', () => {
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      const userToken = data.tokens.find(t => t.sessionId === session1Data.token);
+      const userToken = data.mapUT.find(t => t.token === session1Data.token);
       const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.email).toStrictEqual(person1.email);
       expect(user.nameFirst).toStrictEqual(person2.nameFirst);
@@ -57,7 +57,7 @@ describe('PUT /v2/user/details - Success Cases', () => {
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      const userToken = data.tokens.find(t => t.sessionId === session1Data.token);
+      const userToken = data.mapUT.find(t => t.token === session1Data.token);
       const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.email).toStrictEqual(person1.email);
       expect(user.nameFirst).toStrictEqual(person1.nameFirst);
@@ -81,7 +81,7 @@ describe('PUT /v2/user/password - Success Cases', () => {
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      const userToken = data.tokens.find(t => t.sessionId === session1Data.token);
+      const userToken = data.mapUT.find(t => t.token === session1Data.token);
       const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.password).toStrictEqual(hashText(person2.password));
     }

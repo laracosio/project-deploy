@@ -1,5 +1,5 @@
-import { helperAdminRegister, createSessionId, setAndSave, hashText } from './otherService';
-import { getData, Token } from '../dataStore';
+import { helperAdminRegister, createToken, setAndSave, hashText } from './otherService';
+import { getData, UTInfo } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 interface AuthReturn {
@@ -36,17 +36,17 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
     numFailedPasswordsSinceLastLogin: 0,
   };
 
-  const newSessionId: string = createSessionId(dataStore.tokens);
-  const newToken: Token = {
-    sessionId: newSessionId,
+  const newToken: string = createToken(dataStore.mapUT);
+  const newUTInfo: UTInfo = {
+    token: newToken,
     userId: newUserId
   };
   dataStore.users.push(newUser);
-  dataStore.tokens.push(newToken);
+  dataStore.mapUT.push(newUTInfo);
 
   setAndSave(dataStore);
 
-  return { token: newSessionId };
+  return { token: newToken };
 }
 
 /**
@@ -76,21 +76,21 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   authUser.numSuccessfulLogins++;
   authUser.numFailedPasswordsSinceLastLogin = 0;
 
-  const newSessionId: string = createSessionId(dataStore.tokens);
-  const newToken: Token = {
-    sessionId: newSessionId,
+  const newToken: string = createToken(dataStore.mapUT);
+  const newUTInfo: UTInfo = {
+    token: newToken,
     userId: authUserId
   };
-  dataStore.tokens.push(newToken);
+  dataStore.mapUT.push(newUTInfo);
 
   setAndSave(dataStore);
 
-  return { token: newSessionId };
+  return { token: newToken };
 }
 
 /**
  * Logs out an admin user with an active session
- * @param token - sessionId identifying user
+ * @param token - token identifying user
  * @returns {}
  * @returns { error: string}
  */
@@ -98,13 +98,13 @@ function adminAuthLogout(token: string): object {
   const dataStore = getData();
 
   // check if token is valid
-  if (!dataStore.tokens.some(user => user.sessionId === token)) {
+  if (!dataStore.mapUT.some(user => user.token === token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
   // remove token from dataStore
-  const tokenIndex: number = dataStore.tokens.findIndex(user => user.sessionId === token);
-  dataStore.tokens.splice(tokenIndex, 1);
+  const tokenIndex: number = dataStore.mapUT.findIndex(user => user.token === token);
+  dataStore.mapUT.splice(tokenIndex, 1);
 
   setAndSave(dataStore);
 

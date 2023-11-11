@@ -1,4 +1,4 @@
-import { getData, setData, User, Token, Quiz, Question, Datastore, Session } from '../dataStore';
+import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
@@ -17,10 +17,10 @@ function clear(): object {
   const dataStore = getData();
   dataStore.users = [];
   dataStore.quizzes = [];
-  dataStore.tokens = [];
+  dataStore.mapUT = [];
   dataStore.trash = [];
   dataStore.sessions = [];
-  dataStore.sessionPlayerIndex = [];
+  dataStore.mapPS = [];
   dataStore.maxQuizId = 0;
   dataStore.maxPlayerId = 0;
   setAndSave(dataStore);
@@ -81,17 +81,17 @@ function helperAdminRegister(email: string, password: string, nameFirst: string,
 }
 
 /**
- * Generates a sessionId and checks that sessionId has not been assigned previously
- * @param {Array<Tokens>} Token Datastore to check that generated sID does not already exist
- * @returns {string} sessionId
+ * Generates a token and checks that token has not been assigned previously
+ * @param {Array<UTInfo>} UTInfo Datastore to check that generated sID does not already exist
+ * @returns {string} token
  */
-function createSessionId(tokens: Array<Token>): string {
-  let newSessionId: string = uuidv4();
+function createToken(tokens: Array<UTInfo>): string {
+  let newToken: string = uuidv4();
   /* istanbul ignore next */
-  while (tokens.some(t => t.sessionId === newSessionId)) {
-    newSessionId = uuidv4();
+  while (tokens.some(t => t.token === newToken)) {
+    newToken = uuidv4();
   }
-  return newSessionId;
+  return newToken;
 }
 
 /**
@@ -105,20 +105,20 @@ function tokenValidation (token: string): boolean {
     return false;
   }
   // check whether token exists in dataStore
-  if (!dataStore.tokens.some(t => t.sessionId === token)) {
+  if (!dataStore.mapUT.some(t => t.token === token)) {
     return false;
   }
   return true;
 }
 
 /**
- * Returns a Token from the dataStore based on passed in sessionId
- * @param token - sessionId
+ * Returns a UTInfo from the dataStore based on passed in token
+ * @param token - token
  * @returns Token | undefined (if not found)
  */
-function findToken (token: string): Token {
+function findUTInfo (token: string): UTInfo {
   const dataStore = getData();
-  return dataStore.tokens.find(t => t.sessionId === token);
+  return dataStore.mapUT.find(t => t.token === token);
 }
 
 /**
@@ -222,7 +222,7 @@ function playerValidation(playerId: number): boolean {
     return false;
   }
   // check whether token exists in dataStore
-  if (!dataStore.sessionPlayerIndex.some(elem => elem.playerId === playerId)) {
+  if (!dataStore.mapPS.some(elem => elem.playerId === playerId)) {
     return false;
   }
   return true;
@@ -235,7 +235,7 @@ function playerValidation(playerId: number): boolean {
  */
 function findSessionByPlayerId(playerId: number): Session {
   const dataStore = getData();
-  const matchedIndex = dataStore.sessionPlayerIndex.find(elem => elem.playerId === playerId);
+  const matchedIndex = dataStore.mapPS.find(elem => elem.playerId === playerId);
   const matchedSessionId = matchedIndex.sessionId;
   return dataStore.sessions.find(session => session.sessionId === matchedSessionId);
 }
@@ -264,8 +264,8 @@ function isImageUrlValid(thumbnailUrl: string): boolean {
   return imageRegex.test(thumbnailUrl);
 }
 export {
-  clear, helperAdminRegister, createSessionId, tokenValidation,
-  findQuestionByQuiz, findQuizById, findUserById, findToken,
+  clear, helperAdminRegister, createToken, tokenValidation,
+  findQuestionByQuiz, findQuizById, findUserById, findUTInfo,
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
   hashText, openSessionQuizzesState, isImageUrlValid, playerValidation,
   findSessionByPlayerId, findPlayerName

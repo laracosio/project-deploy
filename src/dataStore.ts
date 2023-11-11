@@ -1,10 +1,12 @@
+import { SessionStates } from './enums/SessionStates';
+
 export interface ErrorObject {
   error: string
 }
 
 export interface AnswerCreate {
   answer: string,
-  correct: boolean,
+  correct: boolean
 }
 
 export interface QuestionCreate {
@@ -26,10 +28,10 @@ export interface User {
   nameFirst: string,
   nameLast: string,
   password: string,
-  oldPasswords: string[];
+  oldPasswords: string[],
   email: string,
   numSuccessfulLogins: number,
-  numFailedPasswordsSinceLastLogin: number
+  numFailedPasswordsSinceLastLogin: number,
 }
 
 export interface Answer {
@@ -47,8 +49,8 @@ export interface Question {
   points: number,
   answers: Answer[],
   playersCorrectList: string[],
-  averageAnswerTime: number,
-  percentCorrect: number
+  answerTimes: number[],
+  questionStartTime: number
 }
 
 export interface Quiz {
@@ -61,61 +63,65 @@ export interface Quiz {
   numQuestions: number,
   questions: Question[],
   quizDuration: number,
-  thumbnailUrl?: string
+  thumbnailUrl?: string,
 }
 
+export interface PlayerAnswers {
+  questionId: number,
+  score: number,
+}
 export interface Player {
   playerId: number,
   playerName: string,
-  playerScore: number
+  playerAnswers?: PlayerAnswers[],
 }
 
 export interface Message {
   messageBody: string,
   playerId: number,
   playerName: string,
-  timeSent: number
+  timeSent: number,
 }
 
 export interface Session {
   sessionId: number,
-  sessionQuiz: Quiz
-  sessionState: string,
+  sessionQuiz: Quiz,
+  sessionState: SessionStates,
   autoStartNum: number,
   atQuestion: number,
-  sessionPlayers: Player[]
-  messages: Message[]
+  sessionPlayers: Player[],
+  messages: Message[],
 }
 
-export interface Token {
-  sessionId: string,
-  userId: number
+export interface UTInfo {
+  token: string,
+  userId: number,
 }
 
-export interface PSIndex {
+export interface PSInfo {
   sessionId: number,
-  playerId: number
+  playerId: number,
 }
 
 export interface Datastore {
   users: User[],
   quizzes: Quiz[],
-  tokens: Token[],
+  mapUT: UTInfo[],
   trash: Quiz[],
   sessions: Session[],
-  sessionPlayerIndex: PSIndex[],
+  mapPS: PSInfo[],
   maxQuizId: number,
-  maxPlayerId: number
+  maxPlayerId: number,
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data: Datastore = {
   users: [],
   quizzes: [],
-  tokens: [],
+  mapUT: [],
   trash: [],
   sessions: [],
-  sessionPlayerIndex: [],
+  mapPS: [],
   maxQuizId: 0,
   maxPlayerId: 0
 };
