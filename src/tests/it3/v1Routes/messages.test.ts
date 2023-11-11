@@ -21,7 +21,6 @@ describe('GET /v1/player/:playerid/chat - success', () => {
     const res = sendMsgRequest(PLAYER_1, msg1);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
-    console.log(data);
     expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
   });
   test('send multiple messages', () => {
