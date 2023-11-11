@@ -209,7 +209,7 @@ function hashText(text: string): string {
 function openSessionQuizzesState(quizId: number): boolean {
   const dataStore = getData();
   return dataStore.sessions.some(element => element.sessionQuiz.quizId === quizId &&
-    element.sessionState !== SessionStates.'END');
+    element.sessionState !== SessionStates.END);
 }
 
 /**
