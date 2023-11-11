@@ -24,6 +24,7 @@ function clear(): object {
   dataStore.mapPS = [];
   dataStore.maxQuizId = 0;
   dataStore.maxPlayerId = 0;
+  dataStore.maxSessionId = 0;
   setAndSave(dataStore);
   return {};
 }
