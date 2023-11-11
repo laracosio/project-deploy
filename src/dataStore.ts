@@ -101,7 +101,8 @@ export interface Datastore {
   sessions: Session[],
   playerIdSessionIds: playerIdSessionId[],
   maxQuizId: number,
-  maxPlayerId: number
+  maxPlayerId: number,
+  maxSessionId: number
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
@@ -113,7 +114,8 @@ let data: Datastore = {
   sessions: [],
   playerIdSessionIds: [],
   maxQuizId: 0,
-  maxPlayerId: 0
+  maxPlayerId: 0,
+  maxSessionId: 0
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
