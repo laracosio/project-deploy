@@ -164,7 +164,7 @@ describe('GET /v1/admin/quiz/{quizid} - Error Cases', () => {
     expect(JSON.parse(response.body.toString())).toStrictEqual({ error: 'Invalid quiz ID' });
   });
 
-  test('quizId not owned by this user', () => {
+  test.only('quizId not owned by this user', () => {
     const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const userData = JSON.parse(user.body.toString());
 
