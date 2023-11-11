@@ -2,11 +2,8 @@
 import { getData } from "../dataStore";
 import { ApiError } from "../errors/ApiError";
 import { HttpStatusCode } from "../enums/HttpStatusCode";
-import { Player, playerIdSessionId } from "../dataStore";
+import { Player, PSInfo } from "../dataStore";
 import { SessionStates } from "../enums/SessionStates";
-import { getUnixTime } from 'date-fns';
-import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './otherService';
-import request from 'sync-request-curl';
 import { generateRandomString } from "./otherService";
 
 interface joinGuestPlayerReturn {
@@ -14,7 +11,7 @@ interface joinGuestPlayerReturn {
 }
 
 interface GuestPlayerStatusReturn {
-	state: number,
+	state: string,
 	numQuestions: number,
 	atQuestion: number
 }
@@ -53,11 +50,10 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 
 	const newPlayer: Player = {
 		'playerId': playerId,
-		'playerName': name,
-		'playerScore': 0,
+		'playerName': name
 	}
 
-	const NewPlayerSession: playerIdSessionId = {
+	const NewPlayerSession: PSInfo = {
 		'playerId': playerId,
 		'sessionId': sessionId
 	}
@@ -65,7 +61,7 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 	//update maxPlayerId
 	dataStore.maxPlayerId = playerId;
 
-	dataStore.playerIdSessionIds.push(NewPlayerSession);
+	dataStore.mapPS.push(NewPlayerSession);
 	dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
 	return { 'PlayerId': playerId }
 
@@ -75,12 +71,12 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 function GuestPlayerStatus (playerId: Number): GuestPlayerStatusReturn {
 	const dataStore = getData();
 	
-	const validPlayer = dataStore.playerIdSessionIds.some(ps => ps.playerId === playerId);
+	const validPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
 	if (!validPlayer) {
 		throw new ApiError('Player ID does not exist', HttpStatusCode.BAD_REQUEST);
 	}
 
-	const playerStatus = dataStore.playerIdSessionIds.find(ps => ps.playerId === playerId);
+	const playerStatus = dataStore.mapPS.find(ps => ps.playerId === playerId);
 
 	const state = dataStore.sessions[playerStatus.sessionId].sessionState;
 	const atQuestion = dataStore.sessions[playerStatus.sessionId].atQuestion;
