@@ -1,7 +1,7 @@
 import { Response } from 'sync-request-curl';
 
 import { person1, validAutoStartNum, validQuestionInput1, validQuestionInput1V2, validQuestionInput2, validQuestionInput2V2, validQuestionInput3, validQuestionInput3V2, validQuizDescription, validQuizName } from '../../../testingData';
-import { createQuizQuestionRequestV2, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest } from '../../serverTestHelperIt3';
+import { createQuizQuestionRequestV2, playerQuestResultRqst, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest } from '../../serverTestHelperIt3';
 import { AdminActions } from '../../../enums/AdminActions';
 import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
 import { Question } from '../../../dataStore';
@@ -38,17 +38,17 @@ describe('GET /v1/player/:playerid/question/:questionposition/results - success'
     const quizInfoData = JSON.parse(quizInfo.body.toString());
     const question1 = quizInfoData.questions.question[0];
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[1].answerId, player1Data.playerId, 0);
+    answerQuestion(question1.answers[1].answerId, player1Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[0].answerId, player2Data.playerId, 0);
+    answerQuestion(question1.answers[0].answerId, player2Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[0].answerId, player3Data.playerId, 0);
+    answerQuestion(question1.answers[0].answerId, player3Data.playerId, 1);
     // does this need a promise for duration of Q?
     updateSessionRequest(sess1Data.sessionId, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_ANSWER);
   });
   test('checking Q1 details', () => {
     const player1Data = JSON.parse(player1.body.toString());
-    const res = playerQuestResultRqst(player1Data.playerId, 0);
+    const res = playerQuestResultRqst(player1Data.playerId, 1);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({
       questionId: question1.questionId,
@@ -70,14 +70,14 @@ describe('GET /v1/player/:playerid/question/:questionposition/results - success'
     updateSessionRequest(sess1Data.sessionId, quiz1Data.quizId, game1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
     const question2 = quizInfoData.questions.question[1];
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question2.answers[2].answerId, player1Data.playerId, 1);
+    answerQuestion(question2.answers[2].answerId, player1Data.playerId, 2);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question2.answers[2].answerId, player2Data.playerId, 1);
+    answerQuestion(question2.answers[2].answerId, player2Data.playerId, 2);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question2.answers[3].answerId, player3Data.playerId, 1);
+    answerQuestion(question2.answers[3].answerId, player3Data.playerId, 2);
     updateSessionRequest(sess1Data.sessionId, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_ANSWER);
 
-    const res = playerQuestResultRqst(player1Data.playerId, 0);
+    const res = playerQuestResultRqst(player1Data.playerId, 1);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({
       questionId: question2.questionId,
@@ -112,11 +112,11 @@ describe('GET /v1/player/:playerid/question/:questionposition/results - error', 
     const quizInfoData = JSON.parse(quizInfo.body.toString());
     const question1 = quizInfoData.questions.question[0];
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[1].answerId, player1Data.playerId, 0);
+    answerQuestion(question1.answers[1].answerId, player1Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[0].answerId, player2Data.playerId, 0);
+    answerQuestion(question1.answers[0].answerId, player2Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[0].answerId, player3Data.playerId, 0);
+    answerQuestion(question1.answers[0].answerId, player3Data.playerId, 1);
   });
   test('invalid playerId', () => {
     const game1Data = JSON.parse(game1.body.toString());
@@ -156,7 +156,7 @@ describe('GET /v1/player/:playerid/question/:questionposition/results - error', 
   });
   test('session is not in ANSWER_SHOW state', () => {
     const player3Data = JSON.parse(player3.body.toString());
-    const res = playerQuestResultRqst(player3Data.playerId, 0);
+    const res = playerQuestResultRqst(player3Data.playerId, 1);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
@@ -194,21 +194,21 @@ describe('GET /v1/player/:playerid/results - success', () => {
     const quizInfoData = JSON.parse(quizInfo.body.toString());
     question1 = quizInfoData.questions.question[0];
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[1].answerId, player1Data.playerId, 0);
+    answerQuestion(question1.answers[1].answerId, player1Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[0].answerId, player2Data.playerId, 0);
+    answerQuestion(question1.answers[0].answerId, player2Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[0].answerId, player3Data.playerId, 0);
+    answerQuestion(question1.answers[0].answerId, player3Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, question1.duration));
     updateSessionRequest(sess1Data.sessionId, quiz1Data.quizId, game1Data.sessionId, AdminActions.NEXT_QUESTION);
     updateSessionRequest(sess1Data.sessionId, quiz1Data.quizId, game1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
     question2 = quizInfoData.questions.question[1];
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question2.answers[2].answerId, player1Data.playerId, 1);
+    answerQuestion(question2.answers[2].answerId, player1Data.playerId, 2);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question2.answers[2].answerId, player2Data.playerId, 1);
+    answerQuestion(question2.answers[2].answerId, player2Data.playerId, 2);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question2.answers[3].answerId, player3Data.playerId, 1);
+    answerQuestion(question2.answers[3].answerId, player3Data.playerId, 2);
     await new Promise((resolve) => setTimeout(resolve, question2.duration));
     updateSessionRequest(sess1Data.sessionId, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
   });
@@ -273,21 +273,21 @@ describe('GET /v1/player/:playerid/results - error', () => {
     const quizInfoData = JSON.parse(quizInfo.body.toString());
     question1 = quizInfoData.questions.question[0];
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[1].answerId, player1Data.playerId, 0);
+    answerQuestion(question1.answers[1].answerId, player1Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[0].answerId, player2Data.playerId, 0);
+    answerQuestion(question1.answers[0].answerId, player2Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question1.answers[0].answerId, player3Data.playerId, 0);
+    answerQuestion(question1.answers[0].answerId, player3Data.playerId, 1);
     await new Promise((resolve) => setTimeout(resolve, question1.duration));
     updateSessionRequest(sess1Data.sessionId, quiz1Data.quizId, game1Data.sessionId, AdminActions.NEXT_QUESTION);
     updateSessionRequest(sess1Data.sessionId, quiz1Data.quizId, game1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
     question2 = quizInfoData.questions.question[1];
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question2.answers[2].answerId, player1Data.playerId, 1);
+    answerQuestion(question2.answers[2].answerId, player1Data.playerId, 2);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question2.answers[2].answerId, player2Data.playerId, 1);
+    answerQuestion(question2.answers[2].answerId, player2Data.playerId, 2);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    answerQuestion(question2.answers[3].answerId, player3Data.playerId, 1);
+    answerQuestion(question2.answers[3].answerId, player3Data.playerId, 2);
     await new Promise((resolve) => setTimeout(resolve, question2.duration));
   });
   test('invalid playerId', () => {
