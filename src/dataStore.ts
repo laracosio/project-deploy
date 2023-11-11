@@ -1,112 +1,114 @@
+import { SessionStates } from './enums/SessionStates';
+
 export interface ErrorObject {
-  error: string
+  error: string;
 }
 
 export interface AnswerCreate {
-  answer: string,
-  correct: boolean,
+  answer: string;
+  correct: boolean;
 }
 
 export interface QuestionCreate {
-  question: string,
-  duration: number,
-  points: number,
-  answers: AnswerCreate[],
-  thumbnailUrl?: string,
+  question: string;
+  duration: number;
+  points: number;
+  answers: AnswerCreate[];
+  thumbnailUrl?: string;
 }
 
 export const Colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
 
 export interface User {
-  userId: number,
-  nameFirst: string,
-  nameLast: string,
-  password: string,
+  userId: number;
+  nameFirst: string;
+  nameLast: string;
+  password: string;
   oldPasswords: string[];
-  email: string,
-  numSuccessfulLogins: number,
-  numFailedPasswordsSinceLastLogin: number
+  email: string;
+  numSuccessfulLogins: number;
+  numFailedPasswordsSinceLastLogin: number;
 }
 
 export interface Answer {
-  answerId: number,
-  answer: string,
-  correct: boolean,
-  colour: string,
+  answerId: number;
+  answer: string;
+  correct: boolean;
+  colour: string;
 }
 
 export interface Question {
-  questionId: number,
-  question: string,
-  duration: number,
-  thumbnailUrl?: string,
-  points: number,
-  answers: Answer[],
-  playersCorrectList: string[],
-  averageAnswerTime: number,
-  percentCorrect: number,
-  numPlayerAnswers: number
+  questionId: number;
+  question: string;
+  duration: number;
+  thumbnailUrl?: string;
+  points: number;
+  answers: Answer[];
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+  numPlayerAnswers: number;
 }
 
 export interface Quiz {
-  quizId: number,
-  name: string,
-  timeCreated: number,
-  timeLastEdited: number,
-  description: string,
-  quizOwner: number,
-  numQuestions: number,
-  questions: Question[],
-  quizDuration: number,
-  thumbnailUrl?: string
+  quizId: number;
+  name: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  description: string;
+  quizOwner: number;
+  numQuestions: number;
+  questions: Question[];
+  quizDuration: number;
+  thumbnailUrl?: string;
 }
 
 export interface PlayerAnswers {
-  questionId: number,
-  score: number
+  questionId: number;
+  score: number;
 }
 export interface Player {
-  playerId: number,
-  playerName: string,
-  playerAnswers?: PlayerAnswers[]
+  playerId: number;
+  playerName: string;
+  playerAnswers?: PlayerAnswers[];
 }
 
 export interface Message {
-  messagebody: string,
-  playerId: number,
-  playerName: string,
-  timeSent: number
+  messagebody: string;
+  playerId: number;
+  playerName: string;
+  timeSent: number;
 }
 
 export interface Session {
-  sessionId: number,
-  sessionQuiz: Quiz
-  sessionState: number,
-  autoStartNum: number,
-  atQuestion: number,
-  sessionPlayers: Player[]
-  messages: Message[]
+  sessionId: number;
+  sessionQuiz: Quiz;
+  sessionState: SessionStates;
+  autoStartNum: number;
+  atQuestion: number;
+  sessionPlayers: Player[];
+  messages: Message[];
 }
 
 export interface Token {
-  sessionId: string,
-  userId: number
+  sessionId: string;
+  userId: number;
 }
 
 export interface playerIdSessionId {
-  sessionId: number,
-  playerId: number
+  sessionId: number;
+  playerId: number;
 }
 
 export interface Datastore {
-  users: User[],
-  quizzes: Quiz[],
-  tokens: Token[],
-  trash: Quiz[],
-  sessions: Session[],
-  playerIdSessionIds: playerIdSessionId[],
-  maxQuizId: number,
-  maxPlayerId: number
+  users: User[];
+  quizzes: Quiz[];
+  tokens: Token[];
+  trash: Quiz[];
+  sessions: Session[];
+  playerIdSessionIds: playerIdSessionId[];
+  maxQuizId: number;
+  maxPlayerId: number;
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
