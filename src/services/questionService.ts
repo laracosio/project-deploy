@@ -114,7 +114,8 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     thumbnailUrl: questionBody.thumbnailUrl,
     playersCorrectList: [],
     averageAnswerTime: 0,
-    percentCorrect: 0
+    percentCorrect: 0,
+    numPlayerAnswers: 0
   };
 
   quiz.questions.push(newQuestion);
@@ -322,7 +323,8 @@ function adminDuplicateQuestion(sessionId: string, quizId: number, questionId: n
     thumbnailUrl: questionToCopy.thumbnailUrl,
     playersCorrectList: questionToCopy.playersCorrectList,
     averageAnswerTime: questionToCopy.averageAnswerTime,
-    percentCorrect: questionToCopy.percentCorrect
+    percentCorrect: questionToCopy.percentCorrect,
+    numPlayerAnswers: 0
   };
 
   const questionIndex = matchedQuiz.questions.findIndex((question) => question.questionId === questionId);
