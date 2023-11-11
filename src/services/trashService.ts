@@ -1,7 +1,7 @@
 import { getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { tokenValidation, findToken, findQuizById, setAndSave, openSessionQuizzesState } from './otherService';
+import { tokenValidation, findUTInfo, findQuizById, setAndSave, openSessionQuizzesState } from './otherService';
 import { getUnixTime } from 'date-fns';
 
 interface BriefTrashQuizInfo {
@@ -15,15 +15,15 @@ interface userTrashQuizList {
 
 /**
  * Given a particular quiz, send it to the trash (can be recovered later)
- * @param {string} sessionId - unique token containing sessionId
+ * @param {string} token - unique UTInfo containing token
  * @param {number} quizId - unique identifier for quiz
  * @returns {{error: string}}
  */
-function adminQuizRemove(sessionId: string, quizId: number): object {
+function adminQuizRemove(token: string, quizId: number): object {
   const dataStore = getData();
 
-  // check that sessionId is not empty or is valid
-  if (!tokenValidation(sessionId)) {
+  // check that token is not empty or is valid
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
@@ -33,9 +33,9 @@ function adminQuizRemove(sessionId: string, quizId: number): object {
     throw new ApiError('Invalid quizId', HttpStatusCode.BAD_REQUEST);
   }
 
-  // find user associated with token and checks whether they are the quiz owner
-  const matchedToken = findToken(sessionId);
-  if (matchedQuiz.quizOwner !== matchedToken.userId) {
+  // find user associated with UTInfo and checks whether they are the quiz owner
+  const matchedUTInfo = findUTInfo(token);
+  if (matchedQuiz.quizOwner !== matchedUTInfo.userId) {
     throw new ApiError('User does not own quiz to remove', HttpStatusCode.FORBIDDEN);
   }
 
@@ -69,7 +69,7 @@ function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: n
   }
 
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
-  const authUser = dataStore.tokens.find(user => user.sessionId === sessionToken);
+  const authUser = dataStore.utinfo.find(user => user.token === sessionToken);
   if (quiz.quizOwner !== authUser.userId) {
     throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
@@ -91,19 +91,19 @@ function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: n
 
 /**
  * Provide a list of all quizzes in the trash that are owned by the currently logged in user.
- * @param {string} sessionId
+ * @param {string} token
  * @returns {quizzes: [{quizId: number, name: string}]}
  * @returns {{error: string}}
  */
-function adminQuizViewTrash(sessionId: string): userTrashQuizList {
+function adminQuizViewTrash(token: string): userTrashQuizList {
   const dataStore = getData();
-  // check that token is not empty or is valid
-  if (!tokenValidation(sessionId)) {
+  // check that UTInfo is not empty or is valid
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
   // find all user quizzes in the trash and add to an array
-  const tokenUser = findToken(sessionId);
+  const tokenUser = findUTInfo(token);
   const userTrashQuizList: Array<BriefTrashQuizInfo> = [];
   dataStore.trash.forEach((quiz) => {
     if (quiz.quizOwner === tokenUser.userId) {
@@ -122,19 +122,19 @@ function adminQuizViewTrash(sessionId: string): userTrashQuizList {
 
 /**
  * Given a particular quiz in the user's trash, restore it.
- * @param {string} sessionId
+ * @param {string} token
  * @param {number} quizId
  * @returns {{error: string}}
  */
-function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
+function adminQuizRestoreTrash (token: string, quizId: number): object {
   const dataStore = getData();
 
-  // check sessionId is valid
-  if (!tokenValidation(sessionId)) {
+  // check token is valid
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  const tokenUser = findToken(sessionId);
+  const tokenUser = findUTInfo(token);
   // check valid quizId is owned by the current user associated with token
   if (dataStore.trash.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
@@ -167,18 +167,18 @@ function adminQuizRestoreTrash (sessionId: string, quizId: number): object {
 
 /**
  * Given a string of quiz IDs, permanently empty/remove it from trash.
- * @param {string} sessionId
+ * @param {string} token
  * @param {number} quizIds
  * @returns {{error: string}}
  */
-function adminQuizEmptyTrash (sessionId: string, quizIds: string): object {
+function adminQuizEmptyTrash (token: string, quizIds: string): object {
   const dataStore = getData();
   const parsedArray: Array<number> = JSON.parse(quizIds);
-  // check sessionId is valid
-  if (!tokenValidation(sessionId)) {
+  // check token is valid
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
-  const tokenUser = findToken(sessionId);
+  const tokenUser = findUTInfo(token);
   // elements should be the individual quizIds of the parsed
   for (const element of parsedArray) {
     // check valid quizIds are owned by the current user associated with token
