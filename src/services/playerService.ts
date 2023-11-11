@@ -4,9 +4,6 @@ import { ApiError } from "../errors/ApiError";
 import { HttpStatusCode } from "../enums/HttpStatusCode";
 import { Player, playerIdSessionId } from "../dataStore";
 import { SessionStates } from "../enums/SessionStates";
-import { getUnixTime } from 'date-fns';
-import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './otherService';
-import request from 'sync-request-curl';
 import { generateRandomString } from "./otherService";
 
 interface joinGuestPlayerReturn {
