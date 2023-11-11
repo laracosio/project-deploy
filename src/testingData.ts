@@ -1,5 +1,4 @@
-import { Colours, Datastore, QuestionCreate } from './dataStore';
-import { hashText } from './services/otherService';
+import { QuestionCreate, InputMessage } from './dataStore';
 
 const person1 = {
   email: 'h.simpson@springfield.com',
@@ -608,7 +607,21 @@ const invalidCreateQuestionV2URLNotPNGJPG: QuestionCreate = {
   thumbnailUrl: 'https://media.giphy.com/media/l0G16FRujv2fiD3Ne/giphy.gif'
 };
 
-const longMessage = 'Into each life some rain must fall. But too much is falling in mine. Into each heart some tears must fall. But someday the sun will shine.'
+const msg1: InputMessage = {
+  messageBody: 'This is the first msg'
+};
+const msg2: InputMessage = {
+  messageBody: 'This is the second msg'
+};
+const msg3: InputMessage = {
+  messageBody: 'This is the third msg'
+};
+const noMsg: InputMessage = {
+  messageBody: ''
+};
+const longMessage: InputMessage = {
+  messageBody: 'Into each life some rain must fall. But too much is falling in mine. Into each heart some tears must fall. But someday the sun will shine.'
+};
 
 export {
   person1,
@@ -671,5 +684,9 @@ export {
   invalidCreateQuestionV2InvalidURL,
   invalidCreateQuestionV2EmptyURL,
   validCreateQuestionV2PNG,
-  longMessage
+  msg1,
+  msg2,
+  msg3,
+  noMsg,
+  longMessage,
 };

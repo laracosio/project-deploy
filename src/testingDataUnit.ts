@@ -1,6 +1,6 @@
-import { Colours, Datastore } from "./dataStore";
-import { hashText } from "./services/otherService";
-import { person1, validQuestionInput1, validQuestionInput2V2, validQuestionInput3, validQuizDescription, validQuizName } from "./testingData";
+import { Colours, Datastore } from './dataStore';
+import { hashText } from './services/otherService';
+import { person1, validQuestionInput1, validQuestionInput2V2, validQuestionInput3, validQuizDescription, validQuizName } from './testingData';
 
 export const unitTestLobby: Datastore = {
   users: [
@@ -36,7 +36,7 @@ export const unitTestLobby: Datastore = {
               answer: validQuestionInput1.answers[0].answer,
               correct: validQuestionInput1.answers[0].correct,
               colour: Colours[0],
-            }, 
+            },
             {
               answerId: 2,
               answer: validQuestionInput1.answers[1].answer,
@@ -48,7 +48,7 @@ export const unitTestLobby: Datastore = {
               answer: validQuestionInput1.answers[2].answer,
               correct: validQuestionInput1.answers[2].correct,
               colour: Colours[2],
-            }, 
+            },
             {
               answerId: 4,
               answer: validQuestionInput1.answers[3].answer,
@@ -59,7 +59,7 @@ export const unitTestLobby: Datastore = {
           playersCorrectList: [],
           averageAnswerTime: 0,
           percentCorrect: 0
-        }, 
+        },
         {
           questionId: 2,
           question: validQuestionInput2V2.question,
@@ -72,7 +72,7 @@ export const unitTestLobby: Datastore = {
               answer: validQuestionInput2V2.answers[0].answer,
               correct: validQuestionInput2V2.answers[0].correct,
               colour: Colours[5],
-            }, 
+            },
             {
               answerId: 2,
               answer: validQuestionInput2V2.answers[1].answer,
@@ -107,7 +107,7 @@ export const unitTestLobby: Datastore = {
               answer: validQuestionInput3.answers[0].answer,
               correct: validQuestionInput3.answers[0].correct,
               colour: Colours[4],
-            }, 
+            },
             {
               answerId: 2,
               answer: validQuestionInput3.answers[1].answer,
@@ -134,17 +134,17 @@ export const unitTestLobby: Datastore = {
       ],
       quizDuration: validQuestionInput1.duration + validQuestionInput2V2.duration + validQuestionInput3.duration,
       thumbnailUrl: 'https://en.wikipedia.org/wiki/Hello,_Love_%28Ella_Fitzgerald_album%29#/media/File:Hello,Love.jpg'
-    }, 
+    },
   ],
   tokens: [
     {
-      sessionId: "01df59de-7943-4e9e-bbae-c4ee254d55b6",
+      sessionId: '01df59de-7943-4e9e-bbae-c4ee254d55b6',
       userId: 1
     }
   ],
   trash: [],
   sessions: [
-    {    
+    {
       sessionId: 1,
       sessionQuiz: {
         quizId: 1,
@@ -166,7 +166,7 @@ export const unitTestLobby: Datastore = {
                 answer: validQuestionInput1.answers[0].answer,
                 correct: validQuestionInput1.answers[0].correct,
                 colour: Colours[0],
-              }, 
+              },
               {
                 answerId: 2,
                 answer: validQuestionInput1.answers[1].answer,
@@ -178,7 +178,7 @@ export const unitTestLobby: Datastore = {
                 answer: validQuestionInput1.answers[2].answer,
                 correct: validQuestionInput1.answers[2].correct,
                 colour: Colours[2],
-              }, 
+              },
               {
                 answerId: 4,
                 answer: validQuestionInput1.answers[3].answer,
@@ -189,7 +189,7 @@ export const unitTestLobby: Datastore = {
             playersCorrectList: [],
             averageAnswerTime: 0,
             percentCorrect: 0
-          }, 
+          },
           {
             questionId: 2,
             question: validQuestionInput2V2.question,
@@ -202,7 +202,7 @@ export const unitTestLobby: Datastore = {
                 answer: validQuestionInput2V2.answers[0].answer,
                 correct: validQuestionInput2V2.answers[0].correct,
                 colour: Colours[5],
-              }, 
+              },
               {
                 answerId: 2,
                 answer: validQuestionInput2V2.answers[1].answer,
@@ -237,7 +237,7 @@ export const unitTestLobby: Datastore = {
                 answer: validQuestionInput3.answers[0].answer,
                 correct: validQuestionInput3.answers[0].correct,
                 colour: Colours[4],
-              }, 
+              },
               {
                 answerId: 2,
                 answer: validQuestionInput3.answers[1].answer,
@@ -261,7 +261,7 @@ export const unitTestLobby: Datastore = {
             averageAnswerTime: 0,
             percentCorrect: 0
           }
-        ], 
+        ],
         quizDuration: validQuestionInput1.duration + validQuestionInput2V2.duration + validQuestionInput3.duration,
         thumbnailUrl: 'https://en.wikipedia.org/wiki/Hello,_Love_%28Ella_Fitzgerald_album%29#/media/File:Hello,Love.jpg'
       },
@@ -273,12 +273,12 @@ export const unitTestLobby: Datastore = {
           playerId: 1,
           playerName: 'Ella',
           playerScore: 0
-        }, 
+        },
         {
           playerId: 2,
           playerName: 'Frank',
           playerScore: 0
-        }, 
+        },
         {
           playerId: 3,
           playerName: 'Tony',
@@ -292,7 +292,7 @@ export const unitTestLobby: Datastore = {
     {
       sessionId: 1,
       playerId: 1
-    }, 
+    },
     {
       sessionId: 1,
       playerId: 2
@@ -304,4 +304,4 @@ export const unitTestLobby: Datastore = {
   ],
   maxQuizId: 1,
   maxPlayerId: 3
-}
+};

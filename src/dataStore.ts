@@ -1,4 +1,3 @@
-import fs from 'fs';
 export interface ErrorObject {
   error: string
 }

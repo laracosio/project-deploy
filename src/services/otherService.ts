@@ -3,7 +3,6 @@ import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import crypto from 'crypto';
-import { SessionStates } from '../enums/SessionStates';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -230,7 +229,7 @@ function playerValidation(playerId: number): boolean {
 }
 
 /**
- * Finds session that player is participating in 
+ * Finds session that player is participating in
  * @param playerId - integer representing the player
  * @returns Session within dataStore where player is apart of
  */
@@ -242,7 +241,7 @@ function findSessionByPlayerId(playerId: number): Session {
 }
 
 /**
- * Finds and returns the name of the player. 
+ * Finds and returns the name of the player.
  * @param playerId - playerId of player to be found
  * @param sessionId - sessionId player is in
  * @returns string of name of player

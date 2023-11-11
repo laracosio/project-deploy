@@ -1,20 +1,13 @@
-// remove me and add your tests below
-// test('placeholder', () => {
-//   expect((1 + 1)).toBe(2);
-// });
-
-import { Response } from 'sync-request-curl';
 import { unitTestLobby } from '../../../testingDataUnit';
 import { clearRequest } from '../../it2/serverTestHelperIt2';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
-import { longMessage, msg1, msg2, msg3, noMsg, person1 } from '../../../testingData';
-import { sendMsgRequest, setDataRequest } from '../../serverTestHelperIt3';
+import { longMessage, msg1, msg2, msg3, noMsg } from '../../../testingData';
+import { sendMsgRequest, setDataRequest, viewMsgsRequest } from '../../serverTestHelperIt3';
 import { getUnixTime } from 'date-fns';
 
 const PLAYER_1 = 1;
 const PLAYER_2 = 2;
 const PLAYER_3 = 3;
-const MINUTE_DELAY = 60000;
 
 const currentTime = getUnixTime(new Date());
 
@@ -30,7 +23,7 @@ describe('GET /v1/player/:playerid/chat - success', () => {
     expect(data).toStrictEqual({});
     console.log(data);
     expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
-  }) 
+  });
   test('send multiple messages', () => {
     sendMsgRequest(PLAYER_1, msg1);
     sendMsgRequest(PLAYER_2, msg2);
@@ -38,8 +31,8 @@ describe('GET /v1/player/:playerid/chat - success', () => {
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
     expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
-  }) 
-})
+  });
+});
 
 describe('GET /v1/player/:playerid/chat - error', () => {
   test('invalid playerId', () => {
@@ -60,7 +53,7 @@ describe('GET /v1/player/:playerid/chat - error', () => {
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
-})
+});
 
 describe('GET v1/player/:playerid/chat - success', () => {
   test('1 sent message', () => {
@@ -70,58 +63,59 @@ describe('GET v1/player/:playerid/chat - success', () => {
     expect(data).toStrictEqual({
       messages: [
         {
-          messageBody: msg1,
+          messageBody: msg1.messageBody,
           playerId: PLAYER_1,
           playerName: 'Ella',
-          timeSent: currentTime
+          timeSent: expect.any(Number)
         }
       ]
-    })
-  })
+    });
+    expect(data.messages[0].timeSent).toBeGreaterThanOrEqual(currentTime);
+  });
   test('multiple sent messages', () => {
     sendMsgRequest(PLAYER_1, msg1);
-    setTimeout(() => {sendMsgRequest(PLAYER_2, msg2), MINUTE_DELAY});
-    setTimeout(() => {sendMsgRequest(PLAYER_3, msg3), (MINUTE_DELAY * 2)});
-    // sendMsgRequest(PLAYER_2, msg2);
-    // sendMsgRequest(PLAYER_3, msg3);
+    sendMsgRequest(PLAYER_2, msg2);
+    sendMsgRequest(PLAYER_3, msg3);
     const res = viewMsgsRequest(PLAYER_1);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({
       messages: [
         {
-          messageBody: msg1,
+          messageBody: msg1.messageBody,
           playerId: PLAYER_1,
           playerName: 'Ella',
-          timeSent: currentTime
+          timeSent: expect.any(Number)
         },
         {
-          messageBody: msg2, 
+          messageBody: msg2.messageBody,
           playerId: PLAYER_2,
           playerName: 'Frank',
-          timeSent: currentTime + 60,
+          timeSent: expect.any(Number),
         },
         {
-          messageBody: msg3, 
+          messageBody: msg3.messageBody,
           playerId: PLAYER_3,
           playerName: 'Tony',
-          timeSent: currentTime + 120
+          timeSent: expect.any(Number)
         }
       ]
-    })
+    });
+    expect(data.messages[2].timeSent).toBeGreaterThanOrEqual(currentTime);
     expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
-  })
-})
+  });
+});
 
 describe('GET v1/player/:playerid/chat - error', () => {
   test('playerId does not exist', () => {
     sendMsgRequest(PLAYER_1, msg1);
-    setTimeout(() => {sendMsgRequest(PLAYER_2, msg2), MINUTE_DELAY});
-    setTimeout(() => {sendMsgRequest(PLAYER_3, msg3), (MINUTE_DELAY * 2)});
+    sendMsgRequest(PLAYER_2, msg2);
+    sendMsgRequest(PLAYER_3, msg3);
     const res = viewMsgsRequest(1531);
     const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  })
-})
+  });
+});
 
 /**
 let session1: Response, quiz1: Response, player1: Response, player2: Response, player3: Response;
@@ -149,13 +143,13 @@ describe('GET /v1/player/:playerid/chat - success', () => {
   test('send 1 message', () => {
     addMessages(playerId, 'This is the first message');
     // check all messages
-  }) 
+  })
   test('send multiple messages', () => {
     addMessages(playerId, 'This is the first message');
     addMessages(playerId2, 'This is the second message');
     addMessages(playerId3, 'This is the third message');
     // check all messages
-  }) 
+  })
 })
 
 describe('GET /v1/player/:playerid/chat - error', () => {
@@ -170,29 +164,29 @@ describe('POST /v1/player/:playerid/chat - success', () => {
   test('send 1 message', () => {
     addMessages(playerId, 'This is the first message');
     expect no issues
-  }) 
+  })
   test('send multiple messages', () => {
     addMessages(playerId, 'This is the first message');
     addMessages(playerId2, 'This is the second message');
     addMessages(playerId3, 'This is the third message');
     expect no issues
-  }) 
+  })
 })
 
 describe('POST /v1/player/:playerid/chat - error', () => {
   test('send 1 message', () => {
     addMessages(playerId3 + 1, 'This is the first message');
     expect to return 400
-  }) 
+  })
   // empty message
   test('send 1 message', () => {
     addMessages(playerId, '');
     expect to return 400
-  }) 
+  })
   test('send 1 message', () => {
     addMessages(playerId, include a very long message);
     expect to return 400
-  }) 
+  })
 })
 
 */
