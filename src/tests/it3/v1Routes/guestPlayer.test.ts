@@ -40,7 +40,6 @@ describe('Successful tests: Join Guest Player', () => {
 
     const name = "laraCosio";
     const res = joinGuestPlayerRequest(123, name);
-    console.log("guestPlayer.test: res");
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ playerId: expect.any(Number) });
     expect(res.statusCode).toBe(HttpStatusCode.OK);
