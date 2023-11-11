@@ -132,7 +132,7 @@ beforeEach(() => {
   createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput1);
   createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput2);
   createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput3);
-  game1 = startNewSessionRequest(quiz1Data.quizId, sess1Data.token, validAutoStartNum);
+  game1 = startNewSessionRequest(sess1Data.token, quiz1Data.quizId, validAutoStartNum);
   const game1Data = JSON.parse(game1.body.toString());
   player1 = playerJoinRequest(game1Data.sessionId, 'Gizmo');
   player2 = playerJoinRequest(game1Data.sessionId, 'Pumpkin');
