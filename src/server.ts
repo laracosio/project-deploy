@@ -94,6 +94,7 @@ const server = app.listen(PORT, HOST, () => {
   if (fs.existsSync('datastore.json')) {
     const datastr = fs.readFileSync('./datastore.json');
     const data = JSON.parse(String(datastr));
+    console.log("server data", data)
     setData(data);
   }
 
