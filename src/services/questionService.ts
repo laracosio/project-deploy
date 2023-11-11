@@ -3,7 +3,7 @@ import { getUnixTime } from 'date-fns';
 import { getData, Question, Answer, QuestionCreate, Colours } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { findQuestionByQuiz, findQuizById, findToken, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './otherService';
+import { findQuestionByQuiz, findQuizById, findUTInfo, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './otherService';
 import request from 'sync-request-curl';
 
 interface adminDuplicateQuestionReturn {
@@ -45,7 +45,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
   }
 
-  const authUser = dataStore.tokens.find(user => user.sessionId === token);
+  const authUser = dataStore.mapUT.find(user => user.token === token);
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
   if (quiz.quizOwner !== authUser.userId) {
     throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
@@ -113,8 +113,8 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     answers: arrayOfAnswers,
     thumbnailUrl: questionBody.thumbnailUrl,
     playersCorrectList: [],
-    averageAnswerTime: 0,
-    percentCorrect: 0
+    answerTimes: [],
+    questionStartTime: 0
   };
 
   quiz.questions.push(newQuestion);
@@ -131,18 +131,18 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
 /**
  * Move a question from one particular position in the quiz to another
  * When this route is called, the timeLastEdited is updated
- * @param sessionId - sessionId contained within a token
+ * @param token - token contained within UTInfo
  * @param quizId - quizId where question exists
  * @param questionId - question to move
  * @param newPosition - position to move question to
  * @returns {}
  * @returns { error: string }
 */
-function adminMoveQuestion(sessionId: string, quizId: number, questionId: number, newPosition: number): object {
+function adminMoveQuestion(token: string, quizId: number, questionId: number, newPosition: number): object {
   const dataStore = getData();
 
   // invalid token
-  if (!tokenValidation(sessionId)) {
+  if (!tokenValidation(token)) {
     throw new ApiError('Token is empty or invalid (does not refer to valid logged in user session)', HttpStatusCode.UNAUTHORISED);
   }
 
@@ -153,7 +153,7 @@ function adminMoveQuestion(sessionId: string, quizId: number, questionId: number
   }
 
   // valid token but not quizOwner
-  const matchedToken = findToken(sessionId);
+  const matchedToken = findUTInfo(token);
   if (matchedToken.userId !== matchedQuiz.quizOwner) {
     throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
@@ -212,7 +212,7 @@ function quizUpdateQuestion(quizId: number, questionId: number, token: string, q
     throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
   }
 
-  const authUser = dataStore.tokens.find(user => user.sessionId === token);
+  const authUser = dataStore.mapUT.find(user => user.token === token);
   if (quiz.quizOwner !== authUser.userId) {
     throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
@@ -285,19 +285,19 @@ function quizUpdateQuestion(quizId: number, questionId: number, token: string, q
 /**
  * A particular question gets duplicated to immediately after where the source question is
  * When this route is called, the timeLastEdited is update
- * @param sessionId - sessionId of token
+ * @param token - token of UTInfo
  * @param quizId - quizId of question to be duplicated
  * @param questionId - question within quiz to be duplicated
  * @returns: adminDuplicateQuestion which contains newQuestionId key with a number value
 */
-function adminDuplicateQuestion(sessionId: string, quizId: number, questionId: number): adminDuplicateQuestionReturn {
+function adminDuplicateQuestion(token: string, quizId: number, questionId: number): adminDuplicateQuestionReturn {
   const dataStore = getData();
 
   // invalid token
-  if (!tokenValidation(sessionId)) {
+  if (!tokenValidation(token)) {
     throw new ApiError('Token is empty or invalid (does not refer to valid logged in user session)', HttpStatusCode.UNAUTHORISED);
   }
-  const tokenUser = findToken(sessionId);
+  const tokenUser = findUTInfo(token);
   const matchedQuiz = findQuizById(quizId);
   // token user is not the owner of question
   if (dataStore.quizzes.some((quiz) => (quiz.quizOwner !== tokenUser.userId && quiz.quizId === quizId))) {
@@ -321,8 +321,8 @@ function adminDuplicateQuestion(sessionId: string, quizId: number, questionId: n
     answers: questionToCopy.answers,
     thumbnailUrl: questionToCopy.thumbnailUrl,
     playersCorrectList: questionToCopy.playersCorrectList,
-    averageAnswerTime: questionToCopy.averageAnswerTime,
-    percentCorrect: questionToCopy.percentCorrect
+    answerTimes: questionToCopy.answerTimes,
+    questionStartTime: questionToCopy.questionStartTime
   };
 
   const questionIndex = matchedQuiz.questions.findIndex((question) => question.questionId === questionId);
