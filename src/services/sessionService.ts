@@ -7,22 +7,27 @@ import { quizToMetadata } from '../utils/mappers';
 import { findToken, tokenValidation } from './otherService';
 import { SessionStateMachine } from './sesssionStateMachine';
 
+/**
+ * Given quiz id and sessionid, return the current status of this quiz session
+ * @param {number} quizId
+ * @param {number} sessionId
+ * @param {string} token
+ * @returns {SessionStatus}
+ * @returns { error: string }
+ */
 export function getSessionStatus(quizId: number, sessionId: number, token: string): SessionStatus {
   const dataStore = getData();
   const session: Session = dataStore.sessions.find(elem => elem.sessionId === sessionId);
 
-  // check that sessionId is not empty or is valid
   if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  // 403
   const authToken: Token = findToken(token);
   if (session.sessionQuiz.quizOwner !== authToken.userId) {
     throw new ApiError('User is not authorised to view this session', HttpStatusCode.FORBIDDEN);
   }
 
-  // 400
   const sessionsWithinQuiz = dataStore.sessions.filter(elem => elem.sessionQuiz.quizId === quizId);
   if (!sessionsWithinQuiz.some(elem => elem.sessionId === sessionId)) {
     throw new ApiError('Session Id does not refer to a valid session within this quiz', HttpStatusCode.BAD_REQUEST);
@@ -36,22 +41,29 @@ export function getSessionStatus(quizId: number, sessionId: number, token: strin
   };
 }
 
+/**
+ * Given quiz id and sessionid, if provided token is valid quizOwner's token,
+ * update the session's status using provided valid action
+ * @param {number} quizId
+ * @param {number} sessionId
+ * @param {string} token
+ * @param {string} action
+ * @returns {}
+ * @returns { error: string }
+ */
 export function updateSessionStatus(quizId: number, sessionId: number, token: string, action: string): void {
   const dataStore = getData();
   const session: Session = dataStore.sessions.find(elem => elem.sessionId === sessionId);
 
-  // check that sessionId is not empty or is valid
   if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  // 403
   const authToken: Token = findToken(token);
   if (session.sessionQuiz.quizOwner !== authToken.userId) {
     throw new ApiError('User is not authorised to view this session', HttpStatusCode.FORBIDDEN);
   }
 
-  // 400
   const sessionsWithinQuiz = dataStore.sessions.filter(elem => elem.sessionQuiz.quizId === quizId);
   if (!sessionsWithinQuiz.some(elem => elem.sessionId === sessionId)) {
     throw new ApiError('Session Id does not refer to a valid session within this quiz', HttpStatusCode.BAD_REQUEST);

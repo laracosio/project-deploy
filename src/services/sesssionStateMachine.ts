@@ -3,6 +3,9 @@ import { SessionStates } from '../enums/SessionStates';
 import { StateError } from '../errors/StateError';
 import { StateTransition } from '../types/types';
 
+// The following code design was inspired by
+// https://kbravh.dev/state-machine-in-typescript
+// It outlines a possible structure for the creation of a state machine
 export class SessionStateMachine {
   static readonly STATE_TRANSITIONS: StateTransition = {
     [SessionStates.LOBBY]: {
@@ -15,7 +18,8 @@ export class SessionStateMachine {
     },
     [SessionStates.QUESTION_CLOSE]: {
       [AdminActions.GO_TO_FINAL_RESULTS]: SessionStates.FINAL_RESULTS,
-      [AdminActions.GO_TO_ANSWER]: SessionStates.ANSWER_SHOW
+      [AdminActions.GO_TO_ANSWER]: SessionStates.ANSWER_SHOW,
+      [AdminActions.END]: SessionStates.END
     },
     [SessionStates.ANSWER_SHOW]: {
       [AdminActions.NEXT_QUESTION]: SessionStates.QUESTION_COUNTDOWN,
