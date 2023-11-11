@@ -33,6 +33,7 @@ describe('startNewSession - Success cases', () => {
     const quiz2 = quizCreateRequest(user1Data.token, validQuizName + 'abc', validQuizDescription);
     const quiz2Data = JSON.parse(quiz2.body.toString());
     createQuizQuestionRequest(quiz2Data.quizId, user1Data.token, validCreateQuestion);
+    startNewSessionRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum)
 
     const response = startNewSessionRequest(user1Data.token, quiz2Data.quizId, validAutoStartNum);
     const responseData = JSON.parse(response.body.toString());
