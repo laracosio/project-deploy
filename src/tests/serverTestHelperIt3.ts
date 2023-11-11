@@ -327,7 +327,7 @@ const startNewSessionRequest = (token: string, quizId: number, autoStartNum: num
     {
       body: JSON.stringify({
         autoStartNum: autoStartNum,
-      }),    
+      }),
       headers: {
         'Content-type': 'application/json',
         token: token
