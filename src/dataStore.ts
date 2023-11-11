@@ -68,7 +68,7 @@ export interface PlayerAnswers {
 export interface Player {
   playerId: number,
   playerName: string,
-  playerAnwers?: PlayerAnswers[]
+  playerAnswers?: PlayerAnswers[]
 }
 
 export interface Message {
