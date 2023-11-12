@@ -54,3 +54,5 @@ function startNewSession(token: string, quizId: number, autoStartNum: number): o
   setAndSave(dataStore);
   return {sessionId: newSessionId};
 }
+
+export { startNewSession }
