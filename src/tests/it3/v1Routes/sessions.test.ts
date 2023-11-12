@@ -11,7 +11,7 @@ beforeEach(() => {
 // Start new session tests
 describe('startNewSession - Success cases', () => {
   let user1: Response, quiz1: Response, question1: Response;
-  test('Update a quiz from no thumbnail to png thumbnail', () => {
+  test('Start a new session for a quiz', () => {
     user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const user1Data = JSON.parse(user1.body.toString());
     quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
