@@ -20,6 +20,7 @@ function clear(): object {
   dataStore.quizzes = [];
   dataStore.tokens = [];
   dataStore.trash = [];
+  dataStore.sessions = [];
   setAndSave(dataStore);
   return {};
 }

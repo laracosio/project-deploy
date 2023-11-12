@@ -286,6 +286,7 @@ const quizInfoRequestV2 = (token: string, quizId: number): Response => {
 };
 
 const quizFinalResultsRequest = (quizid: number, sessionid: number, token: string): Response => {
+  console.log(`helper ${quizid}, ${sessionid}, ${token}`)
   return request(
     'GET',
     `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results`,

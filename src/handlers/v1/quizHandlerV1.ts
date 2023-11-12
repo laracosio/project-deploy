@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizViewTrash, adminQuizEmptyTrash } from '../../services/trashService';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../../services/quizService';
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../../services/questionService';
+import { quizFinalResults } from '../../services/sessionService';
 
 export const quizRouterV1 = Router();
 
@@ -21,6 +22,14 @@ quizRouterV1.get('/:quizId', (req: Request, res: Response) => {
   const quizId: number = parseInt(req.params.quizId);
   res.json(adminQuizInfo(token, quizId));
 });
+
+quizRouterV1.get('/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
+  console.log('route');
+  const token: string = req.header('token');
+  const quizId: number = parseInt(req.params.quizid);
+  const sessionId: number = parseInt(req.params.sessionid);
+  res.json(quizFinalResults(quizId, sessionId, token));
+})
 
 // post routers
 quizRouterV1.post('/', (req: Request, res: Response) => {

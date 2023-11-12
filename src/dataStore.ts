@@ -1,3 +1,5 @@
+import { SessionStates } from "./enums/SessionStates";
+
 export interface ErrorObject {
   error: string
 }
@@ -44,7 +46,8 @@ export interface Question {
   answers: Answer[],
   playersCorrectList: string[],
   averageAnswerTime: number,
-  percentCorrect: number
+  percentCorrect: number,
+  numPlayerAnswers?: number,
 }
 
 export interface Quiz {
@@ -60,10 +63,15 @@ export interface Quiz {
   thumbnailUrl?: string
 }
 
+export interface PlayerAnswers {
+  questionId: number,
+  score: number
+}
+
 export interface Player {
   playerId: number,
   playerName: string,
-  playerScore: number
+  playerAnswers?: PlayerAnswers[]
 }
 
 export interface Message {
@@ -76,7 +84,7 @@ export interface Message {
 export interface Session {
   sessionId: number,
   sessionQuiz: Quiz
-  sessionState: number,
+  sessionState: SessionStates,
   autoStartNum: number,
   atQuestion: number,
   sessionPlayers: Player[]
