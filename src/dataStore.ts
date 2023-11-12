@@ -1,3 +1,5 @@
+import { SessionStates } from "./enums/SessionStates";
+
 export interface ErrorObject {
   error: string
 }
@@ -76,7 +78,7 @@ export interface Message {
 export interface Session {
   sessionId: number,
   sessionQuiz: Quiz
-  sessionState: number,
+  sessionState: SessionStates,
   autoStartNum: number,
   atQuestion: number,
   sessionPlayers: Player[]
