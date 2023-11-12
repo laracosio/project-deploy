@@ -1,4 +1,5 @@
 import { AdminActions } from '../enums/AdminActions';
+import { AutomaticActions } from '../enums/AutomaticActions';
 import { SessionStates } from '../enums/SessionStates';
 import { StateError } from '../errors/StateError';
 import { StateTransition } from '../types/types';
@@ -14,7 +15,8 @@ export class SessionStateMachine {
     },
     [SessionStates.QUESTION_OPEN]: {
       [AdminActions.END]: SessionStates.END,
-      [AdminActions.GO_TO_ANSWER]: SessionStates.ANSWER_SHOW
+      [AdminActions.GO_TO_ANSWER]: SessionStates.ANSWER_SHOW,
+      [AutomaticActions.CLOSE_QUESTION_AUTOMATIC]: SessionStates.QUESTION_CLOSE
     },
     [SessionStates.QUESTION_CLOSE]: {
       [AdminActions.GO_TO_FINAL_RESULTS]: SessionStates.FINAL_RESULTS,
@@ -31,6 +33,7 @@ export class SessionStateMachine {
     },
     [SessionStates.QUESTION_COUNTDOWN]: {
       [AdminActions.SKIP_COUNTDOWN]: SessionStates.QUESTION_OPEN,
+      [AutomaticActions.OPEN_QUESTION_AUTOMATIC]: SessionStates.QUESTION_OPEN,
       [AdminActions.END]: SessionStates.END
     },
     [SessionStates.END]: {}
