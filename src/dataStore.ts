@@ -91,7 +91,7 @@ export interface Token {
 }
 
 export interface playerIdSessionId {
-  sessionId: string,
+  sessionId: number,
   playerId: number
 }
 
