@@ -66,6 +66,12 @@ const longQuizDescription = 'Lorem ipsum dolor sit amet, consectetuer adipiscing
 const stringOf1QuizIDs = '[1]';
 const stringOf2QuizIDs = '[1,2]';
 const stringOf3QuizIDs = '[1,2,3]';
+const validpngUrl1 = 'https://w7.pngwing.com/pngs/115/334/png-transparent-snoopy-illustration-snoopy-hug-happiness-greeting-snoopy-s-reunion-hug-happiness-greeting.png'
+const validpngUrl2 = 'https://i.pinimg.com/originals/cf/8a/11/cf8a11b44a748c4ce286fb020f920ada.png'
+const validjpgUrl1 = 'https://www.cleverfiles.com/howto/wp-content/uploads/2018/03/minion.jpg'
+const validjpgUrl2 = 'https://i.kym-cdn.com/photos/images/original/001/468/202/b02.jpg'
+const invalidimgUrl = 'https://media.giphy.com/media/l0G16FRujv2fiD3Ne/giphy.gif'
+const unfetchableimgUrl = 'https://www.fnordware.conggrad16rgb.png'
 const validQuestionInput1: QuestionCreate = {
   question: 'Who is the Monarch of England?',
   duration: 4,
@@ -667,5 +673,11 @@ export {
   invalidCreateQuestionV2NotJPGPNG,
   invalidCreateQuestionV2InvalidURL,
   invalidCreateQuestionV2EmptyURL,
-  validCreateQuestionV2PNG
+  validCreateQuestionV2PNG,
+  validpngUrl1,
+  validpngUrl2,
+  validjpgUrl1,
+  validjpgUrl2,
+  invalidimgUrl,
+  unfetchableimgUrl,
 };

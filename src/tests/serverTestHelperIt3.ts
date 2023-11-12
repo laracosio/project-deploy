@@ -284,6 +284,22 @@ const quizInfoRequestV2 = (token: string, quizId: number): Response => {
     }
   );
 };
+
+const quizThumbnailUpdateRequest = (token: string, quizId: number, imgUrl: string): Response => {
+  return request(
+    'PUT',
+      `${SERVER_URL}/v1/admin/quiz/${quizId}/thumbnail`,
+      {
+        body: JSON.stringify({
+          imgUrl: imgUrl,
+        }),
+        headers: {
+          'Content-type': 'application/json',
+          token: token
+        }
+      }
+  );
+};
 // #endregion
 
 // #region player handlers
@@ -294,5 +310,5 @@ export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
-  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2
+  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, quizThumbnailUpdateRequest
 };
