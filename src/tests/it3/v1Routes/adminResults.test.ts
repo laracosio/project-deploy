@@ -192,7 +192,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/x - Success Cases', ()
   //   expect(response.statusCode).toStrictEqual(HttpStatusCode.OK);
   //   expect(JSON.parse(response.body.toString())).toStrictEqual({ url: 'http://google.com/some/image/path.csv' });
   // });
-  test('/results - Success: two players in 1st', () => {
+  test.only('/results - Success: two players in 1st', () => {
     // console.log(quizSession);
     const datastr: Buffer = fs.readFileSync('./datastore.json');
     const data: Datastore = JSON.parse(String(datastr));
