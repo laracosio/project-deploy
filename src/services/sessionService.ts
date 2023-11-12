@@ -1,9 +1,9 @@
-import { Session, SessionStatus, Token, getData, Player, Message } from '../dataStore';
+import { Session, SessionStatus, Token, getData, Player, Message, setData } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { SessionStates } from '../enums/SessionStates';
 import { ApiError } from '../errors/ApiError';
 import { quizToMetadata } from '../utils/mappers';
-import { findToken, tokenValidation, findQuizById } from './otherService';
+import { findUTInfo, tokenValidation, findQuizById } from './otherService';
 
 /**
  * Given a particular quiz, start a new session
@@ -19,7 +19,7 @@ function startNewSession(token: string, quizId: number, autoStartNum: number): o
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  const matchedToken = findToken(token);
+  const matchedToken = findUTInfo(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('User is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
@@ -51,7 +51,7 @@ function startNewSession(token: string, quizId: number, autoStartNum: number): o
   };
 
   dataStore.sessions.push(newSession);
-  setAndSave(dataStore);
+  setData(dataStore);
   return {sessionId: newSessionId};
 }
 
