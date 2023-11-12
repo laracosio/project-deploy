@@ -18,10 +18,10 @@ function clear(): object {
   const dataStore = getData();
   dataStore.users = [];
   dataStore.quizzes = [];
-  dataStore.utinfo = [];
+  dataStore.mapUT = [];
   dataStore.trash = [];
   dataStore.sessions = [];
-  dataStore.playerIdSessionIds = [];
+  dataStore.mapPS = [];
   dataStore.maxQuizId = 0;
   dataStore.maxPlayerId = 0;
   setAndSave(dataStore);
@@ -106,7 +106,7 @@ function tokenValidation (token: string): boolean {
     return false;
   }
   // check whether token exists in dataStore
-  if (!dataStore.utinfo.some(t => t.token === token)) {
+  if (!dataStore.mapUT.some(t => t.token === token)) {
     return false;
   }
   return true;
@@ -119,7 +119,7 @@ function tokenValidation (token: string): boolean {
  */
 function findUTInfo (token: string): UTInfo {
   const dataStore = getData();
-  return dataStore.utinfo.find(t => t.token === token);
+  return dataStore.mapUT.find(t => t.token === token);
 }
 
 /**

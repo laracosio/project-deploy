@@ -36,13 +36,13 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
     numFailedPasswordsSinceLastLogin: 0,
   };
 
-  const newToken: string = createToken(dataStore.utinfo);
+  const newToken: string = createToken(dataStore.mapUT);
   const newUTInfo: UTInfo = {
     token: newToken,
     userId: newUserId
   };
   dataStore.users.push(newUser);
-  dataStore.utinfo.push(newUTInfo);
+  dataStore.mapUT.push(newUTInfo);
 
   setAndSave(dataStore);
 
@@ -76,12 +76,12 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
   authUser.numSuccessfulLogins++;
   authUser.numFailedPasswordsSinceLastLogin = 0;
 
-  const newToken: string = createToken(dataStore.utinfo);
+  const newToken: string = createToken(dataStore.mapUT);
   const newUTInfo: UTInfo = {
     token: newToken,
     userId: authUserId
   };
-  dataStore.utinfo.push(newUTInfo);
+  dataStore.mapUT.push(newUTInfo);
 
   setAndSave(dataStore);
 
@@ -98,13 +98,13 @@ function adminAuthLogout(token: string): object {
   const dataStore = getData();
 
   // check if token is valid
-  if (!dataStore.utinfo.some(user => user.token === token)) {
+  if (!dataStore.mapUT.some(user => user.token === token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
   // remove token from dataStore
-  const tokenIndex: number = dataStore.utinfo.findIndex(user => user.token === token);
-  dataStore.utinfo.splice(tokenIndex, 1);
+  const tokenIndex: number = dataStore.mapUT.findIndex(user => user.token === token);
+  dataStore.mapUT.splice(tokenIndex, 1);
 
   setAndSave(dataStore);
 

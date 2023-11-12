@@ -69,7 +69,7 @@ function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: n
   }
 
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
-  const authUser = dataStore.utinfo.find(user => user.token === sessionToken);
+  const authUser = dataStore.mapUT.find(user => user.token === sessionToken);
   if (quiz.quizOwner !== authUser.userId) {
     throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
