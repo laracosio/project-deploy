@@ -3,6 +3,7 @@ import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import crypto from 'crypto';
+import { SessionStates } from '../enums/SessionStates';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -208,7 +209,7 @@ function hashText(text: string): string {
 function openSessionQuizzesState(quizId: number): boolean {
   const dataStore = getData();
   return dataStore.sessions.some(element => element.sessionQuiz.quizId === quizId &&
-    element.sessionState !== 'END');
+    element.sessionState !== SessionStates.'END');
 }
 
 /**
