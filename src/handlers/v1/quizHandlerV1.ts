@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizViewTrash, adminQuizEmptyTrash } from '../../services/trashService';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../../services/quizService';
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../../services/questionService';
+import { quizThumbnailUpdate } from '../../services/thumbnailService';
 
 export const quizRouterV1 = Router();
 
@@ -79,6 +80,12 @@ quizRouterV1.put('/:quizid/question/:questionid/move', (req: Request, res: Respo
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   res.json(adminMoveQuestion(sessionToken, quizId, questionId, newPostion));
+});
+
+quizRouterV1.put('/:quizId/thumbnail', (req: Request, res: Response) => {
+  const sessionToken = req.body.token as string;
+  const quizId = parseInt(req.params.quizId);
+  res.json(quizThumbnailUpdate(sessionToken, quizId, req.body.imgUrl));
 });
 
 // delete routers
