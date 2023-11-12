@@ -1,7 +1,5 @@
 import { SessionStates } from "./enums/SessionStates";
 
-import { SessionStates } from './enums/SessionStates';
-
 export interface ErrorObject {
   error: string
 }
