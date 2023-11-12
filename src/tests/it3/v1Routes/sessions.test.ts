@@ -1,5 +1,5 @@
 import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../../it2-testing/serverTestHelperIt2';
-import {person1, person2, validQuizDescription, validQuizName, validCreateQuestion } from '../../testingData';
+import {person1, person2, validQuizDescription, validQuizName, validCreateQuestion, validAutoStartNum, invalidAutoStartNum } from '../../testingData';
 import { startNewSessionRequest } from '../../serverTestHelperIt3';
 import { validUpdateQuestion } from '../../../testingData';
 import { quizCreateQuestion } from '../../../services/questionService';
