@@ -2,6 +2,8 @@ import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest,
 import {person1, person2, validQuizDescription, validQuizName, validCreateQuestion, validAutoStartNum, invalidAutoStartNum } from '../../../testingData';
 import { startNewSessionRequest } from '../../serverTestHelperIt3';
 import { quizCreateQuestion } from '../../../services/questionService';
+import { Response } from 'sync-request-curl';
+
 beforeEach(() => {
   clearRequest();
 });
