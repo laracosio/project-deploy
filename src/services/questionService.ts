@@ -45,7 +45,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
   }
 
-  const authUser = dataStore.utinfo.find(user => user.token === token);
+  const authUser = dataStore.mapUT.find(user => user.token === token);
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
   if (quiz.quizOwner !== authUser.userId) {
     throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
@@ -113,9 +113,8 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     answers: arrayOfAnswers,
     thumbnailUrl: questionBody.thumbnailUrl,
     playersCorrectList: [],
-    averageAnswerTime: 0,
-    percentCorrect: 0,
-    numPlayerAnswers: 0
+    answerTimes: [],
+    questionStartTime: 0
   };
 
   quiz.questions.push(newQuestion);
@@ -213,7 +212,7 @@ function quizUpdateQuestion(quizId: number, questionId: number, token: string, q
     throw new ApiError('Token is empty or invalid', HttpStatusCode.UNAUTHORISED);
   }
 
-  const authUser = dataStore.utinfo.find(user => user.token === token);
+  const authUser = dataStore.mapUT.find(user => user.token === token);
   if (quiz.quizOwner !== authUser.userId) {
     throw new ApiError('Valid token is provided, but user is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
@@ -322,9 +321,8 @@ function adminDuplicateQuestion(token: string, quizId: number, questionId: numbe
     answers: questionToCopy.answers,
     thumbnailUrl: questionToCopy.thumbnailUrl,
     playersCorrectList: questionToCopy.playersCorrectList,
-    averageAnswerTime: questionToCopy.averageAnswerTime,
-    percentCorrect: questionToCopy.percentCorrect,
-    numPlayerAnswers: 0
+    answerTimes: questionToCopy.answerTimes,
+    questionStartTime: questionToCopy.questionStartTime
   };
 
   const questionIndex = matchedQuiz.questions.findIndex((question) => question.questionId === questionId);

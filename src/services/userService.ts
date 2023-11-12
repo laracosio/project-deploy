@@ -29,7 +29,7 @@ function adminUserDetails(token: string): UserDetailReturn {
     throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
   }
 
-  const userIdInToken = dataStore.utinfo.find(user => user.token === token);
+  const userIdInToken = dataStore.mapUT.find(user => user.token === token);
   const adminUserDetails = dataStore.users.find(user => user.userId === userIdInToken.userId);
 
   return {
