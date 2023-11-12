@@ -1,7 +1,7 @@
 import { getData } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
-import { findToken, findUserById, hashText, setAndSave, tokenValidation } from './otherService';
+import { findUTInfo, findUserById, hashText, setAndSave, tokenValidation } from './otherService';
 import validator from 'validator';
 
 interface UserDetailReturn {
@@ -17,19 +17,19 @@ interface UserDetailReturn {
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
- * @param {string} sessionId - calling user's Id
+ * @param {string} token - calling user's Id
  * @returns {user: {userId: number, email: string,
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(sessionId: string): UserDetailReturn {
+function adminUserDetails(token: string): UserDetailReturn {
   const dataStore = getData();
   // invalid Token
-  if (!tokenValidation(sessionId)) {
+  if (!tokenValidation(token)) {
     throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
   }
 
-  const userIdInToken = dataStore.tokens.find(user => user.sessionId === sessionId);
+  const userIdInToken = dataStore.mapUT.find(user => user.token === token);
   const adminUserDetails = dataStore.users.find(user => user.userId === userIdInToken.userId);
 
   return {
@@ -45,8 +45,8 @@ function adminUserDetails(sessionId: string): UserDetailReturn {
 }
 
 /**
- * Given a valid sessionId and new details, update the sessionId user's details.
- * @param {string} token - user's current token/sessionId
+ * Given a valid token and new details, update the token user's details.
+ * @param {string} token - user's current token
  * @param {string} email - user's updated or current email
  * @param {string} nameFirst - user's updated or current first name
  * @param {string} nameLast - user's updated or current first name
@@ -62,8 +62,8 @@ function adminUserUpdateDetails(token: string, email: string, nameFirst: string,
   }
 
   // find user's details
-  const userToken = findToken(token);
-  const userId = userToken.userId;
+  const userUTInfo = findUTInfo(token);
+  const userId = userUTInfo.userId;
   const user = findUserById(userId);
   const currentUserEmail = user.email;
 
@@ -102,7 +102,7 @@ function adminUserUpdateDetails(token: string, email: string, nameFirst: string,
 
 /**
  * Given details relating to a password change, update the password of a logged in user.
- * @param {string} sessionId - current session id from token
+ * @param {string} token - current session id from UTInfo
  * @param {string} oldPassword - user's current password (before update)
  * @param {string} newPassword - new password to replace the current password
  * @returns {{}}
@@ -119,8 +119,8 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
   const hashedNewPW = hashText(newPassword);
 
   // find user's details (list of old passwords)
-  const userToken = findToken(token);
-  const user = findUserById(userToken.userId);
+  const userUTInfo = findUTInfo(token);
+  const user = findUserById(userUTInfo.userId);
 
   // check oldPassword is correct
   if (hashedOldPW !== user.password) {

@@ -128,22 +128,22 @@ const userUpdatePasswordRequestV2 = (
 // #endregion
 
 // #region quiz handlers
-const quizRemoveRequestV2 = (token: string, quizId: number): Response => {
-  return request('DELETE', SERVER_URL + '/v2/admin/quiz/' + quizId, {
-    headers: {
-      token: token
+const quizRemoveRequestV2 = (token: string, quizid: number): Response => {
+  return request(
+    'DELETE',
+    SERVER_URL + '/v2/admin/quiz/' + quizid,
+    {
+      headers: {
+        token: token
+      }
     }
-  });
+  );
 };
 
-const quizTransferRequestV2 = (
-  token: string,
-  quizId: number,
-  userEmail: string
-): Response => {
+const quizTransferRequestV2 = (token: string, quizid: number, userEmail: string): Response => {
   return request(
     'POST',
-    SERVER_URL + '/v2/admin/quiz/' + quizId + '/transfer',
+    SERVER_URL + '/v2/admin/quiz/' + quizid + '/transfer',
     {
       body: JSON.stringify({ userEmail: userEmail }),
       headers: {
@@ -154,20 +154,10 @@ const quizTransferRequestV2 = (
   );
 };
 
-const moveQuestionRequestV2 = (
-  token: string,
-  quizId: number,
-  questionId: number,
-  newPosition: number
-): Response => {
+const moveQuestionRequestV2 = (token: string, quizid: number, questionid: number, newPosition: number): Response => {
   return request(
     'PUT',
-    SERVER_URL +
-      '/v2/admin/quiz/' +
-      quizId +
-      '/question/' +
-      questionId +
-      '/move',
+    SERVER_URL + '/v2/admin/quiz/' + quizid + '/question/' + questionid + '/move',
     {
       body: JSON.stringify({
         newPosition: newPosition
@@ -180,14 +170,10 @@ const moveQuestionRequestV2 = (
   );
 };
 
-const duplicateQuestionRequestV2 = (
-  token: string,
-  quizId: number,
-  questionId: number
-): Response => {
+const duplicateQuestionRequestV2 = (token: string, quizid: number, questionid: number): Response => {
   return request(
     'POST',
-    `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`,
+    `${SERVER_URL}/v2/admin/quiz/${quizid}/question/${questionid}/duplicate`,
     {
       headers: {
         'Content-type': 'application/json',
@@ -197,31 +183,26 @@ const duplicateQuestionRequestV2 = (
   );
 };
 
-const createQuizQuestionRequestV2 = (
-  quizId: number,
-  token: string,
-  questionBody: QuestionCreate
-): Response => {
-  return request('POST', `${SERVER_URL}/v2/admin/quiz/${quizId}/question`, {
-    json: {
-      questionBody: questionBody
-    },
-    headers: {
-      'Content-type': 'application/json',
-      token: token
+const createQuizQuestionRequestV2 = (quizid: number, token: string, questionBody: QuestionCreate): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v2/admin/quiz/${quizid}/question`,
+    {
+      json: {
+        questionBody: questionBody,
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
     }
-  });
+  );
 };
 
-const updateQuizQuestionRequestV2 = (
-  quizId: number,
-  questionId: number,
-  token: string,
-  questionBody: QuestionCreate
-): Response => {
+const updateQuizQuestionRequestV2 = (quizid: number, questionid: number, token: string, questionBody: QuestionCreate): Response => {
   return request(
     'PUT',
-    `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}`,
+    `${SERVER_URL}/v2/admin/quiz/${quizid}/question/${questionid}`,
     {
       json: {
         questionBody: questionBody
@@ -234,52 +215,48 @@ const updateQuizQuestionRequestV2 = (
   );
 };
 
-const deleteQuizQuestionRequestV2 = (
-  sessionId: string,
-  quizId: number,
-  questionId: number
-): Response => {
+const deleteQuizQuestionRequestV2 = (token: string, quizid: number, questionid: number): Response => {
   return request(
     'DELETE',
-    `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}`,
+    `${SERVER_URL}/v2/admin/quiz/${quizid}/question/${questionid}`,
     {
       headers: {
-        sessionId: sessionId
+        token: token
       }
     }
   );
 };
 
-const quizNameUpdateRequestV2 = (
-  token: string,
-  quizId: number,
-  name: string
-): Response => {
-  return request('PUT', `${SERVER_URL}/v2/admin/quiz/${quizId}/name`, {
-    body: JSON.stringify({
-      name: name
-    }),
-    headers: {
-      'Content-type': 'application/json',
-      token: token
-    }
-  });
+const quizNameUpdateRequestV2 = (token: string, quizid: number, name: string): Response => {
+  return request(
+    'PUT',
+      `${SERVER_URL}/v2/admin/quiz/${quizid}/name`,
+      {
+        body: JSON.stringify({
+          name: name,
+        }),
+        headers: {
+          'Content-type': 'application/json',
+          token: token
+        }
+      }
+  );
 };
 
-const quizDescriptUpdateRequestV2 = (
-  token: string,
-  quizId: number,
-  description: string
-): Response => {
-  return request('PUT', `${SERVER_URL}/v2/admin/quiz/${quizId}/description`, {
-    body: JSON.stringify({
-      description: description
-    }),
-    headers: {
-      'Content-type': 'application/json',
-      token: token
-    }
-  });
+const quizDescriptUpdateRequestV2 = (token: string, quizid: number, description: string): Response => {
+  return request(
+    'PUT',
+        `${SERVER_URL}/v2/admin/quiz/${quizid}/description`,
+        {
+          body: JSON.stringify({
+            description: description,
+          }),
+          headers: {
+            'Content-type': 'application/json',
+            token: token
+          }
+        }
+  );
 };
 
 const quizViewTrashRequestV2 = (token: string): Response => {
@@ -291,25 +268,33 @@ const quizViewTrashRequestV2 = (token: string): Response => {
   });
 };
 
-const quizRestoreTrashRequestV2 = (token: string, quizId: number): Response => {
-  return request('POST', `${SERVER_URL}/v2/admin/quiz/${quizId}/restore`, {
-    headers: {
-      'Content-type': 'application/json',
-      token: token
+const quizRestoreTrashRequestV2 = (token: string, quizid: number): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v2/admin/quiz/${quizid}/restore`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
     }
-  });
+  );
 };
 
-const quizEmptyTrashRequestV2 = (token: string, quizIds: string): Response => {
-  return request('DELETE', `${SERVER_URL}/v2/admin/quiz/trash/empty`, {
-    qs: {
-      quizIds: quizIds
-    },
-    headers: {
-      'Content-type': 'application/json',
-      token: token
+const quizEmptyTrashRequestV2 = (token: string, quizids: string): Response => {
+  return request(
+    'DELETE',
+    `${SERVER_URL}/v2/admin/quiz/trash/empty`,
+    {
+      qs: {
+        quizids: quizids
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
     }
-  });
+  );
 };
 
 const quizCreateRequestV2 = (
@@ -337,12 +322,16 @@ const quizListRequestV2 = (token: string): Response => {
   });
 };
 
-const quizInfoRequestV2 = (token: string, quizId: number): Response => {
-  return request('GET', `${SERVER_URL}/v2/admin/quiz/${quizId}`, {
-    headers: {
-      token: token
+const quizInfoRequestV2 = (token: string, quizid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v2/admin/quiz/${quizid}`,
+    {
+      headers: {
+        token: token
+      }
     }
-  });
+  );
 };
 // #endregion
 

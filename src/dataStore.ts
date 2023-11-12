@@ -1,4 +1,4 @@
-import { SessionStates } from './enums/SessionStates';
+import { SessionStates } from "./enums/SessionStates";
 
 export interface ErrorObject {
   error: string;
@@ -17,7 +17,15 @@ export interface QuestionCreate {
   thumbnailUrl?: string;
 }
 
-export const Colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
+export const Colours = [
+  "red",
+  "blue",
+  "green",
+  "yellow",
+  "purple",
+  "brown",
+  "orange",
+];
 
 export interface User {
   userId: number;
@@ -45,8 +53,8 @@ export interface Question {
   points: number;
   answers: Answer[];
   playersCorrectList: string[];
-  averageAnswerTime: number;
-  percentCorrect: number;
+  answerTimes: number[];
+  questionStartTime: number;
 }
 
 export interface Quiz {
@@ -62,10 +70,14 @@ export interface Quiz {
   thumbnailUrl?: string;
 }
 
+export interface PlayerAnswers {
+  questionId: number;
+  score: number;
+}
 export interface Player {
   playerId: number;
   playerName: string;
-  playerScore: number;
+  playerAnswers?: PlayerAnswers[];
 }
 
 export interface Message {
@@ -85,29 +97,24 @@ export interface Session {
   messages: Message[];
 }
 
-export interface Token {
-  sessionId: string;
+export interface UTInfo {
+  token: string;
   userId: number;
 }
 
-export interface playerIdSessionId {
-  sessionId: number,
-  playerId: number
-}
-
-export interface playerIdSessionId {
-  sessionId: number,
-  playerId: number
+export interface PSInfo {
+  sessionId: number;
+  playerId: number;
 }
 
 export interface Datastore {
   users: User[];
   quizzes: Quiz[];
-  tokens: Token[];
+  mapUT: UTInfo[];
   trash: Quiz[];
-  sessions: Session[],
-  playerIdSessionIds: playerIdSessionId[],
-  maxQuizId: number,
+  sessions: Session[];
+  mapPS: PSInfo[];
+  maxQuizId: number;
   maxPlayerId: number;
 }
 
@@ -133,12 +140,12 @@ export interface SessionStatus {
 let data: Datastore = {
   users: [],
   quizzes: [],
-  tokens: [],
+  mapUT: [],
   trash: [],
   sessions: [],
-  playerIdSessionIds: [],
+  mapPS: [],
   maxQuizId: 0,
-  maxPlayerId: 0
+  maxPlayerId: 0,
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

@@ -1,6 +1,6 @@
 import { Answer, Quiz, getData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
-import { findQuizById, findToken, openSessionQuizzesState, setAndSave, tokenValidation } from './otherService';
+import { findQuizById, findUTInfo, openSessionQuizzesState, setAndSave, tokenValidation } from './otherService';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 interface QuestionInfoReturn {
@@ -38,17 +38,17 @@ interface QuizListReturn {
 
 /**
  * Given basic details about a new quiz, create one for  the logged in user.
- * @param {string} sessionId - unique token
+ * @param {string} token - unique token
  * @param {string} name - of quiz
  * @param {string} description - of quiz
  * @returns { quizId: number }
  * @returns { error: string }
 */
-function adminQuizCreate(sessionId: string, name: string, description: string): QuizCreateReturn {
+function adminQuizCreate(token: string, name: string, description: string): QuizCreateReturn {
   const dataStore = getData();
 
-  // check that sessionId is not empty or is valid
-  if (!tokenValidation(sessionId)) {
+  // check that token is not empty or is valid
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
@@ -62,7 +62,7 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
     throw new ApiError('Invalid name length', HttpStatusCode.BAD_REQUEST);
   }
 
-  const matchedToken = findToken(sessionId);
+  const matchedToken = findUTInfo(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner === matchedToken.userId && q.name === name))) {
     throw new ApiError('Quiz name already in use', HttpStatusCode.BAD_REQUEST);
   }
@@ -100,20 +100,20 @@ function adminQuizCreate(sessionId: string, name: string, description: string): 
 
 /**
  * Get all of the relevant information about the current quiz.
- * @param {string} sessionId
+ * @param {string} token
  * @param {number} quizId
  * @returns {quizId: number, name: string, timeCreated: number, timeLastEdited: number, description: string}
  */
-function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
+function adminQuizInfo(token: string, quizId: number): QuizInfoReturn {
   const dataStore = getData();
 
   // check that token is not empty or is valid
-  if (!tokenValidation(sessionId)) {
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
   // find user associated with token and checks whether they are the quiz owner
-  const matchedToken = findToken(sessionId);
+  const matchedToken = findUTInfo(token);
 
   if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('User does not own quiz to check info', HttpStatusCode.FORBIDDEN);
@@ -155,19 +155,19 @@ function adminQuizInfo(sessionId: string, quizId: number): QuizInfoReturn {
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
- * @param {string} sessionId
+ * @param {string} token
  * @returns {quizzes: [{quizId: number, name: string}]}
  * @returns {{error: string}}
  */
-function adminQuizList (sessionId: string): QuizListReturn {
+function adminQuizList (token: string): QuizListReturn {
   const dataStore = getData();
 
-  // check that sessionId is not empty or is valid
-  if (!tokenValidation(sessionId)) {
+  // check that token is not empty or is valid
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  const matchedToken = findToken(sessionId);
+  const matchedToken = findUTInfo(token);
 
   // find all user quizzes and add to an array
   const userQuizList: Array<BriefQuizInfo> = [];
@@ -188,21 +188,21 @@ function adminQuizList (sessionId: string): QuizListReturn {
 
 /**
  * Given a particular quiz, change the name of the quiz
- * @param {string} sessionId
+ * @param {string} token
  * @param {number} quizId
  * @param {string} name
  * @returns {{error: string}}
  */
-function adminQuizNameUpdate (sessionId: string, quizId: number, name: string): object {
+function adminQuizNameUpdate (token: string, quizId: number, name: string): object {
   const dataStore = getData();
 
-  // check sessionId is valid
-  if (!tokenValidation(sessionId)) {
+  // check token is valid
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
   // check valid quizId is owned by the current user associated with token
-  const matchedToken = findToken(sessionId);
+  const matchedToken = findUTInfo(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }
@@ -238,21 +238,21 @@ function adminQuizNameUpdate (sessionId: string, quizId: number, name: string): 
 
 /**
  * Given a particular quiz, change the description of the quiz
- * @param {string} sessionId
+ * @param {string} token
  * @param {number} quizId
  * @param {string} description
  * @returns {{error: string}}
  */
-function adminQuizDescriptionUpdate (sessionId: string, quizId: number, description: string): object {
+function adminQuizDescriptionUpdate (token: string, quizId: number, description: string): object {
   const dataStore = getData();
 
-  // check sessionId is valid
-  if (!tokenValidation(sessionId)) {
+  // check token is valid
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
   // check valid quizId is owned by the current user associated with token
-  const matchedToken = findToken(sessionId);
+  const matchedToken = findUTInfo(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }
@@ -279,21 +279,21 @@ function adminQuizDescriptionUpdate (sessionId: string, quizId: number, descript
 
 /**
  * Transfer ownership of a quiz to a different user based on their email
- * @param sessionId - string of sessionId
+ * @param token - string of token
  * @param quizId - quizId to change ownership of
  * @param userEmail - email of user to change quiz to
  * @returns {}
  * @returns { error: string }
 */
-function adminQuizTransferOwner(sessionId: string, quizId: number, userEmail: string): object {
+function adminQuizTransferOwner(token: string, quizId: number, userEmail: string): object {
   const dataStore = getData();
 
   const transferUser = dataStore.users.find((user) => user.email === userEmail);
   const transferQuiz = findQuizById(quizId);
 
-  const tokenUser = findToken(sessionId);
+  const tokenUser = findUTInfo(token);
   // invalid token
-  if (!tokenValidation(sessionId)) {
+  if (!tokenValidation(token)) {
     throw new ApiError('Token is invalid', HttpStatusCode.UNAUTHORISED);
   }
 
