@@ -1,13 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { playerFinalResults, playerQuestionResults } from '../../services/playerService';
-import { joinGuestPlayer, GuestPlayerStatus } from '../../services/playerService';
+import { joinGuestPlayer, guestPlayerStatus } from '../../services/playerService';
 
 export const playerRouter = Router();
 
 // get routers
 playerRouter.get('/:playerid', (req: Request, res: Response) => {
     const playerid = parseInt(req.params.playerid);
-    res.json(GuestPlayerStatus(playerid));
+    res.json(guestPlayerStatus(playerid));
 });
 
 playerRouter.get('/:playerid/question/:questionposition/results', (req: Request, res: Response) => {

@@ -87,7 +87,7 @@ function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn
  * @param playerId
  * @returns GuestPlayerStatusReturn
 */
-function GuestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
+function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
   const dataStore = getData();
   
   const validPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
@@ -172,4 +172,4 @@ export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
   }
   
 }
-export { joinGuestPlayer, GuestPlayerStatus };
+export { joinGuestPlayer, guestPlayerStatus };

@@ -1,7 +1,7 @@
 import { Response } from 'sync-request-curl';
 
 import { person1, validAutoStartNum, validQuestionInput1, validQuestionInput1V2, validQuestionInput2, validQuestionInput2V2, validQuestionInput3, validQuestionInput3V2, validQuizDescription, validQuizName } from '../../../testingData';
-import { createQuizQuestionRequestV2, playerFinalResultRqst, playerQuestResultRqst, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest } from '../../serverTestHelperIt3';
+import { createQuizQuestionRequestV2, joinGuestPlayerRequest, playerFinalResultRqst, playerQuestResultRqst, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest } from '../../serverTestHelperIt3';
 import { AdminActions } from '../../../enums/AdminActions';
 import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
 import { Question } from '../../../dataStore';
@@ -26,9 +26,9 @@ describe('GET /v1/player/:playerid/question/:questionposition/results - success'
     createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput3);
     const game1 = sessionCreateRequest(sess1Data.token, quiz1Data.quizId, validAutoStartNum);
     const game1Data = JSON.parse(game1.body.toString());
-    const player1 = joinGuestPlayer(game1Data.sessionId, 'Gizmo');
-    const player2 = joinGuestPlayer(game1Data.sessionId, 'Dave');
-    const player3 = joinGuestPlayer(game1Data.sessionId, 'Pumpkin');
+    const player1 = joinGuestPlayerRequest(game1Data.sessionId, 'Gizmo');
+    const player2 = joinGuestPlayerRequest(game1Data.sessionId, 'Dave');
+    const player3 = joinGuestPlayerRequest(game1Data.sessionId, 'Pumpkin');
     const player1Data = JSON.parse(player1.body.toString());
     const player2Data = JSON.parse(player2.body.toString());
     const player3Data = JSON.parse(player3.body.toString());
@@ -100,9 +100,9 @@ describe('GET /v1/player/:playerid/question/:questionposition/results - error', 
     createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput3);
     const game1 = sessionCreateRequest(sess1Data.token, quiz1Data.quizId, validAutoStartNum);
     const game1Data = JSON.parse(game1.body.toString());
-    const player1 = joinGuestPlayer(game1Data.sessionId, 'Gizmo');
-    const player2 = joinGuestPlayer(game1Data.sessionId, 'Dave');
-    const player3 = joinGuestPlayer(game1Data.sessionId, 'Pumpkin');
+    const player1 = joinGuestPlayerRequest(game1Data.sessionId, 'Gizmo');
+    const player2 = joinGuestPlayerRequest(game1Data.sessionId, 'Dave');
+    const player3 = joinGuestPlayerRequest(game1Data.sessionId, 'Pumpkin');
     const player1Data = JSON.parse(player1.body.toString());
     const player2Data = JSON.parse(player2.body.toString());
     const player3Data = JSON.parse(player3.body.toString());
@@ -182,9 +182,9 @@ describe('GET /v1/player/:playerid/results - success', () => {
     createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput3V2);
     const game1 = sessionCreateRequest(sess1Data.token, quiz1Data.quizId, validAutoStartNum);
     const game1Data = JSON.parse(game1.body.toString());
-    const player1 = joinGuestPlayer(game1Data.sessionId, 'Gizmo');
-    const player2 = joinGuestPlayer(game1Data.sessionId, 'Dave');
-    const player3 = joinGuestPlayer(game1Data.sessionId, 'Pumpkin');
+    const player1 = joinGuestPlayerRequest(game1Data.sessionId, 'Gizmo');
+    const player2 = joinGuestPlayerRequest(game1Data.sessionId, 'Dave');
+    const player3 = joinGuestPlayerRequest(game1Data.sessionId, 'Pumpkin');
     const player1Data = JSON.parse(player1.body.toString());
     const player2Data = JSON.parse(player2.body.toString());
     const player3Data = JSON.parse(player3.body.toString());
@@ -261,9 +261,9 @@ describe('GET /v1/player/:playerid/results - error', () => {
     createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput3V2);
     const game1 = sessionCreateRequest(sess1Data.token, quiz1Data.quizId, validAutoStartNum);
     const game1Data = JSON.parse(game1.body.toString());
-    const player1 = joinGuestPlayer(game1Data.sessionId, 'Gizmo');
-    const player2 = joinGuestPlayer(game1Data.sessionId, 'Dave');
-    const player3 = joinGuestPlayer(game1Data.sessionId, 'Pumpkin');
+    const player1 = joinGuestPlayerRequest(game1Data.sessionId, 'Gizmo');
+    const player2 = joinGuestPlayerRequest(game1Data.sessionId, 'Dave');
+    const player3 = joinGuestPlayerRequest(game1Data.sessionId, 'Pumpkin');
     const player1Data = JSON.parse(player1.body.toString());
     const player2Data = JSON.parse(player2.body.toString());
     const player3Data = JSON.parse(player3.body.toString());
