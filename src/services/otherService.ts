@@ -1,9 +1,10 @@
-import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session } from '../dataStore';
+import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session, Player } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import crypto from 'crypto';
 import { SessionStates } from '../enums/SessionStates';
+import { UserRanking, questionResultsReturn } from './playerService';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -265,10 +266,68 @@ function isImageUrlValid(thumbnailUrl: string): boolean {
   return imageRegex.test(thumbnailUrl);
 }
 
+/**
+ * calculates average answerTime based on question and number of total players
+ * @param question 
+ * @param totalPlayers 
+ * @returns avgTime to nearest integer
+ */
+function calcAvgAnsTime(question: Question, totalPlayers: number): number {
+  const cumulativeTime = question.answerTimes.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+  return Math.round(cumulativeTime/totalPlayers);
+}
+
+/**
+ * Calculates the percentage of correct answers received for question
+ * @param question 
+ * @param totalPlayers 
+ * @returns % of correct answers to nearest integer
+ */
+function calcPercentCorrect(question: Question, totalPlayers: number): number {
+  const numCorrect = question.playersCorrectList.length
+  return Math.round((numCorrect/totalPlayers) * 100);
+}
+
+/**
+ * Creates an array of objects with users ranked by score then by name alphabetically
+ * @param sessionPlayers - player[] containing information about players in a session
+ * @returns userRanking 
+ */
+function createUserRank(sessionPlayers: Player[]): UserRanking[] {
+  const userRanking: UserRanking[] = [];
+  sessionPlayers.map(player => {
+    const cumulativeScore = player.playerAnswers.reduce((sum, answer) => sum + answer.score, 0);
+    userRanking.push({
+      name: player.playerName,
+      score: cumulativeScore
+    })
+  })
+
+  userRanking.sort((a, b) => (b.score - a.score || a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
+
+  return userRanking;
+}
+
+/**
+ * Creates an object containing information on questionId, playersCorrect, avgAnswerTime and % correct
+ * @param question 
+ * @param totalPlayers 
+ * @returns  questionResultsReturn
+ */
+function createQuestionResults(question: Question, totalPlayers: number): questionResultsReturn  {
+  return {
+    questionId: question.questionId,
+    playersCorrectList: question.playersCorrectList,
+    averageAnswerTime: calcAvgAnsTime(question, totalPlayers),
+    percentCorrect: calcPercentCorrect(question, totalPlayers)
+  }
+}
+
 export {
   clear, helperAdminRegister, createToken, tokenValidation,
   findQuestionByQuiz, findQuizById, findUserById, findUTInfo,
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
   hashText, openSessionQuizzesState, isImageUrlValid, playerValidation,
-  findSessionByPlayerId, findPlayerName
+  findSessionByPlayerId, findPlayerName, calcAvgAnsTime, calcPercentCorrect,
+  createUserRank, createQuestionResults
 };

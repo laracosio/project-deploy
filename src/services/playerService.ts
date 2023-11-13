@@ -1,14 +1,24 @@
 import { HttpStatusCode } from "../enums/HttpStatusCode";
-import { findSessionByPlayerId, playerValidation } from "./otherService";
+import { calcAvgAnsTime, calcPercentCorrect, createQuestionResults, createUserRank, findSessionByPlayerId, playerValidation } from "./otherService";
 import { ApiError } from '../errors/ApiError';
 import { getData } from "../dataStore";
 import { SessionStates } from "../enums/SessionStates";
 
-interface PQResultReturn {
+export interface UserRanking {
+  name: string, 
+  score: number
+}
+
+export interface questionResultsReturn {
   questionId: number;
   playersCorrectList: string[];
   averageAnswerTime: number;
   percentCorrect: number;
+}
+
+interface PlyrFinRsltReturn {
+  userRankedByScore: UserRanking[],
+  questionResults: questionResultsReturn[],
 }
 
 /**
@@ -16,7 +26,7 @@ interface PQResultReturn {
  * @param playerId 
  * @param questionPosition 
  */
-function playerQuestionResult(playerId: number, questionPosition: number): PQResultReturn {
+export function playerQuestionResult(playerId: number, questionPosition: number): questionResultsReturn {
   const dataStore = getData();
 
   if (!playerValidation) {
@@ -24,7 +34,7 @@ function playerQuestionResult(playerId: number, questionPosition: number): PQRes
   }
 
   const matchedSession = findSessionByPlayerId(playerId);
-  if (questionPosition < 0 || questionPosition > matchedSession.sessionQuiz.numQuestions) {
+  if (questionPosition < 1 || questionPosition > matchedSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
   }
 
@@ -36,20 +46,38 @@ function playerQuestionResult(playerId: number, questionPosition: number): PQRes
     throw new ApiError('Session is not yet up to this question', HttpStatusCode.BAD_REQUEST);
   }
   
-  const matchedQuestion = matchedSession.sessionQuiz.questions[questionPosition - 1];
+  const questionIndex = questionPosition - 1;
+  const matchedQuestion = matchedSession.sessionQuiz.questions[questionIndex];
   const totalSessionPlayers = dataStore.mapPS.filter(elem => elem.sessionId === matchedSession.sessionId).length;
-  const avgTime = matchedQuestion.answerTimes.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-  const newPQResultObj = {
-    questionId: matchedQuestion.questionId,
-    playersCorrectList: matchedQuestion.playersCorrectList,
-    averageAnswerTime: Math.round((avgTime/totalSessionPlayers)* 10 / 10),
-    percentCorrect: Math.round((matchedQuestion.playersCorrectList.length)/totalSessionPlayers)
-  }
-  
-  return newPQResultObj;
+  return createQuestionResults(matchedQuestion, totalSessionPlayers);
 }
 
-export {
-  playerQuestionResult
+export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
+  const dataStore = getData();
+
+  if (!playerValidation) {
+    throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const matchedSession = findSessionByPlayerId(playerId);
+  if (matchedSession.sessionState !== SessionStates.FINAL_RESULTS) {
+    throw new ApiError('Session is not in FINAL_RESULTS state', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const matchedSessionPlayers = matchedSession.sessionPlayers;
+  const userRanking = createUserRank(matchedSessionPlayers);
+
+  const totalSessionPlayers = dataStore.mapPS.filter(elem => elem.sessionId === matchedSession.sessionId).length;
+  
+  const questionResults: questionResultsReturn[] = [];
+  matchedSession.sessionQuiz.questions.map(question => {
+    questionResults.push(createQuestionResults(question, totalSessionPlayers))
+  })
+
+  return {
+    userRankedByScore: userRanking,
+    questionResults: questionResults
+  }
+
 }
