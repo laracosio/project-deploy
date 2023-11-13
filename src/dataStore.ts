@@ -90,8 +90,8 @@ export interface Session {
 }
 
 export interface UTInfo {
-  token: string;
-  userId: number;
+  token: string,
+  userId: number,
 }
 
 export interface PSInfo {
@@ -100,14 +100,15 @@ export interface PSInfo {
 }
 
 export interface Datastore {
-  users: User[];
-  quizzes: Quiz[];
-  utinfo: UTInfo[];
-  trash: Quiz[];
-  sessions: Session[];
-  playerIdSessionIds: playerIdSessionId[];
-  maxQuizId: number;
-  maxPlayerId: number;
+  users: User[],
+  quizzes: Quiz[],
+  mapUT: UTInfo[],
+  trash: Quiz[],
+  sessions: Session[],
+  mapPS: PSInfo[],
+  maxQuizId: number,
+  maxPlayerId: number,
+  maxSessionId: number,
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW

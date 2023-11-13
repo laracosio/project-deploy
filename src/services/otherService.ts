@@ -241,10 +241,9 @@ function generateRandomString() {
     randomNumbers += randomNumber.toString();
   }
 
-  let newName = randomLetters + randomNumbers
+  const newName = randomLetters + randomNumbers;
   return newName;
 }
-
 
 export {
   clear, helperAdminRegister, createToken, tokenValidation,
