@@ -55,10 +55,10 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 
   dataStore.mapPS.push(NewPlayerSession);
   dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
-  
-  //autostarting the quiz if desired number of players are achieved
+
+  // autostarting the quiz if desired number of players are achieved
   if (dataStore.sessions[sessionIdIndex].sessionPlayers.length === dataStore.sessions[sessionIdIndex].autoStartNum) {
-    dataStore.sessions[sessionIdIndex].sessionState = SessionStates.QUESTION_COUNTDOWN; 
+    dataStore.sessions[sessionIdIndex].sessionState = SessionStates.QUESTION_COUNTDOWN;
   }
   return { playerId: playerId };
 }
@@ -80,8 +80,8 @@ function GuestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
 
   const getPlayerStatus: GuestPlayerStatusReturn = {
     state: state,
-    numQuestions: atQuestion,
-    atQuestion: numQuestions
+    numQuestions: numQuestions,
+    atQuestion: atQuestion
   };
 
   return getPlayerStatus;
