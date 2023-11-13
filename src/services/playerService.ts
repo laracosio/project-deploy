@@ -6,7 +6,7 @@ import { Player, PSInfo } from '../dataStore';
 import { SessionStates } from '../enums/SessionStates';
 import { generateRandomString } from './otherService';
 
-interface joinGuestPlayerReturn {
+interface JoinGuestPlayerReturn {
   playerId: number;
 }
 
@@ -22,7 +22,7 @@ interface GuestPlayerStatusReturn {
  * @param name
  * @returns joinGuestPlayerReturn
  */
-function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn {
+function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn {
   const dataStore = getData();
   const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
 
