@@ -293,6 +293,13 @@ const playerQuestResultRqst = (playerId: number, questionPosition: number): Resp
     `${SERVER_URL}/v1/player/${playerId}/question/${questionPosition}/results`
   );
 }
+
+const playerFinalResultRqst = (playerId: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/results`
+  );
+}
 // #endregion
 
 // #region session handlers
@@ -318,5 +325,5 @@ export {
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
   quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, sessionCreateRequest, 
-  playerQuestResultRqst
+  playerQuestResultRqst, playerFinalResultRqst
 };

@@ -1,7 +1,7 @@
 import { Response } from 'sync-request-curl';
 
 import { person1, validAutoStartNum, validQuestionInput1, validQuestionInput1V2, validQuestionInput2, validQuestionInput2V2, validQuestionInput3, validQuestionInput3V2, validQuizDescription, validQuizName } from '../../../testingData';
-import { createQuizQuestionRequestV2, playerQuestResultRqst, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest } from '../../serverTestHelperIt3';
+import { createQuizQuestionRequestV2, playerFinalResultRqst, playerQuestResultRqst, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest } from '../../serverTestHelperIt3';
 import { AdminActions } from '../../../enums/AdminActions';
 import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
 import { Question } from '../../../dataStore';
@@ -291,6 +291,8 @@ describe('GET /v1/player/:playerid/results - error', () => {
     await new Promise((resolve) => setTimeout(resolve, question2.duration));
   });
   test('invalid playerId', () => {
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const game1Data = JSON.parse(game1.body.toString());
     updateSessionRequest(sess1Data.sessionId, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
     const player3Data = JSON.parse(player3.body.toString());
     const res = playerFinalResultRqst(player3Data.playerId * 1531);

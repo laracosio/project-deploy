@@ -26,7 +26,7 @@ interface PlyrFinRsltReturn {
  * @param playerId 
  * @param questionPosition 
  */
-export function playerQuestionResult(playerId: number, questionPosition: number): questionResultsReturn {
+export function playerQuestionResults(playerId: number, questionPosition: number): questionResultsReturn {
   const dataStore = getData();
 
   if (!playerValidation) {
