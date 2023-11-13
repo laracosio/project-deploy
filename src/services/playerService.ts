@@ -55,6 +55,11 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
 
   dataStore.mapPS.push(NewPlayerSession);
   dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
+  
+  //autostarting the quiz if desired number of players are achieved
+  if (dataStore.sessions[sessionIdIndex].sessionPlayers.length === dataStore.sessions[sessionIdIndex].autoStartNum) {
+    dataStore.sessions[sessionIdIndex].sessionState = SessionStates.QUESTION_COUNTDOWN; 
+  }
   return { playerId: playerId };
 }
 
