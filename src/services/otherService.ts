@@ -323,11 +323,32 @@ function createQuestionResults(question: Question, totalPlayers: number): questi
   }
 }
 
+function generateRandomString() {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  let randomLetters = '';
+  let randomNumbers = '';
+
+  // Generate 5 random letters
+  for (let i = 0; i < 5; i++) {
+    const randomIndex = Math.floor(Math.random() * letters.length);
+    randomLetters += letters.charAt(randomIndex);
+  }
+
+  // Generate 3 random numbers
+  for (let i = 0; i < 3; i++) {
+    const randomNumber = Math.floor(Math.random() * 10);
+    randomNumbers += randomNumber.toString();
+  }
+
+  const newName = randomLetters + randomNumbers;
+  return newName;
+}
+
 export {
   clear, helperAdminRegister, createToken, tokenValidation,
   findQuestionByQuiz, findQuizById, findUserById, findUTInfo,
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
   hashText, openSessionQuizzesState, isImageUrlValid, playerValidation,
-  findSessionByPlayerId, findPlayerName, calcAvgAnsTime, calcPercentCorrect,
-  createUserRank, createQuestionResults
-};
+  findSessionByPlayerId, findPlayerName,calcAvgAnsTime, calcPercentCorrect,
+  createUserRank, createQuestionResults, generateRandomString
+}
