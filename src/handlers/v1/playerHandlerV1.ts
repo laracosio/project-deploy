@@ -11,7 +11,7 @@ playerRouter.post('/join', (req: Request, res: Response) => {
 });
 
 // get
-playerRouter.get('/:playerId', (req: Request, res: Response) => {
-  const playerid = parseInt(req.params.playerId);
+playerRouter.get('/:playerid', (req: Request, res: Response) => {
+  const playerid = parseInt(req.params.playerid);
   res.json(GuestPlayerStatus(playerid));
 });

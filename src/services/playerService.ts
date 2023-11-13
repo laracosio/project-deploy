@@ -16,13 +16,18 @@ interface GuestPlayerStatusReturn {
   atQuestion: number;
 }
 
+/**
+ * This function lets a guest join as a player in a session
+ * @param sessionId
+ * @param name
+ * @returns joinGuestPlayerReturn
+ */
 function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn {
   const dataStore = getData();
-  const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === sessionId);
   const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
 
   // check if name is already taken
-  const takenName = dataStore.sessions[sessionIdIndex].sessionPlayers.some(player => player.playerName === name);
+  const takenName = sessionIdHolder.sessionPlayers.some(player => player.playerName === name);
   if (takenName) {
     throw new ApiError('Name of user entered is not unique (compared to other users who have already joined)', HttpStatusCode.BAD_REQUEST);
   }
@@ -35,7 +40,7 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
     let isTaken;
     do {
       name = generateRandomString();
-      isTaken = dataStore.sessions[sessionIdIndex].sessionPlayers.some(player => player.playerName === name);
+      isTaken = sessionIdHolder.sessionPlayers.some(player => player.playerName === name);
     } while (isTaken);
   }
   // increment maxPlayerId by 1
@@ -54,17 +59,23 @@ function joinGuestPlayer(sessionId: number, name: string): joinGuestPlayerReturn
   dataStore.maxPlayerId = playerId;
 
   dataStore.mapPS.push(NewPlayerSession);
-  dataStore.sessions[sessionIdIndex].sessionPlayers.push(newPlayer);
+  sessionIdHolder.sessionPlayers.push(newPlayer);
 
   // autostarting the quiz if desired number of players are achieved
-  if (dataStore.sessions[sessionIdIndex].sessionPlayers.length === dataStore.sessions[sessionIdIndex].autoStartNum) {
-    dataStore.sessions[sessionIdIndex].sessionState = SessionStates.QUESTION_COUNTDOWN;
+  if (sessionIdHolder.sessionPlayers.length === sessionIdHolder.autoStartNum) {
+    sessionIdHolder.sessionState = SessionStates.QUESTION_COUNTDOWN;
   }
   return { playerId: playerId };
 }
 
+/**
+ * This returns the status of the guest player in a session
+ * @param playerId
+ * @returns GuestPlayerStatusReturn
+ */
 function GuestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
   const dataStore = getData();
+
   const validPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
   if (!validPlayer) {
     throw new ApiError('Player ID does not exist', HttpStatusCode.BAD_REQUEST);
