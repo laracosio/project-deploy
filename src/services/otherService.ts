@@ -14,7 +14,7 @@ const MINPWLEN = 8;
  * @param {void}
  * @returns {void}
  */
-function clear(): object {
+export function clear(): object {
   const dataStore = getData();
   dataStore.users = [];
   dataStore.quizzes = [];
@@ -40,7 +40,7 @@ export function setAndSave(dataStore: Datastore) {
 }
 
 /**
- * Helper function to validate user data for registration.
+ * Helper export function to validate user data for registration.
  * @param {string} email - unique email address
  * @param {string} password - password of user's choice
  * @param {string} nameFirst - user's first name
@@ -48,7 +48,7 @@ export function setAndSave(dataStore: Datastore) {
  * @returns {boolean} - true if valid, false if invalid
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test
  */
-function helperAdminRegister(email: string, password: string, nameFirst: string, nameLast: string, userArray: User[]): boolean {
+export function helperAdminRegister(email: string, password: string, nameFirst: string, nameLast: string, userArray: User[]): boolean {
   // check valid email
   if (!validator.isEmail(email)) {
     return false;
@@ -87,7 +87,7 @@ function helperAdminRegister(email: string, password: string, nameFirst: string,
  * @param {Array<UTInfo>} UTInfo Datastore to check that generated sID does not already exist
  * @returns {string} token
  */
-function createToken(tokens: Array<UTInfo>): string {
+export function createToken(tokens: Array<UTInfo>): string {
   let newToken: string = uuidv4();
   /* istanbul ignore next */
   while (tokens.some(t => t.token === newToken)) {
@@ -97,11 +97,11 @@ function createToken(tokens: Array<UTInfo>): string {
 }
 
 /**
- * Helper function to validate token
+ * Helper export function to validate token
  * @param {string} token - unique token
  * @returns {boolean} - true if valid, false if invalid
  */
-function tokenValidation (token: string): boolean {
+export function tokenValidation (token: string): boolean {
   const dataStore = getData();
   if (token === null) {
     return false;
@@ -118,7 +118,7 @@ function tokenValidation (token: string): boolean {
  * @param token - token
  * @returns Token | undefined (if not found)
  */
-function findUTInfo (token: string): UTInfo {
+export function findUTInfo (token: string): UTInfo {
   const dataStore = getData();
   return dataStore.mapUT.find(t => t.token === token);
 }
@@ -128,7 +128,7 @@ function findUTInfo (token: string): UTInfo {
  * @param userId - identifies user based on userId
  * @returns User | undefined(if not found)
  */
-function findUserById (userId: number): User {
+export function findUserById (userId: number): User {
   const dataStore = getData();
   return dataStore.users.find((user) => user.userId === userId);
 }
@@ -138,7 +138,7 @@ function findUserById (userId: number): User {
  * @param quizId - identifies user based on quizId
  * @returns Quiz | undefined(if not found)
  */
-function findQuizById (quizId: number): Quiz {
+export function findQuizById (quizId: number): Quiz {
   const dataStore = getData();
   return dataStore.quizzes.find((quiz) => quiz.quizId === quizId);
 }
@@ -149,11 +149,11 @@ function findQuizById (quizId: number): Quiz {
  * @param questionId - identifies individual question witihin Quiz
  * @returns Question | undefined(if not found)
  */
-function findQuestionByQuiz (quiz: Quiz, questionId: number): Question {
+export function findQuestionByQuiz (quiz: Quiz, questionId: number): Question {
   return quiz.questions.find((question) => question.questionId === questionId);
 }
 
-function getTotalDurationOfQuiz (quizId: number): number {
+export function getTotalDurationOfQuiz (quizId: number): number {
   const dataStore = getData();
   let totalDuration = 0;
 
@@ -165,7 +165,7 @@ function getTotalDurationOfQuiz (quizId: number): number {
   return totalDuration;
 }
 
-function getRandomColorAndRemove(availableColours: string[]): string | null {
+export function getRandomColorAndRemove(availableColours: string[]): string | null {
   if (availableColours.length === 0) {
     // Array is empty, return null or handle as desired
     return null;
@@ -187,7 +187,7 @@ function getRandomColorAndRemove(availableColours: string[]): string | null {
  * @param quizId - identifies quiz based on quizId
  * @returns Quiz | undefined(if not found)
  */
-function findTrashedQuizById (quizId: number): Quiz {
+export function findTrashedQuizById (quizId: number): Quiz {
   const dataStore = getData();
   return dataStore.trash.find((quiz) => quiz.quizId === quizId);
 }
@@ -197,7 +197,7 @@ function findTrashedQuizById (quizId: number): Quiz {
  * @param text - input text
  * @returns string
  */
-function hashText(text: string): string {
+export function hashText(text: string): string {
   return crypto.createHash('sha256').update(text).digest('hex');
 }
 
@@ -207,7 +207,7 @@ function hashText(text: string): string {
  * @param quizId - quizId to find all sessions using this quiz
  * @returns boolean
  */
-function openSessionQuizzesState(quizId: number): boolean {
+export function openSessionQuizzesState(quizId: number): boolean {
   const dataStore = getData();
   return dataStore.sessions.some(element => element.sessionQuiz.quizId === quizId &&
     element.sessionState !== SessionStates.END);
@@ -218,7 +218,7 @@ function openSessionQuizzesState(quizId: number): boolean {
  * @param playerId - integer representing the player
  * @returns boolean - true if found, false otherwise
  */
-function playerValidation(playerId: number): boolean {
+export function playerValidation(playerId: number): boolean {
   const dataStore = getData();
   if (!playerId) {
     return false;
@@ -235,7 +235,7 @@ function playerValidation(playerId: number): boolean {
  * @param playerId - integer representing the player
  * @returns Session within dataStore where player is apart of
  */
-function findSessionByPlayerId(playerId: number): Session {
+export function findSessionByPlayerId(playerId: number): Session {
   const dataStore = getData();
   const matchedIndex = dataStore.mapPS.find(elem => elem.playerId === playerId);
   const matchedSessionId = matchedIndex.sessionId;
@@ -248,7 +248,7 @@ function findSessionByPlayerId(playerId: number): Session {
  * @param sessionId - sessionId player is in
  * @returns string of name of player
  */
-function findPlayerName(playerId: number, sessionId: number): string {
+export function findPlayerName(playerId: number, sessionId: number): string {
   const dataStore = getData();
   const matchedSession = dataStore.sessions.find(session => session.sessionId === sessionId);
   const matchedPlayer = matchedSession.sessionPlayers.find(player => player.playerId === playerId);
@@ -260,13 +260,13 @@ function findPlayerName(playerId: number, sessionId: number): string {
  * @param thumbnailUrl
  * @returns boolean
  */
-function isImageUrlValid(thumbnailUrl: string): boolean {
+export function isImageUrlValid(thumbnailUrl: string): boolean {
   const imageRegex = /\.(png|jpg|jpeg)$/i;
 
   return imageRegex.test(thumbnailUrl);
 }
 
-function generateRandomString() {
+export function generateRandomString() {
   const letters = 'abcdefghijklmnopqrstuvwxyz';
   let randomLetters = '';
   let randomNumbers = '';
@@ -286,11 +286,3 @@ function generateRandomString() {
   const newName = randomLetters + randomNumbers;
   return newName;
 }
-
-export {
-  clear, helperAdminRegister, createToken, tokenValidation,
-  findQuestionByQuiz, findQuizById, findUserById, findUTInfo,
-  getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
-  hashText, openSessionQuizzesState, isImageUrlValid, playerValidation,
-  findSessionByPlayerId, findPlayerName, generateRandomString
-};

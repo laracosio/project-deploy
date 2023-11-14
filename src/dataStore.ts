@@ -49,6 +49,12 @@ export interface Answer {
   colour: string;
 }
 
+export interface SubmittedAnswer {
+  playerId: number;
+  answerIds: number[];
+  timeSubmitted: number;
+}
+
 export interface Question {
   questionId: number;
   question: string;
@@ -56,8 +62,7 @@ export interface Question {
   thumbnailUrl?: string;
   points: number;
   answers: Answer[];
-  playersCorrectList: string[];
-  answerTimes: number[];
+  submittedAnswers: SubmittedAnswer[];
   questionStartTime: number;
 }
 

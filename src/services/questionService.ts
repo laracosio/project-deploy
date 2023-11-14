@@ -24,7 +24,7 @@ interface QuestionReturn {
  * @param questionBody
  * @returns - CreateQuestionReturn returns a questionId
  */
-function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): QuestionReturn {
+export function quizCreateQuestion(quizId: number, token: string, questionBody: QuestionCreate): QuestionReturn {
   const dataStore = getData();
 
   if (questionBody.thumbnailUrl !== undefined) {
@@ -112,8 +112,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
     points: questionBody.points,
     answers: arrayOfAnswers,
     thumbnailUrl: questionBody.thumbnailUrl,
-    playersCorrectList: [],
-    answerTimes: [],
+    submittedAnswers: [],
     questionStartTime: 0
   };
 
@@ -138,7 +137,7 @@ function quizCreateQuestion(quizId: number, token: string, questionBody: Questio
  * @returns {}
  * @returns { error: string }
 */
-function adminMoveQuestion(token: string, quizId: number, questionId: number, newPosition: number): object {
+export function adminMoveQuestion(token: string, quizId: number, questionId: number, newPosition: number): object {
   const dataStore = getData();
 
   // invalid token
@@ -190,7 +189,7 @@ function adminMoveQuestion(token: string, quizId: number, questionId: number, ne
  * @param questionBody
  * @returns empty object
  */
-function quizUpdateQuestion(quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
+export function quizUpdateQuestion(quizId: number, questionId: number, token: string, questionBody: QuestionCreate): object {
   const dataStore = getData();
   const quiz = dataStore.quizzes.find(quiz => quiz.quizId === quizId);
 
@@ -290,7 +289,7 @@ function quizUpdateQuestion(quizId: number, questionId: number, token: string, q
  * @param questionId - question within quiz to be duplicated
  * @returns: adminDuplicateQuestion which contains newQuestionId key with a number value
 */
-function adminDuplicateQuestion(token: string, quizId: number, questionId: number): adminDuplicateQuestionReturn {
+export function adminDuplicateQuestion(token: string, quizId: number, questionId: number): adminDuplicateQuestionReturn {
   const dataStore = getData();
 
   // invalid token
@@ -320,8 +319,7 @@ function adminDuplicateQuestion(token: string, quizId: number, questionId: numbe
     points: questionToCopy.points,
     answers: questionToCopy.answers,
     thumbnailUrl: questionToCopy.thumbnailUrl,
-    playersCorrectList: questionToCopy.playersCorrectList,
-    answerTimes: questionToCopy.answerTimes,
+    submittedAnswers: questionToCopy.submittedAnswers,
     questionStartTime: questionToCopy.questionStartTime
   };
 
@@ -334,5 +332,3 @@ function adminDuplicateQuestion(token: string, quizId: number, questionId: numbe
 
   return { newQuestionId: duplicatedQuestion.questionId };
 }
-
-export { quizCreateQuestion, adminDuplicateQuestion, quizUpdateQuestion, adminMoveQuestion };
