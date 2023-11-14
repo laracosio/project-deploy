@@ -7,7 +7,8 @@
         "start": "ts-node -T src/server.ts",
         "ts-node-coverage": "nyc --reporter=text --reporter=lcov ts-node -T src/server.ts",
         "cleanup-sync-request": "pkill -f node_modules/sync-rpc/lib/worker.js > /dev/null 2>&1",
-        "posttest": "npm run cleanup-sync-request || true"
+        "posttest": "npm run cleanup-sync-request || true",
+        "pre-commit": "npm run lint-fix && npm run tsc && npm run test"
     },
     "dependencies": {
         "cors": "^2.8.5",

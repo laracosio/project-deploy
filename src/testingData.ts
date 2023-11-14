@@ -625,6 +625,20 @@ const longMessage: InputMessage = {
   messageBody: 'Into each life some rain must fall. But too much is falling in mine. Into each heart some tears must fall. But someday the sun will shine.'
 };
 
+export const postQuestionBody = {
+  questionBody: {
+    question: 'Test question',
+    duration: 2,
+    points: 5,
+    answers: [
+      { answer: 'Prince Charles', correct: true },
+      { answer: 'Queen Charles', correct: false },
+      { answer: 'King Charles', correct: false },
+      { answer: 'Princess Charles', correct: false },
+    ],
+  }
+};
+
 export {
   person1,
   person2,

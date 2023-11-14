@@ -16,6 +16,7 @@ import { userRouterV1 } from './handlers/v1/userHandlerV1';
 import { otherRouter } from './handlers/v1/otherHandler';
 import { authRouterV2 } from './handlers/v2/authHandlerV2';
 import { quizRouterV2 } from './handlers/v2/quizHandlerV2';
+import { sessionRouterV1 } from './handlers/v1/sessionHandlerV1';
 import { userRouterV2 } from './handlers/v2/userHandlerV2';
 import { setData } from './dataStore';
 import { playerRouter } from './handlers/v1/playerHandlerV1';
@@ -55,6 +56,7 @@ app.use('/v1/clear', otherRouter);
 app.use('/v1/player', playerRouter);
 
 app.use('/v2/admin/quiz', quizRouterV2);
+app.use('/v1/admin/quiz', sessionRouterV1);
 app.use('/v2/admin/auth', authRouterV2);
 app.use('/v2/admin/user', userRouterV2);
 
