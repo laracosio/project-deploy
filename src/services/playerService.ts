@@ -43,7 +43,7 @@ interface PlyrFinRsltReturn {
  * @param name
  * @returns joinGuestPlayerReturn
 */
-function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn {
+export function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn {
   const dataStore = getData();
   const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
 
@@ -94,7 +94,7 @@ function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn
  * @param playerId
  * @returns GuestPlayerStatusReturn
 */
-function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
+export function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
   const dataStore = getData();
 
   const validPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);

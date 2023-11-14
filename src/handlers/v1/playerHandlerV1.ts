@@ -26,6 +26,11 @@ playerRouter.get('/:playerid/results', (req: Request, res: Response) => {
   res.json(playerFinalResults(playerId));
 });
 
+playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(viewMessages(playerId));
+});
+
 // post routers
 playerRouter.post('/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
@@ -41,3 +46,4 @@ playerRouter.post('/:playerid/chat', (req: Request, res: Response) => {
 // put routers
 
 // delete routers
+

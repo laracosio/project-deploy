@@ -1,4 +1,4 @@
-import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session, Player } from '../dataStore';
+import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session, PlayerAnswers, Player } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
@@ -297,7 +297,7 @@ function calcPercentCorrect(question: Question, totalPlayers: number): number {
 function createUserRank(sessionPlayers: Player[]): UserRanking[] {
   const userRanking: UserRanking[] = [];
   sessionPlayers.map(player => {
-    const cumulativeScore = player.playerAnswers.reduce((sum, answer) => sum + answer.score, 0);
+    const cumulativeScore = player.playerAnswers.reduce((sum: number, answer: PlayerAnswers) => sum + answer.score, 0);
     userRanking.push({
       name: player.playerName,
       score: cumulativeScore
