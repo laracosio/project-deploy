@@ -14,6 +14,12 @@ playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
   res.json(viewMessages(playerId));
 });
 
+playerRouter.get('/:playerid/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionposition = parseInt(req.params.questionposition);
+  res.json(currentQuestionInfo(playerId, questionposition));
+});
+
 // post routers
 playerRouter.post('/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
@@ -27,5 +33,10 @@ playerRouter.post('/:playerid/chat', (req: Request, res: Response) => {
 });
 
 // put routers
-
+playerRouter.put('/:playerid/question/:questionposition/answer', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionposition = parseInt(req.params.questionposition);
+  const { answerIds } = req.body;
+  res.json(playerSubmitAnswers(playerId, questionposition, answerIds));
+});
 // delete routers
