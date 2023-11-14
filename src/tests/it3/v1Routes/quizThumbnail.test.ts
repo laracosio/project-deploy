@@ -1,7 +1,8 @@
-import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../../it2/serverTestHelperIt2';
+import { clearRequest, authRegisterRequest, quizCreateRequest } from '../../it2/serverTestHelperIt2';
 import {person1, person2, validQuizDescription, validQuizName,  validpngUrl1, validpngUrl2, validjpgUrl1, validjpgUrl2, invalidimgUrl, unfetchableimgUrl } from '../../../testingData';
 import { quizThumbnailUpdateRequest } from '../../serverTestHelperIt3';
 import { Response } from 'sync-request-curl';
+import { token } from 'morgan';
 
 
 beforeEach(() => {

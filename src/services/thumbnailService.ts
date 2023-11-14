@@ -1,21 +1,24 @@
-import { Answer, Quiz, getData } from '../dataStore';
+import { getData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
-import { findQuizById, openSessionQuizzesState, setAndSave, tokenValidation, isImageUrlValid, findUTInfo } from './otherService';
+import { setAndSave, tokenValidation, isImageUrlValid, findUTInfo } from './otherService';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import request from 'sync-request-curl';
 
 /**
  * Given a particular quiz, change the thumbnail of the quiz
- * @param {string} sessionId
+ * @param {string} token
  * @param {number} quizId
  * @param {string} imgUrl
  * @returns {{error: string}}
  */
 function quizThumbnailUpdate (token: string, quizId: number, imgUrl: string): object {
   const dataStore = getData();
+  console.log(token);
+  console.log(quizId);
+  console.log(imgUrl);
 
-  // check sessionId is valid
+  // check token is valid
   if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
@@ -39,16 +42,15 @@ function quizThumbnailUpdate (token: string, quizId: number, imgUrl: string): ob
   if (resThumbnail.statusCode !== 200) {
     throw new ApiError('The thumbnailUrl does not return to a valid type', HttpStatusCode.BAD_REQUEST);
   }
-  
-  //imgUrl when fetch is not a JPG or PNG image
+
+  // imgUrl when fetch is not a JPG or PNG image
   if (!isImageUrlValid(imgUrl)) {
     throw new ApiError('The thumbnailUrl, when fetched, is not a JPG or PNG file type', HttpStatusCode.BAD_REQUEST);
   }
 
-  //find the quiz that quizId in parameters refers to
+  // find the quiz that quizId in parameters refers to
   const index = dataStore.quizzes.findIndex((quiz) => (quiz.quizOwner === matchedToken.userId && quiz.quizId === quizId));
   dataStore.quizzes[index].thumbnailUrl = imgUrl;
-
 
   // Update timeLastEdited for the quiz
   const date = getUnixTime(new Date());
