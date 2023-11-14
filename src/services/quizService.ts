@@ -46,7 +46,7 @@ interface QuizListReturn {
  * @returns { quizId: number }
  * @returns { error: string }
  */
-function adminQuizCreate(token: string, name: string, description: string): QuizCreateReturn {
+export function adminQuizCreate(token: string, name: string, description: string): QuizCreateReturn {
   const dataStore = getData();
 
   // check that token is not empty or is valid
@@ -106,7 +106,7 @@ function adminQuizCreate(token: string, name: string, description: string): Quiz
  * @param {number} quizId
  * @returns {quizId: number, name: string, timeCreated: number, timeLastEdited: number, description: string}
  */
-function adminQuizInfo(token: string, quizId: number): QuizInfoReturn {
+export function adminQuizInfo(token: string, quizId: number): QuizInfoReturn {
   const dataStore = getData();
 
   // check that token is not empty or is valid
@@ -161,7 +161,7 @@ function adminQuizInfo(token: string, quizId: number): QuizInfoReturn {
  * @returns {quizzes: [{quizId: number, name: string}]}
  * @returns {{error: string}}
  */
-function adminQuizList (token: string): QuizListReturn {
+export function adminQuizList (token: string): QuizListReturn {
   const dataStore = getData();
 
   // check that token is not empty or is valid
@@ -195,7 +195,7 @@ function adminQuizList (token: string): QuizListReturn {
  * @param {string} name
  * @returns {{error: string}}
  */
-function adminQuizNameUpdate (token: string, quizId: number, name: string): object {
+export function adminQuizNameUpdate (token: string, quizId: number, name: string): object {
   const dataStore = getData();
 
   // check token is valid
@@ -245,7 +245,7 @@ function adminQuizNameUpdate (token: string, quizId: number, name: string): obje
  * @param {string} description
  * @returns {{error: string}}
  */
-function adminQuizDescriptionUpdate (token: string, quizId: number, description: string): object {
+export function adminQuizDescriptionUpdate (token: string, quizId: number, description: string): object {
   const dataStore = getData();
 
   // check token is valid
@@ -287,7 +287,7 @@ function adminQuizDescriptionUpdate (token: string, quizId: number, description:
  * @returns {}
  * @returns { error: string }
  */
-function adminQuizTransferOwner(token: string, quizId: number, userEmail: string): object {
+export function adminQuizTransferOwner(token: string, quizId: number, userEmail: string): object {
   const dataStore = getData();
 
   const transferUser = dataStore.users.find((user) => user.email === userEmail);
@@ -341,7 +341,7 @@ function adminQuizTransferOwner(token: string, quizId: number, userEmail: string
  * @param {string} imgUrl
  * @returns {{error: string}}
  */
-function quizThumbnailUpdate (token: string, quizId: number, imgUrl: string): object {
+export function quizThumbnailUpdate (token: string, quizId: number, imgUrl: string): object {
   const dataStore = getData();
 
   // check token is valid
@@ -385,8 +385,3 @@ function quizThumbnailUpdate (token: string, quizId: number, imgUrl: string): ob
   setAndSave(dataStore);
   return {};
 }
-
-export {
-  adminQuizInfo, adminQuizList, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate,
-  adminQuizTransferOwner, quizThumbnailUpdate
-};

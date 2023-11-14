@@ -19,7 +19,7 @@ interface userTrashQuizList {
  * @param {number} quizId - unique identifier for quiz
  * @returns {{error: string}}
  */
-function adminQuizRemove(token: string, quizId: number): object {
+export function adminQuizRemove(token: string, quizId: number): object {
   const dataStore = getData();
 
   // check that token is not empty or is valid
@@ -61,7 +61,7 @@ function adminQuizRemove(token: string, quizId: number): object {
  * @returns {{}}
  * @returns { error: string }
  */
-function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: number): object {
+export function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: number): object {
   const dataStore = getData();
 
   if (!tokenValidation(sessionToken)) {
@@ -95,7 +95,7 @@ function quizRemoveQuestion (sessionToken: string, quizId: number, questionId: n
  * @returns {quizzes: [{quizId: number, name: string}]}
  * @returns {{error: string}}
  */
-function adminQuizViewTrash(token: string): userTrashQuizList {
+export function adminQuizViewTrash(token: string): userTrashQuizList {
   const dataStore = getData();
   // check that UTInfo is not empty or is valid
   if (!tokenValidation(token)) {
@@ -126,7 +126,7 @@ function adminQuizViewTrash(token: string): userTrashQuizList {
  * @param {number} quizId
  * @returns {{error: string}}
  */
-function adminQuizRestoreTrash (token: string, quizId: number): object {
+export function adminQuizRestoreTrash (token: string, quizId: number): object {
   const dataStore = getData();
 
   // check token is valid
@@ -171,7 +171,7 @@ function adminQuizRestoreTrash (token: string, quizId: number): object {
  * @param {number} quizIds
  * @returns {{error: string}}
  */
-function adminQuizEmptyTrash (token: string, quizIds: string): object {
+export function adminQuizEmptyTrash (token: string, quizIds: string): object {
   const dataStore = getData();
   const parsedArray: Array<number> = JSON.parse(quizIds);
   // check token is valid
@@ -199,5 +199,3 @@ function adminQuizEmptyTrash (token: string, quizIds: string): object {
   setAndSave(dataStore);
   return {};
 }
-
-export { adminQuizRemove, quizRemoveQuestion, adminQuizViewTrash, adminQuizRestoreTrash, adminQuizEmptyTrash };

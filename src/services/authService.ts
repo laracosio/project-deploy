@@ -15,7 +15,7 @@ interface AuthReturn {
  * @returns {{authUserId: number}}
  * @returns {{error: string}} on error
  */
-function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn {
+export function adminAuthRegister(email:string, password: string, nameFirst: string, nameLast:string): AuthReturn {
   const dataStore = getData();
 
   if (!helperAdminRegister(email, password, nameFirst, nameLast, dataStore.users)) {
@@ -56,7 +56,7 @@ function adminAuthRegister(email:string, password: string, nameFirst: string, na
  * @returns {{authUserId: number}} on successful log in
  * @returns {{error: string}} on error
 */
-function adminAuthLogin(email:string, password: string): AuthReturn {
+export function adminAuthLogin(email:string, password: string): AuthReturn {
   const dataStore = getData();
   const authUser = dataStore.users.find(user => user.email === email);
 
@@ -94,7 +94,7 @@ function adminAuthLogin(email:string, password: string): AuthReturn {
  * @returns {}
  * @returns { error: string}
  */
-function adminAuthLogout(token: string): object {
+export function adminAuthLogout(token: string): object {
   const dataStore = getData();
 
   // check if token is valid
@@ -110,7 +110,3 @@ function adminAuthLogout(token: string): object {
 
   return {};
 }
-
-export {
-  adminAuthRegister, adminAuthLogin, adminAuthLogout
-};

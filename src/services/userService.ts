@@ -22,7 +22,7 @@ interface UserDetailReturn {
  *              numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}
  * @returns {{error: string}} on error
  */
-function adminUserDetails(token: string): UserDetailReturn {
+export function adminUserDetails(token: string): UserDetailReturn {
   const dataStore = getData();
   // invalid Token
   if (!tokenValidation(token)) {
@@ -53,7 +53,7 @@ function adminUserDetails(token: string): UserDetailReturn {
  * @returns {{}} on successful update
  * @returns {{error: string}} on error
 */
-function adminUserUpdateDetails(token: string, email: string, nameFirst: string, nameLast: string): object {
+export function adminUserUpdateDetails(token: string, email: string, nameFirst: string, nameLast: string): object {
   const dataStore = getData();
 
   // check token is valid
@@ -108,7 +108,7 @@ function adminUserUpdateDetails(token: string, email: string, nameFirst: string,
  * @returns {{}}
  * @returns {{ error: string }} on error
  */
-function adminUserUpdatePassword(token: string, oldPassword: string, newPassword: string): object {
+export function adminUserUpdatePassword(token: string, oldPassword: string, newPassword: string): object {
   const dataStore = getData();
 
   if (!tokenValidation(token)) {
@@ -157,9 +157,3 @@ function adminUserUpdatePassword(token: string, oldPassword: string, newPassword
   setAndSave(dataStore);
   return {};
 }
-
-export {
-  adminUserDetails,
-  adminUserUpdateDetails,
-  adminUserUpdatePassword,
-};

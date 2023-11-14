@@ -22,7 +22,7 @@ interface newSessionReturn {
  * @returns { newSessionReturn } - object containing sessionId
  * @returns {{error: string}}
  */
-function startNewSession(token: string, quizId: number, autoStartNum: number): newSessionReturn {
+export function startNewSession(token: string, quizId: number, autoStartNum: number): newSessionReturn {
   const dataStore = getData();
 
   if (!tokenValidation(token)) {
@@ -167,5 +167,3 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
     }
   }
 }
-
-export { startNewSession };
