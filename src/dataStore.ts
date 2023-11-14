@@ -1,4 +1,4 @@
-import { SessionStates } from "./enums/SessionStates";
+import { SessionStates } from './enums/SessionStates';
 
 export interface ErrorObject {
   error: string;
@@ -22,13 +22,13 @@ export interface InputMessage {
 }
 
 export const Colours = [
-  "red",
-  "blue",
-  "green",
-  "yellow",
-  "purple",
-  "brown",
-  "orange",
+  'red',
+  'blue',
+  'green',
+  'yellow',
+  'purple',
+  'brown',
+  'orange',
 ];
 
 export interface User {
