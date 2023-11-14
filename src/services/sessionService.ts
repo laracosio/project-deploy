@@ -163,7 +163,7 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
     if (action in AdminActions) {
       throw e;
     } else {
-      console.log('Failing gracefully for automatic state change failure')
+      console.log('Failing gracefully for automatic state change failure');
     }
   }
 }
