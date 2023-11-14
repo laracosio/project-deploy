@@ -10,7 +10,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
     clearRequest();
   });
 
-  test.only('success', () => {
+  test('success', () => {
     const postRegister = apiPost('/v1/admin/auth/register', person2, {});
     const postQuiz = apiPost(
       '/v1/admin/quiz',
@@ -43,7 +43,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
     expect(session.metadata.name).toStrictEqual('my quiz');
     expect(session.metadata.description).toStrictEqual('quiz description');
     expect(session.metadata.numQuestions).toStrictEqual(1);
-    expect(session.metadata.duration).toStrictEqual(4);
+    expect(session.metadata.duration).toStrictEqual(3);
     expect(session.metadata.questions[0].questionId).toStrictEqual(1);
   });
 

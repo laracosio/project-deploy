@@ -628,7 +628,7 @@ const longMessage: InputMessage = {
 export const postQuestionBody = {
   questionBody: {
     question: 'Test question',
-    duration: 2,
+    duration: 3,
     points: 5,
     answers: [
       { answer: 'Prince Charles', correct: true },

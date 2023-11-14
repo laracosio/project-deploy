@@ -106,7 +106,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/*', () => {
     expect(getResultsCsv.getParsedBody().url).toMatch(/.csv$/);
   });
 
-  test.only('/results - Success', async () => {
+  test('/results - Success', async () => {
     const getResults = apiGet(
       `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}/results`,
       { token: postRegister.getParsedBody().token }
