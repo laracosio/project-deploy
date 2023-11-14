@@ -235,5 +235,3 @@ export function viewMessages(playerId: number): viewMsgReturn {
 
   return { messages: matchedSession.messages };
 }
-
-export { joinGuestPlayer, guestPlayerStatus };
