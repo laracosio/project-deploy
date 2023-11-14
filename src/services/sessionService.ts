@@ -1,11 +1,29 @@
-import { Session, getData } from '../dataStore';
+import { Session, UTInfo, getData,  } from '../dataStore';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { SessionStates } from '../enums/SessionStates';
 import { ApiError } from '../errors/ApiError';
 import { tokenValidation, findQuizById, findUTInfo, setAndSave } from './otherService';
+import { PlayerAnswers } from '../dataStore';
 
 interface newSessionReturn {
   sessionId: number
+}
+
+interface Rank {
+  name: string;
+  score: number;
+}
+
+interface QuestionResults {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+}
+
+interface QuizFinalResultsReturn {
+  usersRankedByScore: Rank[];
+  questionResults: QuestionResults[];
 }
 
 /**
@@ -61,31 +79,6 @@ function startNewSession(token: string, quizId: number, autoStartNum: number): n
   return { sessionId: newSessionId };
 }
 
-export { startNewSession };
-import { UTInfo, getData, Session } from '../dataStore';
-import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { SessionStates } from '../enums/SessionStates';
-import { ApiError } from '../errors/ApiError';
-import { findUTInfo, tokenValidation } from './otherService';
-import { PlayerAnswers } from '../dataStore';
-
-interface Rank {
-  name: string;
-  score: number;
-}
-
-interface QuestionResults {
-  questionId: number;
-  playersCorrectList: string[];
-  averageAnswerTime: number;
-  percentCorrect: number;
-}
-
-interface QuizFinalResultsReturn {
-  usersRankedByScore: Rank[];
-  questionResults: QuestionResults[];
-}
-
 export function quizFinalResults(quizId: number, sessionId: number, token: string): QuizFinalResultsReturn {
   console.log(`func ${quizId}, ${sessionId}, ${token}`);
   const dataStore = getData();
@@ -98,7 +91,7 @@ export function quizFinalResults(quizId: number, sessionId: number, token: strin
   }
 
   // 403 Valid token is provided, but user is not authorised to view this session
-  const authToken: Token = findToken(token);
+  const authToken: UTInfo = findUTInfo(token);
   if (session.sessionQuiz.quizOwner !== authToken.userId) {
     throw new ApiError('User is not authorised to view this session', HttpStatusCode.FORBIDDEN);
   }
@@ -159,3 +152,5 @@ function playerScore(playerAnswers: PlayerAnswers[]): number {
   });
   return playerScore;
 }
+
+export { startNewSession };
