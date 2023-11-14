@@ -1,5 +1,5 @@
 
-import { getData } from '../dataStore';
+import { SubmittedAnswer, getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { Player, PSInfo, InputMessage, Message } from '../dataStore';
@@ -21,6 +21,23 @@ interface GuestPlayerStatusReturn {
   state: string;
   numQuestions: number;
   atQuestion: number;
+}
+
+interface QuestionInfoReturn {
+
+  "questionId": number,
+  "question": string,
+  "duration": number,
+  "thumbnailUrl"?: string,
+  "points": number,
+  "answers": AnswerInfo[]
+
+}
+
+interface AnswerInfo {
+  "answerId": number,
+  "answer": string,
+  "colour": string
 }
 
 /**

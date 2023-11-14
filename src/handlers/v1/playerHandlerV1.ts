@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { joinGuestPlayer, guestPlayerStatus, sendMessage, viewMessages } from '../../services/playerService';
+import { joinGuestPlayer, guestPlayerStatus, sendMessage, viewMessages, currentQuestionInfo, playerSubmitAnswers } from '../../services/playerService';
 
 export const playerRouter = Router();
 
