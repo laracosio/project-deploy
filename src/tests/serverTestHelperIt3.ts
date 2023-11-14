@@ -1,7 +1,7 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
-import { QuestionCreate } from '../dataStore';
+import { QuestionCreate, InputMessage } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -285,6 +285,34 @@ const quizInfoRequestV2 = (token: string, quizid: number): Response => {
   );
 };
 
+const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/player/join`,
+    {
+      body: JSON.stringify({
+        sessionId: sessionId,
+        name: name,
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
+const guestPlayerStatusRequest = (playerid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerid}`,
+    {
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
 const quizFinalResultsRequest = (quizid: number, sessionid: number, token: string): Response => {
   console.log(`helper ${quizid}, ${sessionid}, ${token}`)
   return request(
@@ -312,7 +340,45 @@ const quizFinalResultsCSVRequest = (quizid: number, sessionid: number, token: st
 // #endregion
 
 // #region player handlers
-// place code here and delete this message
+const sendMsgRequest = (playerId: number, message: InputMessage): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/player/${playerId}/chat`,
+    {
+      body: JSON.stringify({
+        message: message
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      }
+    }
+  );
+};
+
+const viewMsgsRequest = (playerId: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/chat`
+  );
+};
+// #endregion
+
+// #region session handlers
+const sessionCreateRequest = (token: string, quizId: number, autoStartNum: number): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/start`,
+    {
+      body: JSON.stringify({
+        autoStartNum: autoStartNum,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
 // #endregion
 
 export {
@@ -320,5 +386,6 @@ export {
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
   quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, quizFinalResultsRequest,
-  quizFinalResultsCSVRequest
+  quizFinalResultsCSVRequest, sendMsgRequest,
+  viewMsgsRequest, sessionCreateRequest, joinGuestPlayerRequest, guestPlayerStatusRequest
 };

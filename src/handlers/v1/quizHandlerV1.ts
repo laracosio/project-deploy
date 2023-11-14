@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizViewTrash, adminQuizEmptyTrash } from '../../services/trashService';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner } from '../../services/quizService';
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../../services/questionService';
+import { startNewSession } from '../../services/sessionService';
 import { quizFinalResults } from '../../services/sessionService';
 
 export const quizRouterV1 = Router();
@@ -60,6 +61,12 @@ quizRouterV1.post('/:quizid/restore', (req: Request, res: Response) => {
   const { token } = req.body;
   const quizId = parseInt(req.params.quizid);
   res.json(adminQuizRestoreTrash(token, quizId));
+});
+
+quizRouterV1.post('/:quizid/session/start', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const quizId = parseInt(req.params.quizid);
+  res.json(startNewSession(token, quizId, req.body.autoStartNum));
 });
 
 // put routers
