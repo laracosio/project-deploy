@@ -7,7 +7,7 @@ import { getUnixTime } from 'date-fns';
 
 const MAX_LENGTH = 100;
 
-interface viewMsgReturn {
+interface ViewMsgReturn {
   messages: Message[]
 }
 
@@ -25,7 +25,7 @@ export interface UserRanking {
   score: number
 }
 
-export interface questionResultsReturn {
+export interface QuestionResultsReturn {
   questionId: number;
   playersCorrectList: string[];
   averageAnswerTime: number;
@@ -34,7 +34,7 @@ export interface questionResultsReturn {
 
 interface PlyrFinRsltReturn {
   userRankedByScore: UserRanking[],
-  questionResults: questionResultsReturn[],
+  questionResults: QuestionResultsReturn[],
 }
 
 /**
@@ -94,7 +94,7 @@ export function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlaye
  * @param playerId
  * @returns GuestPlayerStatusReturn
 */
-export function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
+export function guestPlayerStatus(playerId: number): GuestPlayerStatusReturn {
   const dataStore = getData();
 
   const validPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
@@ -124,7 +124,7 @@ export function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
  * @param playerId
  * @param questionPosition
 */
-export function playerQuestionResults(playerId: number, questionPosition: number): questionResultsReturn {
+export function playerQuestionResults(playerId: number, questionPosition: number): QuestionResultsReturn {
   const dataStore = getData();
 
   if (!playerValidation) {
@@ -137,7 +137,7 @@ export function playerQuestionResults(playerId: number, questionPosition: number
   }
 
   if (matchedSession.sessionState !== SessionStates.ANSWER_SHOW) {
-    throw new ApiError('Session is not yet up to this question', HttpStatusCode.BAD_REQUEST);
+    throw new ApiError('Session is not in ANSWER_SHOW state', HttpStatusCode.BAD_REQUEST);
   }
 
   if (matchedSession.atQuestion !== questionPosition) {
@@ -168,7 +168,7 @@ export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
 
   const totalSessionPlayers = dataStore.mapPS.filter(elem => elem.sessionId === matchedSession.sessionId).length;
 
-  const questionResults: questionResultsReturn[] = [];
+  const questionResults: QuestionResultsReturn[] = [];
   matchedSession.sessionQuiz.questions.map(question => {
     questionResults.push(createQuestionResults(question, totalSessionPlayers));
   });
@@ -224,7 +224,7 @@ export function sendMessage(playerId: number, message: InputMessage): object {
  * @param playerId - Id of player sending message
  * @returns all messages sent in session
 */
-export function viewMessages(playerId: number): viewMsgReturn {
+export function viewMessages(playerId: number): ViewMsgReturn {
   // check whether player is valid
   if (!playerValidation(playerId)) {
     throw new ApiError('playerID is invalid', HttpStatusCode.BAD_REQUEST);

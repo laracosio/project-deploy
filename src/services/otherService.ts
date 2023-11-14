@@ -4,11 +4,18 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import crypto from 'crypto';
 import { SessionStates } from '../enums/SessionStates';
-import { UserRanking, questionResultsReturn } from './playerService';
+import { QuestionResultsReturn, UserRanking, questionResultsReturn } from './playerService';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
 const MINPWLEN = 8;
+
+export interface SubmissionSummary {
+  playerId: number, 
+  playerName: string,
+  answerCorrect: boolean,
+  answerTime: number
+}
 
 /**
  * Reset the state of the application back to the start.
@@ -265,6 +272,57 @@ export function isImageUrlValid(thumbnailUrl: string): boolean {
   const imageRegex = /\.(png|jpg|jpeg)$/i;
 
   return imageRegex.test(thumbnailUrl);
+}
+
+/**
+ * Determines whether the players submitted answers are the same as questionAnswer
+ * @param correctAnswerIds 
+ * @param playerAnswerIds 
+ * @returns boolean of whether the answers were correct (match) or not
+ * https://stackoverflow.com/questions/47589245/compare-unsorted-arrays-of-objects-in-javascript
+ */
+export function compareAnswers(correctAnswerIds: number[], playerAnswerIds: number[]): boolean {
+  if (correctAnswerIds.length !== playerAnswerIds.length) {
+    return false;
+  }
+
+  return (correctAnswerIds.every(elem => playerAnswerIds.includes(elem)) && playerAnswerIds.every(elem => correctAnswerIds.includes(elem)));
+}
+
+/**
+ * Summarises how players performed in the question
+ * @param question 
+ * @returns array of Objects containing player answer summary
+ */
+export function playerSummaries(question: Question): SubmissionSummary[] {
+  const playerSummaries: SubmissionSummary[] = [];
+
+  //get list of answerIds which contain true answers
+  const correctAnswerIds = question.answers.filter(answer => answer.correct).map(answer => answer.answerId);
+  for (const submission of question.submittedAnswers) {
+    playerSummaries.push({
+      playerId: submission.playerId,
+      playerName: submission.playerName,
+      answerCorrect: compareAnswers(correctAnswerIds, submission.answerIds),
+      answerTime: submission.timeSubmitted - question.questionStartTime,
+    });
+  }
+  return playerSummaries;
+}
+
+export function questionResults(question: Question, totalSessionPlayers: number): QuestionResultsReturn {
+  const questionSummary = playerSummaries(question);
+  const correctPlayerList = questionSummary.filter(result => result.answerCorrect).map(person => person.playerName);
+
+
+  const qResults: QuestionResultsReturn = {
+    questionId: question.questionId,
+    playersCorrectList: correctPlayerList,
+    averageAnswerTime: , 
+    percentCorrect: 
+  }
+  
+  return
 }
 
 // /**
