@@ -1,7 +1,7 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
-import { QuestionCreate } from '../dataStore';
+import { QuestionCreate, InputMessage } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -301,7 +301,7 @@ const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
   );
 };
 
-const GuestPlayerStatusRequest = (playerid: number): Response => {
+const guestPlayerStatusRequest = (playerid: number): Response => {
   return request(
     'GET',
     `${SERVER_URL}/v1/player/${playerid}`,
@@ -315,19 +315,40 @@ const GuestPlayerStatusRequest = (playerid: number): Response => {
 // #endregion
 
 // #region player handlers
+const sendMsgRequest = (playerId: number, message: InputMessage): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/player/${playerId}/chat`,
+    {
+      body: JSON.stringify({
+        message: message
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      }
+    }
+  );
+};
+
+const viewMsgsRequest = (playerId: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/chat`
+  );
+};
 const playerQuestResultRqst = (playerId: number, questionPosition: number): Response => {
   return request(
     'GET',
     `${SERVER_URL}/v1/player/${playerId}/question/${questionPosition}/results`
   );
-}
+};
 
 const playerFinalResultRqst = (playerId: number): Response => {
   return request(
     'GET',
     `${SERVER_URL}/v1/player/${playerId}/results`
   );
-}
+};
 // #endregion
 
 // #region session handlers
@@ -352,6 +373,6 @@ export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
-  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, sessionCreateRequest, 
-  playerQuestResultRqst, playerFinalResultRqst, joinGuestPlayerRequest, GuestPlayerStatusRequest
+  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, sendMsgRequest,
+  viewMsgsRequest, sessionCreateRequest, playerQuestResultRqst, playerFinalResultRqst, joinGuestPlayerRequest, guestPlayerStatusRequest
 };

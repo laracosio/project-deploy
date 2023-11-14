@@ -17,6 +17,10 @@ export interface QuestionCreate {
   thumbnailUrl?: string,
 }
 
+export interface InputMessage {
+  messageBody: string,
+}
+
 export const Colours = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
 
 export interface User {
@@ -73,7 +77,7 @@ export interface Player {
 }
 
 export interface Message {
-  messagebody: string,
+  messageBody: string,
   playerId: number,
   playerName: string,
   timeSent: number,

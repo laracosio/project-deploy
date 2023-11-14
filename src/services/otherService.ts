@@ -213,6 +213,7 @@ function openSessionQuizzesState(quizId: number): boolean {
   return dataStore.sessions.some(element => element.sessionQuiz.quizId === quizId &&
     element.sessionState !== SessionStates.END);
 }
+
 /**
  * Checks whether playerId exists in the playerSession index
  * @param playerId - integer representing the player
@@ -268,30 +269,30 @@ function isImageUrlValid(thumbnailUrl: string): boolean {
 
 /**
  * calculates average answerTime based on question and number of total players
- * @param question 
- * @param totalPlayers 
+ * @param question
+ * @param totalPlayers
  * @returns avgTime to nearest integer
  */
 function calcAvgAnsTime(question: Question, totalPlayers: number): number {
   const cumulativeTime = question.answerTimes.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-  return Math.round(cumulativeTime/totalPlayers);
+  return Math.round(cumulativeTime / totalPlayers);
 }
 
 /**
  * Calculates the percentage of correct answers received for question
- * @param question 
- * @param totalPlayers 
+ * @param question
+ * @param totalPlayers
  * @returns % of correct answers to nearest integer
  */
 function calcPercentCorrect(question: Question, totalPlayers: number): number {
-  const numCorrect = question.playersCorrectList.length
-  return Math.round((numCorrect/totalPlayers) * 100);
+  const numCorrect = question.playersCorrectList.length;
+  return Math.round((numCorrect / totalPlayers) * 100);
 }
 
 /**
  * Creates an array of objects with users ranked by score then by name alphabetically
  * @param sessionPlayers - player[] containing information about players in a session
- * @returns userRanking 
+ * @returns userRanking
  */
 function createUserRank(sessionPlayers: Player[]): UserRanking[] {
   const userRanking: UserRanking[] = [];
@@ -300,8 +301,8 @@ function createUserRank(sessionPlayers: Player[]): UserRanking[] {
     userRanking.push({
       name: player.playerName,
       score: cumulativeScore
-    })
-  })
+    });
+  });
 
   userRanking.sort((a, b) => (b.score - a.score || a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
 
@@ -310,19 +311,23 @@ function createUserRank(sessionPlayers: Player[]): UserRanking[] {
 
 /**
  * Creates an object containing information on questionId, playersCorrect, avgAnswerTime and % correct
- * @param question 
- * @param totalPlayers 
+ * @param question
+ * @param totalPlayers
  * @returns  questionResultsReturn
  */
-function createQuestionResults(question: Question, totalPlayers: number): questionResultsReturn  {
+function createQuestionResults(question: Question, totalPlayers: number): questionResultsReturn {
   return {
     questionId: question.questionId,
     playersCorrectList: question.playersCorrectList,
     averageAnswerTime: calcAvgAnsTime(question, totalPlayers),
     percentCorrect: calcPercentCorrect(question, totalPlayers)
-  }
+  };
 }
 
+/**
+ * generates random string containing 5 letters and 3 numbers
+ * @returns random string
+ */
 function generateRandomString() {
   const letters = 'abcdefghijklmnopqrstuvwxyz';
   let randomLetters = '';
@@ -349,6 +354,6 @@ export {
   findQuestionByQuiz, findQuizById, findUserById, findUTInfo,
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
   hashText, openSessionQuizzesState, isImageUrlValid, playerValidation,
-  findSessionByPlayerId, findPlayerName,calcAvgAnsTime, calcPercentCorrect,
+  findSessionByPlayerId, findPlayerName, calcAvgAnsTime, calcPercentCorrect,
   createUserRank, createQuestionResults, generateRandomString
-}
+};
