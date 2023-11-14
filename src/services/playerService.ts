@@ -2,11 +2,10 @@
 import { getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { Player, PSInfo, InputMessage, Message, } from '../dataStore';
+import { Player, PSInfo, InputMessage, Message } from '../dataStore';
 import { SessionStates } from '../enums/SessionStates';
 import { generateRandomString, findPlayerName, findSessionByPlayerId, playerValidation, setAndSave } from './otherService';
 import { getUnixTime } from 'date-fns';
-
 
 const MAX_LENGTH = 100;
 
@@ -33,7 +32,7 @@ interface GuestPlayerStatusReturn {
 function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn {
   const dataStore = getData();
   const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
-  
+
   // check if name is already taken
   const takenName = sessionIdHolder.sessionPlayers.some(player => player.playerName === name);
   if (takenName) {
@@ -53,22 +52,22 @@ function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn
   }
   // increment maxPlayerId by 1
   const playerId = dataStore.maxPlayerId + 1;
-  
+
   const newPlayer: Player = {
     playerId: playerId,
     playerName: name
   };
-  
+
   const NewPlayerSession: PSInfo = {
     sessionId: sessionId,
     playerId: playerId
   };
   // update maxPlayerId
   dataStore.maxPlayerId = playerId;
-  
+
   dataStore.mapPS.push(NewPlayerSession);
   sessionIdHolder.sessionPlayers.push(newPlayer);
-  
+
   // autostarting the quiz if desired number of players are achieved
   if (sessionIdHolder.sessionPlayers.length === sessionIdHolder.autoStartNum) {
     sessionIdHolder.sessionState = SessionStates.QUESTION_COUNTDOWN;
@@ -83,26 +82,26 @@ function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn
 */
 function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
   const dataStore = getData();
-  
+
   const validPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
   if (!validPlayer) {
     throw new ApiError('Player ID does not exist', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   const playerStatus = dataStore.mapPS.find(ps => ps.playerId === playerId);
-  
+
   const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === playerStatus.sessionId);
-  
+
   const state = dataStore.sessions[sessionIdIndex].sessionState;
   const atQuestion = dataStore.sessions[sessionIdIndex].atQuestion;
   const numQuestions = dataStore.sessions[sessionIdIndex].sessionQuiz.numQuestions;
-  
+
   const getPlayerStatus: GuestPlayerStatusReturn = {
     state: state,
     numQuestions: numQuestions,
     atQuestion: atQuestion
   };
-  
+
   return getPlayerStatus;
 }
 
@@ -110,12 +109,12 @@ function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
  * Send a new chat message to everyone in the session
  * @param playerId - Id of player sending message
  * @param message - message being sent
- * @returns empty object on success 
+ * @returns empty object on success
  * @returns error otherwise
  */
 export function sendMessage(playerId: number, message: InputMessage): object {
   const dataStore = getData();
-  
+
   // check message body
   if (!message.messageBody) {
     throw new ApiError('The message is empty.', HttpStatusCode.BAD_REQUEST);
@@ -123,26 +122,26 @@ export function sendMessage(playerId: number, message: InputMessage): object {
   if (message.messageBody.length > MAX_LENGTH) {
     throw new ApiError('The message too long.', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   // check whether player is valid
   if (!playerValidation(playerId)) {
     throw new ApiError('player ID does not exist', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   // locate session to find playerName
   const matchedSession = findSessionByPlayerId(playerId);
   const playerName = findPlayerName(playerId, matchedSession.sessionId);
-  
+
   const newMessage: Message = {
     messageBody: message.messageBody,
     playerId: playerId,
     playerName: playerName,
     timeSent: getUnixTime(new Date())
   };
-  
+
   matchedSession.messages.push(newMessage);
   setAndSave(dataStore);
-  
+
   return {};
 }
 
@@ -156,7 +155,7 @@ export function viewMessages(playerId: number): viewMsgReturn {
   if (!playerValidation(playerId)) {
     throw new ApiError('playerID is invalid', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   // locate session to find playerName
   const matchedSession = findSessionByPlayerId(playerId);
 

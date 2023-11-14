@@ -19,7 +19,6 @@ import { quizRouterV2 } from './handlers/v2/quizHandlerV2';
 import { userRouterV2 } from './handlers/v2/userHandlerV2';
 import { setData } from './dataStore';
 import { playerRouter } from './handlers/v1/playerHandlerV1';
-import { setAndSave } from './services/otherService';
 
 // Set up web app
 const app = express();

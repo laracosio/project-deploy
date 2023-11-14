@@ -1,6 +1,6 @@
-import { authRegisterRequest, clearRequest, createQuizQuestionRequest } from '../../it2/serverTestHelperIt2';
+import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
-import { longMessage, msg1, msg2, msg3, noMsg, person1, validAutoStartNum,validQuestionInput1V2, validQuestionInput2V2, validQuestionInput3V2, validQuizDescription, validQuizName } from '../../../testingData';
+import { longMessage, msg1, msg2, msg3, noMsg, person1, validAutoStartNum, validQuestionInput1V2, validQuestionInput2V2, validQuestionInput3V2, validQuizDescription, validQuizName } from '../../../testingData';
 import { createQuizQuestionRequestV2, joinGuestPlayerRequest, quizCreateRequestV2, sendMsgRequest, sessionCreateRequest, viewMsgsRequest } from '../../serverTestHelperIt3';
 import { getUnixTime } from 'date-fns';
 import { Response } from 'sync-request-curl';
@@ -43,7 +43,7 @@ describe('GET v1/player/:playerid/chat - success', () => {
       ]
     });
     expect(data.messages[0].timeSent).toBeGreaterThanOrEqual(currentTime);
-    expect(res.statusCode).toStrictEqual(HttpStatusCode.OK)
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
   });
   test('multiple sent messages', async () => {
     const player1Data = JSON.parse(player1.body.toString());
@@ -89,7 +89,7 @@ describe('GET v1/player/:playerid/chat - error', () => {
   test('playerId does not exist', async () => {
     const player1Data = JSON.parse(player1.body.toString());
     sendMsgRequest(player1Data.playerId, msg1);
-     
+
     const res = viewMsgsRequest(player1Data.playerId * 1531);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
@@ -105,7 +105,7 @@ describe('POST /v1/player/:playerid/chat - success', () => {
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
     expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
-  })
+  });
   test('send multiple messages', () => {
     const player1Data = JSON.parse(player1.body.toString());
     const player2Data = JSON.parse(player2.body.toString());
@@ -116,8 +116,8 @@ describe('POST /v1/player/:playerid/chat - success', () => {
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
     expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
-  })
-})
+  });
+});
 
 describe('POST /v1/player/:playerid/chat - error', () => {
   test('invalid playerId', () => {
@@ -135,7 +135,7 @@ describe('POST /v1/player/:playerid/chat - error', () => {
     expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
   test('message too long', () => {
-    const player1Data = JSON.parse(player1.body.toString())
+    const player1Data = JSON.parse(player1.body.toString());
     const res = sendMsgRequest(player1Data.playerId, longMessage);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });

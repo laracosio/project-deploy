@@ -293,4 +293,4 @@ export {
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
   hashText, openSessionQuizzesState, isImageUrlValid, playerValidation,
   findSessionByPlayerId, findPlayerName, generateRandomString
-}
+};
