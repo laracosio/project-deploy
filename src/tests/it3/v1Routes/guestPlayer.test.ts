@@ -1,7 +1,7 @@
 import { authRegisterRequest } from '../../it2/serverTestHelperIt2';
 import { quizCreateRequest, createQuizQuestionRequest } from '../../it2/serverTestHelperIt2';
 import { person1, validQuizName, validQuizDescription, validCreateQuestion, validAutoStartNum } from '../../../testingData';
-import { GuestPlayerStatusRequest, sessionCreateRequest } from '../../serverTestHelperIt3';
+import { guestPlayerStatusRequest, sessionCreateRequest } from '../../serverTestHelperIt3';
 import { joinGuestPlayerRequest } from '../../serverTestHelperIt3';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 
@@ -96,7 +96,7 @@ describe('Successful tests: Status of Guest Player', () => {
     const player1 = joinGuestPlayerRequest(sesh1Data.sessionId, name);
     const player1Data = JSON.parse(player1.body.toString());
 
-    const res = GuestPlayerStatusRequest(player1Data.playerId);
+    const res = guestPlayerStatusRequest(player1Data.playerId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({
       state: expect.any(String),
@@ -120,7 +120,7 @@ describe('Unsuccessful tests: Status of Guest Player', () => {
     const name = 'laraCosio';
     joinGuestPlayerRequest(sesh1Data.sessionId, name);
     const invalidPlayerId = 6;
-    const res = GuestPlayerStatusRequest(invalidPlayerId);
+    const res = guestPlayerStatusRequest(invalidPlayerId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toBe(HttpStatusCode.BAD_REQUEST);

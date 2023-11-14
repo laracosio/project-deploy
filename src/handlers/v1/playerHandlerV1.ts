@@ -1,17 +1,31 @@
 import { Router, Request, Response } from 'express';
-import { joinGuestPlayer, GuestPlayerStatus } from '../../services/playerService';
+import { joinGuestPlayer, guestPlayerStatus, sendMessage, viewMessages } from '../../services/playerService';
 
 export const playerRouter = Router();
 
-/// post
+// get routers
+playerRouter.get('/:playerid', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(guestPlayerStatus(playerId));
+});
+
+playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(viewMessages(playerId));
+});
+
+// post routers
 playerRouter.post('/join', (req: Request, res: Response) => {
-  console.log('Entered server');
   const { sessionId, name } = req.body;
   res.json(joinGuestPlayer(sessionId, name));
 });
 
-// get
-playerRouter.get('/:playerid', (req: Request, res: Response) => {
-  const playerid = parseInt(req.params.playerid);
-  res.json(GuestPlayerStatus(playerid));
+playerRouter.post('/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const { message } = req.body;
+  res.json(sendMessage(playerId, message));
 });
+
+// put routers
+
+// delete routers

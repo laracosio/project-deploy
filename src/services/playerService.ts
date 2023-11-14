@@ -2,9 +2,16 @@
 import { getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { Player, PSInfo } from '../dataStore';
+import { Player, PSInfo, InputMessage, Message } from '../dataStore';
 import { SessionStates } from '../enums/SessionStates';
-import { generateRandomString } from './otherService';
+import { generateRandomString, findPlayerName, findSessionByPlayerId, playerValidation, setAndSave } from './otherService';
+import { getUnixTime } from 'date-fns';
+
+const MAX_LENGTH = 100;
+
+interface viewMsgReturn {
+  messages: Message[]
+}
 
 interface JoinGuestPlayerReturn {
   playerId: number;
@@ -21,7 +28,7 @@ interface GuestPlayerStatusReturn {
  * @param sessionId
  * @param name
  * @returns joinGuestPlayerReturn
- */
+*/
 function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn {
   const dataStore = getData();
   const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
@@ -72,8 +79,8 @@ function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn
  * This returns the status of the guest player in a session
  * @param playerId
  * @returns GuestPlayerStatusReturn
- */
-function GuestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
+*/
+function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
   const dataStore = getData();
 
   const validPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
@@ -98,4 +105,61 @@ function GuestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
   return getPlayerStatus;
 }
 
-export { joinGuestPlayer, GuestPlayerStatus };
+/**
+ * Send a new chat message to everyone in the session
+ * @param playerId - Id of player sending message
+ * @param message - message being sent
+ * @returns empty object on success
+ * @returns error otherwise
+ */
+export function sendMessage(playerId: number, message: InputMessage): object {
+  const dataStore = getData();
+
+  // check message body
+  if (!message.messageBody) {
+    throw new ApiError('The message is empty.', HttpStatusCode.BAD_REQUEST);
+  }
+  if (message.messageBody.length > MAX_LENGTH) {
+    throw new ApiError('The message too long.', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // check whether player is valid
+  if (!playerValidation(playerId)) {
+    throw new ApiError('player ID does not exist', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // locate session to find playerName
+  const matchedSession = findSessionByPlayerId(playerId);
+  const playerName = findPlayerName(playerId, matchedSession.sessionId);
+
+  const newMessage: Message = {
+    messageBody: message.messageBody,
+    playerId: playerId,
+    playerName: playerName,
+    timeSent: getUnixTime(new Date())
+  };
+
+  matchedSession.messages.push(newMessage);
+  setAndSave(dataStore);
+
+  return {};
+}
+
+/**
+ * Return all messages that are in the same session as the player
+ * @param playerId - Id of player sending message
+ * @returns all messages sent in session
+ */
+export function viewMessages(playerId: number): viewMsgReturn {
+  // check whether player is valid
+  if (!playerValidation(playerId)) {
+    throw new ApiError('playerID is invalid', HttpStatusCode.BAD_REQUEST);
+  }
+
+  // locate session to find playerName
+  const matchedSession = findSessionByPlayerId(playerId);
+
+  return { messages: matchedSession.messages };
+}
+
+export { joinGuestPlayer, guestPlayerStatus };
