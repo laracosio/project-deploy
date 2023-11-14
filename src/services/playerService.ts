@@ -26,19 +26,19 @@ interface GuestPlayerStatusReturn {
 
 interface QuestionInfoReturn {
 
-  "questionId": number,
-  "question": string,
-  "duration": number,
-  "thumbnailUrl"?: string,
-  "points": number,
-  "answers": AnswerInfo[]
+  'questionId': number,
+  'question': string,
+  'duration': number,
+  'thumbnailUrl'?: string,
+  'points': number,
+  'answers': AnswerInfo[]
 
 }
 
 interface AnswerInfo {
-  "answerId": number,
-  "answer": string,
-  "colour": string
+  'answerId': number,
+  'answer': string,
+  'colour': string
 }
 
 /**
@@ -91,7 +91,7 @@ export function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlaye
 
   // autostarting the quiz if desired number of players are achieved
   if (sessionIdHolder.sessionPlayers.length === sessionIdHolder.autoStartNum) {
-    updateSessionStatus(quizIdHolder, sessionId, quizOwnerInfo.token, AdminActions.SKIP_COUNTDOWN);
+    updateSessionStatus(quizIdHolder, sessionId, quizOwnerInfo.token, AdminActions.NEXT_QUESTION);
   }
   return { playerId: playerId };
 }
@@ -185,14 +185,14 @@ export function viewMessages(playerId: number): viewMsgReturn {
 
 /**
  * return the current question information in a session
- * @param playerId 
- * @param questionposition 
+ * @param playerId
+ * @param questionposition
  * @returns QuestionInfoReturn
  */
 export function currentQuestionInfo(playerId: number, questionposition: number): QuestionInfoReturn {
   const dataStore = getData();
 
-  //if player ID does not exist
+  // if player ID does not exist
   const isvalidPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
   if (!isvalidPlayer) {
     throw new ApiError('Player ID does not exist', HttpStatusCode.BAD_REQUEST);
@@ -204,7 +204,7 @@ export function currentQuestionInfo(playerId: number, questionposition: number):
   const inSession = dataStore.sessions[sessionIdIndex];
   const questionPositionIndex = questionposition - 1;
 
-  //position is not valid
+  // position is not valid
   if (questionposition > inSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
   }
@@ -213,44 +213,43 @@ export function currentQuestionInfo(playerId: number, questionposition: number):
     throw new ApiError('Session is not currently on this question', HttpStatusCode.BAD_REQUEST);
   }
   // not in end or lobby state
-  if (inSession.sessionState !== SessionStates.END && inSession.sessionState !== SessionStates.LOBBY) {
+  if (inSession.sessionState === SessionStates.END || inSession.sessionState === SessionStates.LOBBY) {
     throw new ApiError('Session is in LOBBY or END state', HttpStatusCode.BAD_REQUEST);
   }
 
-  let answerInfoArray: any[] = [];
+  const answerInfoArray = [];
 
   for (const element of inSession.sessionQuiz.questions[questionPositionIndex].answers) {
     const answerBody = {
       answerId: element.answerId,
       answer: element.answer,
       colour: element.colour
-    }
+    };
     answerInfoArray.push(answerBody);
   }
   if (inSession.sessionQuiz.questions[questionPositionIndex].thumbnailUrl !== undefined) {
     return {
-      "questionId": inSession.sessionQuiz.questions[questionPositionIndex].questionId,
-      "question": inSession.sessionQuiz.questions[questionPositionIndex].question,
-      "duration": inSession.sessionQuiz.questions[questionPositionIndex].duration,
-      "points": inSession.sessionQuiz.questions[questionPositionIndex].points,
-      "answers": answerInfoArray
-    }
+      questionId: inSession.sessionQuiz.questions[questionPositionIndex].questionId,
+      question: inSession.sessionQuiz.questions[questionPositionIndex].question,
+      duration: inSession.sessionQuiz.questions[questionPositionIndex].duration,
+      points: inSession.sessionQuiz.questions[questionPositionIndex].points,
+      answers: answerInfoArray
+    };
   }
   return {
-    "questionId": inSession.sessionQuiz.questions[questionPositionIndex].questionId,
-    "question": inSession.sessionQuiz.questions[questionPositionIndex].question,
-    "duration": inSession.sessionQuiz.questions[questionPositionIndex].duration,
-    "thumbnailUrl": inSession.sessionQuiz.questions[questionPositionIndex].thumbnailUrl,
-    "points": inSession.sessionQuiz.questions[questionPositionIndex].points,
-    "answers": answerInfoArray
-  }
+    questionId: inSession.sessionQuiz.questions[questionPositionIndex].questionId,
+    question: inSession.sessionQuiz.questions[questionPositionIndex].question,
+    duration: inSession.sessionQuiz.questions[questionPositionIndex].duration,
+    thumbnailUrl: inSession.sessionQuiz.questions[questionPositionIndex].thumbnailUrl,
+    points: inSession.sessionQuiz.questions[questionPositionIndex].points,
+    answers: answerInfoArray
+  };
 }
-
 
 export function playerSubmitAnswers(playerId: number, questionposition: number, answerIds: number[]) {
   const dataStore = getData();
 
-  //If player ID does not exist
+  // If player ID does not exist
   const isvalidPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
   if (!isvalidPlayer) {
     throw new ApiError('Player ID does not exist', HttpStatusCode.BAD_REQUEST);
@@ -260,19 +259,19 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
   const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === playerInfo.sessionId);
   const inSession = dataStore.sessions[sessionIdIndex];
 
-  //position is not valid
+  // position is not valid
   if (questionposition > inSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
   }
-  //if sessionstate is not in quesition_open
+  // if sessionstate is not in quesition_open
   if (inSession.sessionState !== SessionStates.QUESTION_OPEN) {
     throw new ApiError('Session is not in QUESTION_OPEN state', HttpStatusCode.BAD_REQUEST);
   }
-  //check if session is in this question
+  // check if session is in this question
   if (inSession.atQuestion !== questionposition) {
     throw new ApiError('Session is not yet up to this questione', HttpStatusCode.BAD_REQUEST);
   }
-  //check if answerId provided are not valid for this question
+  // check if answerId provided are not valid for this question
   const answerIdList = inSession.sessionQuiz.questions[questionPositionIndex].answers.map(answer => answer.answerId);
   for (const answer of answerIds) {
     if (!answerIdList.includes(answer)) {
@@ -291,14 +290,14 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
   if (isSeen) {
     throw new ApiError('There are duplicate answer IDs provided', HttpStatusCode.BAD_REQUEST);
   }
-  //if there are no answerIds provided
+  // if there are no answerIds provided
   if (answerIds.length === 0) {
     throw new ApiError('Less than 1 answer ID was submitted', HttpStatusCode.BAD_REQUEST);
   }
-  //get timeSubmitted
+  // get timeSubmitted
   const dateNow = getUnixTime(new Date());
   const answerTime = (inSession.sessionQuiz.questions[questionPositionIndex].questionStartTime - dateNow);
-  
+
   const submittedAnswers = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers;
   const found = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers.find(answer => answer.playerId === playerId);
 
@@ -308,7 +307,7 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
     timeSubmitted: answerTime,
   };
 
-  if(found) {
+  if (found) {
     const answeredIndex = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers.findIndex(answer => answer.playerId === playerId);
     submittedAnswers[answeredIndex] = answer;
   } else {
@@ -317,4 +316,3 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
 
   return {};
 }
-

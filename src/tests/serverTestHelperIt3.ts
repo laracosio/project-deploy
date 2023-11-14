@@ -412,7 +412,7 @@ export const currentQuestionInfoRequest = (playerid: number, questionposition: n
       },
     }
   );
-}
+};
 
 export const playerSubmitAnswerRequest = (playerid: number, questionposition: number, answerIds: number[]): Response => {
   return request(
@@ -427,7 +427,7 @@ export const playerSubmitAnswerRequest = (playerid: number, questionposition: nu
       },
     }
   );
-}
+};
 // #endregion
 
 // #region session handlers
