@@ -112,6 +112,7 @@ export interface Datastore {
   mapPS: PSInfo[],
   maxQuizId: number,
   maxPlayerId: number,
+  maxSessionId: number,
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
@@ -123,7 +124,8 @@ let data: Datastore = {
   sessions: [],
   mapPS: [],
   maxQuizId: 0,
-  maxPlayerId: 0
+  maxPlayerId: 0,
+  maxSessionId: 0
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

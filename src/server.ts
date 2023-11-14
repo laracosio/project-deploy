@@ -58,11 +58,6 @@ app.use('/v2/admin/quiz', quizRouterV2);
 app.use('/v2/admin/auth', authRouterV2);
 app.use('/v2/admin/user', userRouterV2);
 
-app.put('/setdata', (req: Request, res: Response) => {
-  const { dataStore } = req.body;
-  return res.json(setAndSave(dataStore));
-});
-
 app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ApiError) {
     res.status(err.httpCode).json({ error: err.message });

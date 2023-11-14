@@ -284,6 +284,34 @@ const quizInfoRequestV2 = (token: string, quizid: number): Response => {
     }
   );
 };
+
+const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/player/join`,
+    {
+      body: JSON.stringify({
+        sessionId: sessionId,
+        name: name,
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
+const guestPlayerStatusRequest = (playerid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerid}`,
+    {
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
 // #endregion
 
 // #region player handlers
@@ -310,21 +338,28 @@ const viewMsgsRequest = (playerId: number): Response => {
 };
 // #endregion
 
-const setDataRequest = (dataStore: Datastore): Response => {
+// #region session handlers
+const sessionCreateRequest = (token: string, quizId: number, autoStartNum: number): Response => {
   return request(
-    'PUT',
-    SERVER_URL + '/setdata',
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/start`,
     {
-      body: JSON.stringify({ dataStore }),
-      headers: { 'Content-type': 'application/json' }
+      body: JSON.stringify({
+        autoStartNum: autoStartNum,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
     }
   );
 };
+// #endregion
 
 export {
   authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
   createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
   quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
   quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, sendMsgRequest,
-  viewMsgsRequest, setDataRequest
-};
+  viewMsgsRequest,sessionCreateRequest, joinGuestPlayerRequest, guestPlayerStatusRequest
+}
