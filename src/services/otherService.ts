@@ -1,4 +1,4 @@
-import { getData, setData, User, Token, Quiz, Question, Datastore } from '../dataStore';
+import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
@@ -18,12 +18,13 @@ function clear(): object {
   const dataStore = getData();
   dataStore.users = [];
   dataStore.quizzes = [];
-  dataStore.tokens = [];
+  dataStore.mapUT = [];
   dataStore.trash = [];
   dataStore.sessions = [];
-  dataStore.playerIdSessionIds = [];
+  dataStore.mapPS = [];
   dataStore.maxQuizId = 0;
   dataStore.maxPlayerId = 0;
+  dataStore.maxSessionId = 0;
   setAndSave(dataStore);
   return {};
 }
@@ -82,17 +83,17 @@ function helperAdminRegister(email: string, password: string, nameFirst: string,
 }
 
 /**
- * Generates a sessionId and checks that sessionId has not been assigned previously
- * @param {Array<Tokens>} Token Datastore to check that generated sID does not already exist
- * @returns {string} sessionId
+ * Generates a token and checks that token has not been assigned previously
+ * @param {Array<UTInfo>} UTInfo Datastore to check that generated sID does not already exist
+ * @returns {string} token
  */
-function createSessionId(tokens: Array<Token>): string {
-  let newSessionId: string = uuidv4();
+function createToken(tokens: Array<UTInfo>): string {
+  let newToken: string = uuidv4();
   /* istanbul ignore next */
-  while (tokens.some(t => t.sessionId === newSessionId)) {
-    newSessionId = uuidv4();
+  while (tokens.some(t => t.token === newToken)) {
+    newToken = uuidv4();
   }
-  return newSessionId;
+  return newToken;
 }
 
 /**
@@ -106,20 +107,20 @@ function tokenValidation (token: string): boolean {
     return false;
   }
   // check whether token exists in dataStore
-  if (!dataStore.tokens.some(t => t.sessionId === token)) {
+  if (!dataStore.mapUT.some(t => t.token === token)) {
     return false;
   }
   return true;
 }
 
 /**
- * Returns a Token from the dataStore based on passed in sessionId
- * @param token - sessionId
+ * Returns a UTInfo from the dataStore based on passed in token
+ * @param token - token
  * @returns Token | undefined (if not found)
  */
-function findToken (token: string): Token {
+function findUTInfo (token: string): UTInfo {
   const dataStore = getData();
-  return dataStore.tokens.find(t => t.sessionId === token);
+  return dataStore.mapUT.find(t => t.token === token);
 }
 
 /**
@@ -213,7 +214,49 @@ function openSessionQuizzesState(quizId: number): boolean {
 }
 
 /**
- *
+ * Checks whether playerId exists in the playerSession index
+ * @param playerId - integer representing the player
+ * @returns boolean - true if found, false otherwise
+ */
+function playerValidation(playerId: number): boolean {
+  const dataStore = getData();
+  if (!playerId) {
+    return false;
+  }
+  // check whether token exists in dataStore
+  if (!dataStore.mapPS.some(elem => elem.playerId === playerId)) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Finds session that player is participating in
+ * @param playerId - integer representing the player
+ * @returns Session within dataStore where player is apart of
+ */
+function findSessionByPlayerId(playerId: number): Session {
+  const dataStore = getData();
+  const matchedIndex = dataStore.mapPS.find(elem => elem.playerId === playerId);
+  const matchedSessionId = matchedIndex.sessionId;
+  return dataStore.sessions.find(session => session.sessionId === matchedSessionId);
+}
+
+/**
+ * Finds and returns the name of the player.
+ * @param playerId - playerId of player to be found
+ * @param sessionId - sessionId player is in
+ * @returns string of name of player
+ */
+function findPlayerName(playerId: number, sessionId: number): string {
+  const dataStore = getData();
+  const matchedSession = dataStore.sessions.find(session => session.sessionId === sessionId);
+  const matchedPlayer = matchedSession.sessionPlayers.find(player => player.playerId === playerId);
+  return matchedPlayer.playerName;
+}
+
+/**
+ * checks whether thumbnailUrl ends with png, jpg or jpeg
  * @param thumbnailUrl
  * @returns boolean
  */
@@ -222,9 +265,32 @@ function isImageUrlValid(thumbnailUrl: string): boolean {
 
   return imageRegex.test(thumbnailUrl);
 }
+
+function generateRandomString() {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  let randomLetters = '';
+  let randomNumbers = '';
+
+  // Generate 5 random letters
+  for (let i = 0; i < 5; i++) {
+    const randomIndex = Math.floor(Math.random() * letters.length);
+    randomLetters += letters.charAt(randomIndex);
+  }
+
+  // Generate 3 random numbers
+  for (let i = 0; i < 3; i++) {
+    const randomNumber = Math.floor(Math.random() * 10);
+    randomNumbers += randomNumber.toString();
+  }
+
+  const newName = randomLetters + randomNumbers;
+  return newName;
+}
+
 export {
-  clear, helperAdminRegister, createSessionId, tokenValidation,
-  findQuestionByQuiz, findQuizById, findUserById, findToken,
+  clear, helperAdminRegister, createToken, tokenValidation,
+  findQuestionByQuiz, findQuizById, findUserById, findUTInfo,
   getTotalDurationOfQuiz, getRandomColorAndRemove, findTrashedQuizById,
-  hashText, openSessionQuizzesState, isImageUrlValid
+  hashText, openSessionQuizzesState, isImageUrlValid, playerValidation,
+  findSessionByPlayerId, findPlayerName, generateRandomString
 };

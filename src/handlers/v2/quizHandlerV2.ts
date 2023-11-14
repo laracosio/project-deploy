@@ -23,8 +23,8 @@ quizRouterV2.post('/:quizid/transfer', (req: Request, res: Response) => {
   res.json(adminQuizTransferOwner(token, quizId, userEmail));
 });
 
-quizRouterV2.post('/:quizId/question', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizId);
+quizRouterV2.post('/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
   const token = req.header('token');
   const { questionBody } = req.body;
   res.json(quizCreateQuestion(quizId, token, questionBody));
@@ -37,9 +37,9 @@ quizRouterV2.post('/:quizid/question/:questionid/duplicate', (req: Request, res:
   res.json(adminDuplicateQuestion(token, quizId, questionId));
 });
 
-quizRouterV2.post('/:quizId/restore', (req: Request, res: Response) => {
+quizRouterV2.post('/:quizid/restore', (req: Request, res: Response) => {
   const token = req.header('token');
-  const quizId = parseInt(req.params.quizId);
+  const quizId = parseInt(req.params.quizid);
   res.json(adminQuizRestoreTrash(token, quizId));
 });
 // #endregion
@@ -52,23 +52,23 @@ quizRouterV2.put('/:quizid/question/:questionid/move', (req: Request, res: Respo
   const questionId = parseInt(req.params.questionid);
   res.json(adminMoveQuestion(token, quizId, questionId, newPostion));
 });
-quizRouterV2.put('/:quizId/question/:questionId', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizId);
-  const questionId = parseInt(req.params.questionId);
+quizRouterV2.put('/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
   const token = req.header('token');
   const { questionBody } = req.body;
   res.json(quizUpdateQuestion(quizId, questionId, token, questionBody));
 });
 
-quizRouterV2.put('/:quizId/name', (req: Request, res: Response) => {
+quizRouterV2.put('/:quizid/name', (req: Request, res: Response) => {
   const token = req.header('token');
-  const quizId = parseInt(req.params.quizId);
+  const quizId = parseInt(req.params.quizid);
   res.json(adminQuizNameUpdate(token, quizId, req.body.name));
 });
 
-quizRouterV2.put('/:quizId/description', (req: Request, res: Response) => {
+quizRouterV2.put('/:quizid/description', (req: Request, res: Response) => {
   const token = req.header('token');
-  const quizId = parseInt(req.params.quizId);
+  const quizId = parseInt(req.params.quizid);
   res.json(adminQuizDescriptionUpdate(token, quizId, req.body.description));
 });
 // #endregion
@@ -80,16 +80,16 @@ quizRouterV2.delete('/:quizid', (req: Request, res: Response) => {
   const response = adminQuizRemove(token, quizId);
   res.json(response);
 });
-quizRouterV2.delete('/:quizid/question/:questionId', (req: Request, res: Response) => {
-  const sessionToken = req.header('sessionToken');
+quizRouterV2.delete('/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const token = req.header('token');
   const quizId = parseInt(req.params.quizid);
-  const questionId = parseInt(req.params.questionId);
-  res.json(quizRemoveQuestion(sessionToken, quizId, questionId));
+  const questionId = parseInt(req.params.questionid);
+  res.json(quizRemoveQuestion(token, quizId, questionId));
 });
 
 quizRouterV2.delete('/trash/empty', (req: Request, res: Response) => {
   const token = req.header('token');
-  const quizIds = req.query.quizIds as string;
+  const quizIds = req.query.quizids as string;
   const response = adminQuizEmptyTrash(token, quizIds);
   res.json(response);
 });
@@ -106,9 +106,9 @@ quizRouterV2.get('/list', (req: Request, res: Response) => {
   res.json(adminQuizList(token));
 });
 
-quizRouterV2.get('/:quizId', (req: Request, res: Response) => {
+quizRouterV2.get('/:quizid', (req: Request, res: Response) => {
   const token: string = req.header('token');
-  const quizId: number = parseInt(req.params.quizId);
+  const quizId: number = parseInt(req.params.quizid);
   res.json(adminQuizInfo(token, quizId));
 });
 // #endregion
