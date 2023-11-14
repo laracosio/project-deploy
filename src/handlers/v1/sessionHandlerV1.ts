@@ -3,9 +3,9 @@ import { startNewSession, getSessionStatus, updateSessionStatus } from '../../se
 
 export const sessionRouterV1 = Router();
 
-sessionRouterV1.post('/:quizid/session/start', (req: Request, res: Response) => {
+sessionRouterV1.post('/:quizId/session/start', (req: Request, res: Response) => {
   const token = req.header('token');
-  const quizId = parseInt(req.params.quizid);
+  const quizId = parseInt(req.params.quizId);
   res.json(startNewSession(token, quizId, req.body.autoStartNum));
 });
 
