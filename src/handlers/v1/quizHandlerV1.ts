@@ -90,7 +90,7 @@ quizRouterV1.put('/:quizid/question/:questionid/move', (req: Request, res: Respo
 });
 
 quizRouterV1.put('/:quizid/thumbnail', (req: Request, res: Response) => {
-  const token = req.body.token as string;
+  const token = req.header('token');
   const quizId = parseInt(req.params.quizid);
   res.json(quizThumbnailUpdate(token, quizId, req.body.imgUrl));
 });

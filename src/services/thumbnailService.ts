@@ -14,9 +14,6 @@ import request from 'sync-request-curl';
  */
 function quizThumbnailUpdate (token: string, quizId: number, imgUrl: string): object {
   const dataStore = getData();
-  console.log(token);
-  console.log(quizId);
-  console.log(imgUrl);
 
   // check token is valid
   if (!tokenValidation(token)) {
