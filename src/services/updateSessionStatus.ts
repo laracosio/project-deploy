@@ -1,9 +1,9 @@
-import { Session, Token, getData } from '../dataStore';
+import { Session, UTInfo, getData } from '../dataStore';
 import { AdminActions, isAdminAction } from '../enums/AdminActions';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { StateError } from '../errors/StateError';
-import { findToken, tokenValidation } from './otherService';
+import { findUTInfo, tokenValidation } from './otherService';
 import { SessionStateMachine } from './sesssionStateMachine';
 
 export function updateSessionStatus(quizId: number, sessionId: number, token: string, action: string): void {
@@ -16,7 +16,7 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   }
 
   // 403
-  const authToken: Token = findToken(token);
+  const authToken: UTInfo = findUTInfo(token);
   if (session.sessionQuiz.quizOwner !== authToken.userId) {
     throw new ApiError('User is not authorised to view this session', HttpStatusCode.FORBIDDEN);
   }

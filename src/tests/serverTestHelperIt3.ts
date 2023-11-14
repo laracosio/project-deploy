@@ -1,11 +1,11 @@
 import request from 'sync-request-curl';
 import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
-import { QuestionCreate } from '../dataStore';
+import { QuestionCreate, InputMessage } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
-class ParsedResponse {
+export class ParsedResponse {
   response: Response;
 
   constructor(response: Response) {
@@ -20,7 +20,7 @@ class ParsedResponse {
   }
 }
 
-const apiGet = (url: string, headers: object): ParsedResponse => {
+export const apiGet = (url: string, headers: object): ParsedResponse => {
   const httpUrl = SERVER_URL + url;
   const httpOptions = {
     headers: {
@@ -33,7 +33,7 @@ const apiGet = (url: string, headers: object): ParsedResponse => {
   return parsedResponse;
 };
 
-const apiPut = (url: string, body: object, headers: object): ParsedResponse => {
+export const apiPut = (url: string, body: object, headers: object): ParsedResponse => {
   const httpUrl = SERVER_URL + url;
   const httpOptions = {
     headers: headers
@@ -49,7 +49,7 @@ const apiPut = (url: string, body: object, headers: object): ParsedResponse => {
   return parsedResponse;
 };
 
-const apiPost = (
+export const apiPost = (
   url: string,
   body: object,
   headers: object
@@ -333,33 +333,82 @@ const quizInfoRequestV2 = (token: string, quizid: number): Response => {
     }
   );
 };
+
+const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/player/join`,
+    {
+      body: JSON.stringify({
+        sessionId: sessionId,
+        name: name,
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
+const guestPlayerStatusRequest = (playerid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerid}`,
+    {
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
 // #endregion
 
 // #region player handlers
-// place code here and delete this message
+const sendMsgRequest = (playerId: number, message: InputMessage): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/player/${playerId}/chat`,
+    {
+      body: JSON.stringify({
+        message: message
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      }
+    }
+  );
+};
+
+const viewMsgsRequest = (playerId: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/chat`
+  );
+};
+// #endregion
+
+// #region session handlers
+const sessionCreateRequest = (token: string, quizId: number, autoStartNum: number): Response => {
+  return request(
+    'POST',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/start`,
+    {
+      body: JSON.stringify({
+        autoStartNum: autoStartNum,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
 // #endregion
 
 export {
-  authUserDetailsRequestV2,
-  quizRemoveRequestV2,
-  quizTransferRequestV2,
-  moveQuestionRequestV2,
-  duplicateQuestionRequestV2,
-  createQuizQuestionRequestV2,
-  updateQuizQuestionRequestV2,
-  deleteQuizQuestionRequestV2,
-  quizViewTrashRequestV2,
-  quizRestoreTrashRequestV2,
-  quizEmptyTrashRequestV2,
-  quizNameUpdateRequestV2,
-  quizDescriptUpdateRequestV2,
-  quizCreateRequestV2,
-  quizListRequestV2,
-  quizInfoRequestV2,
-  authLogoutRequestV2,
-  userUpdateDetailsRequestV2,
-  userUpdatePasswordRequestV2,
-  apiGet,
-  apiPost,
-  apiPut
+  authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
+  createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
+  quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
+  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, sendMsgRequest,
+  viewMsgsRequest, sessionCreateRequest, joinGuestPlayerRequest, guestPlayerStatusRequest
 };

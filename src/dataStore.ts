@@ -17,6 +17,10 @@ export interface QuestionCreate {
   thumbnailUrl?: string;
 }
 
+export interface InputMessage {
+  messageBody: string;
+}
+
 export const Colours = [
   "red",
   "blue",
@@ -81,7 +85,7 @@ export interface Player {
 }
 
 export interface Message {
-  messagebody: string;
+  messageBody: string;
   playerId: number;
   playerName: string;
   timeSent: number;
@@ -116,6 +120,7 @@ export interface Datastore {
   mapPS: PSInfo[];
   maxQuizId: number;
   maxPlayerId: number;
+  maxSessionId: number;
 }
 
 export interface Metadata {
@@ -146,6 +151,7 @@ let data: Datastore = {
   mapPS: [],
   maxQuizId: 0,
   maxPlayerId: 0,
+  maxSessionId: 0
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

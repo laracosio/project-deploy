@@ -1,4 +1,4 @@
-import { QuestionCreate } from './dataStore';
+import { QuestionCreate, InputMessage } from './dataStore';
 
 const person1 = {
   email: 'h.simpson@springfield.com',
@@ -66,6 +66,8 @@ const longQuizDescription = 'Lorem ipsum dolor sit amet, consectetuer adipiscing
 const stringOf1QuizIDs = '[1]';
 const stringOf2QuizIDs = '[1,2]';
 const stringOf3QuizIDs = '[1,2,3]';
+const validAutoStartNum = 25;
+const invalidAutoStartNum = 51;
 const validQuestionInput1: QuestionCreate = {
   question: 'Who is the Monarch of England?',
   duration: 4,
@@ -607,6 +609,22 @@ const invalidCreateQuestionV2URLNotPNGJPG: QuestionCreate = {
   thumbnailUrl: 'https://media.giphy.com/media/l0G16FRujv2fiD3Ne/giphy.gif'
 };
 
+const msg1: InputMessage = {
+  messageBody: 'This is the first msg'
+};
+const msg2: InputMessage = {
+  messageBody: 'This is the second msg'
+};
+const msg3: InputMessage = {
+  messageBody: 'This is the third msg'
+};
+const noMsg: InputMessage = {
+  messageBody: ''
+};
+const longMessage: InputMessage = {
+  messageBody: 'Into each life some rain must fall. But too much is falling in mine. Into each heart some tears must fall. But someday the sun will shine.'
+};
+
 export {
   person1,
   person2,
@@ -667,5 +685,12 @@ export {
   invalidCreateQuestionV2NotJPGPNG,
   invalidCreateQuestionV2InvalidURL,
   invalidCreateQuestionV2EmptyURL,
-  validCreateQuestionV2PNG
+  validCreateQuestionV2PNG,
+  msg1,
+  msg2,
+  msg3,
+  noMsg,
+  longMessage,
+  validAutoStartNum,
+  invalidAutoStartNum
 };
