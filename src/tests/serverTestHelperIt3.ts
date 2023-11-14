@@ -317,15 +317,15 @@ const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: strin
   return request(
     'PUT',
     `${SERVER_URL}/v1/admin/quiz/${quizid}/thumbnail`,
-      {
-        body: JSON.stringify({
-          imgUrl: imgUrl,
-        }),
-        headers: {
-          'Content-type': 'application/json',
-          token: token
-        },
-      }
+    {
+      body: JSON.stringify({
+        imgUrl: imgUrl,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
   );
 };
 // #endregion

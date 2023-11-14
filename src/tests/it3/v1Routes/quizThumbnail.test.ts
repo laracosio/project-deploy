@@ -95,7 +95,7 @@ describe('quizThumbnailUpdate - Error cases', () => {
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const response = quizThumbnailUpdateRequest(session1Data.token, quiz1Data.quizId, validjpgUrl1);
+    const response = quizThumbnailUpdateRequest(session1Data.token, quiz1Data.quizId, '');
     expect(response.statusCode).toStrictEqual(400);
   });
   
@@ -104,7 +104,7 @@ describe('quizThumbnailUpdate - Error cases', () => {
     const session1Data = JSON.parse(session1.body.toString());
     quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const response = quizThumbnailUpdateRequest(session1Data.token, quiz1Data.quizId, unfetchableimgUrl);
+    const response = quizThumbnailUpdateRequest(session1Data.token, quiz1Data.quizId, 'https://www.fnordware.com/ggrad16rgb.png');
     expect(response.statusCode).toStrictEqual(400);
   });
 
