@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { startNewSession, getSessionStatus, updateSessionStatus } from '../../services/sessionService';
+import { startNewSession, getSessionStatus, viewSessions } from '../../services/sessionService';
+import { updateSessionStatus } from '../../services/updateSessionStatus';
 
 export const sessionRouterV1 = Router();
 
@@ -23,4 +24,10 @@ sessionRouterV1.put('/:quizId/session/:sessionId', (req: Request, res: Response)
   const adminAction: string = req.body.action;
   updateSessionStatus(quizId, sessionId, token, adminAction);
   res.json({});
+});
+
+sessionRouterV1.get('/:quizId/sessions', (req: Request, res: Response) => {
+  const token: string = req.query.token as string;
+  const quizId: number = parseInt(req.params.quizid);
+  res.json(viewSessions(token, quizId));
 });
