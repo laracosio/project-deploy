@@ -5,6 +5,8 @@ build
 coverage/
 .nyc_output
 results/
+datastore.json
+.prettierrc
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -170,3 +172,4 @@ Thumbs.db
 
 # Ignore built ts files
 dist/**/*
+.vscode/settings.json
