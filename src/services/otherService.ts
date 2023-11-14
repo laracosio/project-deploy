@@ -281,7 +281,7 @@ export function isImageUrlValid(thumbnailUrl: string): boolean {
  * @returns boolean of whether the answers were correct (match) or not
  * https://stackoverflow.com/questions/47589245/compare-unsorted-arrays-of-objects-in-javascript
  */
-export function compareAnswers(correctAnswerIds: number[], playerAnswerIds: number[]): boolean {
+export function checkAnswers(correctAnswerIds: number[], playerAnswerIds: number[]): boolean {
   if (correctAnswerIds.length !== playerAnswerIds.length) {
     return false;
   }
@@ -297,90 +297,89 @@ export function compareAnswers(correctAnswerIds: number[], playerAnswerIds: numb
 export function playerSummaries(question: Question): SubmissionSummary[] {
   const playerSummaries: SubmissionSummary[] = [];
 
-  //get list of answerIds which contain true answers
+  // get list of answerIds which contain true answers
   const correctAnswerIds = question.answers.filter(answer => answer.correct).map(answer => answer.answerId);
+  
   for (const submission of question.submittedAnswers) {
     playerSummaries.push({
       playerId: submission.playerId,
       playerName: submission.playerName,
-      answerCorrect: compareAnswers(correctAnswerIds, submission.answerIds),
+      answerCorrect: checkAnswers(correctAnswerIds, submission.answerIds),
       answerTime: submission.timeSubmitted - question.questionStartTime,
     });
   }
+
   return playerSummaries;
+}
+
+/**
+ * calculates average answerTime based on question and number of total players
+ * @param question
+ * @param totalPlayers
+ * @returns avgTime to nearest integer
+ */
+export function calcAvgAnsTime(summary: SubmissionSummary[], totalPlayers: number): number {
+  const cumulativeTime = summary.reduce((accumulator, currentValue) => accumulator + currentValue.answerTime, 0);
+  return Math.round(cumulativeTime / totalPlayers);
+}
+
+/**
+ * Calculates the percentage of correct answers received for question
+ * @param question
+ * @param totalPlayers
+ * @returns % of correct answers to nearest integer
+ */
+export function calcPercentCorrect(summary: SubmissionSummary[], totalPlayers: number): number {
+  const numCorrect = summary.filter(submission => submission.answerCorrect).length;
+  return Math.round((numCorrect / totalPlayers) * 100);
 }
 
 export function questionResults(question: Question, totalSessionPlayers: number): QuestionResultsReturn {
   const questionSummary = playerSummaries(question);
   const correctPlayerList = questionSummary.filter(result => result.answerCorrect).map(person => person.playerName);
 
-
   const qResults: QuestionResultsReturn = {
     questionId: question.questionId,
     playersCorrectList: correctPlayerList,
-    averageAnswerTime: , 
-    percentCorrect: 
+    averageAnswerTime: calcAvgAnsTime(questionSummary, totalSessionPlayers), 
+    percentCorrect: calcPercentCorrect(questionSummary, totalSessionPlayers)
   }
   
-  return
+  return qResults;
 }
 
-// /**
-//  * calculates average answerTime based on question and number of total players
-//  * @param question
-//  * @param totalPlayers
-//  * @returns avgTime to nearest integer
-//  */
-// export function calcAvgAnsTime(question: Question, totalPlayers: number): number {
-//   const cumulativeTime = question.answerTimes.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-//   return Math.round(cumulativeTime / totalPlayers);
-// }
+/**
+ * Creates an array of objects with users ranked by score then by name alphabetically
+ * @param sessionPlayers - player[] containing information about players in a session
+ * @returns userRanking
+ */
+export function createUserRank(sessionPlayers: Player[]): UserRanking[] {
+  const userRanking: UserRanking[] = [];
+  
+  determine a players score - time answered x points
+  need to sort summary by whether answer is correct and how many people are correct
+  
+  should score be determined when question closes?
+    score in playerAnswer is for individual question
+  
+  for each player, for each question - need to compute Score 
+  add scores together and then rank
 
-// /**
-//  * Calculates the percentage of correct answers received for question
-//  * @param question
-//  * @param totalPlayers
-//  * @returns % of correct answers to nearest integer
-//  */
-// export function calcPercentCorrect(question: Question, totalPlayers: number): number {
-//   const numCorrect = question.playersCorrectList.length;
-//   return Math.round((numCorrect / totalPlayers) * 100);
-// }
 
-// /**
-//  * Creates an array of objects with users ranked by score then by name alphabetically
-//  * @param sessionPlayers - player[] containing information about players in a session
-//  * @returns userRanking
-//  */
-// export function createUserRank(sessionPlayers: Player[]): UserRanking[] {
-//   const userRanking: UserRanking[] = [];
-//   sessionPlayers.map(player => {
-//     const cumulativeScore = player.playerAnswers.reduce((sum: number, answer: PlayerAnswers) => sum + answer.score, 0);
-//     userRanking.push({
-//       name: player.playerName,
-//       score: cumulativeScore
-//     });
-//   });
 
-//   userRanking.sort((a, b) => (b.score - a.score || a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
+  sessionPlayers.map(player => {
+    const cumulativeScore = player.playerAnswers.reduce((sum: number, answer: PlayerAnswers) => sum + answer.score, 0);
+    userRanking.push({
+      name: player.playerName,
+      score: cumulativeScore
+    });
+  });
 
-//   return userRanking;
-// }
+  userRanking.sort((a, b) => (b.score - a.score || a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
 
-// /**
-//  * Creates an object containing information on questionId, playersCorrect, avgAnswerTime and % correct
-//  * @param question
-//  * @param totalPlayers
-//  * @returns  questionResultsReturn
-//  */
-// export function createQuestionResults(question: Question, totalPlayers: number): questionResultsReturn {
-//   return {
-//     questionId: question.questionId,
-//     playersCorrectList: question.playersCorrectList,
-//     averageAnswerTime: calcAvgAnsTime(question, totalPlayers),
-//     percentCorrect: calcPercentCorrect(question, totalPlayers)
-//   };
-// }
+  return userRanking;
+}
+
 
 /**
  * generates random string containing 5 letters and 3 numbers
