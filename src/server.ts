@@ -39,6 +39,7 @@ const HOST: string = process.env.IP || 'localhost';
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
+app.use(express.static('results'))
 
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {

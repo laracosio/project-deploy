@@ -3,7 +3,8 @@ import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 import {
   createQuizQuestionRequestV2,
   quizFinalResultsRequest,
-  quizFinalResultsCSVRequest
+  quizFinalResultsCSVRequest,
+  joinGuestPlayerRequest
 } from '../../serverTestHelperIt3';
 import { person1, person2 } from '../../../testingData';
 import { authRegisterRequest, clearRequest, quizCreateRequest } from '../../it2/serverTestHelperIt2';
@@ -13,13 +14,6 @@ import { setAndSave } from '../../../services/otherService';
 import { SessionStates } from '../../../enums/SessionStates';
 
 beforeEach(() => {
-  // const datastr: Buffer = fs.readFileSync('./datastore.json');
-  // const dataStore: Datastore = JSON.parse(String(datastr));
-  // dataStore.users = [];
-  // dataStore.quizzes = [];
-  // dataStore.tokens = [];
-  // dataStore.trash = [];
-  // setAndSave(dataStore);
   clearRequest();
 });
 
@@ -76,10 +70,9 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/x - Success Cases', ()
     quizProf.questions[0].playersCorrectList = ['Hermione', 'Ron'];
     quizProf.questions[1].playersCorrectList = ['Hermione', 'Harry', 'Ron'];
     quizProf.questions[2].playersCorrectList = ['Hermione', 'Harry'];
-    console.log(quizProf.questions[0]);
-    console.log(quizProf.questions[1]);
-    console.log(quizProf.questions[2]);
-    // setAndSave(data);
+    // console.log(quizProf.questions[0]);
+    // console.log(quizProf.questions[1]);
+    // console.log(quizProf.questions[2]);
 
     // console.log('From beforeEach:');
     // console.log('line 72');
@@ -183,15 +176,15 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/x - Success Cases', ()
       ]
     });
   });
-  // test('/results/csv - Success: all players have different results', () => {
-  //   const adminData = JSON.parse(admin.body.toString());
-  //   const quizData = JSON.parse(quiz.body.toString());
+  test('/results/csv - Success: all players have different results', () => {
+    const adminData = JSON.parse(admin.body.toString());
+    const quizData = JSON.parse(quiz.body.toString());
 
-  //   const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 1234, adminData.token);
+    const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 1234, adminData.token);
 
-  //   expect(response.statusCode).toStrictEqual(HttpStatusCode.OK);
-  //   expect(JSON.parse(response.body.toString())).toStrictEqual({ url: 'http://google.com/some/image/path.csv' });
-  // });
+    expect(response.statusCode).toStrictEqual(HttpStatusCode.OK);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ url: 'http://google.com/some/image/path.csv' });
+  });
   test.only('/results - Success: two players in 1st', () => {
     // console.log(quizSession);
     const datastr: Buffer = fs.readFileSync('./datastore.json');
@@ -253,24 +246,24 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/x - Success Cases', ()
       ]
     });
   });
-  // test('/results/csv - Success: two players in 1st', () => {
-  //   const datastr: Buffer = fs.readFileSync('./datastore.json');
-  //   const data: Datastore = JSON.parse(String(datastr));
-  //   const quizProfSession: Session = data.sessions.find(s => s.sessionId === 1234);
+  test('/results/csv - Success: two players in 1st', () => {
+    const datastr: Buffer = fs.readFileSync('./datastore.json');
+    const data: Datastore = JSON.parse(String(datastr));
+    const quizProfSession: Session = data.sessions.find(s => s.sessionId === 1234);
 
-  //   // Harry's score changes to 16 -> equal 1st with Hermione
-  //   quizProfSession.sessionPlayers[0].playerAnswers[0].score = 1;
-  //   quizProfSession.sessionPlayers[0].playerAnswers[1].score = 5;
-  //   quizProfSession.sessionPlayers[0].playerAnswers[2].score = 10;
+    // Harry's score changes to 16 -> equal 1st with Hermione
+    quizProfSession.sessionPlayers[0].playerAnswers[0].score = 1;
+    quizProfSession.sessionPlayers[0].playerAnswers[1].score = 5;
+    quizProfSession.sessionPlayers[0].playerAnswers[2].score = 10;
 
-  //   const adminData = JSON.parse(admin.body.toString());
-  //   const quizData = JSON.parse(quiz.body.toString());
+    const adminData = JSON.parse(admin.body.toString());
+    const quizData = JSON.parse(quiz.body.toString());
 
-  //   const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 1234, adminData.token);
+    const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 1234, adminData.token);
 
-  //   expect(response.statusCode).toStrictEqual(HttpStatusCode.OK);
-  //   expect(JSON.parse(response.body.toString())).toStrictEqual({ url: 'http://google.com/some/image/path.csv' });
-  // });
+    expect(response.statusCode).toStrictEqual(HttpStatusCode.OK);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({ url: 'http://google.com/some/image/path.csv' });
+  });
 });
 
 describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/x - Error Cases', () => {
@@ -355,34 +348,34 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/x - Error Cases', () =
     const response: Response = quizFinalResultsRequest(quizData.quizId, 1234, adminData.token);
     expect(response.statusCode).toStrictEqual(HttpStatusCode.FORBIDDEN);
   });
-  // test('/results/csv - Error: Session Id does not refer to a valid session within this quiz', () => {
-  //   const adminData = JSON.parse(admin.body.toString());
-  //   const quizData = JSON.parse(quiz.body.toString());
-  //   const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 12345, adminData.token);
-  //   expect(response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  // });
-  // test('/results/csv - Error: Session is not in FINAL_RESULTS state', () => {
-  //   const datastr: Buffer = fs.readFileSync('./datastore.json');
-  //   const data: Datastore = JSON.parse(String(datastr));
-  //   const quizProfSession: Session = data.sessions.find(s => s.sessionId === 1234);
-  //   // change state to be !FINAL_RESULTS
-  //   quizProfSession.sessionState = SessionStates.ANSWER_SHOW;
+  test('/results/csv - Error: Session Id does not refer to a valid session within this quiz', () => {
+    const adminData = JSON.parse(admin.body.toString());
+    const quizData = JSON.parse(quiz.body.toString());
+    const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 12345, adminData.token);
+    expect(response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+  });
+  test('/results/csv - Error: Session is not in FINAL_RESULTS state', () => {
+    const datastr: Buffer = fs.readFileSync('./datastore.json');
+    const data: Datastore = JSON.parse(String(datastr));
+    const quizProfSession: Session = data.sessions.find(s => s.sessionId === 1234);
+    // change state to be !FINAL_RESULTS
+    quizProfSession.sessionState = SessionStates.ANSWER_SHOW;
 
-  //   const adminData = JSON.parse(admin.body.toString());
-  //   const quizData = JSON.parse(quiz.body.toString());
-  //   const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 1234, adminData.token);
-  //   expect(response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  // });
-  // test('/results/csv - Error: Token is empty or invalid (does not refer to valid logged in user session)', () => {
-  //   const adminData = JSON.parse(admin.body.toString());
-  //   const quizData = JSON.parse(quiz.body.toString());
-  //   const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 1234, adminData.token + 1);
-  //   expect(response.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
-  // });
-  // test('/results/csv - Error: Valid token is provided, but user is not authorised to view this session', () => {
-  //   const adminData = JSON.parse(admin.body.toString());
-  //   const quizData = JSON.parse(quiz.body.toString());
-  //   const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 5678, adminData.token);
-  //   expect(response.statusCode).toStrictEqual(HttpStatusCode.FORBIDDEN);
-  // });
+    const adminData = JSON.parse(admin.body.toString());
+    const quizData = JSON.parse(quiz.body.toString());
+    const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 1234, adminData.token);
+    expect(response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+  });
+  test('/results/csv - Error: Token is empty or invalid (does not refer to valid logged in user session)', () => {
+    const adminData = JSON.parse(admin.body.toString());
+    const quizData = JSON.parse(quiz.body.toString());
+    const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 1234, adminData.token + 1);
+    expect(response.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
+  });
+  test('/results/csv - Error: Valid token is provided, but user is not authorised to view this session', () => {
+    const adminData = JSON.parse(admin.body.toString());
+    const quizData = JSON.parse(quiz.body.toString());
+    const response: Response = quizFinalResultsCSVRequest(quizData.quizid, 5678, adminData.token);
+    expect(response.statusCode).toStrictEqual(HttpStatusCode.FORBIDDEN);
+  });
 });
