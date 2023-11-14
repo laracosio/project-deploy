@@ -7,6 +7,7 @@ import { SessionStates } from '../enums/SessionStates';
 import { generateRandomString, findPlayerName, findSessionByPlayerId, playerValidation, setAndSave } from './otherService';
 import { getUnixTime } from 'date-fns';
 import { updateSessionStatus } from './sessionService';
+import { AdminActions } from '../enums/AdminActions';
 const MAX_LENGTH = 100;
 
 interface viewMsgReturn {
@@ -90,7 +91,7 @@ export function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlaye
 
   // autostarting the quiz if desired number of players are achieved
   if (sessionIdHolder.sessionPlayers.length === sessionIdHolder.autoStartNum) {
-    updateSessionStatus(quizIdHolder, sessionId, quizOwnerInfo.token, SessionStates.QUESTION_COUNTDOWN);
+    updateSessionStatus(quizIdHolder, sessionId, quizOwnerInfo.token, AdminActions.SKIP_COUNTDOWN);
   }
   return { playerId: playerId };
 }
