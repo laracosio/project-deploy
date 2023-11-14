@@ -5,68 +5,125 @@ import { QuestionCreate, InputMessage } from '../dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
+export class ParsedResponse {
+  response: Response;
+
+  constructor(response: Response) {
+    this.response = response;
+  }
+
+  getParsedBody() {
+    if (!this.response?.body) {
+      return null;
+    }
+    return JSON.parse(this.response.body.toString());
+  }
+}
+
+export const apiGet = (url: string, headers: object): ParsedResponse => {
+  const httpUrl = SERVER_URL + url;
+  const httpOptions = {
+    headers: {
+      ...headers,
+      'Content-type': 'application/json'
+    }
+  };
+  const res = request('GET', httpUrl, httpOptions);
+  const parsedResponse = new ParsedResponse(res);
+  return parsedResponse;
+};
+
+export const apiPut = (url: string, body: object, headers: object): ParsedResponse => {
+  const httpUrl = SERVER_URL + url;
+  const httpOptions = {
+    headers: headers
+      ? {
+          ...headers,
+          'Content-type': 'application/json'
+        }
+      : null,
+    body: body ? JSON.stringify(body) : null
+  };
+  const res = request('PUT', httpUrl, httpOptions);
+  const parsedResponse = new ParsedResponse(res);
+  return parsedResponse;
+};
+
+export const apiPost = (
+  url: string,
+  body: object,
+  headers: object
+): ParsedResponse => {
+  const httpUrl = SERVER_URL + url;
+  const httpOptions = {
+    headers: headers
+      ? {
+          ...headers,
+          'Content-type': 'application/json'
+        }
+      : null,
+    body: body ? JSON.stringify(body) : null
+  };
+  const res: Response = request('POST', httpUrl, httpOptions);
+  const parsedResponse = new ParsedResponse(res);
+  return parsedResponse;
+};
+
 // #region auth handlers
 const authUserDetailsRequestV2 = (token: string): Response => {
-  return request(
-    'GET',
-    SERVER_URL + '/v2/admin/user/details',
-    {
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
+  return request('GET', SERVER_URL + '/v2/admin/user/details', {
+    headers: {
+      'Content-type': 'application/json',
+      token: token
     }
-  );
+  });
 };
 
 const authLogoutRequestV2 = (token: string): Response => {
-  return request(
-    'POST',
-    `${SERVER_URL}/v2/admin/auth/logout`,
-    {
-      headers: {
-        token: token
-      }
+  return request('POST', `${SERVER_URL}/v2/admin/auth/logout`, {
+    headers: {
+      token: token
     }
-  );
+  });
 };
 
 // #endregion
 
 // #region user handlers
-const userUpdateDetailsRequestV2 = (token: string, email: string, nameFirst: string, nameLast: string): Response => {
-  return request(
-    'PUT',
-    `${SERVER_URL}/v2/admin/user/details`,
-    {
-      body: JSON.stringify({
-        email: email,
-        nameFirst: nameFirst,
-        nameLast: nameLast
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
+const userUpdateDetailsRequestV2 = (
+  token: string,
+  email: string,
+  nameFirst: string,
+  nameLast: string
+): Response => {
+  return request('PUT', `${SERVER_URL}/v2/admin/user/details`, {
+    body: JSON.stringify({
+      email: email,
+      nameFirst: nameFirst,
+      nameLast: nameLast
+    }),
+    headers: {
+      'Content-type': 'application/json',
+      token: token
     }
-  );
+  });
 };
 
-const userUpdatePasswordRequestV2 = (token: string, oldPassword: string, newPassword: string): Response => {
-  return request(
-    'PUT',
-    SERVER_URL + '/v2/admin/user/password',
-    {
-      body: JSON.stringify({
-        oldPassword: oldPassword,
-        newPassword: newPassword
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      },
+const userUpdatePasswordRequestV2 = (
+  token: string,
+  oldPassword: string,
+  newPassword: string
+): Response => {
+  return request('PUT', SERVER_URL + '/v2/admin/user/password', {
+    body: JSON.stringify({
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    }),
+    headers: {
+      'Content-type': 'application/json',
+      token: token
     }
-  );
+  });
 };
 // #endregion
 
@@ -92,7 +149,7 @@ const quizTransferRequestV2 = (token: string, quizid: number, userEmail: string)
       headers: {
         'Content-type': 'application/json',
         token: token
-      },
+      }
     }
   );
 };
@@ -103,12 +160,12 @@ const moveQuestionRequestV2 = (token: string, quizid: number, questionid: number
     SERVER_URL + '/v2/admin/quiz/' + quizid + '/question/' + questionid + '/move',
     {
       body: JSON.stringify({
-        newPosition: newPosition,
+        newPosition: newPosition
       }),
       headers: {
         'Content-type': 'application/json',
         token: token
-      },
+      }
     }
   );
 };
@@ -121,7 +178,7 @@ const duplicateQuestionRequestV2 = (token: string, quizid: number, questionid: n
       headers: {
         'Content-type': 'application/json',
         token: token
-      },
+      }
     }
   );
 };
@@ -148,7 +205,7 @@ const updateQuizQuestionRequestV2 = (quizid: number, questionid: number, token: 
     `${SERVER_URL}/v2/admin/quiz/${quizid}/question/${questionid}`,
     {
       json: {
-        questionBody: questionBody,
+        questionBody: questionBody
       },
       headers: {
         'Content-type': 'application/json',
@@ -203,16 +260,12 @@ const quizDescriptUpdateRequestV2 = (token: string, quizid: number, description:
 };
 
 const quizViewTrashRequestV2 = (token: string): Response => {
-  return request(
-    'GET',
-    `${SERVER_URL}/v2/admin/quiz/trash`,
-    {
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
+  return request('GET', `${SERVER_URL}/v2/admin/quiz/trash`, {
+    headers: {
+      'Content-type': 'application/json',
+      token: token
     }
-  );
+  });
 };
 
 const quizRestoreTrashRequestV2 = (token: string, quizid: number): Response => {
@@ -244,33 +297,29 @@ const quizEmptyTrashRequestV2 = (token: string, quizids: string): Response => {
   );
 };
 
-const quizCreateRequestV2 = (token: string, name: string, description: string): Response => {
-  return request(
-    'POST',
-    `${SERVER_URL}/v2/admin/quiz`,
-    {
-      body: JSON.stringify({
-        name: name,
-        description: description
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      },
+const quizCreateRequestV2 = (
+  token: string,
+  name: string,
+  description: string
+): Response => {
+  return request('POST', `${SERVER_URL}/v2/admin/quiz`, {
+    body: JSON.stringify({
+      name: name,
+      description: description
+    }),
+    headers: {
+      'Content-type': 'application/json',
+      token: token
     }
-  );
+  });
 };
 
 const quizListRequestV2 = (token: string): Response => {
-  return request(
-    'GET',
-    `${SERVER_URL}/v2/admin/quiz/list`,
-    {
-      headers: {
-        token: token
-      }
+  return request('GET', `${SERVER_URL}/v2/admin/quiz/list`, {
+    headers: {
+      token: token
     }
-  );
+  });
 };
 
 const quizInfoRequestV2 = (token: string, quizid: number): Response => {

@@ -6,36 +6,36 @@ import { HttpStatusCode } from '../enums/HttpStatusCode';
 import request from 'sync-request-curl';
 
 interface QuestionInfoReturn {
-  questionId: number,
-  question: string,
-  duration: number,
-  thumbnailUrl?: string,
-  points: number,
-  answers: Answer[],
+  questionId: number;
+  question: string;
+  duration: number;
+  thumbnailUrl?: string;
+  points: number;
+  answers: Answer[];
 }
 
 interface QuizInfoReturn {
-  quizId: number,
-  name: string,
-  timeCreated: number,
-  timeLastEdited: number,
-  description: string,
-  numQuestions: number,
-  questions: QuestionInfoReturn[],
-  duration: number,
-  thumbnailUrl?: string
+  quizId: number;
+  name: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  description: string;
+  numQuestions: number;
+  questions: QuestionInfoReturn[];
+  duration: number;
+  thumbnailUrl?: string;
 }
 
 interface QuizCreateReturn {
-  quizId: number
+  quizId: number;
 }
 interface BriefQuizInfo {
-  quizId: number,
-  name: string
+  quizId: number;
+  name: string;
 }
 
 interface QuizListReturn {
-  quizzes: BriefQuizInfo[]
+  quizzes: BriefQuizInfo[];
 }
 
 /**
@@ -45,7 +45,7 @@ interface QuizListReturn {
  * @param {string} description - of quiz
  * @returns { quizId: number }
  * @returns { error: string }
-*/
+ */
 function adminQuizCreate(token: string, name: string, description: string): QuizCreateReturn {
   const dataStore = getData();
 
@@ -286,7 +286,7 @@ function adminQuizDescriptionUpdate (token: string, quizId: number, description:
  * @param userEmail - email of user to change quiz to
  * @returns {}
  * @returns { error: string }
-*/
+ */
 function adminQuizTransferOwner(token: string, quizId: number, userEmail: string): object {
   const dataStore = getData();
 
