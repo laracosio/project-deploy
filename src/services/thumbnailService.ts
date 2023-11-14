@@ -1,6 +1,6 @@
 import { Answer, Quiz, getData } from '../dataStore';
 import { getUnixTime } from 'date-fns';
-import { findQuizById, findToken, openSessionQuizzesState, setAndSave, tokenValidation, isImageUrlValid } from './otherService';
+import { findQuizById, openSessionQuizzesState, setAndSave, tokenValidation, isImageUrlValid, findUTInfo } from './otherService';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import request from 'sync-request-curl';
@@ -12,16 +12,16 @@ import request from 'sync-request-curl';
  * @param {string} imgUrl
  * @returns {{error: string}}
  */
-function quizThumbnailUpdate (sessionId: string, quizId: number, imgUrl: string): object {
+function quizThumbnailUpdate (token: string, quizId: number, imgUrl: string): object {
   const dataStore = getData();
 
   // check sessionId is valid
-  if (!tokenValidation(sessionId)) {
+  if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
   // check valid quizId is owned by the current user associated with token
-  const matchedToken = findToken(sessionId);
+  const matchedToken = findUTInfo(token);
   if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
     throw new ApiError('Quiz ID not owned by this user', HttpStatusCode.FORBIDDEN);
   }

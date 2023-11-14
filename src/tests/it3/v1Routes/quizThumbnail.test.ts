@@ -1,6 +1,9 @@
-import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../it2-testing/serverTestHelperIt2';
-import {person1, person2, validQuizDescription, validQuizName,  validpngUrl1, validpngUrl2, validjpgUrl1, validjpgUrl2, invalidimgUrl, unfetchableimgUrl } from '../../testingData';
-import { quizThumbnailUpdateRequest } from '../serverTestHelperIt3';
+import { authLoginRequest, clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../../it2/serverTestHelperIt2';
+import {person1, person2, validQuizDescription, validQuizName,  validpngUrl1, validpngUrl2, validjpgUrl1, validjpgUrl2, invalidimgUrl, unfetchableimgUrl } from '../../../testingData';
+import { quizThumbnailUpdateRequest } from '../../serverTestHelperIt3';
+import { Response } from 'sync-request-curl';
+
+
 beforeEach(() => {
   clearRequest();
 });

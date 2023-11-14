@@ -89,16 +89,10 @@ quizRouterV1.put('/:quizid/question/:questionid/move', (req: Request, res: Respo
   res.json(adminMoveQuestion(token, quizId, questionId, newPostion));
 });
 
-quizRouterV1.put('/:quizId/thumbnail', (req: Request, res: Response) => {
-  const sessionToken = req.body.token as string;
-  const quizId = parseInt(req.params.quizId);
-  res.json(quizThumbnailUpdate(sessionToken, quizId, req.body.imgUrl));
-});
-
-quizRouterV1.put('/:quizId/thumbnail', (req: Request, res: Response) => {
-  const sessionToken = req.body.token as string;
-  const quizId = parseInt(req.params.quizId);
-  res.json(quizThumbnailUpdate(sessionToken, quizId, req.body.imgUrl));
+quizRouterV1.put('/:quizid/thumbnail', (req: Request, res: Response) => {
+  const token = req.body.token as string;
+  const quizId = parseInt(req.params.quizid);
+  res.json(adminQuizNameUpdate(token, quizId, req.body.imgUrl));
 });
 
 // delete routers

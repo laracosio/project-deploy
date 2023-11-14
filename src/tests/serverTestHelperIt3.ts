@@ -313,10 +313,10 @@ const guestPlayerStatusRequest = (playerid: number): Response => {
   );
 };
 
-const quizThumbnailUpdateRequest = (token: string, quizId: number, imgUrl: string): Response => {
+const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: string): Response => {
   return request(
     'PUT',
-      `${SERVER_URL}/v1/admin/quiz/${quizId}/thumbnail`,
+      `${SERVER_URL}/v1/admin/quiz/${quizid}/name`,
       {
         body: JSON.stringify({
           imgUrl: imgUrl,
