@@ -417,7 +417,7 @@ export const currentQuestionInfoRequest = (playerid: number, questionposition: n
 export const playerSubmitAnswerRequest = (playerid: number, questionposition: number, answerIds: number[]): Response => {
   return request(
     'PUT',
-    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}`,
+    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}/answer`,
     {
       body: JSON.stringify({
         answerIds: answerIds,

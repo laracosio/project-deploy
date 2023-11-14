@@ -200,7 +200,7 @@ export const validQuestionInput3V2: QuestionCreate = {
 
 export const validCreateQuestion: QuestionCreate = {
   question: 'Who is laras best boy cat?',
-  duration: 1,
+  duration: 40,
   points: 2,
   answers: [
     { answer: 'Hamlet', correct: true },

@@ -6,7 +6,7 @@ import { Player, PSInfo, InputMessage, Message } from '../dataStore';
 import { SessionStates } from '../enums/SessionStates';
 import { generateRandomString, findPlayerName, findSessionByPlayerId, playerValidation, setAndSave } from './otherService';
 import { getUnixTime } from 'date-fns';
-
+import { updateSessionStatus } from './sessionService';
 const MAX_LENGTH = 100;
 
 interface viewMsgReturn {
@@ -49,7 +49,10 @@ interface AnswerInfo {
 export function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlayerReturn {
   const dataStore = getData();
   const sessionIdHolder = dataStore.sessions.find(session => session.sessionId === sessionId);
-
+  const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === sessionId);
+  const quizIdHolder = dataStore.sessions[sessionIdIndex].sessionQuiz.quizId;
+  const quizOwner = dataStore.sessions[sessionIdIndex].sessionQuiz.quizOwner;
+  const quizOwnerInfo = dataStore.mapUT.find(person => person.userId === quizOwner);
   // check if name is already taken
   const takenName = sessionIdHolder.sessionPlayers.some(player => player.playerName === name);
   if (takenName) {
@@ -87,7 +90,7 @@ export function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlaye
 
   // autostarting the quiz if desired number of players are achieved
   if (sessionIdHolder.sessionPlayers.length === sessionIdHolder.autoStartNum) {
-    sessionIdHolder.sessionState = SessionStates.QUESTION_COUNTDOWN;
+    updateSessionStatus(quizIdHolder, sessionId, quizOwnerInfo.token, SessionStates.QUESTION_COUNTDOWN);
   }
   return { playerId: playerId };
 }
@@ -252,10 +255,10 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
     throw new ApiError('Player ID does not exist', HttpStatusCode.BAD_REQUEST);
   }
   const playerInfo = dataStore.mapPS.find(ps => ps.playerId === playerId);
-  const inSession = dataStore.sessions[playerInfo.sessionId];
   const questionPositionIndex = questionposition - 1;
   const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === playerInfo.sessionId);
-  
+  const inSession = dataStore.sessions[sessionIdIndex];
+
   //position is not valid
   if (questionposition > inSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
