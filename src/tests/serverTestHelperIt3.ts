@@ -316,7 +316,7 @@ const guestPlayerStatusRequest = (playerid: number): Response => {
 const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: string): Response => {
   return request(
     'PUT',
-      `${SERVER_URL}/v1/admin/quiz/${quizid}/thumbnail`,
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/thumbnail`,
       {
         body: JSON.stringify({
           imgUrl: imgUrl,
@@ -324,7 +324,7 @@ const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: strin
         headers: {
           'Content-type': 'application/json',
           token: token
-        }
+        },
       }
   );
 };
