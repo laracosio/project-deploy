@@ -14,6 +14,11 @@ interface newSessionReturn {
   sessionId: number
 }
 
+interface quizSessionsList {
+  activeSessions: number[];
+  inactiveSessions: number[];
+}
+
 /**
  * Given a particular quiz, start a new session
  * @param {string} token - unique token
@@ -181,4 +186,74 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
       console.log('Failing gracefully for automatic state change failure');
     }
   }
+}
+
+ /**
+ * Given a particular quiz, view both active and inactive sessions
+ * @param {string} token - unique token
+ * @param {number} quizId - unique identifier for quiz
+ * @returns { quizSessionsList } - object containing sessionId
+ * @returns {{error: string}}
+ */
+ export function viewSessions(token: string, quizId: number): quizSessionsList {
+  const dataStore = getData();
+
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+
+  const matchedToken = findUTInfo(token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
+    throw new ApiError('User is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
+  }
+
+  const matchedQuiz = findQuizById(quizId)
+  
+  // // Creates an array of active sessionIds
+  // const quizActiveSessionList: Array<newSessionReturn> = [];
+  // dataStore.sessions.forEach((sess) => {
+  //   if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END ) {
+  //     const obj = {sessionId: sess.sessionId};
+  //     quizActiveSessionList.push(obj);
+  //   }
+  // });
+
+  // // Creates an array of inactive sessionIds
+  // const quizInactiveSessionList: Array<newSessionReturn> = [];
+  // dataStore.sessions.forEach((sess) => {
+  //   if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END ) {
+  //     const obj = {sessionId: sess.sessionId};
+  //     quizActiveSessionList.push(obj);
+  //   }
+  // });
+  
+  // const quizSessionsList1: Array<quizSessionsList> = [];
+  // const obj = {
+  //   activeSessions: quizActiveSessionList, 
+  //   inactiveSessions: quizInactiveSessionList 
+  // }
+  // quizSessionsList1.push(obj);  
+
+  let quizActiveSessionList: number[];
+  dataStore.sessions.forEach((sess) => {
+    if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END ) {
+      const obj = sess.sessionId;
+      quizActiveSessionList.push(obj);
+    }
+  });
+
+  let quizInactiveSessionList: number[];
+  dataStore.sessions.forEach((sess) => {
+    if (sess.sessionQuiz === matchedQuiz && sess.sessionState === SessionStates.END ) {
+      const obj = sess.sessionId;
+      quizInactiveSessionList.push(obj);
+    }
+  });
+
+  let quizSessionsList1: quizSessionsList = {activeSessions: quizActiveSessionList, inactiveSessions: quizInactiveSessionList};
+
+  
+  return {
+    quizSessionsList1
+  };
 }
