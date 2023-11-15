@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { startNewSession, getSessionStatus, viewSessions } from '../../services/sessionService';
-import { updateSessionStatus } from '../../services/updateSessionStatus';
+import { startNewSession, getSessionStatus, updateSessionStatus, viewSessions } from '../../services/sessionService';
 
 export const sessionRouterV1 = Router();
 
