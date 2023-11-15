@@ -75,9 +75,21 @@ export const validjpgUrl2 = 'https://i.kym-cdn.com/photos/images/original/001/46
 export const invalidimgUrl = 'https://media.giphy.com/media/l0G16FRujv2fiD3Ne/giphy.gif';
 export const unfetchableimgUrl = 'https://www.fnordware.com/ggrad16rgb.png';
 
+export const longMultiChoice: QuestionCreate = {
+  question: 'Who is the Monarch of England?',
+  duration: 3,
+  points: 5,
+  answers: [
+    { answer: 'Prince Charles', correct: true },
+    { answer: 'Shrek', correct: true },
+    { answer: 'Prince Charming', correct: false },
+    { answer: 'Rumpelstiltskin', correct: false },
+  ]
+};
+
 export const validQuestionInput1: QuestionCreate = {
   question: 'Who is the Monarch of England?',
-  duration: 4,
+  duration: 1,
   points: 5,
   answers: [
     { answer: 'Prince Charles', correct: true },
@@ -89,7 +101,7 @@ export const validQuestionInput1: QuestionCreate = {
 
 export const validQuestionInput2: QuestionCreate = {
   question: 'Who ended the War of Roses?',
-  duration: 5,
+  duration: 1,
   points: 6,
   answers: [
     {
@@ -113,7 +125,7 @@ export const validQuestionInput2: QuestionCreate = {
 
 export const validQuestionInput3: QuestionCreate = {
   question: 'Who was Queen Victoria married to?',
-  duration: 2,
+  duration: 3,
   points: 4,
   answers: [
     {
