@@ -131,6 +131,10 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   const dataStore = getData();
   const session: Session = dataStore.sessions.find(elem => elem.sessionId === sessionId);
 
+  console.log('testing autoStartNum = 3 with 3 players');
+  console.log(`current action: ${action}`);
+  console.log(`current session's state: ${session.sessionState}`);
+
   if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }

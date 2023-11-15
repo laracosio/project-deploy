@@ -37,12 +37,14 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Success', () => {
         { token: postRegister.getParsedBody().token }
     );
 
+    // start session
     postSession = apiPost(
             `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/start`,
-            { autoStartNum: 4 },
+            { autoStartNum: 3 }, // change this from 3 to 4
             { token: postRegister.getParsedBody().token }
     );
 
+    // three players join
     const postPlayer1 = apiPost(
       '/v1/player/join',
       { sessionId: postSession.getParsedBody().sessionId, name: 'Harry' }
@@ -55,6 +57,9 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Success', () => {
       '/v1/player/join',
       { sessionId: postSession.getParsedBody().sessionId, name: 'Ron' }
     );
+  
+    // LOBBY -> QUESTION_COUNTDOWN automatically since autoStartNum 3 = 3 players
+    // should print current action: NEXT_QUESTION and current state: QUESTION_COUNTDOWN
 
     apiPut(
         `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
@@ -98,7 +103,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Success', () => {
     );
   });
 
-  test('/results/csv - Success', async () => {
+  test.only('/results/csv - Success', async () => {
     const getResultsCsv = apiGet(
       `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}/results/csv`,
       { token: postRegister.getParsedBody().token }
