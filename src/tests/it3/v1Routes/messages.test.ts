@@ -7,17 +7,17 @@ import { Response } from 'sync-request-curl';
 
 const currentTime = getUnixTime(new Date());
 
-let session1: Response, quiz1: Response, player1: Response, player2: Response, player3: Response, game1: Response;
+let user1: Response, quiz1: Response, player1: Response, player2: Response, player3: Response, game1: Response;
 beforeEach(() => {
   clearRequest();
-  session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-  const sess1Data = JSON.parse(session1.body.toString());
-  quiz1 = quizCreateRequestV2(sess1Data.token, validQuizName, validQuizDescription);
+  user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+  const user1Data = JSON.parse(user1.body.toString());
+  quiz1 = quizCreateRequestV2(user1Data.token, validQuizName, validQuizDescription);
   const quiz1Data = JSON.parse(quiz1.body.toString());
-  createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput1V2);
-  createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput2V2);
-  createQuizQuestionRequestV2(quiz1Data.quizId, sess1Data.token, validQuestionInput3V2);
-  game1 = sessionCreateRequest(sess1Data.token, quiz1Data.quizId, validAutoStartNum);
+  createQuizQuestionRequestV2(quiz1Data.quizId, user1Data.token, validQuestionInput1V2);
+  createQuizQuestionRequestV2(quiz1Data.quizId, user1Data.token, validQuestionInput2V2);
+  createQuizQuestionRequestV2(quiz1Data.quizId, user1Data.token, validQuestionInput3V2);
+  game1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
   const game1Data = JSON.parse(game1.body.toString());
   player1 = joinGuestPlayerRequest(game1Data.sessionId, 'Gizmo');
   player2 = joinGuestPlayerRequest(game1Data.sessionId, 'Pumpkin');
