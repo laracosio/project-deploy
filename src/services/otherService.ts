@@ -10,13 +10,6 @@ const MAXCHAR = 20;
 const MINCHAR = 2;
 const MINPWLEN = 8;
 
-export interface SubmissionSummary {
-  playerId: number,
-  playerName: string,
-  answerCorrect: boolean,
-  answerTime: number
-}
-
 /**
  * Reset the state of the application back to the start.
  * @param {void}
