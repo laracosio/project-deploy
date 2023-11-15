@@ -334,6 +334,24 @@ export const quizInfoRequestV2 = (token: string, quizid: number): Response => {
   );
 };
 
+export const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: string): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/thumbnail`,
+    {
+      body: JSON.stringify({
+        imgUrl: imgUrl,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
+// #endregion
+  
+// #region player handlers
 export const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
   return request(
     'POST',
@@ -362,24 +380,6 @@ export const guestPlayerStatusRequest = (playerid: number): Response => {
   );
 };
 
-export const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: string): Response => {
-  return request(
-    'PUT',
-    `${SERVER_URL}/v1/admin/quiz/${quizid}/thumbnail`,
-    {
-      body: JSON.stringify({
-        imgUrl: imgUrl,
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      },
-    }
-  );
-};
-// #endregion
-
-// #region player handlers
 export const sendMsgRequest = (playerId: number, message: InputMessage): Response => {
   return request(
     'POST',
@@ -392,9 +392,9 @@ export const sendMsgRequest = (playerId: number, message: InputMessage): Respons
         'Content-type': 'application/json'
       }
     }
-  );
-};
-
+    );
+  };
+    
 export const viewMsgsRequest = (playerId: number): Response => {
   return request(
     'GET',
@@ -483,7 +483,6 @@ export const sessionStatusRequest = (token: string, quizId: number, sessionId: n
     `${SERVER_URL}/v1/admin/quiz/${quizId}/session/${sessionId}`,
     {
       headers: {
-        'Content-type': 'application/json',
         token: token
       },
     }
