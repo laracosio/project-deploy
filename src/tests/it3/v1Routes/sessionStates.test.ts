@@ -4,7 +4,7 @@ import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 import { SessionStates } from '../../../enums/SessionStates';
 import { person2, person3 } from '../../../testingData';
 import { clearRequest } from '../../it2/serverTestHelperIt2';
-import { apiGet, apiPost, apiPut, sessionStatusRequest } from '../../serverTestHelperIt3';
+import { apiGet, apiPost, apiPut } from '../../serverTestHelperIt3';
 const postQuestionBody = {
   questionBody: {
     question: 'Test question',
