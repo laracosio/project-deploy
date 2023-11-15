@@ -1,5 +1,5 @@
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { findPlayerName, createQuestionResults, createUserRank, findSessionByPlayerId, generateRandomString, playerValidation, setAndSave } from './otherService';
+import { calcAvgAnsTime, calcPercentCorrect, createUserRank, findPlayerName, findSessionByPlayerId, generateRandomString, playerValidation, setAndSave } from './otherService';
 import { ApiError } from '../errors/ApiError';
 import { Player, PSInfo, InputMessage, Message, getData } from '../dataStore';
 import { SessionStates } from '../enums/SessionStates';
@@ -125,8 +125,6 @@ export function guestPlayerStatus(playerId: number): GuestPlayerStatusReturn {
  * @param questionPosition
 */
 export function playerQuestionResults(playerId: number, questionPosition: number): QuestionResultsReturn {
-  const dataStore = getData();
-
   if (!playerValidation) {
     throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
   }
@@ -146,14 +144,18 @@ export function playerQuestionResults(playerId: number, questionPosition: number
 
   const questionIndex = questionPosition - 1;
   const matchedQuestion = matchedSession.sessionQuiz.questions[questionIndex];
-  const totalSessionPlayers = dataStore.mapPS.filter(elem => elem.sessionId === matchedSession.sessionId).length;
 
-  return createQuestionResults(matchedQuestion, totalSessionPlayers);
+  const qResults: QuestionResultsReturn = {
+    questionId: matchedQuestion.questionId,
+    playersCorrectList: matchedQuestion.playerCorrectList,
+    averageAnswerTime: calcAvgAnsTime(matchedSession, questionIndex),
+    percentCorrect: calcPercentCorrect(matchedSession, questionIndex)
+  }
+
+  return qResults;
 }
 
 export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
-  const dataStore = getData();
-
   if (!playerValidation) {
     throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
   }
@@ -163,19 +165,24 @@ export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
     throw new ApiError('Session is not in FINAL_RESULTS state', HttpStatusCode.BAD_REQUEST);
   }
 
-  const matchedSessionPlayers = matchedSession.sessionPlayers;
-  const userRanking = createUserRank(matchedSessionPlayers);
+  const userRanking = createUserRank(matchedSession);
 
-  const totalSessionPlayers = dataStore.mapPS.filter(elem => elem.sessionId === matchedSession.sessionId).length;
-
-  const questionResults: QuestionResultsReturn[] = [];
-  matchedSession.sessionQuiz.questions.map(question => {
-    questionResults.push(createQuestionResults(question, totalSessionPlayers));
-  });
+  const allQuestionResults: QuestionResultsReturn[] = [];
+  let index = 0;
+  matchedSession.sessionQuiz.questions.forEach(question => {
+    const qResults: QuestionResultsReturn = {
+      questionId: question.questionId,
+      playersCorrectList: question.playerCorrectList,
+      averageAnswerTime: calcAvgAnsTime(matchedSession, index),
+      percentCorrect: calcPercentCorrect(matchedSession, index)
+    }
+    index++;
+    allQuestionResults.push(qResults);
+  })
 
   return {
     userRankedByScore: userRanking,
-    questionResults: questionResults
+    questionResults: allQuestionResults
   };
 }
 

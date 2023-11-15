@@ -1,4 +1,4 @@
-import { QuestionCreate, InputMessage } from './dataStore';
+import { QuestionCreate, InputMessage} from './dataStore';
 
 export const person1 = {
   email: 'h.simpson@springfield.com',
@@ -624,19 +624,15 @@ export const invalidCreateQuestionV2URLNotPNGJPG: QuestionCreate = {
 export const msg1: InputMessage = {
   messageBody: 'This is the first msg'
 };
-
 export const msg2: InputMessage = {
   messageBody: 'This is the second msg'
 };
-
 export const msg3: InputMessage = {
   messageBody: 'This is the third msg'
 };
-
 export const noMsg: InputMessage = {
   messageBody: ''
 };
-
 export const longMessage: InputMessage = {
   messageBody: 'Into each life some rain must fall. But too much is falling in mine. Into each heart some tears must fall. But someday the sun will shine.'
 };

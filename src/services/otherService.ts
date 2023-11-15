@@ -1,10 +1,11 @@
-import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session, PlayerAnswers, Player } from '../dataStore';
+import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session, Player } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import crypto from 'crypto';
 import { SessionStates } from '../enums/SessionStates';
-import { QuestionResultsReturn, UserRanking, questionResultsReturn } from './playerService';
+import { QuestionResultsReturn, UserRanking } from './playerService';
+import { sub } from 'date-fns';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -274,117 +275,6 @@ export function isImageUrlValid(thumbnailUrl: string): boolean {
   return imageRegex.test(thumbnailUrl);
 }
 
-/**
- * Determines whether the players submitted answers are the same as questionAnswer
- * @param correctAnswerIds 
- * @param playerAnswerIds 
- * @returns boolean of whether the answers were correct (match) or not
- * https://stackoverflow.com/questions/47589245/compare-unsorted-arrays-of-objects-in-javascript
- */
-export function checkAnswers(correctAnswerIds: number[], playerAnswerIds: number[]): boolean {
-  if (correctAnswerIds.length !== playerAnswerIds.length) {
-    return false;
-  }
-
-  return (correctAnswerIds.every(elem => playerAnswerIds.includes(elem)) && playerAnswerIds.every(elem => correctAnswerIds.includes(elem)));
-}
-
-/**
- * Summarises how players performed in the question
- * @param question 
- * @returns array of Objects containing player answer summary
- */
-export function playerSummaries(question: Question): SubmissionSummary[] {
-  const playerSummaries: SubmissionSummary[] = [];
-
-  // get list of answerIds which contain true answers
-  const correctAnswerIds = question.answers.filter(answer => answer.correct).map(answer => answer.answerId);
-  
-  for (const submission of question.submittedAnswers) {
-    playerSummaries.push({
-      playerId: submission.playerId,
-      playerName: submission.playerName,
-      answerCorrect: checkAnswers(correctAnswerIds, submission.answerIds),
-      answerTime: submission.timeSubmitted - question.questionStartTime,
-    });
-  }
-
-  return playerSummaries;
-}
-
-/**
- * calculates average answerTime based on question and number of total players
- * @param question
- * @param totalPlayers
- * @returns avgTime to nearest integer
- */
-export function calcAvgAnsTime(summary: SubmissionSummary[], totalPlayers: number): number {
-  const cumulativeTime = summary.reduce((accumulator, currentValue) => accumulator + currentValue.answerTime, 0);
-  return Math.round(cumulativeTime / totalPlayers);
-}
-
-/**
- * Calculates the percentage of correct answers received for question
- * @param question
- * @param totalPlayers
- * @returns % of correct answers to nearest integer
- */
-export function calcPercentCorrect(summary: SubmissionSummary[], totalPlayers: number): number {
-  const numCorrect = summary.filter(submission => submission.answerCorrect).length;
-  return Math.round((numCorrect / totalPlayers) * 100);
-}
-
-export function questionResults(question: Question, totalSessionPlayers: number): QuestionResultsReturn {
-  const questionSummary = playerSummaries(question);
-  const correctPlayerList = questionSummary.filter(result => result.answerCorrect).map(person => person.playerName);
-
-  const qResults: QuestionResultsReturn = {
-    questionId: question.questionId,
-    playersCorrectList: correctPlayerList,
-    averageAnswerTime: calcAvgAnsTime(questionSummary, totalSessionPlayers), 
-    percentCorrect: calcPercentCorrect(questionSummary, totalSessionPlayers)
-  }
-  
-  return qResults;
-}
-
-/**
- * Creates an array of objects with users ranked by score then by name alphabetically
- * @param sessionPlayers - player[] containing information about players in a session
- * @returns userRanking
- */
-export function createUserRank(sessionPlayers: Player[]): UserRanking[] {
-  const userRanking: UserRanking[] = [];
-  
-  determine a players score - time answered x points
-  need to sort summary by whether answer is correct and how many people are correct
-  
-  should score be determined when question closes?
-    score in playerAnswer is for individual question
-  
-  for each player, for each question - need to compute Score 
-  add scores together and then rank
-
-
-
-  sessionPlayers.map(player => {
-    const cumulativeScore = player.playerAnswers.reduce((sum: number, answer: PlayerAnswers) => sum + answer.score, 0);
-    userRanking.push({
-      name: player.playerName,
-      score: cumulativeScore
-    });
-  });
-
-  userRanking.sort((a, b) => (b.score - a.score || a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
-
-  return userRanking;
-}
-
-
-/**
- * generates random string containing 5 letters and 3 numbers
- * @returns random string
- */
 export function generateRandomString() {
   const letters = 'abcdefghijklmnopqrstuvwxyz';
   let randomLetters = '';
@@ -395,21 +285,21 @@ export function generateRandomString() {
     const randomIndex = Math.floor(Math.random() * letters.length);
     randomLetters += letters.charAt(randomIndex);
   }
-
+  
   // Generate 3 random numbers
   for (let i = 0; i < 3; i++) {
     const randomNumber = Math.floor(Math.random() * 10);
     randomNumbers += randomNumber.toString();
   }
-
+  
   const newName = randomLetters + randomNumbers;
   return newName;
 }
 
 /**
  * Determines whether the players submitted answers are the same as questionAnswer
- * @param correctAnswerIds
- * @param playerAnswerIds
+ * @param correctAnswerIds 
+ * @param playerAnswerIds 
  * @returns boolean of whether the answers were correct (match) or not
  * https://stackoverflow.com/questions/47589245/compare-unsorted-arrays-of-objects-in-javascript
  */
@@ -454,4 +344,65 @@ export function calcSubmittedAnsScore(session: Session, questionIndex: number) {
       submission.questionScore = 0;
     }
   });
+}
+
+/**
+ * calculates average answerTime based on question and number of total players
+ * @param session: session where question resides
+ * @param questionIndex: index of question (questionPosition - 1)
+ * @returns avgTime to nearest integer
+ */
+export function calcAvgAnsTime(session:Session, questionIndex: number): number {
+  const matchedQuestion = session.sessionQuiz.questions[questionIndex];
+  const totalSessionPlayers = session.sessionPlayers.length;
+  const submittedAnswers = matchedQuestion.submittedAnswers;
+
+  const cumulativeTime = submittedAnswers.reduce((accumulator, currentValue) => accumulator + currentValue.timeSubmitted, 0);
+  return Math.round(cumulativeTime / totalSessionPlayers);
+}
+
+/**
+ * Calculates the percentage of correct answers received for question
+ * @param session: session where question resides
+ * @param questionIndex: index of question (questionPosition - 1)
+ * @returns % of correct answers to nearest integer
+ */
+export function calcPercentCorrect(session:Session, questionIndex: number): number {
+  const matchedQuestion = session.sessionQuiz.questions[questionIndex];
+  const totalSessionPlayers = session.sessionPlayers.length;
+  const numCorrect = matchedQuestion.playerCorrectList.length;
+ 
+  return Math.round((numCorrect / totalSessionPlayers) * 100);
+}
+
+/**
+ * Creates an array of objects with users ranked by score then by name alphabetically
+ * @param session: session where playerId resides
+ * @returns userRanking
+ */
+export function createUserRank(session: Session): UserRanking[] {
+  
+  const questions = session.sessionQuiz.questions;
+  const playerList = session.sessionPlayers;
+  
+  const userRanking: UserRanking[] = [];
+  
+  for (const player of playerList) {
+    let cumulativeScore = 0;
+    for (const question of questions) {
+      for (const answer of question.submittedAnswers) {
+        if (answer.playerId === player.playerId) {
+          cumulativeScore += answer.questionScore;
+        }
+      }
+    }
+    userRanking.push({
+      name: findPlayerName(player.playerId, session.sessionId),
+      score: cumulativeScore
+    })
+  }
+
+  userRanking.sort((a, b) => (b.score - a.score || a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
+
+  return userRanking;
 }
