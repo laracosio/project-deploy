@@ -286,3 +286,53 @@ export function generateRandomString() {
   const newName = randomLetters + randomNumbers;
   return newName;
 }
+
+/**
+ * Determines whether the players submitted answers are the same as questionAnswer
+ * @param correctAnswerIds
+ * @param playerAnswerIds
+ * @returns boolean of whether the answers were correct (match) or not
+ * https://stackoverflow.com/questions/47589245/compare-unsorted-arrays-of-objects-in-javascript
+ */
+export function checkAnswers(correctAnswerIds: number[], playerAnswerIds: number[]): boolean {
+  if (correctAnswerIds.length !== playerAnswerIds.length) {
+    return false;
+  }
+
+  return (correctAnswerIds.every(elem => playerAnswerIds.includes(elem)) && playerAnswerIds.every(elem => correctAnswerIds.includes(elem)));
+}
+
+/**
+ * determines of player submittedAnswers in question, whether submission was correct and scoring
+ * intialises answerCorrect and questionScore of submittedAns interface
+ * @param session
+ * @param questionIndex
+ */
+export function calcSubmittedAnsScore(session: Session, questionIndex: number) {
+  const matchedQuestion = session.sessionQuiz.questions[questionIndex];
+  const submittedAnswers = matchedQuestion.submittedAnswers;
+  const correctAnswerIds = matchedQuestion.answers.filter(answer => answer.correct).map(answer => answer.answerId);
+  // for each player submission check whether correct answer has been submitted
+  submittedAnswers.forEach(submission => {
+    if (checkAnswers(correctAnswerIds, submission.answerIds)) {
+      submission.answerCorrect = true;
+    } else {
+      submission.answerCorrect = false;
+    }
+  });
+
+  // order submittedAnswers based on 1) answer correctness then 2) time taken to submit
+  // ternary operator - ? 1: 0; if truthful will be 1 otherwise 0; cannot sort booleans
+  submittedAnswers.sort((a, b) => ((b.answerCorrect ? 1 : 0) - (a.answerCorrect ? 1 : 0)) || (b.timeSubmitted - a.timeSubmitted));
+
+  // compute score
+  submittedAnswers.forEach(submission => {
+    if (submission.answerCorrect === true) {
+      const currentlyCorrect = matchedQuestion.playerCorrectList.length;
+      submission.questionScore = matchedQuestion.points * (1 / (currentlyCorrect + 1));
+      matchedQuestion.playerCorrectList.push(findPlayerName(submission.playerId, session.sessionId));
+    } else {
+      submission.questionScore = 0;
+    }
+  });
+}
