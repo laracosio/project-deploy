@@ -1,4 +1,4 @@
-import { clearRequest, authRegisterRequest, quizCreateRequest, quizNameUpdateRequest } from '../../it2/serverTestHelperIt2';
+import { clearRequest, authRegisterRequest, quizCreateRequest } from '../../it2/serverTestHelperIt2';
 import { person1, person2, validQuizDescription, validQuizName, validpngUrl1, validpngUrl2, validjpgUrl1, validjpgUrl2, invalidimgUrl, unfetchableimgUrl } from '../../../testingData';
 import { quizThumbnailUpdateRequest } from '../../serverTestHelperIt3';
 import { Response } from 'sync-request-curl';
@@ -8,19 +8,6 @@ beforeEach(() => {
 });
 
 // Update quiz thumbnail tests
-describe('adminQuizNameUpdate - Success Cases', () => {
-  let session1: Response, quiz1: Response;
-  test('valid authUserId, quizId and name', () => {
-    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-    const session1Data = JSON.parse(session1.body.toString());
-    quiz1 = quizCreateRequest(session1Data.token, validQuizName, validQuizDescription);
-    const quiz1Data = JSON.parse(quiz1.body.toString());
-    const response = quizNameUpdateRequest(session1Data.token, quiz1Data.quizId, validQuizDescription);
-    const responseData = JSON.parse(response.body.toString());
-    expect(responseData).toStrictEqual({});
-  });
-});
-
 describe('quizThumbnailUpdate - Success cases', () => {
   let session1: Response, quiz1: Response;
   test('Update a quiz from no thumbnail to png thumbnail', () => {

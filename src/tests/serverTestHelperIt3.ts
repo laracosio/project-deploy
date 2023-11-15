@@ -449,3 +449,16 @@ export const sessionStatusRequest = (token: string, quizId: number, sessionId: n
   );
 };
 // #endregion
+
+export const viewSessionsRequest = (token: string, quizid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/sessions`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
