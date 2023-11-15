@@ -149,16 +149,16 @@ export function playerQuestionResults(playerId: number, questionPosition: number
   if (!playerValidation) {
     throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
   }
-
+  
   const matchedSession = findSessionByPlayerId(playerId);
   if (questionPosition < 1 || questionPosition > matchedSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
   }
-
+  
   if (matchedSession.sessionState !== SessionStates.ANSWER_SHOW) {
     throw new ApiError('Session is not in ANSWER_SHOW state', HttpStatusCode.BAD_REQUEST);
   }
-
+  
   if (matchedSession.atQuestion !== questionPosition) {
     throw new ApiError('Session is not yet up to this question', HttpStatusCode.BAD_REQUEST);
   }
@@ -377,7 +377,7 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
   }
   // get timeSubmitted
   const dateNow = getUnixTime(new Date());
-  const answerTime = (inSession.sessionQuiz.questions[questionPositionIndex].questionStartTime - dateNow);
+  const answerTime = (dateNow - inSession.sessionQuiz.questions[questionPositionIndex].questionStartTime);
 
   const submittedAnswers = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers;
   const found = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers.find(answer => answer.playerId === playerId);
