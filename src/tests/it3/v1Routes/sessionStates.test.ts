@@ -4,6 +4,7 @@ import { SessionStates } from '../../../enums/SessionStates';
 import { person2, person3 } from '../../../testingData';
 import { clearRequest } from '../../it2/serverTestHelperIt2';
 import { apiGet, apiPost, apiPut } from '../../serverTestHelperIt3';
+
 const postQuestionBody = {
   questionBody: {
     question: 'Test question',
@@ -371,12 +372,7 @@ describe('PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
     );
     expect(putSession.response.statusCode).toStrictEqual(400);
   });
-import { SessionStatus } from '../../../dataStore';
-import { AdminActions } from '../../../enums/AdminActions';
-import { SessionStates } from '../../../enums/SessionStates';
-import { person2, person3, postQuestionBody } from '../../../testingData';
-import { clearRequest } from '../../it2/serverTestHelperIt2';
-import { apiGet, apiPost, apiPut } from '../../serverTestHelperIt3';
+});
 
 describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
   beforeEach(() => {

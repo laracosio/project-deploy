@@ -343,5 +343,3 @@ function playerScore(playerAnswers: PlayerAnswers[]): number {
   });
   return playerScore;
 }
-
-export { startNewSession };
