@@ -185,14 +185,14 @@ describe('viewSessions - Success Cases', () => {
 });
 
 describe('viewSessions - Error Cases', () => {
-  let user1:Response, user2: Response, session1: Response, quiz1: Response;
+  let user1:Response, user2: Response, quiz1: Response;
   test('invalid token', () => {
     user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const user1Data = JSON.parse(user1.body.toString());
     quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
     createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
-    session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
     const response = viewSessionsRequest(user1Data.token + 1, quiz1Data.quizId);
     expect(response.statusCode).toStrictEqual(401);
   });
@@ -203,7 +203,7 @@ describe('viewSessions - Error Cases', () => {
     quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
     createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
-    session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
     user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const user2Data = JSON.parse(user2.body.toString());
     const response = viewSessionsRequest(user2Data.token, quiz1Data.quizId);
@@ -216,10 +216,10 @@ describe('viewSessions - Error Cases', () => {
     quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
     const quiz1Data = JSON.parse(quiz1.body.toString());
     createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
-    session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
     user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const user2Data = JSON.parse(user2.body.toString());
     const response = viewSessionsRequest(user2Data.token, quiz1Data.quizId);
-      expect(response.statusCode).toStrictEqual(403);
+    expect(response.statusCode).toStrictEqual(403);
   });
 });
