@@ -42,7 +42,6 @@ playerRouter.get('/:playerid/question/:questionposition', (req: Request, res: Re
   res.json(currentQuestionInfo(playerId, questionposition));
 });
 
-
 playerRouter.get('/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   const questionPosition = parseInt(req.params.questionposition);

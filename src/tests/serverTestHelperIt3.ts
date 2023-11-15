@@ -350,7 +350,7 @@ export const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl
   );
 };
 // #endregion
-  
+
 // #region player handlers
 export const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
   return request(
@@ -392,9 +392,9 @@ export const sendMsgRequest = (playerId: number, message: InputMessage): Respons
         'Content-type': 'application/json'
       }
     }
-    );
-  };
-    
+  );
+};
+
 export const viewMsgsRequest = (playerId: number): Response => {
   return request(
     'GET',
