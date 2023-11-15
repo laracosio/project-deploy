@@ -1,6 +1,6 @@
 import { clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../../it2/serverTestHelperIt2';
 import { person1, person2, validQuizDescription, validQuizName, validCreateQuestion, validAutoStartNum, invalidAutoStartNum } from '../../../testingData';
-import { sessionCreateRequest } from '../../serverTestHelperIt3';
+import { sessionCreateRequest, viewSessionsRequest } from '../../serverTestHelperIt3';
 import { Response } from 'sync-request-curl';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 

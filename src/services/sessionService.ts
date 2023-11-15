@@ -192,7 +192,7 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
  * Given a particular quiz, view both active and inactive sessions
  * @param {string} token - unique token
  * @param {number} quizId - unique identifier for quiz
- * @returns { quizSessionsList } - object containing sessionId
+ * @returns { activeSessions: [{number}], inactiveSessions: [{number}] } - object containing 2 arrays of sessionIds
  * @returns {{error: string}}
  */
  export function viewSessions(token: string, quizId: number): quizSessionsList {
@@ -208,33 +208,9 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
   }
 
   const matchedQuiz = findQuizById(quizId)
-  
-  // // Creates an array of active sessionIds
-  // const quizActiveSessionList: Array<newSessionReturn> = [];
-  // dataStore.sessions.forEach((sess) => {
-  //   if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END ) {
-  //     const obj = {sessionId: sess.sessionId};
-  //     quizActiveSessionList.push(obj);
-  //   }
-  // });
 
-  // // Creates an array of inactive sessionIds
-  // const quizInactiveSessionList: Array<newSessionReturn> = [];
-  // dataStore.sessions.forEach((sess) => {
-  //   if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END ) {
-  //     const obj = {sessionId: sess.sessionId};
-  //     quizActiveSessionList.push(obj);
-  //   }
-  // });
-  
-  // const quizSessionsList1: Array<quizSessionsList> = [];
-  // const obj = {
-  //   activeSessions: quizActiveSessionList, 
-  //   inactiveSessions: quizInactiveSessionList 
-  // }
-  // quizSessionsList1.push(obj);  
-
-  let quizActiveSessionList: number[];
+  // Create an array for active sessions for particular quiz
+  let quizActiveSessionList: number[] = [];
   dataStore.sessions.forEach((sess) => {
     if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END ) {
       const obj = sess.sessionId;
@@ -242,7 +218,8 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
     }
   });
 
-  let quizInactiveSessionList: number[];
+  // Create an array for inactive sessions for particular quiz
+  let quizInactiveSessionList: number[] = [];
   dataStore.sessions.forEach((sess) => {
     if (sess.sessionQuiz === matchedQuiz && sess.sessionState === SessionStates.END ) {
       const obj = sess.sessionId;
@@ -250,10 +227,9 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
     }
   });
 
-  let quizSessionsList1: quizSessionsList = {activeSessions: quizActiveSessionList, inactiveSessions: quizInactiveSessionList};
+  let quizSessionsList: quizSessionsList = {activeSessions: quizActiveSessionList, inactiveSessions: quizInactiveSessionList};
 
+  console.log(quizSessionsList);
   
-  return {
-    quizSessionsList1
-  };
+  return quizSessionsList
 }
