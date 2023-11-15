@@ -51,7 +51,7 @@ export interface QuestionResultsReturn {
 }
 
 interface PlyrFinRsltReturn {
-  userRankedByScore: UserRanking[],
+  usersRankedByScore: UserRanking[],
   questionResults: QuestionResultsReturn[],
 }
 
@@ -141,73 +141,6 @@ export function guestPlayerStatus(playerId: number): GuestPlayerStatusReturn {
 }
 
 /**
- * Get the results for a particular question of the session a player is playing in
- * @param playerId
- * @param questionPosition
-*/
-export function playerQuestionResults(playerId: number, questionPosition: number): QuestionResultsReturn {
-  if (!playerValidation) {
-    throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
-  }
-  
-  const matchedSession = findSessionByPlayerId(playerId);
-  if (questionPosition < 1 || questionPosition > matchedSession.sessionQuiz.numQuestions) {
-    throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
-  }
-  
-  if (matchedSession.sessionState !== SessionStates.ANSWER_SHOW) {
-    throw new ApiError('Session is not in ANSWER_SHOW state', HttpStatusCode.BAD_REQUEST);
-  }
-  
-  if (matchedSession.atQuestion !== questionPosition) {
-    throw new ApiError('Session is not yet up to this question', HttpStatusCode.BAD_REQUEST);
-  }
-
-  const questionIndex = questionPosition - 1;
-  const matchedQuestion = matchedSession.sessionQuiz.questions[questionIndex];
-
-  const qResults: QuestionResultsReturn = {
-    questionId: matchedQuestion.questionId,
-    playersCorrectList: matchedQuestion.playerCorrectList,
-    averageAnswerTime: calcAvgAnsTime(matchedSession, questionIndex),
-    percentCorrect: calcPercentCorrect(matchedSession, questionIndex)
-  };
-
-  return qResults;
-}
-
-export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
-  if (!playerValidation) {
-    throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
-  }
-
-  const matchedSession = findSessionByPlayerId(playerId);
-  if (matchedSession.sessionState !== SessionStates.FINAL_RESULTS) {
-    throw new ApiError('Session is not in FINAL_RESULTS state', HttpStatusCode.BAD_REQUEST);
-  }
-
-  const userRanking = createUserRank(matchedSession);
-
-  const allQuestionResults: QuestionResultsReturn[] = [];
-  let index = 0;
-  matchedSession.sessionQuiz.questions.forEach(question => {
-    const qResults: QuestionResultsReturn = {
-      questionId: question.questionId,
-      playersCorrectList: question.playerCorrectList,
-      averageAnswerTime: calcAvgAnsTime(matchedSession, index),
-      percentCorrect: calcPercentCorrect(matchedSession, index)
-    };
-    index++;
-    allQuestionResults.push(qResults);
-  });
-
-  return {
-    userRankedByScore: userRanking,
-    questionResults: allQuestionResults
-  };
-}
-
-/**
  * Send a new chat message to everyone in the session
  * @param playerId - Id of player sending message
  * @param message - message being sent
@@ -216,7 +149,7 @@ export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
 */
 export function sendMessage(playerId: number, message: InputMessage): object {
   const dataStore = getData();
-
+  
   // check message body
   if (!message.messageBody) {
     throw new ApiError('The message is empty.', HttpStatusCode.BAD_REQUEST);
@@ -224,23 +157,23 @@ export function sendMessage(playerId: number, message: InputMessage): object {
   if (message.messageBody.length > MAX_LENGTH) {
     throw new ApiError('The message too long.', HttpStatusCode.BAD_REQUEST);
   }
-
+  
   // check whether player is valid
   if (!playerValidation(playerId)) {
     throw new ApiError('player ID does not exist', HttpStatusCode.BAD_REQUEST);
   }
-
+  
   // locate session to find playerName
   const matchedSession = findSessionByPlayerId(playerId);
   const playerName = findPlayerName(playerId, matchedSession.sessionId);
-
+  
   const newMessage: Message = {
     messageBody: message.messageBody,
     playerId: playerId,
     playerName: playerName,
     timeSent: getUnixTime(new Date())
   };
-
+  
   matchedSession.messages.push(newMessage);
   setAndSave(dataStore);
 
@@ -257,10 +190,10 @@ export function viewMessages(playerId: number): ViewMsgReturn {
   if (!playerValidation(playerId)) {
     throw new ApiError('playerID is invalid', HttpStatusCode.BAD_REQUEST);
   }
-
+  
   // locate session to find playerName
   const matchedSession = findSessionByPlayerId(playerId);
-
+  
   return { messages: matchedSession.messages };
 }
 
@@ -269,22 +202,22 @@ export function viewMessages(playerId: number): ViewMsgReturn {
  * @param playerId
  * @param questionposition
  * @returns QuestionInfoReturn
- */
+*/
 export function currentQuestionInfo(playerId: number, questionposition: number): QuestionInfoReturn {
   const dataStore = getData();
-
+  
   // if player ID does not exist
   const isvalidPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
   if (!isvalidPlayer) {
     throw new ApiError('Player ID does not exist', HttpStatusCode.BAD_REQUEST);
   }
-
+  
   const playerInfo = dataStore.mapPS.find(ps => ps.playerId === playerId);
   const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === playerInfo.sessionId);
-
+  
   const inSession = dataStore.sessions[sessionIdIndex];
   const questionPositionIndex = questionposition - 1;
-
+  
   // position is not valid
   if (questionposition > inSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
@@ -297,9 +230,9 @@ export function currentQuestionInfo(playerId: number, questionposition: number):
   if (inSession.sessionState === SessionStates.END || inSession.sessionState === SessionStates.LOBBY) {
     throw new ApiError('Session is in LOBBY or END state', HttpStatusCode.BAD_REQUEST);
   }
-
+  
   const answerInfoArray = [];
-
+  
   for (const element of inSession.sessionQuiz.questions[questionPositionIndex].answers) {
     const answerBody = {
       answerId: element.answerId,
@@ -329,7 +262,7 @@ export function currentQuestionInfo(playerId: number, questionposition: number):
 
 export function playerSubmitAnswers(playerId: number, questionposition: number, answerIds: number[]) {
   const dataStore = getData();
-
+  
   // If player ID does not exist
   const isvalidPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
   if (!isvalidPlayer) {
@@ -339,7 +272,7 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
   const questionPositionIndex = questionposition - 1;
   const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === playerInfo.sessionId);
   const inSession = dataStore.sessions[sessionIdIndex];
-
+  
   // position is not valid
   if (questionposition > inSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
@@ -378,22 +311,89 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
   // get timeSubmitted
   const dateNow = getUnixTime(new Date());
   const answerTime = (dateNow - inSession.sessionQuiz.questions[questionPositionIndex].questionStartTime);
-
+  
   const submittedAnswers = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers;
   const found = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers.find(answer => answer.playerId === playerId);
-
+  
   const answer: SubmittedAnswer = {
     playerId: playerId,
     answerIds: answerIds,
     timeSubmitted: answerTime,
   };
-
+  
   if (found) {
     const answeredIndex = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers.findIndex(answer => answer.playerId === playerId);
     submittedAnswers[answeredIndex] = answer;
   } else {
     submittedAnswers.push(answer);
   }
-
+  
   return {};
+}
+
+/**
+ * Get the results for a particular question of the session a player is playing in
+ * @param playerId
+ * @param questionPosition
+*/
+export function playerQuestionResults(playerId: number, questionPosition: number): QuestionResultsReturn {
+  if (!playerValidation(playerId)) {
+    throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
+  }
+  
+  const matchedSession = findSessionByPlayerId(playerId);
+  if (questionPosition < 1 || questionPosition > matchedSession.sessionQuiz.numQuestions) {
+    throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
+  }
+  
+  if (matchedSession.sessionState !== SessionStates.ANSWER_SHOW) {
+    throw new ApiError('Session is not in ANSWER_SHOW state', HttpStatusCode.BAD_REQUEST);
+  }
+  
+  if (matchedSession.atQuestion !== questionPosition) {
+    throw new ApiError('Session is not yet up to this question', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const questionIndex = questionPosition - 1;
+  const matchedQuestion = matchedSession.sessionQuiz.questions[questionIndex];
+
+  const qResults: QuestionResultsReturn = {
+    questionId: matchedQuestion.questionId,
+    playersCorrectList: matchedQuestion.playerCorrectList,
+    averageAnswerTime: calcAvgAnsTime(matchedSession, questionIndex),
+    percentCorrect: calcPercentCorrect(matchedSession, questionIndex)
+  };
+
+  return qResults;
+}
+
+export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
+  if (!playerValidation(playerId)) {
+    throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const matchedSession = findSessionByPlayerId(playerId);
+  if (matchedSession.sessionState !== SessionStates.FINAL_RESULTS) {
+    throw new ApiError('Session is not in FINAL_RESULTS state', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const userRanking = createUserRank(matchedSession);
+
+  const allQuestionResults: QuestionResultsReturn[] = [];
+  let index = 0;
+  matchedSession.sessionQuiz.questions.forEach(question => {
+    const qResults: QuestionResultsReturn = {
+      questionId: question.questionId,
+      playersCorrectList: question.playerCorrectList,
+      averageAnswerTime: calcAvgAnsTime(matchedSession, index),
+      percentCorrect: calcPercentCorrect(matchedSession, index)
+    };
+    index++;
+    allQuestionResults.push(qResults);
+  });
+
+  return {
+    usersRankedByScore: userRanking,
+    questionResults: allQuestionResults
+  };
 }

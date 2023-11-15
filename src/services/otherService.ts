@@ -316,6 +316,7 @@ export function checkAnswers(correctAnswerIds: number[], playerAnswerIds: number
  * intialises answerCorrect and questionScore of submittedAns interface
  * @param session
  * @param questionIndex
+ * // 1dp: https://stackoverflow.com/questions/7342957/how-do-you-round-to-one-decimal-place-in-javascript
  */
 export function calcSubmittedAnsScore(session: Session, questionIndex: number) {
   const matchedQuestion = session.sessionQuiz.questions[questionIndex];
@@ -333,17 +334,18 @@ export function calcSubmittedAnsScore(session: Session, questionIndex: number) {
   // order submittedAnswers based on 1) answer correctness then 2) time taken to submit
   // ternary operator - ? 1: 0; if truthful will be 1 otherwise 0; cannot sort booleans
   submittedAnswers.sort((a, b) => ((b.answerCorrect ? 1 : 0) - (a.answerCorrect ? 1 : 0)) || (b.timeSubmitted - a.timeSubmitted));
-
   // compute score
   submittedAnswers.forEach(submission => {
     if (submission.answerCorrect === true) {
       const currentlyCorrect = matchedQuestion.playerCorrectList.length;
-      submission.questionScore = matchedQuestion.points * (1 / (currentlyCorrect + 1));
+      submission.questionScore = Math.round((matchedQuestion.points * (1 / (currentlyCorrect + 1))) * 10 / 10);
       matchedQuestion.playerCorrectList.push(findPlayerName(submission.playerId, session.sessionId));
     } else {
       submission.questionScore = 0;
     }
   });
+  console.log(submittedAnswers);
+
 }
 
 /**
