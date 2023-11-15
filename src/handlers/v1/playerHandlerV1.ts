@@ -15,12 +15,10 @@ playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
   res.json(viewMessages(playerId));
 });
 
-
 playerRouter.get('/:playerid/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   res.json(playerFinalResults(playerId));
 });
-
 
 playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
