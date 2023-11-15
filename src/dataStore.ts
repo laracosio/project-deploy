@@ -51,7 +51,6 @@ export interface Answer {
 
 export interface SubmittedAnswer {
   playerId: number;
-  playerName: string;
   answerIds: number[];
   timeSubmitted: number;
   answerCorrect?: boolean;
