@@ -27,7 +27,7 @@ sessionRouterV1.put('/:quizId/session/:sessionId', (req: Request, res: Response)
 });
 
 sessionRouterV1.get('/:quizId/sessions', (req: Request, res: Response) => {
-  const token: string = req.query.token as string;
-  const quizId: number = parseInt(req.params.quizid);
+  const token: string = req.header('token');
+  const quizId: number = parseInt(req.params.quizId);
   res.json(viewSessions(token, quizId));
 });
