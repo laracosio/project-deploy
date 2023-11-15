@@ -113,6 +113,7 @@ export function quizCreateQuestion(quizId: number, token: string, questionBody: 
     answers: arrayOfAnswers,
     thumbnailUrl: questionBody.thumbnailUrl,
     submittedAnswers: [],
+    playerCorrectList: [],
     questionStartTime: 0
   };
 
@@ -320,6 +321,7 @@ export function adminDuplicateQuestion(token: string, quizId: number, questionId
     answers: questionToCopy.answers,
     thumbnailUrl: questionToCopy.thumbnailUrl,
     submittedAnswers: questionToCopy.submittedAnswers,
+    playerCorrectList: questionToCopy.playerCorrectList,
     questionStartTime: questionToCopy.questionStartTime
   };
 
