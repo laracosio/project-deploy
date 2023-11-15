@@ -401,6 +401,33 @@ export const viewMsgsRequest = (playerId: number): Response => {
     `${SERVER_URL}/v1/player/${playerId}/chat`
   );
 };
+
+export const currentQuestionInfoRequest = (playerid: number, questionposition: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}`,
+    {
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
+export const playerSubmitAnswerRequest = (playerid: number, questionposition: number, answerIds: number[]): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}/answer`,
+    {
+      body: JSON.stringify({
+        answerIds: answerIds,
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
 // #endregion
 
 // #region session handlers

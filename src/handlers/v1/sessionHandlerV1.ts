@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { startNewSession, getSessionStatus, updateSessionStatus, viewSessions } from '../../services/sessionService';
-
+import { startNewSession, getSessionStatus, viewSessions, updateSessionStatus } from '../../services/sessionService';
 export const sessionRouterV1 = Router();
 
 sessionRouterV1.post('/:quizId/session/start', (req: Request, res: Response) => {
