@@ -113,7 +113,7 @@ describe('startNewSession - Error cases', () => {
 
 // viewSessions tests
 describe('viewSessions - Success Cases', () => {
-  let user1: Response, session1: Response, session2: Response, session3: Response, session4: Response, quiz1: Response, changeState1: Response, changeState2: Response, changeState3: Response, changeState4: Response;
+  let user1: Response, session1: Response, session2: Response, session3: Response, session4: Response, quiz1: Response;
   test('1 active session listed', () => {
     user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const user1Data = JSON.parse(user1.body.toString());
@@ -135,97 +135,92 @@ describe('viewSessions - Success Cases', () => {
   });
 
   test('1 inactive session listed', () => {
-      user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-      const user1Data = JSON.parse(user1.body.toString());
-      quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
-      const quiz1Data = JSON.parse(quiz1.body.toString());
-      createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
-      session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-      const session1Data = JSON.parse(session1.body.toString());
-      changeState1 = updateSessionRequest(user1Data.token, quiz1Data.quizId, session1Data.sessionId, 'END');
-      const response = viewSessionsRequest(user1Data.token, quiz1Data.quizId);
-      const responseData = JSON.parse(response.body.toString());
-      expect(responseData).toStrictEqual({
-        activeSessions: [
-
-        ],
-        inactiveSessions: [
-            session1Data.sessionId
-        ]
-      });
+    user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const user1Data = JSON.parse(user1.body.toString());
+    quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
+    session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const session1Data = JSON.parse(session1.body.toString());
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, session1Data.sessionId, 'END');
+    const response = viewSessionsRequest(user1Data.token, quiz1Data.quizId);
+    const responseData = JSON.parse(response.body.toString());
+    expect(responseData).toStrictEqual({
+      activeSessions: [],
+      inactiveSessions: [
+        session1Data.sessionId
+      ]
     });
-    
-    test('Multiple active and inactive sessions listed', () => {
-      user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-      const user1Data = JSON.parse(user1.body.toString());
-      quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
-      const quiz1Data = JSON.parse(quiz1.body.toString());
-      createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
-      session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-      const session1Data = JSON.parse(session1.body.toString());
-      changeState1 = updateSessionRequest(user1Data.token, quiz1Data.quizId, session1Data.sessionId, 'END');
-      session2 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-      const session2Data = JSON.parse(session2.body.toString());
-      changeState2 = updateSessionRequest(user1Data.token, quiz1Data.quizId, session2Data.sessionId, 'END');
-      
-      session3 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-      const session3Data = JSON.parse(session3.body.toString());
+  });
 
-      session4 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-      const session4Data = JSON.parse(session4.body.toString());
-
-      const response = viewSessionsRequest(user1Data.token, quiz1Data.quizId);
-      const responseData = JSON.parse(response.body.toString());
-      expect(responseData).toStrictEqual({
-        activeSessions: [
-          session3Data.sessionId,
-          session4Data.sessionId,
-        ],
-        inactiveSessions: [
-          session1Data.sessionId,
-          session2Data.sessionId,
-        ],
-      });
+  test('Multiple active and inactive sessions listed', () => {
+    user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const user1Data = JSON.parse(user1.body.toString());
+    quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
+    session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const session1Data = JSON.parse(session1.body.toString());
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, session1Data.sessionId, 'END');
+    session2 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const session2Data = JSON.parse(session2.body.toString());
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, session2Data.sessionId, 'END');
+    session3 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const session3Data = JSON.parse(session3.body.toString());
+    session4 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const session4Data = JSON.parse(session4.body.toString());
+    const response = viewSessionsRequest(user1Data.token, quiz1Data.quizId);
+    const responseData = JSON.parse(response.body.toString());
+    expect(responseData).toStrictEqual({
+      activeSessions: [
+        session3Data.sessionId,
+        session4Data.sessionId,
+      ],
+      inactiveSessions: [
+        session1Data.sessionId,
+        session2Data.sessionId,
+      ],
     });
+  });
 });
 
 describe('viewSessions - Error Cases', () => {
   let user1:Response, user2: Response, session1: Response, quiz1: Response;
   test('invalid token', () => {
-      user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-      const user1Data = JSON.parse(user1.body.toString());
-      quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
-      const quiz1Data = JSON.parse(quiz1.body.toString());
-      createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
-      session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-      const session1Data = JSON.parse(session1.body.toString());
-      const response = viewSessionsRequest(user1Data.token + 1, quiz1Data.quizId);
-      expect(response.statusCode).toStrictEqual(401);
-    });
+    user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const user1Data = JSON.parse(user1.body.toString());
+    quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
+    session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const session1Data = JSON.parse(session1.body.toString());
+    const response = viewSessionsRequest(user1Data.token + 1, quiz1Data.quizId);
+    expect(response.statusCode).toStrictEqual(401);
+  });
 
   test('QuizId not owned by this user - view 1 active session', () => {
-      user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-      const user1Data = JSON.parse(user1.body.toString());
-      quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
-      const quiz1Data = JSON.parse(quiz1.body.toString());
-      createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
-      session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-      user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-      const user2Data = JSON.parse(user2.body.toString());
-      const response = viewSessionsRequest(user2Data.token, quiz1Data.quizId);
-      expect(response.statusCode).toStrictEqual(403);
-    });
+    user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const user1Data = JSON.parse(user1.body.toString());
+    quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
+    session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const user2Data = JSON.parse(user2.body.toString());
+    const response = viewSessionsRequest(user2Data.token, quiz1Data.quizId);
+    expect(response.statusCode).toStrictEqual(403);
+  });
 
-    test('QuizId not owned by this user - view 1 inactive session', () => {
-      user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-      const user1Data = JSON.parse(user1.body.toString());
-      quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
-      const quiz1Data = JSON.parse(quiz1.body.toString());
-      createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
-      session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-      user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
-      const user2Data = JSON.parse(user2.body.toString());
-      const response = viewSessionsRequest(user2Data.token, quiz1Data.quizId);
-      expect(response.statusCode).toStrictEqual(403);
-    });
+  test('QuizId not owned by this user - view 1 inactive session', () => {
+    user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const user1Data = JSON.parse(user1.body.toString());
+    quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
+    session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const user2Data = JSON.parse(user2.body.toString());
+    const response = viewSessionsRequest(user2Data.token, quiz1Data.quizId);
+    expect(response.statusCode).toStrictEqual(403);
+  });
 });
