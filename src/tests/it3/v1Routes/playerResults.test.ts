@@ -1,6 +1,6 @@
 import { Response } from 'sync-request-curl';
-import { person1, validAutoStartNum, validQuestionInput1, validQuestionInput1V2, validQuestionInput2, validQuestionInput2V2, validQuestionInput3, validQuestionInput3V2, validQuizDescription, validQuizName } from '../../../testingData';
-import { createQuizQuestionRequestV2, joinGuestPlayerRequest, playerFinalResultRqst, playerQuestResultRqst, playerSubmitAnswerRequest, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest, sessionStatusRequest, updateSessionRequest } from '../../serverTestHelperIt3';
+import { person1, validAutoStartNum, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../../../testingData';
+import { createQuizQuestionRequestV2, joinGuestPlayerRequest, playerFinalResultRqst, playerQuestResultRqst, playerSubmitAnswerRequest, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest, updateSessionRequest } from '../../serverTestHelperIt3';
 import { AdminActions } from '../../../enums/AdminActions';
 import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
 import { Question } from '../../../dataStore';
@@ -33,7 +33,7 @@ beforeEach(async() => {
   // start game and by-pass countdown
   updateSessionRequest(sess1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.NEXT_QUESTION);
   updateSessionRequest(sess1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
-  
+
   // quizInfo to get answerIds
   quizInfo = quizInfoRequestV2(sess1Data.token, quiz1Data.quizId);
   const quizInfoData = JSON.parse(quizInfo.body.toString());
@@ -42,11 +42,11 @@ beforeEach(async() => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   let numArray = [question1.answers[0].answerId];
   playerSubmitAnswerRequest(player1Data.playerId, 1, numArray);
-  
+
   await new Promise((resolve) => setTimeout(resolve, 1000));
   numArray = [question1.answers[1].answerId];
   playerSubmitAnswerRequest(player2Data.playerId, 1, numArray);
-  
+
   await new Promise((resolve) => setTimeout(resolve, 1000));
   numArray = [question1.answers[0].answerId];
   playerSubmitAnswerRequest(player3Data.playerId, 1, numArray);
@@ -89,22 +89,22 @@ describe('GET /v1/player/:playerid/question/:questionposition/results - success'
     updateSessionRequest(sess1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
     question2 = quizInfoData.questions[1];
-    
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
     let numArray: number[] = [question2.answers[2].answerId];
-    playerSubmitAnswerRequest(player3Data.playerId, 2 , numArray);
-    
+    playerSubmitAnswerRequest(player3Data.playerId, 2, numArray);
+
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    numArray = [question2.answers[0].answerId]
+    numArray = [question2.answers[0].answerId];
     playerSubmitAnswerRequest(player1Data.playerId, 2, numArray);
-    
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    numArray = [question2.answers[3].answerId]
+    numArray = [question2.answers[3].answerId];
     playerSubmitAnswerRequest(player2Data.playerId, 2, numArray);
-    
+
     await new Promise((resolve) => setTimeout(resolve, 2000));
     updateSessionRequest(sess1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_ANSWER);
-    
+
     const res = playerQuestResultRqst(player1Data.playerId, 2);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({
@@ -113,7 +113,7 @@ describe('GET /v1/player/:playerid/question/:questionposition/results - success'
       averageAnswerTime: expect.any(Number),
       percentCorrect: Math.round((1 / 3) * 100)
     });
-    expect(data.averageAnswerTime).toBeGreaterThanOrEqual(Math.round((1 + 3 + 4) / 3))
+    expect(data.averageAnswerTime).toBeGreaterThanOrEqual(Math.round((1 + 3 + 4) / 3));
     expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
   });
 });
@@ -169,7 +169,7 @@ describe('GET /v1/player/:playerid/question/:questionposition/results - error', 
 });
 
 // Get the final results for a whole session a player is playing in
-describe.only('GET /v1/player/:playerid/results - success', () => {
+describe('GET /v1/player/:playerid/results - success', () => {
   beforeEach(async() => {
     const sess1Data = JSON.parse(session1.body.toString());
     const game1Data = JSON.parse(game1.body.toString());
@@ -182,23 +182,25 @@ describe.only('GET /v1/player/:playerid/results - success', () => {
     updateSessionRequest(sess1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
     question2 = quizInfoData.questions[1];
-    
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
     let numArray: number[] = [question2.answers[2].answerId];
-    playerSubmitAnswerRequest(player3Data.playerId, 2 , numArray);
-    
+    playerSubmitAnswerRequest(player3Data.playerId, 2, numArray);
+
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    numArray = [question2.answers[0].answerId]
+    numArray = [question2.answers[0].answerId];
     playerSubmitAnswerRequest(player1Data.playerId, 2, numArray);
-    
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    numArray = [question2.answers[3].answerId]
+    numArray = [question2.answers[3].answerId];
     playerSubmitAnswerRequest(player2Data.playerId, 2, numArray);
-    
+
     await new Promise((resolve) => setTimeout(resolve, 2000));
     updateSessionRequest(sess1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
   });
   test('ended question', () => {
+    const quizInfoData = JSON.parse(quizInfo.body.toString());
+    const question3 = quizInfoData.questions[2];
     const player1Data = JSON.parse(player1.body.toString());
     const res = playerFinalResultRqst(player1Data.playerId);
     const data = JSON.parse(res.body.toString());
@@ -229,6 +231,12 @@ describe.only('GET /v1/player/:playerid/results - success', () => {
           playersCorrectList: ['Pumpkin'],
           averageAnswerTime: expect.any(Number),
           percentCorrect: Math.round((1 / 3) * 100)
+        },
+        {
+          questionId: question3.questionId,
+          playersCorrectList: [],
+          averageAnswerTime: 0,
+          percentCorrect: 0
         }
       ]
     });
@@ -253,19 +261,19 @@ describe('GET /v1/player/:playerid/results - error', () => {
     updateSessionRequest(sess1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
     question2 = quizInfoData.questions[1];
-    
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
     let numArray: number[] = [question2.answers[2].answerId];
-    playerSubmitAnswerRequest(player3Data.playerId, 2 , numArray);
-    
+    playerSubmitAnswerRequest(player3Data.playerId, 2, numArray);
+
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    numArray = [question2.answers[0].answerId]
+    numArray = [question2.answers[0].answerId];
     playerSubmitAnswerRequest(player1Data.playerId, 2, numArray);
-    
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    numArray = [question2.answers[3].answerId]
+    numArray = [question2.answers[3].answerId];
     playerSubmitAnswerRequest(player2Data.playerId, 2, numArray);
-    
+
     await new Promise((resolve) => setTimeout(resolve, 2000));
   });
   test('invalid playerId', () => {

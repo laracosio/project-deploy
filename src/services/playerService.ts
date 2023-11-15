@@ -1,7 +1,7 @@
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { calcAvgAnsTime, calcPercentCorrect, createUserRank, findPlayerName, findSessionByPlayerId, generateRandomString, playerValidation, setAndSave } from './otherService';
-import { Player, PSInfo, InputMessage, Message, getData, SubmittedAnswer, } from '../dataStore';
+import { Player, PSInfo, InputMessage, Message, getData, SubmittedAnswer } from '../dataStore';
 import { SessionStates } from '../enums/SessionStates';
 import { getUnixTime } from 'date-fns';
 import { updateSessionStatus } from './sessionService';
@@ -149,7 +149,7 @@ export function guestPlayerStatus(playerId: number): GuestPlayerStatusReturn {
 */
 export function sendMessage(playerId: number, message: InputMessage): object {
   const dataStore = getData();
-  
+
   // check message body
   if (!message.messageBody) {
     throw new ApiError('The message is empty.', HttpStatusCode.BAD_REQUEST);
@@ -157,23 +157,23 @@ export function sendMessage(playerId: number, message: InputMessage): object {
   if (message.messageBody.length > MAX_LENGTH) {
     throw new ApiError('The message too long.', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   // check whether player is valid
   if (!playerValidation(playerId)) {
     throw new ApiError('player ID does not exist', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   // locate session to find playerName
   const matchedSession = findSessionByPlayerId(playerId);
   const playerName = findPlayerName(playerId, matchedSession.sessionId);
-  
+
   const newMessage: Message = {
     messageBody: message.messageBody,
     playerId: playerId,
     playerName: playerName,
     timeSent: getUnixTime(new Date())
   };
-  
+
   matchedSession.messages.push(newMessage);
   setAndSave(dataStore);
 
@@ -190,10 +190,10 @@ export function viewMessages(playerId: number): ViewMsgReturn {
   if (!playerValidation(playerId)) {
     throw new ApiError('playerID is invalid', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   // locate session to find playerName
   const matchedSession = findSessionByPlayerId(playerId);
-  
+
   return { messages: matchedSession.messages };
 }
 
@@ -205,19 +205,19 @@ export function viewMessages(playerId: number): ViewMsgReturn {
 */
 export function currentQuestionInfo(playerId: number, questionposition: number): QuestionInfoReturn {
   const dataStore = getData();
-  
+
   // if player ID does not exist
   const isvalidPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
   if (!isvalidPlayer) {
     throw new ApiError('Player ID does not exist', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   const playerInfo = dataStore.mapPS.find(ps => ps.playerId === playerId);
   const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === playerInfo.sessionId);
-  
+
   const inSession = dataStore.sessions[sessionIdIndex];
   const questionPositionIndex = questionposition - 1;
-  
+
   // position is not valid
   if (questionposition > inSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
@@ -230,9 +230,9 @@ export function currentQuestionInfo(playerId: number, questionposition: number):
   if (inSession.sessionState === SessionStates.END || inSession.sessionState === SessionStates.LOBBY) {
     throw new ApiError('Session is in LOBBY or END state', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   const answerInfoArray = [];
-  
+
   for (const element of inSession.sessionQuiz.questions[questionPositionIndex].answers) {
     const answerBody = {
       answerId: element.answerId,
@@ -262,7 +262,7 @@ export function currentQuestionInfo(playerId: number, questionposition: number):
 
 export function playerSubmitAnswers(playerId: number, questionposition: number, answerIds: number[]) {
   const dataStore = getData();
-  
+
   // If player ID does not exist
   const isvalidPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
   if (!isvalidPlayer) {
@@ -272,7 +272,7 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
   const questionPositionIndex = questionposition - 1;
   const sessionIdIndex = dataStore.sessions.findIndex(session => session.sessionId === playerInfo.sessionId);
   const inSession = dataStore.sessions[sessionIdIndex];
-  
+
   // position is not valid
   if (questionposition > inSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
@@ -311,23 +311,23 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
   // get timeSubmitted
   const dateNow = getUnixTime(new Date());
   const answerTime = (dateNow - inSession.sessionQuiz.questions[questionPositionIndex].questionStartTime);
-  
+
   const submittedAnswers = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers;
   const found = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers.find(answer => answer.playerId === playerId);
-  
+
   const answer: SubmittedAnswer = {
     playerId: playerId,
     answerIds: answerIds,
     timeSubmitted: answerTime,
   };
-  
+
   if (found) {
     const answeredIndex = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers.findIndex(answer => answer.playerId === playerId);
     submittedAnswers[answeredIndex] = answer;
   } else {
     submittedAnswers.push(answer);
   }
-  
+
   return {};
 }
 
@@ -340,16 +340,16 @@ export function playerQuestionResults(playerId: number, questionPosition: number
   if (!playerValidation(playerId)) {
     throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   const matchedSession = findSessionByPlayerId(playerId);
   if (questionPosition < 1 || questionPosition > matchedSession.sessionQuiz.numQuestions) {
     throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   if (matchedSession.sessionState !== SessionStates.ANSWER_SHOW) {
     throw new ApiError('Session is not in ANSWER_SHOW state', HttpStatusCode.BAD_REQUEST);
   }
-  
+
   if (matchedSession.atQuestion !== questionPosition) {
     throw new ApiError('Session is not yet up to this question', HttpStatusCode.BAD_REQUEST);
   }
