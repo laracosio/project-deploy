@@ -15,52 +15,22 @@ playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
   res.json(viewMessages(playerId));
 });
 
-playerRouter.get('/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  const questionPosition = parseInt(req.params.questionposition);
-  res.json(playerQuestionResults(playerId, questionPosition));
-});
 
 playerRouter.get('/:playerid/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   res.json(playerFinalResults(playerId));
 });
 
-playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  res.json(viewMessages(playerId));
-});
 
 playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   res.json(viewMessages(playerId));
-});
-
-playerRouter.get('/:playerid/question/:questionposition', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  const questionposition = parseInt(req.params.questionposition);
-  res.json(currentQuestionInfo(playerId, questionposition));
 });
 
 playerRouter.get('/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   const questionPosition = parseInt(req.params.questionposition);
   res.json(playerQuestionResults(playerId, questionPosition));
-});
-
-playerRouter.get('/:playerid/results', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  res.json(playerFinalResults(playerId));
-});
-
-playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  res.json(viewMessages(playerId));
-});
-
-playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  res.json(viewMessages(playerId));
 });
 
 playerRouter.get('/:playerid/question/:questionposition', (req: Request, res: Response) => {
@@ -88,4 +58,5 @@ playerRouter.put('/:playerid/question/:questionposition/answer', (req: Request, 
   const { answerIds } = req.body;
   res.json(playerSubmitAnswers(playerId, questionposition, answerIds));
 });
+
 // delete routers
