@@ -455,11 +455,10 @@ export const viewSessionsRequest = (token: string, quizid: number): Response => 
     'GET',
     `${SERVER_URL}/v1/admin/quiz/${quizid}/sessions`,
     {
-        headers: {
-          'Content-type': 'application/json',
-          token: token
-        },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
     }
   );
 };
-

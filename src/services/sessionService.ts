@@ -188,14 +188,14 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
   }
 }
 
- /**
+/**
  * Given a particular quiz, view both active and inactive sessions
  * @param {string} token - unique token
  * @param {number} quizId - unique identifier for quiz
  * @returns { activeSessions: [{number}], inactiveSessions: [{number}] } - object containing 2 arrays of sessionIds
  * @returns {{error: string}}
  */
- export function viewSessions(token: string, quizId: number): quizSessionsList {
+export function viewSessions(token: string, quizId: number): quizSessionsList {
   const dataStore = getData();
 
   if (!tokenValidation(token)) {
@@ -207,27 +207,27 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
     throw new ApiError('User is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
 
-  const matchedQuiz = findQuizById(quizId)
+  const matchedQuiz = findQuizById(quizId);
 
   // Create an array for active sessions for particular quiz
-  let quizActiveSessionList: number[] = [];
+  const quizActiveSessionList: number[] = [];
   dataStore.sessions.forEach((sess) => {
-    if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END ) {
+    if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END) {
       const obj = sess.sessionId;
       quizActiveSessionList.push(obj);
     }
   });
 
   // Create an array for inactive sessions for particular quiz
-  let quizInactiveSessionList: number[] = [];
+  const quizInactiveSessionList: number[] = [];
   dataStore.sessions.forEach((sess) => {
-    if (sess.sessionQuiz === matchedQuiz && sess.sessionState === SessionStates.END ) {
+    if (sess.sessionQuiz === matchedQuiz && sess.sessionState === SessionStates.END) {
       const obj = sess.sessionId;
       quizInactiveSessionList.push(obj);
     }
   });
 
-  let quizSessionsList: quizSessionsList = {activeSessions: quizActiveSessionList, inactiveSessions: quizInactiveSessionList};
-    
-  return quizSessionsList
+  const quizSessionsList: quizSessionsList = { activeSessions: quizActiveSessionList, inactiveSessions: quizInactiveSessionList };
+
+  return quizSessionsList;
 }
