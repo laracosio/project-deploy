@@ -8,7 +8,7 @@ import { StateError } from '../errors/StateError';
 import { quizToMetadata } from '../utils/mappers';
 import { SessionStateMachine } from './sesssionStateMachine';
 import { AutomaticActions } from '../enums/AutomaticActions';
-import { tokenValidation, findQuizById, findUTInfo, setAndSave } from './otherService';
+import { tokenValidation, findQuizById, findUTInfo, setAndSave, calcSubmittedAnsScore } from './otherService';
 
 interface newSessionReturn {
   sessionId: number
@@ -131,8 +131,23 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   if (!isAdminAction(action)) {
     throw new ApiError(`Admin Action: ${action} is not valid`, HttpStatusCode.BAD_REQUEST);
   }
+
+  // if the sessions is at the last question and its state is closed
+  // if admin tries to go to next question this should go to final results instead
+  if ((session.atQuestion === session.sessionQuiz.numQuestions) &&
+      session.sessionState === SessionStates.QUESTION_CLOSE &&
+      action === AdminActions.NEXT_QUESTION) {
+    action = AdminActions.GO_TO_FINAL_RESULTS;
+  }
+
+  // try-catch executes changing state. If error will go to catch
   try {
+    // updateState will change the state of the session and throw an error if invalid action given as next state
     const nextState = updateState(session, action as AdminActions);
+    if (action === SessionStates.QUESTION_CLOSE || action === SessionStates.ANSWER_SHOW) {
+      const questionIndex = (session.atQuestion - 1);
+      calcSubmittedAnsScore(session, questionIndex);
+    }
     if (nextState === SessionStates.QUESTION_COUNTDOWN) {
       setTimeout(() => {
         updateState(session, AutomaticActions.OPEN_QUESTION_AUTOMATIC);

@@ -1,5 +1,6 @@
 import { SessionStatus } from '../../../dataStore';
 import { AdminActions } from '../../../enums/AdminActions';
+import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 import { SessionStates } from '../../../enums/SessionStates';
 import { person2, person3 } from '../../../testingData';
 import { clearRequest } from '../../it2/serverTestHelperIt2';
@@ -107,8 +108,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
             `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession2.getParsedBody().sessionId}`,
             { token: postRegister.getParsedBody().token }
     );
-
-    expect(getSession.response.statusCode).toStrictEqual(400);
+    expect(getSession.response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
 
   test('Error - Token is empty or invalid (does not refer to valid logged in user session)', () => {
@@ -140,7 +140,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
             }
     );
 
-    expect(getSession.response.statusCode).toStrictEqual(401);
+    expect(getSession.response.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
   });
 
   test('Error - Valid token is provided, but user is not authorised to view this session', () => {
@@ -171,12 +171,11 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
               token: postRegisterInvalid.getParsedBody().token,
             }
     );
-    expect(getSession.response.statusCode).toStrictEqual(403);
+    expect(getSession.response.statusCode).toStrictEqual(HttpStatusCode.FORBIDDEN);
   });
 });
 
 // update session state
-
 describe('PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
   beforeEach(() => {
     clearRequest();
@@ -221,7 +220,7 @@ describe('PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
 
   test('401 - Invalid token', () => {
     const putSession = apiPut('/v1/admin/quiz/4/session/5', { action: AdminActions.NEXT_QUESTION }, { token: '1234' });
-    expect(putSession.response.statusCode).toStrictEqual(401);
+    expect(putSession.response.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
   });
 
   test('403 - Valid token but unauthorized user', () => {
@@ -254,7 +253,7 @@ describe('PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
             { token: postRegisterInvalid.getParsedBody().token }
     );
     // then
-    expect(putSession.response.statusCode).toStrictEqual(403);
+    expect(putSession.response.statusCode).toStrictEqual(HttpStatusCode.FORBIDDEN);
   });
 
   test('400 - Session id invalid', () => {
@@ -307,7 +306,7 @@ describe('PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
     );
 
     // then
-    expect(putSession.response.statusCode).toStrictEqual(400);
+    expect(putSession.response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
 
   test('400 - Invalid action enum', () => {
@@ -338,7 +337,7 @@ describe('PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
             { action: 'foobar' },
             { token: postRegister.getParsedBody().token }
     );
-    expect(putSession.response.statusCode).toStrictEqual(400);
+    expect(putSession.response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
 
   test('400 - Action enum invalid in the current state', () => {
@@ -369,6 +368,6 @@ describe('PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
             { action: AdminActions.GO_TO_ANSWER },
             { token: postRegister.getParsedBody().token }
     );
-    expect(putSession.response.statusCode).toStrictEqual(400);
+    expect(putSession.response.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
 });

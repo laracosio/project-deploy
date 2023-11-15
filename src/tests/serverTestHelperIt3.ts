@@ -3,7 +3,7 @@ import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
 import { QuestionCreate, InputMessage } from '../dataStore';
 
-const SERVER_URL = `${url}:${port}`;
+export const SERVER_URL = `${url}:${port}`;
 
 export class ParsedResponse {
   response: Response;
@@ -433,5 +433,33 @@ export const sessionCreateRequest = (token: string, quizId: number, autoStartNum
     }
   );
 };
-// #endregion
 
+export const updateSessionRequest = (token: string, quizId: number, sessionId: number, action: string): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      body: JSON.stringify({
+        action: action,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
+
+export const sessionStatusRequest = (token: string, quizId: number, sessionId: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
+// #endregion

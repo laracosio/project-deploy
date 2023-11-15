@@ -54,6 +54,8 @@ export interface SubmittedAnswer {
   playerName: string;
   answerIds: number[];
   timeSubmitted: number;
+  answerCorrect?: boolean;
+  questionScore?: number;
 }
 
 export interface Question {
@@ -64,6 +66,7 @@ export interface Question {
   points: number;
   answers: Answer[];
   submittedAnswers: SubmittedAnswer[];
+  playerCorrectList: string[];
   questionStartTime: number;
 }
 
@@ -80,14 +83,9 @@ export interface Quiz {
   thumbnailUrl?: string;
 }
 
-export interface PlayerAnswers {
-  questionId: number;
-  score: number;
-}
 export interface Player {
   playerId: number;
   playerName: string;
-  playerAnswers?: PlayerAnswers[];
 }
 
 export interface Message {
