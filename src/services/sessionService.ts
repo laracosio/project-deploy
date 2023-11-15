@@ -217,8 +217,7 @@ export function viewSessions(token: string, quizId: number): quizSessionsList {
       quizActiveSessionList.push(obj);
     }
   });
-  quizActiveSessionList.sort(function(a, b){return a - b});
-
+  quizActiveSessionList.sort(function(a, b) { return a - b; });
 
   // Create an array for inactive sessions for particular quiz
   const quizInactiveSessionList: number[] = [];
@@ -228,8 +227,7 @@ export function viewSessions(token: string, quizId: number): quizSessionsList {
       quizInactiveSessionList.push(obj);
     }
   });
-  quizInactiveSessionList.sort(function(a, b){return a - b});
-
+  quizInactiveSessionList.sort(function(a, b) { return a - b; });
 
   const quizSessionsList: quizSessionsList = { activeSessions: quizActiveSessionList, inactiveSessions: quizInactiveSessionList };
 
