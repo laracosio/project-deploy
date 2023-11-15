@@ -488,8 +488,6 @@ export const sessionStatusRequest = (token: string, quizId: number, sessionId: n
     }
   );
 };
-// #endregion
-
 export const viewSessionsRequest = (token: string, quizid: number): Response => {
   return request(
     'GET',
@@ -502,3 +500,4 @@ export const viewSessionsRequest = (token: string, quizid: number): Response => 
     }
   );
 };
+// #endregion
