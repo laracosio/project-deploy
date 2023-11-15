@@ -228,8 +228,6 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
   });
 
   let quizSessionsList: quizSessionsList = {activeSessions: quizActiveSessionList, inactiveSessions: quizInactiveSessionList};
-
-  console.log(quizSessionsList);
-  
+    
   return quizSessionsList
 }
