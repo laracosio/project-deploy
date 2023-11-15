@@ -14,6 +14,11 @@ interface newSessionReturn {
   sessionId: number
 }
 
+interface quizSessionsList {
+  activeSessions: number[];
+  inactiveSessions: number[];
+}
+
 /**
  * Given a particular quiz, start a new session
  * @param {string} token - unique token
@@ -144,7 +149,7 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   try {
     // updateState will change the state of the session and throw an error if invalid action given as next state
     const nextState = updateState(session, action as AdminActions);
-    if (action === SessionStates.QUESTION_CLOSE || action === SessionStates.ANSWER_SHOW) {
+    if (nextState === SessionStates.QUESTION_CLOSE || nextState === SessionStates.ANSWER_SHOW) {
       const questionIndex = (session.atQuestion - 1);
       calcSubmittedAnsScore(session, questionIndex);
     }
@@ -181,4 +186,50 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
       console.log('Failing gracefully for automatic state change failure');
     }
   }
+}
+
+/**
+ * Given a particular quiz, view both active and inactive sessions
+ * @param {string} token - unique token
+ * @param {number} quizId - unique identifier for quiz
+ * @returns { activeSessions: [{number}], inactiveSessions: [{number}] } - object containing 2 arrays of sessionIds
+ * @returns {{error: string}}
+ */
+export function viewSessions(token: string, quizId: number): quizSessionsList {
+  const dataStore = getData();
+
+  if (!tokenValidation(token)) {
+    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+  }
+
+  const matchedToken = findUTInfo(token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
+    throw new ApiError('User is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
+  }
+
+  const matchedQuiz = findQuizById(quizId);
+
+  // Create an array for active sessions for particular quiz
+  const quizActiveSessionList: number[] = [];
+  dataStore.sessions.forEach((sess) => {
+    if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END) {
+      const obj = sess.sessionId;
+      quizActiveSessionList.push(obj);
+    }
+  });
+  quizActiveSessionList.sort(function(a, b) { return a - b; });
+
+  // Create an array for inactive sessions for particular quiz
+  const quizInactiveSessionList: number[] = [];
+  dataStore.sessions.forEach((sess) => {
+    if (sess.sessionQuiz === matchedQuiz && sess.sessionState === SessionStates.END) {
+      const obj = sess.sessionId;
+      quizInactiveSessionList.push(obj);
+    }
+  });
+  quizInactiveSessionList.sort(function(a, b) { return a - b; });
+
+  const quizSessionsList: quizSessionsList = { activeSessions: quizActiveSessionList, inactiveSessions: quizInactiveSessionList };
+
+  return quizSessionsList;
 }

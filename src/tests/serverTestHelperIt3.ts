@@ -402,6 +402,33 @@ export const viewMsgsRequest = (playerId: number): Response => {
   );
 };
 
+export const currentQuestionInfoRequest = (playerid: number, questionposition: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}`,
+    {
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
+export const playerSubmitAnswerRequest = (playerid: number, questionposition: number, answerIds: number[]): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}/answer`,
+    {
+      body: JSON.stringify({
+        answerIds: answerIds,
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
 export const playerQuestResultRqst = (playerId: number, questionPosition: number): Response => {
   return request(
     'GET',
@@ -463,3 +490,16 @@ export const sessionStatusRequest = (token: string, quizId: number, sessionId: n
   );
 };
 // #endregion
+
+export const viewSessionsRequest = (token: string, quizid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/sessions`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
