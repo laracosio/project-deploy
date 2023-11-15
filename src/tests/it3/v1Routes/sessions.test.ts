@@ -155,7 +155,7 @@ describe('viewSessions - Success Cases', () => {
       });
     });
     
-    test.only('Multiple active and inactive sessions listed', () => {
+    test('Multiple active and inactive sessions listed', () => {
       user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
       const user1Data = JSON.parse(user1.body.toString());
       quiz1 = quizCreateRequest(user1Data.token, validQuizName, validQuizDescription);
