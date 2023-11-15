@@ -12,7 +12,7 @@ const MINCHAR = 2;
 const MINPWLEN = 8;
 
 export interface SubmissionSummary {
-  playerId: number, 
+  playerId: number,
   playerName: string,
   answerCorrect: boolean,
   answerTime: number
@@ -285,21 +285,21 @@ export function generateRandomString() {
     const randomIndex = Math.floor(Math.random() * letters.length);
     randomLetters += letters.charAt(randomIndex);
   }
-  
+
   // Generate 3 random numbers
   for (let i = 0; i < 3; i++) {
     const randomNumber = Math.floor(Math.random() * 10);
     randomNumbers += randomNumber.toString();
   }
-  
+
   const newName = randomLetters + randomNumbers;
   return newName;
 }
 
 /**
  * Determines whether the players submitted answers are the same as questionAnswer
- * @param correctAnswerIds 
- * @param playerAnswerIds 
+ * @param correctAnswerIds
+ * @param playerAnswerIds
  * @returns boolean of whether the answers were correct (match) or not
  * https://stackoverflow.com/questions/47589245/compare-unsorted-arrays-of-objects-in-javascript
  */
@@ -371,7 +371,7 @@ export function calcPercentCorrect(session:Session, questionIndex: number): numb
   const matchedQuestion = session.sessionQuiz.questions[questionIndex];
   const totalSessionPlayers = session.sessionPlayers.length;
   const numCorrect = matchedQuestion.playerCorrectList.length;
- 
+
   return Math.round((numCorrect / totalSessionPlayers) * 100);
 }
 
@@ -381,12 +381,11 @@ export function calcPercentCorrect(session:Session, questionIndex: number): numb
  * @returns userRanking
  */
 export function createUserRank(session: Session): UserRanking[] {
-  
   const questions = session.sessionQuiz.questions;
   const playerList = session.sessionPlayers;
-  
+
   const userRanking: UserRanking[] = [];
-  
+
   for (const player of playerList) {
     let cumulativeScore = 0;
     for (const question of questions) {
@@ -399,7 +398,7 @@ export function createUserRank(session: Session): UserRanking[] {
     userRanking.push({
       name: findPlayerName(player.playerId, session.sessionId),
       score: cumulativeScore
-    })
+    });
   }
 
   userRanking.sort((a, b) => (b.score - a.score || a.name.toLowerCase().localeCompare(b.name.toLowerCase())));

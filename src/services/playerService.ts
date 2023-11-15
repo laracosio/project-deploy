@@ -150,7 +150,7 @@ export function playerQuestionResults(playerId: number, questionPosition: number
     playersCorrectList: matchedQuestion.playerCorrectList,
     averageAnswerTime: calcAvgAnsTime(matchedSession, questionIndex),
     percentCorrect: calcPercentCorrect(matchedSession, questionIndex)
-  }
+  };
 
   return qResults;
 }
@@ -175,10 +175,10 @@ export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
       playersCorrectList: question.playerCorrectList,
       averageAnswerTime: calcAvgAnsTime(matchedSession, index),
       percentCorrect: calcPercentCorrect(matchedSession, index)
-    }
+    };
     index++;
     allQuestionResults.push(qResults);
-  })
+  });
 
   return {
     userRankedByScore: userRanking,

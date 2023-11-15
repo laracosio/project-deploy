@@ -1,4 +1,4 @@
-import { QuestionCreate, InputMessage} from './dataStore';
+import { QuestionCreate, InputMessage } from './dataStore';
 
 export const person1 = {
   email: 'h.simpson@springfield.com',
