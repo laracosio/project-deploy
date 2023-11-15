@@ -363,7 +363,6 @@ export function calcPercentCorrect(session:Session, questionIndex: number): numb
   const matchedQuestion = session.sessionQuiz.questions[questionIndex];
   const totalSessionPlayers = session.sessionPlayers.length;
   const numCorrect = matchedQuestion.playerCorrectList.length;
-
   return Math.round((numCorrect / totalSessionPlayers) * 100);
 }
 
