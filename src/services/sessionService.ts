@@ -137,7 +137,7 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   if ((session.atQuestion === session.sessionQuiz.numQuestions) &&
       session.sessionState === SessionStates.QUESTION_CLOSE &&
       action === AdminActions.NEXT_QUESTION) {
-    action = SessionStates.FINAL_RESULTS;
+    action = AdminActions.GO_TO_FINAL_RESULTS;
   }
 
   // try-catch executes changing state. If error will go to catch
