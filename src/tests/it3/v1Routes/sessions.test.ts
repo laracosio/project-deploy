@@ -193,7 +193,6 @@ describe('viewSessions - Error Cases', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
     createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
     session1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
-    const session1Data = JSON.parse(session1.body.toString());
     const response = viewSessionsRequest(user1Data.token + 1, quiz1Data.quizId);
     expect(response.statusCode).toStrictEqual(401);
   });
@@ -221,6 +220,6 @@ describe('viewSessions - Error Cases', () => {
     user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const user2Data = JSON.parse(user2.body.toString());
     const response = viewSessionsRequest(user2Data.token, quiz1Data.quizId);
-    expect(response.statusCode).toStrictEqual(403);
+      expect(response.statusCode).toStrictEqual(403);
   });
 });
