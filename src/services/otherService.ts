@@ -333,19 +333,17 @@ export function calcSubmittedAnsScore(session: Session, questionIndex: number) {
 
   // order submittedAnswers based on 1) answer correctness then 2) time taken to submit
   // ternary operator - ? 1: 0; if truthful will be 1 otherwise 0; cannot sort booleans
-  submittedAnswers.sort((a, b) => ((b.answerCorrect ? 1 : 0) - (a.answerCorrect ? 1 : 0)) || (b.timeSubmitted - a.timeSubmitted));
+  submittedAnswers.sort((a, b) => ((b.answerCorrect ? 1 : 0) - (a.answerCorrect ? 1 : 0)) || (a.timeSubmitted - b.timeSubmitted));
   // compute score
   submittedAnswers.forEach(submission => {
     if (submission.answerCorrect === true) {
       const currentlyCorrect = matchedQuestion.playerCorrectList.length;
-      submission.questionScore = Math.round((matchedQuestion.points * (1 / (currentlyCorrect + 1))) * 10 / 10);
+      submission.questionScore = Math.round((matchedQuestion.points * (1 / (currentlyCorrect + 1))) * 10) / 10;
       matchedQuestion.playerCorrectList.push(findPlayerName(submission.playerId, session.sessionId));
     } else {
       submission.questionScore = 0;
     }
   });
-  console.log(submittedAnswers);
-
 }
 
 /**
