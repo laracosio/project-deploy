@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-// import { playerFinalResults, playerQuestionResults } from '../../services/playerService';
+import { playerFinalResults, playerQuestionResults } from '../../services/playerService';
 import { joinGuestPlayer, guestPlayerStatus, sendMessage, viewMessages } from '../../services/playerService';
 
 export const playerRouter = Router();
@@ -15,16 +15,16 @@ playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
   res.json(viewMessages(playerId));
 });
 
-// playerRouter.get('/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
-//   const playerId = parseInt(req.params.playerid);
-//   const questionPosition = parseInt(req.params.questionposition);
-//   res.json(playerQuestionResults(playerId, questionPosition));
-// });
+playerRouter.get('/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  res.json(playerQuestionResults(playerId, questionPosition));
+});
 
-// playerRouter.get('/:playerid/results', (req: Request, res: Response) => {
-//   const playerId = parseInt(req.params.playerid);
-//   res.json(playerFinalResults(playerId));
-// });
+playerRouter.get('/:playerid/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(playerFinalResults(playerId));
+});
 
 playerRouter.get('/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
