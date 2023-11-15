@@ -1,11 +1,10 @@
-import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session, Player } from '../dataStore';
+import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import crypto from 'crypto';
 import { SessionStates } from '../enums/SessionStates';
-import { QuestionResultsReturn, UserRanking } from './playerService';
-import { sub } from 'date-fns';
+import { UserRanking } from './playerService';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
