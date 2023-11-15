@@ -149,8 +149,7 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   try {
     // updateState will change the state of the session and throw an error if invalid action given as next state
     const nextState = updateState(session, action as AdminActions);
-    console.log('\n', nextState);
-    if (action === AutomaticActions.CLOSE_QUESTION_AUTOMATIC || nextState === SessionStates.ANSWER_SHOW) {
+    if (session.sessionState === SessionStates.QUESTION_OPEN && nextState === SessionStates.ANSWER_SHOW) {
       const questionIndex = (session.atQuestion - 1);
       calcSubmittedAnsScore(session, questionIndex);
     }
@@ -166,6 +165,8 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
       question.questionStartTime = currentUnixTime;
       setTimeout(() => {
         updateState(session, AutomaticActions.CLOSE_QUESTION_AUTOMATIC);
+        const questionIndex = (session.atQuestion - 1);
+        calcSubmittedAnsScore(session, questionIndex);
       }, question.duration * 1000);
     }
   } catch (e) {
