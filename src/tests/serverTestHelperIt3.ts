@@ -488,6 +488,7 @@ export const sessionStatusRequest = (token: string, quizId: number, sessionId: n
     }
   );
 };
+
 export const viewSessionsRequest = (token: string, quizid: number): Response => {
   return request(
     'GET',
@@ -501,3 +502,29 @@ export const viewSessionsRequest = (token: string, quizid: number): Response => 
   );
 };
 // #endregion
+
+export const quizFinalRsltRequest = (token: string, quizid: number, sessionid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
+
+export const csvRequest = (token: string, quizid: number, sessionid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
