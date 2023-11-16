@@ -62,7 +62,7 @@ export function startNewSession(token: string, quizId: number, autoStartNum: num
     sessionQuiz: matchedQuiz,
     sessionState: SessionStates.LOBBY,
     autoStartNum: autoStartNum,
-    atQuestion: 1,
+    atQuestion: 0,
     sessionPlayers: [],
     messages: [],
   };
@@ -149,11 +149,12 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   try {
     // updateState will change the state of the session and throw an error if invalid action given as next state
     const nextState = updateState(session, action as AdminActions);
-    if (action === SessionStates.QUESTION_CLOSE || action === SessionStates.ANSWER_SHOW) {
+    if (session.sessionState === SessionStates.QUESTION_OPEN && nextState === SessionStates.ANSWER_SHOW) {
       const questionIndex = (session.atQuestion - 1);
       calcSubmittedAnsScore(session, questionIndex);
     }
     if (nextState === SessionStates.QUESTION_COUNTDOWN) {
+      session.atQuestion++;
       setTimeout(() => {
         updateState(session, AutomaticActions.OPEN_QUESTION_AUTOMATIC);
       }, 3000);
@@ -164,6 +165,8 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
       question.questionStartTime = currentUnixTime;
       setTimeout(() => {
         updateState(session, AutomaticActions.CLOSE_QUESTION_AUTOMATIC);
+        const questionIndex = (session.atQuestion - 1);
+        calcSubmittedAnsScore(session, questionIndex);
       }, question.duration * 1000);
     }
   } catch (e) {

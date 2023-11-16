@@ -194,7 +194,7 @@ describe('viewSessions - Error Cases', () => {
     createQuizQuestionRequest(quiz1Data.quizId, user1Data.token, validCreateQuestion);
     sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
     const response = viewSessionsRequest(user1Data.token + 1, quiz1Data.quizId);
-    expect(response.statusCode).toStrictEqual(401);
+    expect(response.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
   });
 
   test('QuizId not owned by this user - view 1 active session', () => {
@@ -207,7 +207,7 @@ describe('viewSessions - Error Cases', () => {
     user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const user2Data = JSON.parse(user2.body.toString());
     const response = viewSessionsRequest(user2Data.token, quiz1Data.quizId);
-    expect(response.statusCode).toStrictEqual(403);
+    expect(response.statusCode).toStrictEqual(HttpStatusCode.FORBIDDEN);
   });
 
   test('QuizId not owned by this user - view 1 inactive session', () => {

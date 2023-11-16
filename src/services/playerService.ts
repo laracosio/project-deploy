@@ -1,16 +1,14 @@
-
-import { SubmittedAnswer, getData } from '../dataStore';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import { Player, PSInfo, InputMessage, Message } from '../dataStore';
+import { calcAvgAnsTime, calcPercentCorrect, createUserRank, findPlayerName, findSessionByPlayerId, generateRandomString, playerValidation, setAndSave } from './otherService';
+import { Player, PSInfo, InputMessage, Message, getData, SubmittedAnswer } from '../dataStore';
 import { SessionStates } from '../enums/SessionStates';
-import { generateRandomString, findPlayerName, findSessionByPlayerId, playerValidation, setAndSave } from './otherService';
 import { getUnixTime } from 'date-fns';
 import { updateSessionStatus } from './sessionService';
 import { AdminActions } from '../enums/AdminActions';
 const MAX_LENGTH = 100;
 
-interface viewMsgReturn {
+interface ViewMsgReturn {
   messages: Message[]
 }
 
@@ -39,6 +37,22 @@ interface AnswerInfo {
   'answerId': number,
   'answer': string,
   'colour': string
+}
+export interface UserRanking {
+  name: string,
+  score: number
+}
+
+export interface QuestionResultsReturn {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+}
+
+interface PlyrFinRsltReturn {
+  usersRankedByScore: UserRanking[],
+  questionResults: QuestionResultsReturn[],
 }
 
 /**
@@ -101,7 +115,7 @@ export function joinGuestPlayer(sessionId: number, name: string): JoinGuestPlaye
  * @param playerId
  * @returns GuestPlayerStatusReturn
 */
-export function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
+export function guestPlayerStatus(playerId: number): GuestPlayerStatusReturn {
   const dataStore = getData();
 
   const validPlayer = dataStore.mapPS.some(ps => ps.playerId === playerId);
@@ -132,7 +146,7 @@ export function guestPlayerStatus (playerId: number): GuestPlayerStatusReturn {
  * @param message - message being sent
  * @returns empty object on success
  * @returns error otherwise
- */
+*/
 export function sendMessage(playerId: number, message: InputMessage): object {
   const dataStore = getData();
 
@@ -170,8 +184,8 @@ export function sendMessage(playerId: number, message: InputMessage): object {
  * Return all messages that are in the same session as the player
  * @param playerId - Id of player sending message
  * @returns all messages sent in session
- */
-export function viewMessages(playerId: number): viewMsgReturn {
+*/
+export function viewMessages(playerId: number): ViewMsgReturn {
   // check whether player is valid
   if (!playerValidation(playerId)) {
     throw new ApiError('playerID is invalid', HttpStatusCode.BAD_REQUEST);
@@ -188,7 +202,7 @@ export function viewMessages(playerId: number): viewMsgReturn {
  * @param playerId
  * @param questionposition
  * @returns QuestionInfoReturn
- */
+*/
 export function currentQuestionInfo(playerId: number, questionposition: number): QuestionInfoReturn {
   const dataStore = getData();
 
@@ -296,7 +310,7 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
   }
   // get timeSubmitted
   const dateNow = getUnixTime(new Date());
-  const answerTime = (inSession.sessionQuiz.questions[questionPositionIndex].questionStartTime - dateNow);
+  const answerTime = (dateNow - inSession.sessionQuiz.questions[questionPositionIndex].questionStartTime);
 
   const submittedAnswers = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers;
   const found = dataStore.sessions[sessionIdIndex].sessionQuiz.questions[questionPositionIndex].submittedAnswers.find(answer => answer.playerId === playerId);
@@ -315,4 +329,71 @@ export function playerSubmitAnswers(playerId: number, questionposition: number, 
   }
 
   return {};
+}
+
+/**
+ * Get the results for a particular question of the session a player is playing in
+ * @param playerId
+ * @param questionPosition
+*/
+export function playerQuestionResults(playerId: number, questionPosition: number): QuestionResultsReturn {
+  if (!playerValidation(playerId)) {
+    throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const matchedSession = findSessionByPlayerId(playerId);
+  if (questionPosition < 1 || questionPosition > matchedSession.sessionQuiz.numQuestions) {
+    throw new ApiError('Question position is not valid for the session this player is in', HttpStatusCode.BAD_REQUEST);
+  }
+
+  if (matchedSession.sessionState !== SessionStates.ANSWER_SHOW) {
+    throw new ApiError('Session is not in ANSWER_SHOW state', HttpStatusCode.BAD_REQUEST);
+  }
+
+  if (matchedSession.atQuestion !== questionPosition) {
+    throw new ApiError('Session is not yet up to this question', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const questionIndex = questionPosition - 1;
+  const matchedQuestion = matchedSession.sessionQuiz.questions[questionIndex];
+
+  const qResults: QuestionResultsReturn = {
+    questionId: matchedQuestion.questionId,
+    playersCorrectList: matchedQuestion.playerCorrectList,
+    averageAnswerTime: calcAvgAnsTime(matchedSession, questionIndex),
+    percentCorrect: calcPercentCorrect(matchedSession, questionIndex)
+  };
+
+  return qResults;
+}
+
+export function playerFinalResults(playerId: number): PlyrFinRsltReturn {
+  if (!playerValidation(playerId)) {
+    throw new ApiError('Player is invalid', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const matchedSession = findSessionByPlayerId(playerId);
+  if (matchedSession.sessionState !== SessionStates.FINAL_RESULTS) {
+    throw new ApiError('Session is not in FINAL_RESULTS state', HttpStatusCode.BAD_REQUEST);
+  }
+
+  const userRanking = createUserRank(matchedSession);
+
+  const allQuestionResults: QuestionResultsReturn[] = [];
+  let index = 0;
+  matchedSession.sessionQuiz.questions.forEach(question => {
+    const qResults: QuestionResultsReturn = {
+      questionId: question.questionId,
+      playersCorrectList: question.playerCorrectList,
+      averageAnswerTime: calcAvgAnsTime(matchedSession, index),
+      percentCorrect: calcPercentCorrect(matchedSession, index)
+    };
+    index++;
+    allQuestionResults.push(qResults);
+  });
+
+  return {
+    usersRankedByScore: userRanking,
+    questionResults: allQuestionResults
+  };
 }

@@ -12,20 +12,20 @@ beforeEach(() => {
 
 // updateUserDetails test
 describe('PUT /v2/user/details - Success Cases', () => {
-  let session1: Response;
+  let user1: Response;
   beforeEach(() => {
-    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
   });
   test('email updated', () => {
-    const session1Data = JSON.parse(session1.body.toString());
-    const response = userUpdateDetailsRequestV2(session1Data.token, person2.email, person1.nameFirst, person1.nameLast);
+    const user1Data = JSON.parse(user1.body.toString());
+    const response = userUpdateDetailsRequestV2(user1Data.token, person2.email, person1.nameFirst, person1.nameLast);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
 
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      const userToken = data.mapUT.find(t => t.token === session1Data.token);
+      const userToken = data.mapUT.find(t => t.token === user1Data.token);
       const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.email).toStrictEqual(person2.email);
       expect(user.nameFirst).toStrictEqual(person1.nameFirst);
@@ -33,15 +33,15 @@ describe('PUT /v2/user/details - Success Cases', () => {
     }
   });
   test('nameFirst updated', () => {
-    const session1Data = JSON.parse(session1.body.toString());
-    const response = userUpdateDetailsRequestV2(session1Data.token, person1.email, person2.nameFirst, person1.nameLast);
+    const user1Data = JSON.parse(user1.body.toString());
+    const response = userUpdateDetailsRequestV2(user1Data.token, person1.email, person2.nameFirst, person1.nameLast);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
 
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      const userToken = data.mapUT.find(t => t.token === session1Data.token);
+      const userToken = data.mapUT.find(t => t.token === user1Data.token);
       const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.email).toStrictEqual(person1.email);
       expect(user.nameFirst).toStrictEqual(person2.nameFirst);
@@ -49,15 +49,15 @@ describe('PUT /v2/user/details - Success Cases', () => {
     }
   });
   test('nameLast updated', () => {
-    const session1Data = JSON.parse(session1.body.toString());
-    const response = userUpdateDetailsRequestV2(session1Data.token, person1.email, person1.nameFirst, person2.nameLast);
+    const user1Data = JSON.parse(user1.body.toString());
+    const response = userUpdateDetailsRequestV2(user1Data.token, person1.email, person1.nameFirst, person2.nameLast);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
 
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      const userToken = data.mapUT.find(t => t.token === session1Data.token);
+      const userToken = data.mapUT.find(t => t.token === user1Data.token);
       const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.email).toStrictEqual(person1.email);
       expect(user.nameFirst).toStrictEqual(person1.nameFirst);
@@ -68,20 +68,20 @@ describe('PUT /v2/user/details - Success Cases', () => {
 
 // updateUserPassword test
 describe('PUT /v2/user/password - Success Cases', () => {
-  let session1: Response;
+  let user1: Response;
   beforeEach(() => {
-    session1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
   });
   test('password updated', () => {
-    const session1Data = JSON.parse(session1.body.toString());
-    const response = userUpdatePasswordRequestV2(session1Data.token, person1.password, person2.password);
+    const user1Data = JSON.parse(user1.body.toString());
+    const response = userUpdatePasswordRequestV2(user1Data.token, person1.password, person2.password);
     expect(response.statusCode).toStrictEqual(200);
     expect(JSON.parse(response.body.toString())).toStrictEqual({});
 
     if (fs.existsSync('datastore.json')) {
       const datastr: Buffer = fs.readFileSync('./datastore.json');
       const data: Datastore = JSON.parse(String(datastr));
-      const userToken = data.mapUT.find(t => t.token === session1Data.token);
+      const userToken = data.mapUT.find(t => t.token === user1Data.token);
       const user: User = data.users.find(u => u.userId === userToken.userId);
       expect(user.password).toStrictEqual(hashText(person2.password));
     }
