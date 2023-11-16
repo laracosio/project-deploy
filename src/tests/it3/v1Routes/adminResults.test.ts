@@ -8,6 +8,7 @@ import { person2, person3, postQuestionBody } from '../../../testingData';
 import { clearRequest } from '../../it2/serverTestHelperIt2';
 import { AdminActions } from '../../../enums/AdminActions';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
+import { Answer } from '../../../dataStore';
 
 beforeEach(() => {
   clearRequest();
@@ -70,19 +71,19 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Success', () => {
 
     // TODO: uncomment once quiz answers is done
 
-    const quizAnswers = getQuizInfo.getParsedBody().questions[0].answers;
+    const quizAnswers: Answer[] = getQuizInfo.getParsedBody().questions[0].answers;
 
     apiPut(
-      `/v1/players/${postPlayer1.getParsedBody().playerId}/question/${1}/answer`,
-      { answerIds: [quizAnswers[0]] }
+      `/v1/player/${postPlayer1.getParsedBody().playerId}/question/${1}/answer`,
+      { answerIds: [quizAnswers[0].answerId] }
     );
     apiPut(
-      `/v1/players/${postPlayer2.getParsedBody().playerId}/question/${1}/answer`,
-      { answerIds: [quizAnswers[0]] }
+      `/v1/player/${postPlayer2.getParsedBody().playerId}/question/${1}/answer`,
+      { answerIds: [quizAnswers[0].answerId] }
     );
     apiPut(
-      `/v1/players/${postPlayer3.getParsedBody().playerId}/question/${1}/answer`,
-      { answerIds: [quizAnswers[0]] }
+      `/v1/player/${postPlayer3.getParsedBody().playerId}/question/${1}/answer`,
+      { answerIds: [quizAnswers[0].answerId] }
     );
 
     apiPut(
@@ -97,7 +98,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Success', () => {
     );
   });
 
-  test.only('/results/csv - Success', async () => {
+  test('/results/csv - Success', async () => {
     const getResultsCsv = apiGet(
       `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}/results/csv`,
       { token: postRegister.getParsedBody().token }

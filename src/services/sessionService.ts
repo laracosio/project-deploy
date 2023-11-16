@@ -205,7 +205,8 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   try {
     // updateState will change the state of the session and throw an error if invalid action given as next state
     const nextState = updateState(session, action as AdminActions);
-    if (session.sessionState === SessionStates.QUESTION_OPEN && nextState === SessionStates.ANSWER_SHOW) {
+    console.log(session.sessionState);
+    if (nextState === SessionStates.QUESTION_CLOSE || nextState === SessionStates.ANSWER_SHOW) {
       const questionIndex = (session.atQuestion - 1);
       calcSubmittedAnsScore(session, questionIndex);
     }
@@ -389,9 +390,12 @@ function enrichWithScores(questions: Question[], players: Player[]): PlayerWithS
   return players.map(player => {
     return {
       ...player,
-      playerScore: questions.map(question => {
+      playerScores: questions.map(question => {
         const submittedAnswer = question.submittedAnswers.find(answer => answer.playerId === player.playerId);
-        return submittedAnswer.questionScore;
+        return {
+          questionId: question.questionId,
+          score: submittedAnswer.questionScore
+        };
       })
     };
   });

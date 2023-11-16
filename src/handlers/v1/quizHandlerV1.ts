@@ -4,6 +4,7 @@ import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adm
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../../services/questionService';
 import { quizFinalResults, quizFinalResultsCsv } from '../../services/sessionService';
 import { writeFile } from 'fs';
+import path from 'path';
 
 export const quizRouterV1 = Router();
 
@@ -37,11 +38,11 @@ quizRouterV1.get('/:quizid/session/:sessionid/results/csv', (req: Request, res: 
   const quizId: number = parseInt(req.params.quizid);
   const sessionId: number = parseInt(req.params.sessionid);
 
-  const csvData = quizFinalResultsCsv(quizId, sessionId, token)
-  const filePath = `${__dirname}/results/${sessionId}.csv`
+  const csvData = quizFinalResultsCsv(quizId, sessionId, token);
+  const filePath = path.join(__dirname, '..', '..', 'public', `${sessionId.toString()}.csv`);
   writeFile(filePath, csvData.join('\r\n'), err => {
-    console.log(err)
-  })
+    console.log(err);
+  });
   res.json({
     url: `${req.hostname}/${filePath}`
   });
