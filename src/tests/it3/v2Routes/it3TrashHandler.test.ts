@@ -1,7 +1,9 @@
 import { person1, validQuizDescription, validQuizName, stringOf1QuizIDs, stringOf2QuizIDs } from '../../../testingData';
 import { authRegisterRequest, clearRequest, quizCreateRequest } from '../../it2/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, quizEmptyTrashRequestV2 } from '../../serverTestHelperIt3';
+import { quizRemoveRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, quizEmptyTrashRequestV2, quizCreateRequestV2, sessionCreateRequest, sessionStatusRequest, updateSessionRequest } from '../../serverTestHelperIt3';
+import { HttpStatusCode } from '../../../enums/HttpStatusCode';
+import { AdminActions } from '../../../enums/AdminActions';
 // import { HttpStatusCode } from "../../enums/HttpStatusCode";
 
 beforeEach(() => {
@@ -10,31 +12,31 @@ beforeEach(() => {
 
 // quizRemove
 describe('DELETE /v2/admin/quiz/{quizid}', () => {
-  let sess1: Response, quiz1: Response;
+  let user1: Response, quiz1: Response;
   beforeEach(() => {
     const { email, password, nameFirst, nameLast } = person1;
-    sess1 = authRegisterRequest(email, password, nameFirst, nameLast);
-    const sess1Data = JSON.parse(sess1.body.toString());
-    quiz1 = quizCreateRequest(sess1Data.token, validQuizName, validQuizDescription);
+    user1 = authRegisterRequest(email, password, nameFirst, nameLast);
+    const user1Data = JSON.parse(user1.body.toString());
+    quiz1 = quizCreateRequestV2(user1Data.token, validQuizName, validQuizDescription);
   });
   test('Success - v2 route - 1 quiz created - 1 removed', () => {
-    // needs to be updated to V2 when created
-    const sess1Data = JSON.parse(sess1.body.toString());
+    const user1Data = JSON.parse(user1.body.toString());
     const quiz1data = JSON.parse(quiz1.body.toString());
-    const res = quizRemoveRequestV2(sess1Data.token, quiz1data.quizId);
+    const res = quizRemoveRequestV2(user1Data.token, quiz1data.quizId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({});
   });
-  // NEEDS AN OPEN SESSION - TEST AFTER SESSIONS HAVE BEEN CREATED!
-  // test('tesing v2 route - open session', () => {
-  //   const sess1Data = JSON.parse(sess1.body.toString());
-  //   const quiz1data = JSON.parse(quiz1.body.toString());
-  //   // open a session
-  //   const res = quizRemoveRequestV2(sess1Data.token, quiz1data.quizId);
-  //   const data = JSON.parse(res.body.toString());
-  //   expect(data).toStrictEqual({ error: expect.any(String) });
-  //   expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  // })
+  test('tesing v2 route - open session', () => {
+    const user1Data = JSON.parse(user1.body.toString());
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const game1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, 3);
+    const game1Data = JSON.parse(game1.body.toString());
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.NEXT_QUESTION);
+    const res = quizRemoveRequestV2(user1Data.token, quiz1Data.quizId);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+  })
 });
 
 // quizViewTrash tests
