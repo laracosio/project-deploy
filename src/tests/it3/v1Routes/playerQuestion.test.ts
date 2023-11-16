@@ -23,7 +23,8 @@ describe('Successful tests: Current Question Information for a Player', () => {
     const player1 = joinGuestPlayerRequest(sesh1Data.sessionId, name);
     const player1Data = JSON.parse(player1.body.toString());
     updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.NEXT_QUESTION);
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
+
     const res = currentQuestionInfoRequest(player1Data.playerId, 1);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual(
@@ -148,7 +149,8 @@ describe('Unsuccessful tests: Current Question Information for a Player', () => 
     const player1 = joinGuestPlayerRequest(sesh1Data.sessionId, name);
     const player1Data = JSON.parse(player1.body.toString());
     updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.END);
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
+
     const res = currentQuestionInfoRequest(player1Data.playerId, 1);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual(
@@ -182,8 +184,8 @@ describe('Successful tests: Player Submission of Answer(s)', () => {
     joinGuestPlayerRequest(sesh1Data.sessionId, name2);
     joinGuestPlayerRequest(sesh1Data.sessionId, name3);
     joinGuestPlayerRequest(sesh1Data.sessionId, name4);
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
-    await new Promise((resolve) => setTimeout(resolve, 4000));
     const numArray: number[] = [answers[0].answerId];
     const res = playerSubmitAnswerRequest(player1Data.playerId, question1Data.questionId, numArray);
 
@@ -216,8 +218,8 @@ describe('Unsuccessful tests: Player Submission of Answer(s)', () => {
     joinGuestPlayerRequest(sesh1Data.sessionId, name2);
     joinGuestPlayerRequest(sesh1Data.sessionId, name3);
     joinGuestPlayerRequest(sesh1Data.sessionId, name4);
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
-    await new Promise((resolve) => setTimeout(resolve, 4000));
     const numArray: number[] = [answers[0].answerId];
 
     const invalidPlayer = 3535;
@@ -249,8 +251,7 @@ describe('Unsuccessful tests: Player Submission of Answer(s)', () => {
     joinGuestPlayerRequest(sesh1Data.sessionId, name2);
     joinGuestPlayerRequest(sesh1Data.sessionId, name3);
     joinGuestPlayerRequest(sesh1Data.sessionId, name4);
-
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
     const numArray: number[] = [answers[0].answerId];
     const res = playerSubmitAnswerRequest(player1Data.playerId, 10, numArray);
@@ -283,8 +284,8 @@ describe('Unsuccessful tests: Player Submission of Answer(s)', () => {
     joinGuestPlayerRequest(sesh1Data.sessionId, name2);
     joinGuestPlayerRequest(sesh1Data.sessionId, name3);
     joinGuestPlayerRequest(sesh1Data.sessionId, name4);
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
-    await new Promise((resolve) => setTimeout(resolve, 4000));
     const numArray: number[] = [answers[0].answerId];
     // change status
     updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.GO_TO_ANSWER);
@@ -318,8 +319,8 @@ describe('Unsuccessful tests: Player Submission of Answer(s)', () => {
     joinGuestPlayerRequest(sesh1Data.sessionId, name2);
     joinGuestPlayerRequest(sesh1Data.sessionId, name3);
     joinGuestPlayerRequest(sesh1Data.sessionId, name4);
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
-    await new Promise((resolve) => setTimeout(resolve, 4000));
     const numArray: number[] = [answers[0].answerId];
     const res = playerSubmitAnswerRequest(player1Data.playerId, 2, numArray);
 
@@ -350,8 +351,8 @@ describe('Unsuccessful tests: Player Submission of Answer(s)', () => {
     joinGuestPlayerRequest(sesh1Data.sessionId, name2);
     joinGuestPlayerRequest(sesh1Data.sessionId, name3);
     joinGuestPlayerRequest(sesh1Data.sessionId, name4);
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
-    await new Promise((resolve) => setTimeout(resolve, 4000));
     const invalidAnswer = answers[0].answerId + 10;
     const numArray: number[] = [invalidAnswer];
     const res = playerSubmitAnswerRequest(player1Data.playerId, question1Data.questionId, numArray);
@@ -384,8 +385,8 @@ describe('Unsuccessful tests: Player Submission of Answer(s)', () => {
     joinGuestPlayerRequest(sesh1Data.sessionId, name2);
     joinGuestPlayerRequest(sesh1Data.sessionId, name3);
     joinGuestPlayerRequest(sesh1Data.sessionId, name4);
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
-    await new Promise((resolve) => setTimeout(resolve, 4000));
     const numArray: number[] = [answers[0].answerId, answers[0].answerId, answers[1].answerId];
     const res = playerSubmitAnswerRequest(player1Data.playerId, question1Data.questionId, numArray);
 
@@ -414,8 +415,8 @@ describe('Unsuccessful tests: Player Submission of Answer(s)', () => {
     joinGuestPlayerRequest(sesh1Data.sessionId, name2);
     joinGuestPlayerRequest(sesh1Data.sessionId, name3);
     joinGuestPlayerRequest(sesh1Data.sessionId, name4);
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
 
-    await new Promise((resolve) => setTimeout(resolve, 4000));
     const numArray: number[] = [];
     const res = playerSubmitAnswerRequest(player1Data.playerId, question1Data.questionId, numArray);
     const data = JSON.parse(res.body.toString());
