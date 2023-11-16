@@ -3,7 +3,7 @@ import { Response } from 'sync-request-curl';
 import { port, url } from '../config.json';
 import { QuestionCreate, InputMessage } from '../dataStore';
 
-const SERVER_URL = `${url}:${port}`;
+export const SERVER_URL = `${url}:${port}`;
 
 export class ParsedResponse {
   response: Response;
@@ -70,7 +70,7 @@ export const apiPost = (
 };
 
 // #region auth handlers
-const authUserDetailsRequestV2 = (token: string): Response => {
+export const authUserDetailsRequestV2 = (token: string): Response => {
   return request('GET', SERVER_URL + '/v2/admin/user/details', {
     headers: {
       'Content-type': 'application/json',
@@ -79,7 +79,7 @@ const authUserDetailsRequestV2 = (token: string): Response => {
   });
 };
 
-const authLogoutRequestV2 = (token: string): Response => {
+export const authLogoutRequestV2 = (token: string): Response => {
   return request('POST', `${SERVER_URL}/v2/admin/auth/logout`, {
     headers: {
       token: token
@@ -90,7 +90,7 @@ const authLogoutRequestV2 = (token: string): Response => {
 // #endregion
 
 // #region user handlers
-const userUpdateDetailsRequestV2 = (
+export const userUpdateDetailsRequestV2 = (
   token: string,
   email: string,
   nameFirst: string,
@@ -109,7 +109,7 @@ const userUpdateDetailsRequestV2 = (
   });
 };
 
-const userUpdatePasswordRequestV2 = (
+export const userUpdatePasswordRequestV2 = (
   token: string,
   oldPassword: string,
   newPassword: string
@@ -128,7 +128,7 @@ const userUpdatePasswordRequestV2 = (
 // #endregion
 
 // #region quiz handlers
-const quizRemoveRequestV2 = (token: string, quizid: number): Response => {
+export const quizRemoveRequestV2 = (token: string, quizid: number): Response => {
   return request(
     'DELETE',
     SERVER_URL + '/v2/admin/quiz/' + quizid,
@@ -140,7 +140,7 @@ const quizRemoveRequestV2 = (token: string, quizid: number): Response => {
   );
 };
 
-const quizTransferRequestV2 = (token: string, quizid: number, userEmail: string): Response => {
+export const quizTransferRequestV2 = (token: string, quizid: number, userEmail: string): Response => {
   return request(
     'POST',
     SERVER_URL + '/v2/admin/quiz/' + quizid + '/transfer',
@@ -154,7 +154,7 @@ const quizTransferRequestV2 = (token: string, quizid: number, userEmail: string)
   );
 };
 
-const moveQuestionRequestV2 = (token: string, quizid: number, questionid: number, newPosition: number): Response => {
+export const moveQuestionRequestV2 = (token: string, quizid: number, questionid: number, newPosition: number): Response => {
   return request(
     'PUT',
     SERVER_URL + '/v2/admin/quiz/' + quizid + '/question/' + questionid + '/move',
@@ -170,7 +170,7 @@ const moveQuestionRequestV2 = (token: string, quizid: number, questionid: number
   );
 };
 
-const duplicateQuestionRequestV2 = (token: string, quizid: number, questionid: number): Response => {
+export const duplicateQuestionRequestV2 = (token: string, quizid: number, questionid: number): Response => {
   return request(
     'POST',
     `${SERVER_URL}/v2/admin/quiz/${quizid}/question/${questionid}/duplicate`,
@@ -183,7 +183,7 @@ const duplicateQuestionRequestV2 = (token: string, quizid: number, questionid: n
   );
 };
 
-const createQuizQuestionRequestV2 = (quizid: number, token: string, questionBody: QuestionCreate): Response => {
+export const createQuizQuestionRequestV2 = (quizid: number, token: string, questionBody: QuestionCreate): Response => {
   return request(
     'POST',
     `${SERVER_URL}/v2/admin/quiz/${quizid}/question`,
@@ -199,7 +199,7 @@ const createQuizQuestionRequestV2 = (quizid: number, token: string, questionBody
   );
 };
 
-const updateQuizQuestionRequestV2 = (quizid: number, questionid: number, token: string, questionBody: QuestionCreate): Response => {
+export const updateQuizQuestionRequestV2 = (quizid: number, questionid: number, token: string, questionBody: QuestionCreate): Response => {
   return request(
     'PUT',
     `${SERVER_URL}/v2/admin/quiz/${quizid}/question/${questionid}`,
@@ -215,7 +215,7 @@ const updateQuizQuestionRequestV2 = (quizid: number, questionid: number, token: 
   );
 };
 
-const deleteQuizQuestionRequestV2 = (token: string, quizid: number, questionid: number): Response => {
+export const deleteQuizQuestionRequestV2 = (token: string, quizid: number, questionid: number): Response => {
   return request(
     'DELETE',
     `${SERVER_URL}/v2/admin/quiz/${quizid}/question/${questionid}`,
@@ -227,7 +227,7 @@ const deleteQuizQuestionRequestV2 = (token: string, quizid: number, questionid: 
   );
 };
 
-const quizNameUpdateRequestV2 = (token: string, quizid: number, name: string): Response => {
+export const quizNameUpdateRequestV2 = (token: string, quizid: number, name: string): Response => {
   return request(
     'PUT',
       `${SERVER_URL}/v2/admin/quiz/${quizid}/name`,
@@ -243,7 +243,7 @@ const quizNameUpdateRequestV2 = (token: string, quizid: number, name: string): R
   );
 };
 
-const quizDescriptUpdateRequestV2 = (token: string, quizid: number, description: string): Response => {
+export const quizDescriptUpdateRequestV2 = (token: string, quizid: number, description: string): Response => {
   return request(
     'PUT',
         `${SERVER_URL}/v2/admin/quiz/${quizid}/description`,
@@ -259,7 +259,7 @@ const quizDescriptUpdateRequestV2 = (token: string, quizid: number, description:
   );
 };
 
-const quizViewTrashRequestV2 = (token: string): Response => {
+export const quizViewTrashRequestV2 = (token: string): Response => {
   return request('GET', `${SERVER_URL}/v2/admin/quiz/trash`, {
     headers: {
       'Content-type': 'application/json',
@@ -268,7 +268,7 @@ const quizViewTrashRequestV2 = (token: string): Response => {
   });
 };
 
-const quizRestoreTrashRequestV2 = (token: string, quizid: number): Response => {
+export const quizRestoreTrashRequestV2 = (token: string, quizid: number): Response => {
   return request(
     'POST',
     `${SERVER_URL}/v2/admin/quiz/${quizid}/restore`,
@@ -281,7 +281,7 @@ const quizRestoreTrashRequestV2 = (token: string, quizid: number): Response => {
   );
 };
 
-const quizEmptyTrashRequestV2 = (token: string, quizids: string): Response => {
+export const quizEmptyTrashRequestV2 = (token: string, quizids: string): Response => {
   return request(
     'DELETE',
     `${SERVER_URL}/v2/admin/quiz/trash/empty`,
@@ -297,7 +297,7 @@ const quizEmptyTrashRequestV2 = (token: string, quizids: string): Response => {
   );
 };
 
-const quizCreateRequestV2 = (
+export const quizCreateRequestV2 = (
   token: string,
   name: string,
   description: string
@@ -314,7 +314,7 @@ const quizCreateRequestV2 = (
   });
 };
 
-const quizListRequestV2 = (token: string): Response => {
+export const quizListRequestV2 = (token: string): Response => {
   return request('GET', `${SERVER_URL}/v2/admin/quiz/list`, {
     headers: {
       token: token
@@ -322,7 +322,7 @@ const quizListRequestV2 = (token: string): Response => {
   });
 };
 
-const quizInfoRequestV2 = (token: string, quizid: number): Response => {
+export const quizInfoRequestV2 = (token: string, quizid: number): Response => {
   return request(
     'GET',
     `${SERVER_URL}/v2/admin/quiz/${quizid}`,
@@ -334,7 +334,25 @@ const quizInfoRequestV2 = (token: string, quizid: number): Response => {
   );
 };
 
-const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
+export const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: string): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/thumbnail`,
+    {
+      body: JSON.stringify({
+        imgUrl: imgUrl,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
+// #endregion
+
+// #region player handlers
+export const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
   return request(
     'POST',
     `${SERVER_URL}/v1/player/join`,
@@ -350,7 +368,7 @@ const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
   );
 };
 
-const guestPlayerStatusRequest = (playerid: number): Response => {
+export const guestPlayerStatusRequest = (playerid: number): Response => {
   return request(
     'GET',
     `${SERVER_URL}/v1/player/${playerid}`,
@@ -362,50 +380,7 @@ const guestPlayerStatusRequest = (playerid: number): Response => {
   );
 };
 
-const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: string): Response => {
-  return request(
-    'PUT',
-    `${SERVER_URL}/v1/admin/quiz/${quizid}/thumbnail`,
-    {
-      body: JSON.stringify({
-        imgUrl: imgUrl,
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      },
-    }
-  );
-};
-
-const quizFinalResultsRequest = (quizid: number, sessionid: number, token: string): Response => {
-  console.log(`helper ${quizid}, ${sessionid}, ${token}`);
-  return request(
-    'GET',
-    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results`,
-    {
-      headers: {
-        token: token
-      }
-    }
-  );
-};
-
-const quizFinalResultsCSVRequest = (quizid: number, sessionid: number, token: string): Response => {
-  return request(
-    'GET',
-    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`,
-    {
-      headers: {
-        token: token
-      }
-    }
-  );
-};
-// #endregion
-
-// #region player handlers
-const sendMsgRequest = (playerId: number, message: InputMessage): Response => {
+export const sendMsgRequest = (playerId: number, message: InputMessage): Response => {
   return request(
     'POST',
     `${SERVER_URL}/v1/player/${playerId}/chat`,
@@ -420,16 +395,57 @@ const sendMsgRequest = (playerId: number, message: InputMessage): Response => {
   );
 };
 
-const viewMsgsRequest = (playerId: number): Response => {
+export const viewMsgsRequest = (playerId: number): Response => {
   return request(
     'GET',
     `${SERVER_URL}/v1/player/${playerId}/chat`
   );
 };
+
+export const currentQuestionInfoRequest = (playerid: number, questionposition: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}`,
+    {
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
+export const playerSubmitAnswerRequest = (playerid: number, questionposition: number, answerIds: number[]): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}/answer`,
+    {
+      body: JSON.stringify({
+        answerIds: answerIds,
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
+export const playerQuestResultRqst = (playerId: number, questionPosition: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/question/${questionPosition}/results`
+  );
+};
+
+export const playerFinalResultRqst = (playerId: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/results`
+  );
+};
 // #endregion
 
 // #region session handlers
-const sessionCreateRequest = (token: string, quizId: number, autoStartNum: number): Response => {
+export const sessionCreateRequest = (token: string, quizId: number, autoStartNum: number): Response => {
   return request(
     'POST',
     `${SERVER_URL}/v1/admin/quiz/${quizId}/session/start`,
@@ -444,13 +460,44 @@ const sessionCreateRequest = (token: string, quizId: number, autoStartNum: numbe
     }
   );
 };
-// #endregion
 
-export {
-  authUserDetailsRequestV2, quizRemoveRequestV2, quizTransferRequestV2, moveQuestionRequestV2, duplicateQuestionRequestV2,
-  createQuizQuestionRequestV2, updateQuizQuestionRequestV2, deleteQuizQuestionRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2,
-  quizEmptyTrashRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2,
-  quizInfoRequestV2, authLogoutRequestV2, userUpdateDetailsRequestV2, userUpdatePasswordRequestV2, quizThumbnailUpdateRequest, quizFinalResultsRequest,
-  quizFinalResultsCSVRequest, sendMsgRequest,
-  viewMsgsRequest, sessionCreateRequest, joinGuestPlayerRequest, guestPlayerStatusRequest
+export const updateSessionRequest = (token: string, quizId: number, sessionId: number, action: string): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      body: JSON.stringify({
+        action: action,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
 };
+
+export const sessionStatusRequest = (token: string, quizId: number, sessionId: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      headers: {
+        token: token
+      },
+    }
+  );
+};
+export const viewSessionsRequest = (token: string, quizid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/sessions`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
+// #endregion

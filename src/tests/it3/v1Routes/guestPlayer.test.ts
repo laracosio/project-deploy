@@ -1,11 +1,12 @@
 import { authRegisterRequest } from '../../it2/serverTestHelperIt2';
 import { quizCreateRequest, createQuizQuestionRequest } from '../../it2/serverTestHelperIt2';
 import { person1, validQuizName, validQuizDescription, validCreateQuestion, validAutoStartNum } from '../../../testingData';
-import { guestPlayerStatusRequest, sessionCreateRequest } from '../../serverTestHelperIt3';
+import { guestPlayerStatusRequest, sessionCreateRequest, updateSessionRequest } from '../../serverTestHelperIt3';
 import { joinGuestPlayerRequest } from '../../serverTestHelperIt3';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 
 import { clearRequest } from '../../it2/serverTestHelperIt2';
+import { AdminActions } from '../../../enums/AdminActions';
 
 beforeEach(() => {
   clearRequest();
@@ -62,7 +63,7 @@ describe('Unsuccessful tests: Join Guest Player', () => {
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toBe(HttpStatusCode.BAD_REQUEST);
   });
-  /*
+
   test('Unsuccessful: Session is not in LOBBY state', () => {
     const user1 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
     const user1Data = JSON.parse(user1.body.toString());
@@ -72,14 +73,13 @@ describe('Unsuccessful tests: Join Guest Player', () => {
 
     const sesh1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
     const sesh1Data = JSON.parse(sesh1.body.toString());
-    const name = "laraMichelle";
-    //put updatesessionStateRequest here!
+    const name = 'laraMichelle';
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, sesh1Data.sessionId, AdminActions.NEXT_QUESTION);
     const res = joinGuestPlayerRequest(sesh1Data.sessionId, name);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toBe(HttpStatusCode.BAD_REQUEST);
   });
-  */
 });
 
 describe('Successful tests: Status of Guest Player', () => {

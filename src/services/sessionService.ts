@@ -8,8 +8,8 @@ import { StateError } from '../errors/StateError';
 import { quizToMetadata } from '../utils/mappers';
 import { SessionStateMachine } from './sesssionStateMachine';
 import { AutomaticActions } from '../enums/AutomaticActions';
-import { tokenValidation, findQuizById, findUTInfo, setAndSave } from './otherService';
-import { PlayerAnswers } from '../dataStore';
+import { tokenValidation, findQuizById, findUTInfo, setAndSave, calcSubmittedAnsScore } from './otherService';
+
 interface newSessionReturn {
   sessionId: number
 }
@@ -29,6 +29,11 @@ interface QuestionResults {
 interface QuizFinalResultsReturn {
   usersRankedByScore: Rank[];
   questionResults: QuestionResults[];
+}
+
+interface quizSessionsList {
+  activeSessions: number[];
+  inactiveSessions: number[];
 }
 
 /**
@@ -74,7 +79,7 @@ export function startNewSession(token: string, quizId: number, autoStartNum: num
     sessionQuiz: matchedQuiz,
     sessionState: SessionStates.LOBBY,
     autoStartNum: autoStartNum,
-    atQuestion: 1,
+    atQuestion: 0,
     sessionPlayers: [],
     messages: [],
   };
@@ -152,9 +157,25 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   if (!isAdminAction(action)) {
     throw new ApiError(`Admin Action: ${action} is not valid`, HttpStatusCode.BAD_REQUEST);
   }
+
+  // if the sessions is at the last question and its state is closed
+  // if admin tries to go to next question this should go to final results instead
+  if ((session.atQuestion === session.sessionQuiz.numQuestions) &&
+      session.sessionState === SessionStates.QUESTION_CLOSE &&
+      action === AdminActions.NEXT_QUESTION) {
+    action = AdminActions.GO_TO_FINAL_RESULTS;
+  }
+
+  // try-catch executes changing state. If error will go to catch
   try {
+    // updateState will change the state of the session and throw an error if invalid action given as next state
     const nextState = updateState(session, action as AdminActions);
+    if (session.sessionState === SessionStates.QUESTION_OPEN && nextState === SessionStates.ANSWER_SHOW) {
+      const questionIndex = (session.atQuestion - 1);
+      calcSubmittedAnsScore(session, questionIndex);
+    }
     if (nextState === SessionStates.QUESTION_COUNTDOWN) {
+      session.atQuestion++;
       setTimeout(() => {
         updateState(session, AutomaticActions.OPEN_QUESTION_AUTOMATIC);
       }, 3000);
@@ -165,6 +186,8 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
       question.questionStartTime = currentUnixTime;
       setTimeout(() => {
         updateState(session, AutomaticActions.CLOSE_QUESTION_AUTOMATIC);
+        const questionIndex = (session.atQuestion - 1);
+        calcSubmittedAnsScore(session, questionIndex);
       }, question.duration * 1000);
     }
   } catch (e) {
@@ -189,161 +212,207 @@ export function updateState(session: Session, action: AdminActions | AutomaticAc
   }
 }
 
-export function quizFinalResults(quizId: number, sessionId: number, token: string): QuizFinalResultsReturn {
+/**
+ * Given a particular quiz, view both active and inactive sessions
+ * @param {string} token - unique token
+ * @param {number} quizId - unique identifier for quiz
+ * @returns { activeSessions: [{number}], inactiveSessions: [{number}] } - object containing 2 arrays of sessionIds
+ * @returns {{error: string}}
+ */
+export function viewSessions(token: string, quizId: number): quizSessionsList {
   const dataStore = getData();
-  const session: Session = dataStore.sessions.find(elem => elem.sessionId === sessionId);
 
-  // 401 Token is empty or invalid (does not refer to valid logged in user session)
   if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
 
-  // 403 Valid token is provided, but user is not authorised to view this session
-  const authToken: UTInfo = findUTInfo(token);
-  if (session.sessionQuiz.quizOwner !== authToken.userId) {
-    throw new ApiError('User is not authorised to view this session', HttpStatusCode.FORBIDDEN);
+  const matchedToken = findUTInfo(token);
+  if (dataStore.quizzes.some((q) => (q.quizOwner !== matchedToken.userId && q.quizId === quizId))) {
+    throw new ApiError('User is not an owner of this quiz', HttpStatusCode.FORBIDDEN);
   }
 
-  // 400 Session Id does not refer to a valid session within this quiz
-  const sessionsWithinQuiz = dataStore.sessions.filter(elem => elem.sessionQuiz.quizId === quizId);
-  if (!sessionsWithinQuiz.some(elem => elem.sessionId === sessionId)) {
-    throw new ApiError('Session Id does not refer to a valid session within this quiz', HttpStatusCode.BAD_REQUEST);
-  }
+  const matchedQuiz = findQuizById(quizId);
 
-  // 400 Session is not in FINAL_RESULTS state
-  if (session.sessionState !== SessionStates.FINAL_RESULTS) {
-    throw new ApiError('Something went wrong, please try again', HttpStatusCode.BAD_REQUEST);
-  }
-
-  const usersRankedByScore = [...session.sessionPlayers]
-    .sort((a, b) => playerScore(b.playerAnswers) - playerScore(a.playerAnswers))
-    .map(elem => {
-      return {
-        name: elem.playerName,
-        score: playerScore(elem.playerAnswers)
-      };
-    });
-
-  const questionResults = [...session.sessionQuiz.questions].map(elem => {
-    const noOfAnswers = elem.answerTimes.length;
-    const sumOfAnswers = -1;
-
-    const averageAnswerTime = sumOfAnswers / noOfAnswers;
-    const percentCorrect = Math.round((elem.playersCorrectList.length / session.sessionPlayers.length) * 100);
-    return {
-      questionId: elem.questionId,
-      playersCorrectList: elem.playersCorrectList,
-      averageAnswerTime: averageAnswerTime,
-      percentCorrect: percentCorrect
-    };
-  });
-
-  const finalResults: QuizFinalResultsReturn = {
-    usersRankedByScore: usersRankedByScore,
-    questionResults: questionResults
-  };
-
-  return finalResults;
-}
-export function quizFinalResultsCsv(quizId: number, sessionId: number, token: string): string[] {
-  const dataStore = getData();
-  const session: Session = dataStore.sessions.find(elem => elem.sessionId === sessionId);
-
-  // 401 Token is empty or invalid (does not refer to valid logged in user session)
-  if (!tokenValidation(token)) {
-    throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
-  }
-
-  // 403 Valid token is provided, but user is not authorised to view this session
-  const authToken: UTInfo = findUTInfo(token);
-  if (session.sessionQuiz.quizOwner !== authToken.userId) {
-    throw new ApiError('User is not authorised to view this session', HttpStatusCode.FORBIDDEN);
-  }
-
-  // 400 Session Id does not refer to a valid session within this quiz
-  const sessionsWithinQuiz = dataStore.sessions.filter(elem => elem.sessionQuiz.quizId === quizId);
-  if (!sessionsWithinQuiz.some(elem => elem.sessionId === sessionId)) {
-    throw new ApiError('Session Id does not refer to a valid session within this quiz', HttpStatusCode.BAD_REQUEST);
-  }
-
-  // 400 Session is not in FINAL_RESULTS state
-  if (session.sessionState !== SessionStates.FINAL_RESULTS) {
-    throw new ApiError('Something went wrong, please try again', HttpStatusCode.BAD_REQUEST);
-  }
-
-  return createQuizResultsCsv(session);
-}
-
-function createQuizResultsCsv(session: Session): string[] {
-  const questions: Question[] = session.sessionQuiz.questions;
-  const players: Player[] = session.sessionPlayers;
-
-  const sortedPlayers = players.sort((a, b) => {
-    if (a.playerName < b.playerName) {
-      return -1;
+  // Create an array for active sessions for particular quiz
+  const quizActiveSessionList: number[] = [];
+  dataStore.sessions.forEach((sess) => {
+    if (sess.sessionQuiz === matchedQuiz && sess.sessionState !== SessionStates.END) {
+      const obj = sess.sessionId;
+      quizActiveSessionList.push(obj);
     }
-    if (a.playerName > b.playerName) {
-      return 1;
+  });
+  quizActiveSessionList.sort(function(a, b) { return a - b; });
+
+  // Create an array for inactive sessions for particular quiz
+  const quizInactiveSessionList: number[] = [];
+  dataStore.sessions.forEach((sess) => {
+    if (sess.sessionQuiz === matchedQuiz && sess.sessionState === SessionStates.END) {
+      const obj = sess.sessionId;
+      quizInactiveSessionList.push(obj);
     }
-    return 0;
   });
+  quizInactiveSessionList.sort(function(a, b) { return a - b; });
 
-  // get list of questions with all players scores and ranks
-  const questionsWithScoresAndRank = questions.map(question => {
-    // get list of scores for each player, with each each index + 1 being the corresponding question number
-    const scores = sortedPlayers.map(player => {
-      const playerAnswer = player.playerAnswers.find(playerAnswer => playerAnswer.questionId === question.questionId);
-      return {
-        playerId: player.playerId,
-        score: playerAnswer ? playerAnswer.score : 0
-      };
-    });
-    const sortedScores = scores.sort((a, b) => (b.score) - (a.score));
-    let rank = 1;
+  const quizSessionsList: quizSessionsList = { activeSessions: quizActiveSessionList, inactiveSessions: quizInactiveSessionList };
 
-    // get ranks for each player, with each index + 1 being the corresponding question number
-    const ranks = sortedScores.map((answer, idx) => {
-      if (idx > 0 && answer.score < sortedScores[idx - 1].score) {
-        rank = idx + 1;
-      }
-      return {
-        playerId: answer.playerId,
-        rank: rank
-      };
-    });
-
-    return {
-      id: question.questionId,
-      scores: scores,
-      ranks: ranks
-    };
-  });
-
-  // add header to csv list
-  const header = ['Player'];
-  questions.forEach((elem, idx) => {
-    header.push(`question${idx + 1}score`);
-    header.push(`question${idx + 1}rank`);
-  });
-  const csvData = [header.join(',')];
-
-  // add players score and rank to csv list
-  sortedPlayers.forEach(player => {
-    const row = [player.playerName];
-    questionsWithScoresAndRank.forEach((elem, idx) => {
-      row.push(elem.scores.find(score => score.playerId === player.playerId).score.toString());
-      row.push(elem.ranks.find(rank => rank.playerId === player.playerId).rank.toString());
-    });
-    csvData.push(row.join(','));
-  });
-
-  return csvData;
+  return quizSessionsList;
 }
 
-function playerScore(playerAnswers: PlayerAnswers[]): number {
-  let playerScore = 0;
-  playerAnswers.forEach(q => {
-    playerScore += q.score;
-  });
-  return playerScore;
-}
+// export function quizFinalResults(quizId: number, sessionId: number, token: string): QuizFinalResultsReturn {
+//   const dataStore = getData();
+//   const session: Session = dataStore.sessions.find(elem => elem.sessionId === sessionId);
+
+//   // 401 Token is empty or invalid (does not refer to valid logged in user session)
+//   if (!tokenValidation(token)) {
+//     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+//   }
+
+//   // 403 Valid token is provided, but user is not authorised to view this session
+//   const authToken: UTInfo = findUTInfo(token);
+//   if (session.sessionQuiz.quizOwner !== authToken.userId) {
+//     throw new ApiError('User is not authorised to view this session', HttpStatusCode.FORBIDDEN);
+//   }
+
+//   // 400 Session Id does not refer to a valid session within this quiz
+//   const sessionsWithinQuiz = dataStore.sessions.filter(elem => elem.sessionQuiz.quizId === quizId);
+//   if (!sessionsWithinQuiz.some(elem => elem.sessionId === sessionId)) {
+//     throw new ApiError('Session Id does not refer to a valid session within this quiz', HttpStatusCode.BAD_REQUEST);
+//   }
+
+//   // 400 Session is not in FINAL_RESULTS state
+//   if (session.sessionState !== SessionStates.FINAL_RESULTS) {
+//     throw new ApiError('Something went wrong, please try again', HttpStatusCode.BAD_REQUEST);
+//   }
+
+//   const usersRankedByScore = [...session.sessionPlayers]
+//     .sort((a, b) => playerScore(b.playerAnswers) - playerScore(a.playerAnswers))
+//     .map(elem => {
+//       return {
+//         name: elem.playerName,
+//         score: playerScore(elem.playerAnswers)
+//       };
+//     });
+
+//   const questionResults = [...session.sessionQuiz.questions].map(elem => {
+//     const noOfAnswers = elem.answerTimes.length;
+//     const sumOfAnswers = -1;
+
+//     const averageAnswerTime = sumOfAnswers / noOfAnswers;
+//     const percentCorrect = Math.round((elem.playersCorrectList.length / session.sessionPlayers.length) * 100);
+//     return {
+//       questionId: elem.questionId,
+//       playersCorrectList: elem.playersCorrectList,
+//       averageAnswerTime: averageAnswerTime,
+//       percentCorrect: percentCorrect
+//     };
+//   });
+
+//   const finalResults: QuizFinalResultsReturn = {
+//     usersRankedByScore: usersRankedByScore,
+//     questionResults: questionResults
+//   };
+
+//   return finalResults;
+// }
+// export function quizFinalResultsCsv(quizId: number, sessionId: number, token: string): string[] {
+//   const dataStore = getData();
+//   const session: Session = dataStore.sessions.find(elem => elem.sessionId === sessionId);
+
+//   // 401 Token is empty or invalid (does not refer to valid logged in user session)
+//   if (!tokenValidation(token)) {
+//     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
+//   }
+
+//   // 403 Valid token is provided, but user is not authorised to view this session
+//   const authToken: UTInfo = findUTInfo(token);
+//   if (session.sessionQuiz.quizOwner !== authToken.userId) {
+//     throw new ApiError('User is not authorised to view this session', HttpStatusCode.FORBIDDEN);
+//   }
+
+//   // 400 Session Id does not refer to a valid session within this quiz
+//   const sessionsWithinQuiz = dataStore.sessions.filter(elem => elem.sessionQuiz.quizId === quizId);
+//   if (!sessionsWithinQuiz.some(elem => elem.sessionId === sessionId)) {
+//     throw new ApiError('Session Id does not refer to a valid session within this quiz', HttpStatusCode.BAD_REQUEST);
+//   }
+
+//   // 400 Session is not in FINAL_RESULTS state
+//   if (session.sessionState !== SessionStates.FINAL_RESULTS) {
+//     throw new ApiError('Something went wrong, please try again', HttpStatusCode.BAD_REQUEST);
+//   }
+
+//   return createQuizResultsCsv(session);
+// }
+
+// function createQuizResultsCsv(session: Session): string[] {
+//   const questions: Question[] = session.sessionQuiz.questions;
+//   const players: Player[] = session.sessionPlayers;
+
+//   const sortedPlayers = players.sort((a, b) => {
+//     if (a.playerName < b.playerName) {
+//       return -1;
+//     }
+//     if (a.playerName > b.playerName) {
+//       return 1;
+//     }
+//     return 0;
+//   });
+
+//   // get list of questions with all players scores and ranks
+//   const questionsWithScoresAndRank = questions.map(question => {
+//     // get list of scores for each player, with each each index + 1 being the corresponding question number
+//     const scores = sortedPlayers.map(player => {
+//       const playerAnswer = player.playerAnswers.find(playerAnswer => playerAnswer.questionId === question.questionId);
+//       return {
+//         playerId: player.playerId,
+//         score: playerAnswer ? playerAnswer.score : 0
+//       };
+//     });
+//     const sortedScores = scores.sort((a, b) => (b.score) - (a.score));
+//     let rank = 1;
+
+//     // get ranks for each player, with each index + 1 being the corresponding question number
+//     const ranks = sortedScores.map((answer, idx) => {
+//       if (idx > 0 && answer.score < sortedScores[idx - 1].score) {
+//         rank = idx + 1;
+//       }
+//       return {
+//         playerId: answer.playerId,
+//         rank: rank
+//       };
+//     });
+
+//     return {
+//       id: question.questionId,
+//       scores: scores,
+//       ranks: ranks
+//     };
+//   });
+
+//   // add header to csv list
+//   const header = ['Player'];
+//   questions.forEach((elem, idx) => {
+//     header.push(`question${idx + 1}score`);
+//     header.push(`question${idx + 1}rank`);
+//   });
+//   const csvData = [header.join(',')];
+
+//   // add players score and rank to csv list
+//   sortedPlayers.forEach(player => {
+//     const row = [player.playerName];
+//     questionsWithScoresAndRank.forEach((elem, idx) => {
+//       row.push(elem.scores.find(score => score.playerId === player.playerId).score.toString());
+//       row.push(elem.ranks.find(rank => rank.playerId === player.playerId).rank.toString());
+//     });
+//     csvData.push(row.join(','));
+//   });
+
+//   return csvData;
+// }
+
+// function playerScore(playerAnswers: PlayerAnswers[]): number {
+//   let playerScore = 0;
+//   playerAnswers.forEach(q => {
+//     playerScore += q.score;
+//   });
+//   return playerScore;
+// }
