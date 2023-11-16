@@ -1,10 +1,9 @@
-import { person1, validQuizDescription, validQuizName, stringOf1QuizIDs, stringOf2QuizIDs } from '../../../testingData';
+import { person1, validQuizDescription, validQuizName, stringOf1QuizIDs, stringOf2QuizIDs, validCreateQuestion } from '../../../testingData';
 import { authRegisterRequest, clearRequest, quizCreateRequest } from '../../it2/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, quizEmptyTrashRequestV2, quizCreateRequestV2, sessionCreateRequest, sessionStatusRequest, updateSessionRequest } from '../../serverTestHelperIt3';
+import { quizRemoveRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, quizEmptyTrashRequestV2, quizCreateRequestV2, sessionCreateRequest, sessionStatusRequest, updateSessionRequest, createQuizQuestionRequestV2 } from '../../serverTestHelperIt3';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 import { AdminActions } from '../../../enums/AdminActions';
-// import { HttpStatusCode } from "../../enums/HttpStatusCode";
 
 beforeEach(() => {
   clearRequest();
@@ -29,6 +28,7 @@ describe('DELETE /v2/admin/quiz/{quizid}', () => {
   test('tesing v2 route - open session', () => {
     const user1Data = JSON.parse(user1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
+    createQuizQuestionRequestV2(quiz1Data.quizId, user1Data.token, validCreateQuestion);
     const game1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, 3);
     const game1Data = JSON.parse(game1.body.toString());
     updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.NEXT_QUESTION);

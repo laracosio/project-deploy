@@ -1,9 +1,10 @@
-import { person1, person2, person3, validQuizDescription, validQuizName, newvalidQuizName, validQuestionInput1, validQuestionInput2, validQuestionInput1V2, validQuestionInput2V2, validpngUrl1 } from '../../../testingData';
+import { person1, person2, person3, validQuizDescription, validQuizName, newvalidQuizName, validQuestionInput1, validQuestionInput2, validQuestionInput1V2, validQuestionInput2V2, validpngUrl1, validCreateQuestion } from '../../../testingData';
 import { authRegisterRequest, clearRequest, createQuizQuestionRequest, quizCreateRequest, quizInfoRequest } from '../../it2/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizTransferRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2, quizInfoRequestV2, createQuizQuestionRequestV2, sessionCreateRequest, quizThumbnailUpdateRequest } from '../../serverTestHelperIt3';
+import { quizRemoveRequestV2, quizTransferRequestV2, quizNameUpdateRequestV2, quizDescriptUpdateRequestV2, quizCreateRequestV2, quizListRequestV2, quizInfoRequestV2, createQuizQuestionRequestV2, sessionCreateRequest, quizThumbnailUpdateRequest, updateSessionRequest } from '../../serverTestHelperIt3';
 import { getUnixTime } from 'date-fns';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
+import { AdminActions } from '../../../enums/AdminActions';
 
 beforeEach(() => {
   clearRequest();
@@ -40,7 +41,10 @@ describe('POST /v2/admin/quiz/{quizId}/transfer', () => {
     const user1Data = JSON.parse(user1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
     const sess2Data = JSON.parse(sess2.body.toString());
-    sessionCreateRequest(user1Data.token, quiz1Data.quizId, 3);
+    createQuizQuestionRequestV2(quiz1Data.quizId, user1Data.token, validCreateQuestion);
+    const game1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, 3);
+    const game1Data = JSON.parse(game1.body.toString());
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.NEXT_QUESTION);
     const res = quizTransferRequestV2(user1Data.token, quiz1Data.quizId, person2.email);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
