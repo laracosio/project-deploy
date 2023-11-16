@@ -52,7 +52,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
     );
     const session: SessionStatus = getSession.getParsedBody();
     expect(session.state).toStrictEqual('LOBBY');
-    expect(session.atQuestion).toStrictEqual(1);
+    expect(session.atQuestion).toStrictEqual(0);
     expect(session.players).toEqual([]);
     expect(session.metadata.quizId).toStrictEqual(postQuiz.getParsedBody().quizId);
     expect(session.metadata.name).toStrictEqual('my quiz');

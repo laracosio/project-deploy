@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import crypto from 'crypto';
 import { SessionStates } from '../enums/SessionStates';
+import { UserRanking } from './playerService';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -307,6 +308,7 @@ export function checkAnswers(correctAnswerIds: number[], playerAnswerIds: number
  * intialises answerCorrect and questionScore of submittedAns interface
  * @param session
  * @param questionIndex
+ * // 1dp: https://stackoverflow.com/questions/7342957/how-do-you-round-to-one-decimal-place-in-javascript
  */
 export function calcSubmittedAnsScore(session: Session, questionIndex: number) {
   const matchedQuestion = session.sessionQuiz.questions[questionIndex];
@@ -323,16 +325,74 @@ export function calcSubmittedAnsScore(session: Session, questionIndex: number) {
 
   // order submittedAnswers based on 1) answer correctness then 2) time taken to submit
   // ternary operator - ? 1: 0; if truthful will be 1 otherwise 0; cannot sort booleans
-  submittedAnswers.sort((a, b) => ((b.answerCorrect ? 1 : 0) - (a.answerCorrect ? 1 : 0)) || (b.timeSubmitted - a.timeSubmitted));
-
+  submittedAnswers.sort((a, b) => ((b.answerCorrect ? 1 : 0) - (a.answerCorrect ? 1 : 0)) || (a.timeSubmitted - b.timeSubmitted));
   // compute score
   submittedAnswers.forEach(submission => {
     if (submission.answerCorrect === true) {
       const currentlyCorrect = matchedQuestion.playerCorrectList.length;
-      submission.questionScore = matchedQuestion.points * (1 / (currentlyCorrect + 1));
+      submission.questionScore = Math.round((matchedQuestion.points * (1 / (currentlyCorrect + 1))) * 10) / 10;
       matchedQuestion.playerCorrectList.push(findPlayerName(submission.playerId, session.sessionId));
     } else {
       submission.questionScore = 0;
     }
   });
+}
+
+/**
+ * calculates average answerTime based on question and number of total players
+ * @param session: session where question resides
+ * @param questionIndex: index of question (questionPosition - 1)
+ * @returns avgTime to nearest integer
+ */
+export function calcAvgAnsTime(session:Session, questionIndex: number): number {
+  const matchedQuestion = session.sessionQuiz.questions[questionIndex];
+  const totalSessionPlayers = session.sessionPlayers.length;
+  const submittedAnswers = matchedQuestion.submittedAnswers;
+
+  const cumulativeTime = submittedAnswers.reduce((accumulator, currentValue) => accumulator + currentValue.timeSubmitted, 0);
+  return Math.round(cumulativeTime / totalSessionPlayers);
+}
+
+/**
+ * Calculates the percentage of correct answers received for question
+ * @param session: session where question resides
+ * @param questionIndex: index of question (questionPosition - 1)
+ * @returns % of correct answers to nearest integer
+ */
+export function calcPercentCorrect(session:Session, questionIndex: number): number {
+  const matchedQuestion = session.sessionQuiz.questions[questionIndex];
+  const totalSessionPlayers = session.sessionPlayers.length;
+  const numCorrect = matchedQuestion.playerCorrectList.length;
+  return Math.round((numCorrect / totalSessionPlayers) * 100);
+}
+
+/**
+ * Creates an array of objects with users ranked by score then by name alphabetically
+ * @param session: session where playerId resides
+ * @returns userRanking
+ */
+export function createUserRank(session: Session): UserRanking[] {
+  const questions = session.sessionQuiz.questions;
+  const playerList = session.sessionPlayers;
+
+  const userRanking: UserRanking[] = [];
+
+  for (const player of playerList) {
+    let cumulativeScore = 0;
+    for (const question of questions) {
+      for (const answer of question.submittedAnswers) {
+        if (answer.playerId === player.playerId) {
+          cumulativeScore += answer.questionScore;
+        }
+      }
+    }
+    userRanking.push({
+      name: findPlayerName(player.playerId, session.sessionId),
+      score: cumulativeScore
+    });
+  }
+
+  userRanking.sort((a, b) => (b.score - a.score || a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
+
+  return userRanking;
 }

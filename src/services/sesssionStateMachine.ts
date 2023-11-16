@@ -21,7 +21,8 @@ export class SessionStateMachine {
     [SessionStates.QUESTION_CLOSE]: {
       [AdminActions.GO_TO_FINAL_RESULTS]: SessionStates.FINAL_RESULTS,
       [AdminActions.GO_TO_ANSWER]: SessionStates.ANSWER_SHOW,
-      [AdminActions.END]: SessionStates.END
+      [AdminActions.END]: SessionStates.END,
+      [AdminActions.NEXT_QUESTION]: SessionStates.QUESTION_COUNTDOWN
     },
     [SessionStates.ANSWER_SHOW]: {
       [AdminActions.NEXT_QUESTION]: SessionStates.QUESTION_COUNTDOWN,

@@ -61,12 +61,6 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Success', () => {
     // LOBBY -> QUESTION_COUNTDOWN automatically since autoStartNum 3 = 3 players
     // should print current action: NEXT_QUESTION and current state: QUESTION_COUNTDOWN
 
-    apiPut(
-        `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,
-        { action: AdminActions.NEXT_QUESTION },
-        { token: postRegister.getParsedBody().token }
-    );
-
     await new Promise((r) => setTimeout(r, 4000));
 
     const getQuizInfo = apiGet(
@@ -76,20 +70,20 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Success', () => {
 
     // TODO: uncomment once quiz answers is done
 
-    // const quizAnswers = getQuizInfo.getParsedBody().questions[0].answers;
+    const quizAnswers = getQuizInfo.getParsedBody().questions[0].answers;
 
-    // apiPut(
-    //   `/v1/players/${postPlayer1.getParsedBody().playerId}/question/${1}/answer`,
-    //   { answerIds: [quizAnswers[0]] }
-    // );
-    // apiPut(
-    //   `/v1/players/${postPlayer2.getParsedBody().playerId}/question/${1}/answer`,
-    //   { answerIds: [quizAnswers[0]] }
-    // );
-    // apiPut(
-    //   `/v1/players/${postPlayer3.getParsedBody().playerId}/question/${1}/answer`,
-    //   { answerIds: [quizAnswers[0]] }
-    // );
+    apiPut(
+      `/v1/players/${postPlayer1.getParsedBody().playerId}/question/${1}/answer`,
+      { answerIds: [quizAnswers[0]] }
+    );
+    apiPut(
+      `/v1/players/${postPlayer2.getParsedBody().playerId}/question/${1}/answer`,
+      { answerIds: [quizAnswers[0]] }
+    );
+    apiPut(
+      `/v1/players/${postPlayer3.getParsedBody().playerId}/question/${1}/answer`,
+      { answerIds: [quizAnswers[0]] }
+    );
 
     apiPut(
         `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}`,

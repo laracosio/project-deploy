@@ -334,6 +334,24 @@ export const quizInfoRequestV2 = (token: string, quizid: number): Response => {
   );
 };
 
+export const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: string): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/thumbnail`,
+    {
+      body: JSON.stringify({
+        imgUrl: imgUrl,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
+// #endregion
+
+// #region player handlers
 export const joinGuestPlayerRequest = (sessionId: number, name: string): Response => {
   return request(
     'POST',
@@ -362,49 +380,6 @@ export const guestPlayerStatusRequest = (playerid: number): Response => {
   );
 };
 
-export const quizThumbnailUpdateRequest = (token: string, quizid: number, imgUrl: string): Response => {
-  return request(
-    'PUT',
-    `${SERVER_URL}/v1/admin/quiz/${quizid}/thumbnail`,
-    {
-      body: JSON.stringify({
-        imgUrl: imgUrl,
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      },
-    }
-  );
-};
-
-const quizFinalResultsRequest = (quizid: number, sessionid: number, token: string): Response => {
-  console.log(`helper ${quizid}, ${sessionid}, ${token}`);
-  return request(
-    'GET',
-    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results`,
-    {
-      headers: {
-        token: token
-      }
-    }
-  );
-};
-
-const quizFinalResultsCSVRequest = (quizid: number, sessionid: number, token: string): Response => {
-  return request(
-    'GET',
-    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`,
-    {
-      headers: {
-        token: token
-      }
-    }
-  );
-};
-// #endregion
-
-// #region player handlers
 export const sendMsgRequest = (playerId: number, message: InputMessage): Response => {
   return request(
     'POST',
@@ -424,6 +399,47 @@ export const viewMsgsRequest = (playerId: number): Response => {
   return request(
     'GET',
     `${SERVER_URL}/v1/player/${playerId}/chat`
+  );
+};
+
+export const currentQuestionInfoRequest = (playerid: number, questionposition: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}`,
+    {
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
+export const playerSubmitAnswerRequest = (playerid: number, questionposition: number, answerIds: number[]): Response => {
+  return request(
+    'PUT',
+    `${SERVER_URL}/v1/player/${playerid}/question/${questionposition}/answer`,
+    {
+      body: JSON.stringify({
+        answerIds: answerIds,
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      },
+    }
+  );
+};
+
+export const playerQuestResultRqst = (playerId: number, questionPosition: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/question/${questionPosition}/results`
+  );
+};
+
+export const playerFinalResultRqst = (playerId: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/results`
   );
 };
 // #endregion
@@ -467,6 +483,18 @@ export const sessionStatusRequest = (token: string, quizId: number, sessionId: n
     `${SERVER_URL}/v1/admin/quiz/${quizId}/session/${sessionId}`,
     {
       headers: {
+        token: token
+      },
+    }
+  );
+};
+
+export const viewSessionsRequest = (token: string, quizid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/sessions`,
+    {
+      headers: {
         'Content-type': 'application/json',
         token: token
       },
@@ -474,3 +502,29 @@ export const sessionStatusRequest = (token: string, quizId: number, sessionId: n
   );
 };
 // #endregion
+
+export const quizFinalRsltRequest = (token: string, quizid: number, sessionid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
+
+export const csvRequest = (token: string, quizid: number, sessionid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};

@@ -39,6 +39,10 @@ describe('Success Cases', () => {
     const nextState = SessionStateMachine.getNextState(SessionStates.QUESTION_CLOSE, AdminActions.GO_TO_ANSWER);
     expect(nextState).toStrictEqual(SessionStates.ANSWER_SHOW);
   });
+  test('QUESTION_CLOSE to NEXT_QUESTION', () => {
+    const nextState = SessionStateMachine.getNextState(SessionStates.QUESTION_CLOSE, AdminActions.NEXT_QUESTION);
+    expect(nextState).toStrictEqual(SessionStates.QUESTION_COUNTDOWN);
+  });
   test('FINAL_RESULT to END', () => {
     const nextState = SessionStateMachine.getNextState(SessionStates.FINAL_RESULTS, AdminActions.END);
     expect(nextState).toStrictEqual(SessionStates.END);
