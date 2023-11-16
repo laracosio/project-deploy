@@ -1,12 +1,10 @@
-import { Response } from 'sync-request-curl';
-import { longMultiChoice, person1, validAutoStartNum, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../../../testingData';
-import { createQuizQuestionRequestV2, joinGuestPlayerRequest, playerFinalResultRqst, playerQuestResultRqst, playerSubmitAnswerRequest, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest, updateSessionRequest } from '../../serverTestHelperIt3';
+import { longMultiChoice, person1, validAutoStartNum, validQuizDescription, validQuizName } from '../../../testingData';
+import { createQuizQuestionRequestV2, joinGuestPlayerRequest, playerQuestResultRqst, playerSubmitAnswerRequest, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest, updateSessionRequest } from '../../serverTestHelperIt3';
 import { AdminActions } from '../../../enums/AdminActions';
 import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
-import { Question } from '../../../dataStore';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 
-// cannot keep with other playerResults tests due to beforeEach 
+// cannot keep with other playerResults tests due to beforeEach
 test('long multiple choice test to calculate avgTime', async() => {
   clearRequest();
   // create admin
@@ -57,6 +55,6 @@ test('long multiple choice test to calculate avgTime', async() => {
     percentCorrect: Math.round((2 / 3) * 100)
   });
   expect(data.playersCorrectList).toEqual(expect.arrayContaining(['Dave', 'Gizmo']));
-  expect(data.averageAnswerTime).toEqual(Math.round((1 + 2 + 3)/3));
+  expect(data.averageAnswerTime).toEqual(Math.round((1 + 2 + 3) / 3));
   expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
-})
+});

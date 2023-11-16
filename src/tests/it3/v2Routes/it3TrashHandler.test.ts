@@ -1,7 +1,7 @@
 import { person1, validQuizDescription, validQuizName, stringOf1QuizIDs, stringOf2QuizIDs, validCreateQuestion } from '../../../testingData';
 import { authRegisterRequest, clearRequest, quizCreateRequest } from '../../it2/serverTestHelperIt2';
 import { Response } from 'sync-request-curl';
-import { quizRemoveRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, quizEmptyTrashRequestV2, quizCreateRequestV2, sessionCreateRequest, sessionStatusRequest, updateSessionRequest, createQuizQuestionRequestV2 } from '../../serverTestHelperIt3';
+import { quizRemoveRequestV2, quizViewTrashRequestV2, quizRestoreTrashRequestV2, quizEmptyTrashRequestV2, quizCreateRequestV2, sessionCreateRequest, updateSessionRequest, createQuizQuestionRequestV2 } from '../../serverTestHelperIt3';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 import { AdminActions } from '../../../enums/AdminActions';
 
@@ -36,7 +36,7 @@ describe('DELETE /v2/admin/quiz/{quizid}', () => {
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  })
+  });
 });
 
 // quizViewTrash tests

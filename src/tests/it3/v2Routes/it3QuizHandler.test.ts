@@ -40,7 +40,6 @@ describe('POST /v2/admin/quiz/{quizId}/transfer', () => {
   test('error - tesing v2 route - open session error', () => {
     const user1Data = JSON.parse(user1.body.toString());
     const quiz1Data = JSON.parse(quiz1.body.toString());
-    const sess2Data = JSON.parse(sess2.body.toString());
     createQuizQuestionRequestV2(quiz1Data.quizId, user1Data.token, validCreateQuestion);
     const game1 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, 3);
     const game1Data = JSON.parse(game1.body.toString());
@@ -49,7 +48,7 @@ describe('POST /v2/admin/quiz/{quizId}/transfer', () => {
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  })
+  });
 });
 
 // adminQuizNameUpdate tests
@@ -347,19 +346,19 @@ describe('Testing V1 vs V2 differences with thumbnailurl for quizInfo', () => {
       duration: validQuestionInput1V2.duration + validQuestionInput2V2.duration,
     });
   });
-test('QuizInfo v2 - yes quiz thumbnail, yes question thumbnail', () => {
-  const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
-  const userData = JSON.parse(user.body.toString());
-  const quiz = quizCreateRequestV2(userData.token, validQuizName, validQuizDescription);
-  const quizData = JSON.parse(quiz.body.toString());
-  const quest1 = createQuizQuestionRequestV2(quizData.quizId, userData.token, validQuestionInput1V2);
-  const quest2 = createQuizQuestionRequestV2(quizData.quizId, userData.token, validQuestionInput2V2);
-  const quest1Data = JSON.parse(quest1.body.toString());
-  const quest2Data = JSON.parse(quest2.body.toString());
-  quizThumbnailUpdateRequest(userData.token, quizData.quizId, validpngUrl1);
-  const response = quizInfoRequestV2(userData.token, quizData.quizId);
-  expect(response.statusCode).toStrictEqual(200);
-  expect(JSON.parse(response.body.toString())).toStrictEqual({
+  test('QuizInfo v2 - yes quiz thumbnail, yes question thumbnail', () => {
+    const user = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const userData = JSON.parse(user.body.toString());
+    const quiz = quizCreateRequestV2(userData.token, validQuizName, validQuizDescription);
+    const quizData = JSON.parse(quiz.body.toString());
+    const quest1 = createQuizQuestionRequestV2(quizData.quizId, userData.token, validQuestionInput1V2);
+    const quest2 = createQuizQuestionRequestV2(quizData.quizId, userData.token, validQuestionInput2V2);
+    const quest1Data = JSON.parse(quest1.body.toString());
+    const quest2Data = JSON.parse(quest2.body.toString());
+    quizThumbnailUpdateRequest(userData.token, quizData.quizId, validpngUrl1);
+    const response = quizInfoRequestV2(userData.token, quizData.quizId);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(JSON.parse(response.body.toString())).toStrictEqual({
       quizId: quizData.quizId,
       name: validQuizName,
       timeCreated: expect.any(Number),
@@ -386,6 +385,6 @@ test('QuizInfo v2 - yes quiz thumbnail, yes question thumbnail', () => {
       ],
       duration: validQuestionInput1V2.duration + validQuestionInput2V2.duration,
       thumbnailUrl: validpngUrl1
-  });
+    });
   });
 });
