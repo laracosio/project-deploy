@@ -11,6 +11,15 @@ import { AutomaticActions } from '../enums/AutomaticActions';
 import { tokenValidation, findQuizById, findUTInfo, setAndSave, calcSubmittedAnsScore, createUserRank, calcAvgAnsTime, calcPercentCorrect, findPlayerName } from './otherService';
 import { QuestionResultsReturn } from './playerService';
 
+interface PlayerWithScores extends Player {
+  playerScores?: PlayerScore[];
+}
+
+interface PlayerScore {
+  questionId: number;
+  score: number;
+}
+
 interface newSessionReturn {
   sessionId: number
 }
@@ -43,7 +52,7 @@ interface IndividualRank {
   rank?: number;
 }
 interface Ranking {
-  questionPosition: number; 
+  questionPosition: number;
   rankings: IndividualRank[]
 }
 
@@ -376,104 +385,65 @@ export function quizFinalResultsCsv(quizId: number, sessionId: number, token: st
   return createQuizResultsCsv(session);
 }
 
-/**
- * helper function to generate CSVs
- * @param session - session corresponding to data needed
- * @returns 
- */
+function enrichWithScores(questions: Question[], players: Player[]): PlayerWithScores[] {
+  return players.map(player => {
+    return {
+      ...player,
+      playerScore: questions.map(question => {
+        const submittedAnswer = question.submittedAnswers.find(answer => answer.playerId === player.playerId);
+        return submittedAnswer.questionScore;
+      })
+    };
+  });
+}
+
 function createQuizResultsCsv(session: Session): string[] {
-  const sessionId = session.sessionId;
-  const quiz = session.sessionQuiz;
-  const questions = session.sessionQuiz.questions;
+  const questions: Question[] = session.sessionQuiz.questions;
   const players: Player[] = session.sessionPlayers;
 
-  const sortedPlayers = players.sort((a, b) => 
-    a.playerName.toLowerCase().localeCompare(b.playerName.toLowerCase())
-  );
-
-  // get player information from SubmittedAnswer and sort by score
-  const rankingSummary: Ranking[] = [];
-  let qIndex = 1;
-  questions.forEach(question => {
-    const qRank: Ranking = {
-      questionPosition: qIndex,
-      rankings: []
+  const sortedPlayers = players.sort((a, b) => {
+    if (a.playerName < b.playerName) {
+      return -1;
     }
-    question.submittedAnswers.forEach(answer => {
-      qRank.rankings.push({
-        name: findPlayerName(answer.playerId, sessionId),
-        score: answer.questionScore,
-      })
-    })
-    qRank.rankings.sort((a,b) => b.score || a.score);
-    rankingSummary.push(qRank);
-    qIndex++;
+    if (a.playerName > b.playerName) {
+      return 1;
+    }
+    return 0;
   });
-  
-  
-  rankingSummary.forEach(question => {
-    let currRank = 0;
-    let counter = 0;
-    let prevScore = 0;
-    question.rankings.forEach(answer => {
-        // score is 0 - rank is 0
-        if (answer.score === 0) {                 
-            answer.rank = 0;
-            // same score, assign the same rank and increase counter
-          } else if (prevScore === answer.score) {  
-              answer.rank = currRank;
-              counter++;
-            } else {
-        currRank++
-        answer.rank = currRank + counter;
-        counter = 0;
-        prevScore == answer.score;
+  const sortedPlayersWithScores: PlayerWithScores[] = enrichWithScores(questions, sortedPlayers);
+
+  // get list of questions with all players scores and ranks
+  const questionsWithScoresAndRank = questions.map(question => {
+  // get list of scores for each player, with each each index + 1 being the corresponding question number
+
+    const scores = sortedPlayersWithScores.map(player => {
+      const playerAnswer = player.playerScores.find(playerAnswer => playerAnswer.questionId === question.questionId);
+      return {
+        playerId: player.playerId,
+        score: playerAnswer ? playerAnswer.score : 0
+      };
+    });
+    const sortedScores = scores.sort((a, b) => (b.score) - (a.score));
+    let rank = 1;
+
+    // get ranks for each player, with each index + 1 being the corresponding question number
+    const ranks = sortedScores.map((answer, idx) => {
+      if (idx > 0 && answer.score < sortedScores[idx - 1].score) {
+        rank = idx + 1;
       }
-    })
+      return {
+        playerId: answer.playerId,
+        rank: rank
+      };
+    });
+
+    return {
+      id: question.questionId,
+      scores: scores,
+      ranks: ranks
+    };
   });
-  console.log('ranking', rankingSummary)
 
-
-  // const allRanking: qRankings[] = [];
-  // let qIndex = 1;
-  // questions.forEach(question => {
-  //   question.submittedAnswers.forEach(answer => {
-  //     allRanking.push({
-  //       playerName: findPlayerName(answer.playerId, sessionId),
-  //       questionPosition: qIndex,
-  //       score: answer.questionScore,
-  //     })
-  //   })
-  //   qIndex++;
-  // });
-
-  // // sort such that all same questions go first and then score
-  // allRanking.sort((a,b) => (a.questionPosition - b.questionPosition || (b.score - a.score)));
-  // console.log('sorted rankings Summary', allRanking);
-  
-  // for (let index = 1; index <= quiz.numQuestions; index++) {
-  //   const filteredRanks = allRanking.filter(q => q.questionPosition === index);
-  //   let currRank = 0;
-  //   let counter = 0;
-  //   let prevScore = 0;
-  //   filteredRanks.forEach(answer => {
-  //     // score is 0 - rank is 0
-  //     if (answer.score === 0) {                 
-  //       answer.rank = 0;
-  //       // same score, assign the same rank and increase counter
-  //     } else if (prevScore === answer.score) {  
-  //       answer.rank = currRank;
-  //       counter++;
-  //     } else {
-  //       currRank++
-  //       answer.rank = currRank + counter;
-  //       counter = 0;
-  //       prevScore == answer.score;
-  //     }
-  //   })
-  // }
-  // console.log('summary with rank', allRanking);
-    
   // add header to csv list
   const header = ['Player'];
   questions.forEach((elem, idx) => {
@@ -481,24 +451,16 @@ function createQuizResultsCsv(session: Session): string[] {
     header.push(`question${idx + 1}rank`);
   });
   const csvData = [header.join(',')];
-  
+
   // add players score and rank to csv list
   sortedPlayers.forEach(player => {
     const row = [player.playerName];
-    rankingSummary.forEach(question => {
-      row.push(question.rankings.find(person => person.name === player.playerName).score.toString());
-      row.push(question.rankings.find(person => person.name === player.playerName).rank.toString())
-    })
-        
-    // questions.forEach((elem, idx) => {
-    //   row.push(elem.scores.find(score => score.playerId === player.playerId).score.toString());
-    //   row.push(elem.ranks.find(rank => rank.playerId === player.playerId).rank.toString());
-    // });
+    questionsWithScoresAndRank.forEach((elem, idx) => {
+      row.push(elem.scores.find(score => score.playerId === player.playerId).score.toString());
+      row.push(elem.ranks.find(rank => rank.playerId === player.playerId).rank.toString());
+    });
     csvData.push(row.join(','));
   });
 
-  console.log(csvData);
-
   return csvData;
 }
-
