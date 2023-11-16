@@ -355,7 +355,6 @@ test('QuizInfo v2 - yes quiz thumbnail, yes question thumbnail', () => {
   quizThumbnailUpdateRequest(userData.token, quizData.quizId, validpngUrl1);
   const response = quizInfoRequestV2(userData.token, quizData.quizId);
   expect(response.statusCode).toStrictEqual(200);
-  console.log('v2', JSON.parse(response.body.toString()));
   expect(JSON.parse(response.body.toString())).toStrictEqual({
       quizId: quizData.quizId,
       name: validQuizName,
@@ -381,8 +380,8 @@ test('QuizInfo v2 - yes quiz thumbnail, yes question thumbnail', () => {
           thumbnailUrl: validQuestionInput2V2.thumbnailUrl
         }
       ],
-      duration: validQuestionInput1.duration + validQuestionInput2.duration,
-      thumbnail: validpngUrl1
+      duration: validQuestionInput1V2.duration + validQuestionInput2V2.duration,
+      thumbnailUrl: validpngUrl1
   });
   });
 });
