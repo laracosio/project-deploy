@@ -171,10 +171,6 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   const dataStore = getData();
   const session: Session = dataStore.sessions.find(elem => elem.sessionId === sessionId);
 
-  console.log('testing autoStartNum = 3 with 3 players');
-  console.log(`current action: ${action}`);
-  console.log(`current session's state: ${session.sessionState}`);
-
   if (!tokenValidation(token)) {
     throw new ApiError('Invalid token', HttpStatusCode.UNAUTHORISED);
   }
@@ -205,7 +201,6 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   try {
     // updateState will change the state of the session and throw an error if invalid action given as next state
     const nextState = updateState(session, action as AdminActions);
-    console.log(session.sessionState);
     if (nextState === SessionStates.QUESTION_CLOSE || nextState === SessionStates.ANSWER_SHOW) {
       const questionIndex = (session.atQuestion - 1);
       calcSubmittedAnsScore(session, questionIndex);

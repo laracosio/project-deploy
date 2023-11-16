@@ -26,7 +26,6 @@ quizRouterV1.get('/:quizid', (req: Request, res: Response) => {
 });
 
 quizRouterV1.get('/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
-  console.log('route');
   const token: string = req.header('token');
   const quizId: number = parseInt(req.params.quizid);
   const sessionId: number = parseInt(req.params.sessionid);

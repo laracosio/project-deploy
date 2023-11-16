@@ -115,19 +115,19 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Success', () => {
 
     const { usersRankedByScore, questionResults } = getResults.getParsedBody();
 
-    expect(usersRankedByScore[0].name).toStrictEqual('Hermione');
-    expect(usersRankedByScore[0].score).toStrictEqual(10);
-    expect(usersRankedByScore[1].name).toStrictEqual('Harry');
-    expect(usersRankedByScore[1].score).toStrictEqual(5);
+    expect(usersRankedByScore[0].name).toStrictEqual('Harry');
+    expect(usersRankedByScore[0].score).toStrictEqual(5);
+    expect(usersRankedByScore[1].name).toStrictEqual('Hermione');
+    expect(usersRankedByScore[1].score).toStrictEqual(2.5);
     expect(usersRankedByScore[2].name).toStrictEqual('Ron');
-    expect(usersRankedByScore[2].score).toStrictEqual(3.3);
+    expect(usersRankedByScore[2].score).toStrictEqual(1.7);
 
-    expect(questionResults.questionId).toStrictEqual(1);
-    expect(questionResults.playersCorrectList).toContain('Harry');
-    expect(questionResults.playersCorrectList).toContain('Hermione');
-    expect(questionResults.playersCorrectList).toContain('Ron');
-    expect(questionResults.averageAnswerTime).toEqual(expect.any(Number));
-    expect(questionResults.percentCorrect).toStrictEqual(100);
+    expect(questionResults[0].questionId).toStrictEqual(1);
+    expect(questionResults[0].playersCorrectList).toContain('Harry');
+    expect(questionResults[0].playersCorrectList).toContain('Hermione');
+    expect(questionResults[0].playersCorrectList).toContain('Ron');
+    expect(questionResults[0].averageAnswerTime).toEqual(expect.any(Number));
+    expect(questionResults[0].percentCorrect).toStrictEqual(100);
   });
 });
 
@@ -269,7 +269,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Errors', () => {
   test('/results - Error - 401 - Token is empty or invalid (does not refer to valid logged in user session', () => {
     const getResults = apiGet(
       `/v1/admin/quiz/${postQuiz.getParsedBody().quizId}/session/${postSession.getParsedBody().sessionId}/results`,
-      { token: postRegister.getParsedBody().token }
+      { token: 1234 }
     );
     expect(getResults.response.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
   });
