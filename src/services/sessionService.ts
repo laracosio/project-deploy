@@ -8,7 +8,7 @@ import { StateError } from '../errors/StateError';
 import { quizToMetadata } from '../utils/mappers';
 import { SessionStateMachine } from './sesssionStateMachine';
 import { AutomaticActions } from '../enums/AutomaticActions';
-import { tokenValidation, findQuizById, findUTInfo, setAndSave, calcSubmittedAnsScore, createUserRank, calcAvgAnsTime, calcPercentCorrect, findPlayerName } from './otherService';
+import { tokenValidation, findQuizById, findUTInfo, setAndSave, calcSubmittedAnsScore, createUserRank, calcAvgAnsTime, calcPercentCorrect } from './otherService';
 import { QuestionResultsReturn } from './playerService';
 
 interface PlayerWithScores extends Player {
@@ -46,31 +46,6 @@ interface quizSessionsList {
   inactiveSessions: number[];
 }
 
-interface IndividualRank {
-  name: string;
-  score: number;
-  rank?: number;
-}
-interface Ranking {
-  questionPosition: number;
-  rankings: IndividualRank[]
-}
-
-interface PlayerSummary {
-  name: string;
-  question: {
-    qPosition: number;
-    qscore: number;
-    qRank: number;
-  }
-}
-
-interface qRankings {
-  playerName: string;
-  questionPosition: number;
-  score: number;
-  rank?: number;
-}
 /**
  * Given a particular quiz, start a new session
  * @param {string} token - unique token
