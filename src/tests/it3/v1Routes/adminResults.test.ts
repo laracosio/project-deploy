@@ -58,7 +58,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/* - Success', () => {
       '/v1/player/join',
       { sessionId: postSession.getParsedBody().sessionId, name: 'Ron' }
     );
-  
+
     // LOBBY -> QUESTION_COUNTDOWN automatically since autoStartNum 3 = 3 players
     // should print current action: NEXT_QUESTION and current state: QUESTION_COUNTDOWN
 
