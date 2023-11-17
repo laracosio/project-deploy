@@ -3,7 +3,7 @@ import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizVi
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner, quizThumbnailUpdate } from '../../services/quizService';
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../../services/questionService';
 import { quizFinalResults, quizFinalResultsCsv } from '../../services/sessionService';
-import { writeFile } from 'fs';
+import { existsSync, fstat, mkdirSync, writeFile } from 'fs';
 import path from 'path';
 
 export const quizRouterV1 = Router();
@@ -38,7 +38,12 @@ quizRouterV1.get('/:quizid/session/:sessionid/results/csv', (req: Request, res: 
   const sessionId: number = parseInt(req.params.sessionid);
 
   const csvData = quizFinalResultsCsv(quizId, sessionId, token);
-  const filePath = path.join(__dirname, '..', '..', 'public', `${sessionId.toString()}.csv`);
+  const dir = path.join(__dirname, '..', '..', 'public');
+  const filePath = `${dir}/${sessionId.toString()}.csv`;
+
+  if (!existsSync(dir)) {
+    mkdirSync(dir);
+  }
   writeFile(filePath, csvData.join('\r\n'), err => {
     console.log(err);
   });
