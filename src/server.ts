@@ -21,6 +21,18 @@ import { userRouterV2 } from './handlers/v2/userHandlerV2';
 import { setData } from './dataStore';
 import { playerRouter } from './handlers/v1/playerHandlerV1';
 
+import { createClient } from '@vercel/kv';
+
+//deploy
+const KV_REST_API_URL="https://finer-glider-45574.kv.vercel-storage.com";
+const KV_REST_API_TOKEN="AbIGASQgOTRkNzc5ZWYtZmI5MC00NDliLTkyYjUtMGUyMTZkMWFlZTBmYzUwMzYyN2MxYjlmNGRkNTk1MTZkYTIyMzQyMjZkYzQ=";
+
+const database = createClient({
+  url: KV_REST_API_URL,
+  token: KV_REST_API_TOKEN,
+});
+
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -41,6 +53,18 @@ const HOST: string = process.env.IP || 'localhost';
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 app.use(express.static(__dirname + '/public'));
+
+//deploy
+app.get('/data', async (req: Request, res: Response) => {
+  const data = await database.hgetall('data:forum');
+  res.status(200).json({ data });
+});
+
+app.put('/data', async (req: Request, res: Response) => {
+  const { data } = req.body;
+  await database.hset("data:forum", { data });
+  return res.status(200).json({});
+});
 
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {

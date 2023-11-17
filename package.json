@@ -11,6 +11,7 @@
         "pre-commit": "npm run lint-fix && npm run tsc && npm run test"
     },
     "dependencies": {
+        "@vercel/kv": "^1.0.0",
         "cors": "^2.8.5",
         "date-fns": "^2.30.0",
         "express": "^4.18.0",
