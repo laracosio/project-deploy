@@ -176,7 +176,9 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
   try {
     // updateState will change the state of the session and throw an error if invalid action given as next state
     const nextState = updateState(session, action as AdminActions);
-    if (nextState === SessionStates.QUESTION_CLOSE || nextState === SessionStates.ANSWER_SHOW) {
+    // cannot use check to see if nextState is QUESTION_CLOSE or ANSWER_SHOW
+    // as shortcut. Answer will not calculate properly
+    if (session.sessionState === SessionStates.QUESTION_OPEN && nextState === SessionStates.ANSWER_SHOW) {
       const questionIndex = (session.atQuestion - 1);
       calcSubmittedAnsScore(session, questionIndex);
     }
