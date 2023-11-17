@@ -1,5 +1,5 @@
 import { Response } from 'sync-request-curl';
-import { person1, validAutoStartNum, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../../../testingData';
+import { person1, person2, validAutoStartNum, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../../../testingData';
 import { createQuizQuestionRequestV2, joinGuestPlayerRequest, playerSubmitAnswerRequest, quizCreateRequestV2, quizFinalRsltRequest, quizInfoRequestV2, sessionCreateRequest, updateSessionRequest } from '../../serverTestHelperIt3';
 import { AdminActions } from '../../../enums/AdminActions';
 import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
@@ -66,22 +66,22 @@ describe('GET /v1/player/:quizid/session/:sessionid/results - success', () => {
     const quizInfoData = JSON.parse(quizInfo.body.toString());
     updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.NEXT_QUESTION);
     updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
-
+  
     question2 = quizInfoData.questions[1];
-
+  
     await new Promise((resolve) => setTimeout(resolve, 100)); // 0.1 second submission
     // jest.setTimeout(7000);
     let numArray: number[] = [question2.answers[2].answerId];
     playerSubmitAnswerRequest(player3Data.playerId, 2, numArray);
-
+  
     await new Promise((resolve) => setTimeout(resolve, 200)); // 0.3 second submission
     numArray = [question2.answers[0].answerId];
     playerSubmitAnswerRequest(player1Data.playerId, 2, numArray);
-
+  
     await new Promise((resolve) => setTimeout(resolve, 100)); // 0.4 second submission
     numArray = [question2.answers[3].answerId];
     playerSubmitAnswerRequest(player2Data.playerId, 2, numArray);
-
+  
     await new Promise((resolve) => setTimeout(resolve, 1000));
     updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
   });
@@ -94,40 +94,40 @@ describe('GET /v1/player/:quizid/session/:sessionid/results - success', () => {
     const res = quizFinalRsltRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({
-      usersRankedByScore: [
-        {
-          name: 'Pumpkin',
-          score: 8.5
-        },
-        {
-          name: 'Gizmo',
-          score: 5
-        },
-        {
-          name: 'Dave',
-          score: 0
-        },
-      ],
-      questionResults: [
-        {
-          questionId: question1.questionId,
-          playersCorrectList: expect.any(Array),
-          averageAnswerTime: expect.any(Number),
-          percentCorrect: Math.round((2 / 3) * 100)
-        },
-        {
-          questionId: question2.questionId,
-          playersCorrectList: ['Pumpkin'],
-          averageAnswerTime: expect.any(Number),
-          percentCorrect: Math.round((1 / 3) * 100)
-        },
-        {
-          questionId: question3.questionId,
-          playersCorrectList: [],
-          averageAnswerTime: 0,
-          percentCorrect: 0
-        }
-      ]
+    usersRankedByScore: [
+      {
+      name: 'Pumpkin',
+      score: 8.5
+      },
+      {
+      name: 'Gizmo',
+      score: 5
+      },
+      {
+      name: 'Dave',
+      score: 0
+      },
+    ],
+    questionResults: [
+      {
+      questionId: question1.questionId,
+      playersCorrectList: expect.any(Array),
+      averageAnswerTime: expect.any(Number),
+      percentCorrect: Math.round((2 / 3) * 100)
+      },
+      {
+      questionId: question2.questionId,
+      playersCorrectList: ['Pumpkin'],
+      averageAnswerTime: expect.any(Number),
+      percentCorrect: Math.round((1 / 3) * 100)
+      },
+      {
+      questionId: question3.questionId,
+      playersCorrectList: [],
+      averageAnswerTime: 0,
+      percentCorrect: 0
+      }
+    ]
     });
     expect(data.questionResults[0].playersCorrectList).toEqual(expect.arrayContaining(['Pumpkin', 'Gizmo']));
     expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
@@ -168,7 +168,12 @@ describe('GET /v1/player/:quizid/session/:sessionid/results - error', () => {
     const game1Data = JSON.parse(game1.body.toString());
     const user1Data = JSON.parse(user1.body.toString());
     updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
-    const res = quizFinalRsltRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId * 1531);
+    const quiz2 = quizCreateRequestV2(user1Data.token, validQuizName + 'abc', validQuizDescription);
+    const quiz2Data = JSON.parse(quiz2.body.toString());
+    createQuizQuestionRequestV2(quiz2Data.quizId, user1Data.token, validQuestionInput1);
+    const game2 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const game2Data = JSON.parse(game2.body.toString());
+    const res = quizFinalRsltRequest(user1Data.token, quiz1Data.quizId, game2Data.sessionId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
@@ -206,7 +211,7 @@ describe('GET /v1/player/:quizid/session/:sessionid/results - error', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
     const game1Data = JSON.parse(game1.body.toString());
     const user1Data = JSON.parse(user1.body.toString());
-    const user2 = authRegisterRequest(person1.email, person1.password, person1.nameFirst, person1.nameLast);
+    const user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
     const user2Data = JSON.parse(user2.body.toString());
     updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
     const res = quizFinalRsltRequest(user2Data.token, quiz1Data.quizId, game1Data.sessionId);
