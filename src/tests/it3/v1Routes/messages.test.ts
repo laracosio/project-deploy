@@ -3,7 +3,7 @@ import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 import { longMessage, msg1, msg2, msg3, noMsg, person1, validAutoStartNum, validQuestionInput1V2, validQuestionInput2V2, validQuestionInput3V2, validQuizDescription, validQuizName } from '../../../testingData';
 import { createQuizQuestionRequestV2, joinGuestPlayerRequest, quizCreateRequestV2, sendMsgRequest, sessionCreateRequest, viewMsgsRequest } from '../../serverTestHelperIt3';
 import { getUnixTime } from 'date-fns';
-import { Response } from 'sync-request-curl';
+import { Response } from 'sync-request';
 
 const currentTime = getUnixTime(new Date());
 

@@ -1,7 +1,7 @@
 import { clearRequest, authRegisterRequest, quizCreateRequest, createQuizQuestionRequest } from '../../it2/serverTestHelperIt2';
 import { person1, person2, validQuizDescription, validQuizName, validCreateQuestion, validAutoStartNum, invalidAutoStartNum } from '../../../testingData';
 import { sessionCreateRequest, viewSessionsRequest, updateSessionRequest } from '../../serverTestHelperIt3';
-import { Response } from 'sync-request-curl';
+import { Response } from 'sync-request';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 
 beforeEach(() => {

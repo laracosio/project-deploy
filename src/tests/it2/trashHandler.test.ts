@@ -1,6 +1,6 @@
 import { authRegisterRequest, clearRequest, quizCreateRequest, quizRemoveRequest, quizViewTrashRequest, quizRestoreTrashRequest, quizEmptyTrashRequest } from './serverTestHelperIt2';
 import { person1, person2, validQuizName, validQuizDescription, stringOf1QuizIDs, stringOf2QuizIDs } from '../../testingData';
-import { Response } from 'sync-request-curl';
+import { Response } from 'sync-request';
 
 beforeEach(() => {
   clearRequest();

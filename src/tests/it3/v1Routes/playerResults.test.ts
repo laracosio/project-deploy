@@ -1,4 +1,4 @@
-import { Response } from 'sync-request-curl';
+import { Response } from 'sync-request';
 import { person1, validAutoStartNum, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../../../testingData';
 import { createQuizQuestionRequestV2, joinGuestPlayerRequest, playerFinalResultRqst, playerQuestResultRqst, playerSubmitAnswerRequest, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest, updateSessionRequest } from '../../serverTestHelperIt3';
 import { AdminActions } from '../../../enums/AdminActions';

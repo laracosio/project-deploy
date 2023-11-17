@@ -1,5 +1,5 @@
-import request from 'sync-request-curl';
-import { Response } from 'sync-request-curl';
+import request from 'sync-request';
+import { Response } from 'sync-request';
 import { port, url } from '../../config.json';
 import { QuestionCreate } from '../../dataStore';
 

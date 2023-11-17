@@ -1,4 +1,4 @@
-import { Response } from 'sync-request-curl';
+import { Response } from 'sync-request';
 import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
 import { person1, person2 } from '../../../testingData';
 import { Datastore, User } from '../../../dataStore';

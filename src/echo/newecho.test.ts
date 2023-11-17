@@ -7,7 +7,7 @@ test('REMOVE ME - added to pass testing pipeline!', () => {
 // UNCOMMENT LATER
 
 // Do not delete this file
-// import request from 'sync-request-curl';
+// import request from 'sync-request';
 // import config from '../config.json';
 
 // const OK = 200;

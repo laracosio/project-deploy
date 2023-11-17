@@ -1,4 +1,4 @@
-import { Response } from 'sync-request-curl';
+import { Response } from 'sync-request';
 import { person1, person2, validQuizDescription, validQuizName } from '../../testingData';
 import { authRegisterRequest, clearRequest, quizRemoveRequest, quizCreateRequest } from './serverTestHelperIt2';
 

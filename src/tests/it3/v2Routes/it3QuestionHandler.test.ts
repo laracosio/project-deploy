@@ -1,7 +1,7 @@
 import { getUnixTime } from 'date-fns';
 import { invalidCreateQuestionV2EmptyURL, invalidCreateQuestionV2InvalidURL, invalidCreateQuestionV2NotJPGPNG, invalidCreateQuestionV2URLEmpty, invalidCreateQuestionV2URLInvalid, invalidCreateQuestionV2URLNotPNGJPG, person1, validCreateQuestionV2JPG, validCreateQuestionV2PNG, validQuestionInput1, validQuestionInput2, validQuizDescription, validQuizName, validUpdateQuestionV2PNG } from '../../../testingData';
 import { authLoginRequest, authRegisterRequest, clearRequest, createQuizQuestionRequest, quizCreateRequest, quizInfoRequest } from '../../it2/serverTestHelperIt2';
-import { Response } from 'sync-request-curl';
+import { Response } from 'sync-request';
 import { createQuizQuestionRequestV2, duplicateQuestionRequestV2, moveQuestionRequestV2, quizCreateRequestV2, quizInfoRequestV2, updateQuizQuestionRequestV2 } from '../../serverTestHelperIt3';
 import { HttpStatusCode } from '../../../enums/HttpStatusCode';
 beforeEach(() => {

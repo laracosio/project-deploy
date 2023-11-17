@@ -5,7 +5,7 @@ import {
   invalidUpdateQuestionManyAnswers, invalidUpdateQuestionOneAnswer, invalidUpdateQuestionNegativeDuration, invalidUpdateQuestionMoreThan180, invalidUpdateQuestionZeroPoints, invalidUpdateQuestionMoreThan10Points, invalidUpdateQuestionBlankAnswer,
   invalidUpdateQuestionLongAnswer, invalidUpdateQuestionDuplicateAnswer, invalidUpdateQuestionNoCorrectAnswer, validCreateQuestion2
 } from '../../testingData';
-import { Response } from 'sync-request-curl';
+import { Response } from 'sync-request';
 import { getUnixTime } from 'date-fns';
 
 beforeEach(() => {

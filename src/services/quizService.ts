@@ -3,7 +3,7 @@ import { getUnixTime } from 'date-fns';
 import { findQuizById, findUTInfo, openSessionQuizzesState, setAndSave, tokenValidation, isImageUrlValid } from './otherService';
 import { ApiError } from '../errors/ApiError';
 import { HttpStatusCode } from '../enums/HttpStatusCode';
-import request from 'sync-request-curl';
+import request from 'sync-request';
 
 interface QuestionInfoReturn {
   questionId: number;

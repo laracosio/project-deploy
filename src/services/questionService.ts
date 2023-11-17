@@ -4,7 +4,7 @@ import { getData, Question, Answer, QuestionCreate, Colours } from '../dataStore
 import { HttpStatusCode } from '../enums/HttpStatusCode';
 import { ApiError } from '../errors/ApiError';
 import { findQuestionByQuiz, findQuizById, findUTInfo, getRandomColorAndRemove, getTotalDurationOfQuiz, isImageUrlValid, setAndSave, tokenValidation } from './otherService';
-import request from 'sync-request-curl';
+import request from 'sync-request';
 
 interface adminDuplicateQuestionReturn {
   newQuestionId: number
