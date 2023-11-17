@@ -3,7 +3,7 @@ import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizVi
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner, quizThumbnailUpdate } from '../../services/quizService';
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../../services/questionService';
 import { quizFinalResults, quizFinalResultsCsv } from '../../services/sessionService';
-import { existsSync, fstat, mkdirSync, writeFile } from 'fs';
+import { existsSync, mkdirSync, writeFile } from 'fs';
 import path from 'path';
 
 export const quizRouterV1 = Router();
