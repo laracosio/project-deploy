@@ -411,7 +411,7 @@ describe('GET /v1/admin/quiz/{quizId}/session/{sessionId}', () => {
     expect(session.metadata.name).toStrictEqual('my quiz');
     expect(session.metadata.description).toStrictEqual('quiz description');
     expect(session.metadata.numQuestions).toStrictEqual(1);
-    expect(session.metadata.duration).toStrictEqual(3);
+    expect(session.metadata.duration).toStrictEqual(4);
     expect(session.metadata.questions[0].questionId).toStrictEqual(1);
   });
 
