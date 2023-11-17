@@ -1,6 +1,6 @@
 import { Response } from 'sync-request-curl';
-import { person1, validAutoStartNum, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../../../testingData';
-import { createQuizQuestionRequestV2, joinGuestPlayerRequest, playerFinalResultRqst, playerQuestResultRqst, playerSubmitAnswerRequest, quizCreateRequestV2, quizInfoRequestV2, sessionCreateRequest, updateSessionRequest } from '../../serverTestHelperIt3';
+import { person1, person2, validAutoStartNum, validQuestionInput1, validQuestionInput2, validQuestionInput3, validQuizDescription, validQuizName } from '../../../testingData';
+import { createQuizQuestionRequestV2, joinGuestPlayerRequest, playerSubmitAnswerRequest, quizCreateRequestV2, quizFinalRsltRequest, quizInfoRequestV2, sessionCreateRequest, updateSessionRequest } from '../../serverTestHelperIt3';
 import { AdminActions } from '../../../enums/AdminActions';
 import { authRegisterRequest, clearRequest } from '../../it2/serverTestHelperIt2';
 import { Question } from '../../../dataStore';
@@ -54,121 +54,8 @@ beforeEach(async() => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 });
 
-// get results for a particular question of a session a player is playing in
-describe('GET /v1/player/:playerid/question/:questionposition/results - success', () => {
-  beforeEach(async() => {
-    const user1Data = JSON.parse(user1.body.toString());
-    const game1Data = JSON.parse(game1.body.toString());
-    const quiz1Data = JSON.parse(quiz1.body.toString());
-    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_ANSWER);
-  });
-  test('checking Q1 details', () => {
-    const player1Data = JSON.parse(player1.body.toString());
-    const res = playerQuestResultRqst(player1Data.playerId, 1);
-
-    const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({
-      questionId: question1.questionId,
-      playersCorrectList: expect.any(Array),
-      averageAnswerTime: expect.any(Number),
-      percentCorrect: Math.round((2 / 3) * 100)
-    });
-    expect(data.playersCorrectList).toEqual(expect.arrayContaining(['Pumpkin', 'Gizmo']));
-    expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
-  });
-  test('check Q2 details', async () => {
-    const user1Data = JSON.parse(user1.body.toString());
-    const game1Data = JSON.parse(game1.body.toString());
-    const quiz1Data = JSON.parse(quiz1.body.toString());
-    const player1Data = JSON.parse(player1.body.toString());
-    const player2Data = JSON.parse(player2.body.toString());
-    const player3Data = JSON.parse(player3.body.toString());
-    const quizInfoData = JSON.parse(quizInfo.body.toString());
-    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.NEXT_QUESTION);
-    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.SKIP_COUNTDOWN);
-
-    question2 = quizInfoData.questions[1];
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    let numArray: number[] = [question2.answers[2].answerId];
-    playerSubmitAnswerRequest(player3Data.playerId, 2, numArray);
-
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    numArray = [question2.answers[0].answerId];
-    playerSubmitAnswerRequest(player1Data.playerId, 2, numArray);
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    numArray = [question2.answers[3].answerId];
-    playerSubmitAnswerRequest(player2Data.playerId, 2, numArray);
-
-    // close question
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_ANSWER);
-
-    const res = playerQuestResultRqst(player1Data.playerId, 2);
-    const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({
-      questionId: question2.questionId,
-      playersCorrectList: ['Pumpkin'],
-      averageAnswerTime: expect.any(Number),
-      percentCorrect: Math.round((1 / 3) * 100)
-    });
-    expect(res.statusCode).toStrictEqual(HttpStatusCode.OK);
-  });
-});
-
-describe('GET /v1/player/:playerid/question/:questionposition/results - error', () => {
-  test('invalid playerId', () => {
-    const game1Data = JSON.parse(game1.body.toString());
-    const quiz1Data = JSON.parse(quiz1.body.toString());
-    const user1Data = JSON.parse(user1.body.toString());
-    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_ANSWER);
-    const player3Data = JSON.parse(player3.body.toString());
-    const res = playerQuestResultRqst(player3Data.playerId + 1531, 1);
-    const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({ error: expect.any(String) });
-    expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  });
-  test('question position doesnt exist (< 0)', () => {
-    const game1Data = JSON.parse(game1.body.toString());
-    const quiz1Data = JSON.parse(quiz1.body.toString());
-    const user1Data = JSON.parse(user1.body.toString());
-    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_ANSWER);
-    const player3Data = JSON.parse(player3.body.toString());
-    const res = playerQuestResultRqst(player3Data.playerId, -1);
-    const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({ error: expect.any(String) });
-    expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  });
-  test('question position doesnt exist (exceeds #Questions)', () => {
-    const game1Data = JSON.parse(game1.body.toString());
-    const quiz1Data = JSON.parse(quiz1.body.toString());
-    const user1Data = JSON.parse(user1.body.toString());
-    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_ANSWER);
-    const player3Data = JSON.parse(player3.body.toString());
-    const res = playerQuestResultRqst(player3Data.playerId, 5);
-    const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({ error: expect.any(String) });
-    expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  });
-  test('session is not in ANSWER_SHOW state', () => {
-    const player3Data = JSON.parse(player3.body.toString());
-    const res = playerQuestResultRqst(player3Data.playerId, 1);
-    const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({ error: expect.any(String) });
-    expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  });
-  test('session isnt up to the input question', () => {
-    const player3Data = JSON.parse(player3.body.toString());
-    const res = playerQuestResultRqst(player3Data.playerId, 2);
-    const data = JSON.parse(res.body.toString());
-    expect(data).toStrictEqual({ error: expect.any(String) });
-    expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
-  });
-});
-
 // Get the final results for a whole session a player is playing in
-describe('GET /v1/player/:playerid/results - success', () => {
+describe('GET /v1/player/:quizid/session/:sessionid/results - success', () => {
   beforeEach(async() => {
     const user1Data = JSON.parse(user1.body.toString());
     const game1Data = JSON.parse(game1.body.toString());
@@ -201,8 +88,10 @@ describe('GET /v1/player/:playerid/results - success', () => {
   test('ended question', () => {
     const quizInfoData = JSON.parse(quizInfo.body.toString());
     const question3 = quizInfoData.questions[2];
-    const player1Data = JSON.parse(player1.body.toString());
-    const res = playerFinalResultRqst(player1Data.playerId);
+    const user1Data = JSON.parse(user1.body.toString());
+    const game1Data = JSON.parse(game1.body.toString());
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const res = quizFinalRsltRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({
       usersRankedByScore: [
@@ -245,7 +134,7 @@ describe('GET /v1/player/:playerid/results - success', () => {
   });
 });
 
-describe('GET /v1/player/:playerid/results - error', () => {
+describe('GET /v1/player/:quizid/session/:sessionid/results - error', () => {
   beforeEach(async() => {
     const user1Data = JSON.parse(user1.body.toString());
     const game1Data = JSON.parse(game1.body.toString());
@@ -274,22 +163,60 @@ describe('GET /v1/player/:playerid/results - error', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
   });
-  test('invalid playerId', () => {
+  test('invalid sessionId', () => {
     const quiz1Data = JSON.parse(quiz1.body.toString());
     const game1Data = JSON.parse(game1.body.toString());
     const user1Data = JSON.parse(user1.body.toString());
     updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
-    const player3Data = JSON.parse(player3.body.toString());
-    const res = playerFinalResultRqst(player3Data.playerId * 1531);
+    const quiz2 = quizCreateRequestV2(user1Data.token, validQuizName + 'abc', validQuizDescription);
+    const quiz2Data = JSON.parse(quiz2.body.toString());
+    createQuizQuestionRequestV2(quiz2Data.quizId, user1Data.token, validQuestionInput1);
+    const game2 = sessionCreateRequest(user1Data.token, quiz1Data.quizId, validAutoStartNum);
+    const game2Data = JSON.parse(game2.body.toString());
+    const res = quizFinalRsltRequest(user1Data.token, quiz1Data.quizId, game2Data.sessionId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
   });
   test('not in final results stage', () => {
-    const player3Data = JSON.parse(player3.body.toString());
-    const res = playerFinalResultRqst(player3Data.playerId);
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const game1Data = JSON.parse(game1.body.toString());
+    const user1Data = JSON.parse(user1.body.toString());
+    const res = quizFinalRsltRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId);
     const data = JSON.parse(res.body.toString());
     expect(data).toStrictEqual({ error: expect.any(String) });
     expect(res.statusCode).toStrictEqual(HttpStatusCode.BAD_REQUEST);
+  });
+  test('empty token', () => {
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const game1Data = JSON.parse(game1.body.toString());
+    const user1Data = JSON.parse(user1.body.toString());
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
+    const res = quizFinalRsltRequest('', quiz1Data.quizId, game1Data.sessionId);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
+  });
+  test('invalid token', () => {
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const game1Data = JSON.parse(game1.body.toString());
+    const user1Data = JSON.parse(user1.body.toString());
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
+    const res = quizFinalRsltRequest(user1Data.token + 1531, quiz1Data.quizId, game1Data.sessionId);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.UNAUTHORISED);
+  });
+  test('Valid token is provided, but user is not an owner of this quiz', () => {
+    const quiz1Data = JSON.parse(quiz1.body.toString());
+    const game1Data = JSON.parse(game1.body.toString());
+    const user1Data = JSON.parse(user1.body.toString());
+    const user2 = authRegisterRequest(person2.email, person2.password, person2.nameFirst, person2.nameLast);
+    const user2Data = JSON.parse(user2.body.toString());
+    updateSessionRequest(user1Data.token, quiz1Data.quizId, game1Data.sessionId, AdminActions.GO_TO_FINAL_RESULTS);
+    const res = quizFinalRsltRequest(user2Data.token, quiz1Data.quizId, game1Data.sessionId);
+    const data = JSON.parse(res.body.toString());
+    expect(data).toStrictEqual({ error: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(HttpStatusCode.FORBIDDEN);
   });
 });

@@ -172,4 +172,4 @@ Thumbs.db
 
 # Ignore built ts files
 dist/**/*
-.vscode/settings.json
+.vscode/

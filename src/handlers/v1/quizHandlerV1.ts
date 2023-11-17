@@ -2,6 +2,9 @@ import { Router, Request, Response } from 'express';
 import { adminQuizRemove, quizRemoveQuestion, adminQuizRestoreTrash, adminQuizViewTrash, adminQuizEmptyTrash } from '../../services/trashService';
 import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizTransferOwner, quizThumbnailUpdate } from '../../services/quizService';
 import { adminDuplicateQuestion, quizCreateQuestion, quizUpdateQuestion, adminMoveQuestion } from '../../services/questionService';
+import { quizFinalResults, quizFinalResultsCsv } from '../../services/sessionService';
+import { existsSync, mkdirSync, writeFile } from 'fs';
+import path from 'path';
 
 export const quizRouterV1 = Router();
 
@@ -20,6 +23,33 @@ quizRouterV1.get('/:quizid', (req: Request, res: Response) => {
   const token: string = req.query.token as string;
   const quizId: number = parseInt(req.params.quizid);
   res.json(adminQuizInfo(token, quizId));
+});
+
+quizRouterV1.get('/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
+  const token: string = req.header('token');
+  const quizId: number = parseInt(req.params.quizid);
+  const sessionId: number = parseInt(req.params.sessionid);
+  res.json(quizFinalResults(quizId, sessionId, token));
+});
+
+quizRouterV1.get('/:quizid/session/:sessionid/results/csv', (req: Request, res: Response) => {
+  const token: string = req.header('token');
+  const quizId: number = parseInt(req.params.quizid);
+  const sessionId: number = parseInt(req.params.sessionid);
+
+  const csvData = quizFinalResultsCsv(quizId, sessionId, token);
+  const dir = path.join(__dirname, '..', '..', 'public');
+  const filePath = `${dir}/${sessionId.toString()}.csv`;
+
+  if (!existsSync(dir)) {
+    mkdirSync(dir);
+  }
+  writeFile(filePath, csvData.join('\r\n'), err => {
+    console.log(err);
+  });
+  res.json({
+    url: `${req.hostname}/${filePath}`
+  });
 });
 
 // post routers

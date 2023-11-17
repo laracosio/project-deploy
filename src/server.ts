@@ -40,6 +40,7 @@ const HOST: string = process.env.IP || 'localhost';
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
+app.use(express.static(__dirname + '/public'));
 
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {

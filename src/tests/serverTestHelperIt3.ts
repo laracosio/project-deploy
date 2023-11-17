@@ -33,7 +33,7 @@ export const apiGet = (url: string, headers: object): ParsedResponse => {
   return parsedResponse;
 };
 
-export const apiPut = (url: string, body: object, headers: object): ParsedResponse => {
+export const apiPut = (url: string, body: object, headers?: object): ParsedResponse => {
   const httpUrl = SERVER_URL + url;
   const httpOptions = {
     headers: headers
@@ -41,7 +41,7 @@ export const apiPut = (url: string, body: object, headers: object): ParsedRespon
           ...headers,
           'Content-type': 'application/json'
         }
-      : null,
+      : { 'Content-type': 'application/json' },
     body: body ? JSON.stringify(body) : null
   };
   const res = request('PUT', httpUrl, httpOptions);
@@ -52,7 +52,7 @@ export const apiPut = (url: string, body: object, headers: object): ParsedRespon
 export const apiPost = (
   url: string,
   body: object,
-  headers: object
+  headers?: object
 ): ParsedResponse => {
   const httpUrl = SERVER_URL + url;
   const httpOptions = {
@@ -61,7 +61,7 @@ export const apiPost = (
           ...headers,
           'Content-type': 'application/json'
         }
-      : null,
+      : { 'Content-type': 'application/json' },
     body: body ? JSON.stringify(body) : null
   };
   const res: Response = request('POST', httpUrl, httpOptions);
@@ -488,6 +488,7 @@ export const sessionStatusRequest = (token: string, quizId: number, sessionId: n
     }
   );
 };
+
 export const viewSessionsRequest = (token: string, quizid: number): Response => {
   return request(
     'GET',
@@ -501,3 +502,29 @@ export const viewSessionsRequest = (token: string, quizid: number): Response => 
   );
 };
 // #endregion
+
+export const quizFinalRsltRequest = (token: string, quizid: number, sessionid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};
+
+export const csvRequest = (token: string, quizid: number, sessionid: number): Response => {
+  return request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      },
+    }
+  );
+};

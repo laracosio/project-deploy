@@ -331,7 +331,9 @@ export function calcSubmittedAnsScore(session: Session, questionIndex: number) {
     if (submission.answerCorrect === true) {
       const currentlyCorrect = matchedQuestion.playerCorrectList.length;
       submission.questionScore = Math.round((matchedQuestion.points * (1 / (currentlyCorrect + 1))) * 10) / 10;
-      matchedQuestion.playerCorrectList.push(findPlayerName(submission.playerId, session.sessionId));
+      const set = new Set<string>(matchedQuestion.playerCorrectList);
+      set.add(findPlayerName(submission.playerId, session.sessionId));
+      matchedQuestion.playerCorrectList = Array.from(set.values());
     } else {
       submission.questionScore = 0;
     }
