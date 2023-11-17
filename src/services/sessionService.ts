@@ -178,7 +178,7 @@ export function updateSessionStatus(quizId: number, sessionId: number, token: st
     const nextState = updateState(session, action as AdminActions);
     // cannot use check to see if nextState is QUESTION_CLOSE or ANSWER_SHOW
     // as shortcut. Answer will not calculate properly
-    if (session.sessionState === SessionStates.QUESTION_OPEN && nextState === SessionStates.ANSWER_SHOW) {
+    if (nextState === SessionStates.QUESTION_OPEN || nextState === SessionStates.ANSWER_SHOW) {
       const questionIndex = (session.atQuestion - 1);
       calcSubmittedAnsScore(session, questionIndex);
     }
