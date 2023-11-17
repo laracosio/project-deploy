@@ -1,7 +1,6 @@
 import { getData, setData, User, UTInfo, Quiz, Question, Datastore, Session } from '../dataStore';
 import validator from 'validator';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
 import crypto from 'crypto';
 import { SessionStates } from '../enums/SessionStates';
 import { UserRanking } from './playerService';
@@ -38,7 +37,7 @@ export function clear(): object {
  */
 export function setAndSave(dataStore: Datastore) {
   setData(dataStore);
-  database.hset<Datastore>('toohak', {datastore: dataStore});
+  database.hset<Datastore>('toohak', { datastore: dataStore });
 }
 
 /**

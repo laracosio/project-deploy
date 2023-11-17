@@ -23,15 +23,14 @@ import { playerRouter } from './handlers/v1/playerHandlerV1';
 
 import { createClient } from '@vercel/kv';
 
-//deploy
-const KV_REST_API_URL="https://finer-glider-45574.kv.vercel-storage.com";
-const KV_REST_API_TOKEN="AbIGASQgOTRkNzc5ZWYtZmI5MC00NDliLTkyYjUtMGUyMTZkMWFlZTBmYzUwMzYyN2MxYjlmNGRkNTk1MTZkYTIyMzQyMjZkYzQ=";
+// deploy
+const KV_REST_API_URL = 'https://finer-glider-45574.kv.vercel-storage.com';
+const KV_REST_API_TOKEN = 'AbIGASQgOTRkNzc5ZWYtZmI5MC00NDliLTkyYjUtMGUyMTZkMWFlZTBmYzUwMzYyN2MxYjlmNGRkNTk1MTZkYTIyMzQyMjZkYzQ=';
 
 export const database = createClient({
   url: KV_REST_API_URL,
   token: KV_REST_API_TOKEN,
 });
-
 
 // Set up web app
 const app = express();
@@ -54,7 +53,7 @@ const HOST: string = process.env.IP || 'localhost';
 // ====================================================================
 app.use(express.static(__dirname + '/public'));
 
-//deploy
+// deploy
 app.get('/data', async (req: Request, res: Response) => {
   const data = await database.hgetall('data:project');
   res.status(200).json({ data });
@@ -62,7 +61,7 @@ app.get('/data', async (req: Request, res: Response) => {
 
 app.put('/data', async (req: Request, res: Response) => {
   const { data } = req.body;
-  await database.hset("data:project", { data });
+  await database.hset('data:project', { data });
   return res.status(200).json({});
 });
 
@@ -119,12 +118,10 @@ const server = app.listen(PORT, HOST, async () => {
   // Persistence - code sourced from
   // https://nw-syd-gitlab.cseunsw.tech/COMP1531/23T3/comp1531-lecturecode-23t3/-/blob/main/week3-9/src/5.1_4persistence.ts?ref_type=heads
 
+  const promise = database.hget<Datastore>('toohak', 'datastore');
+  const data = await promise;
 
-    const promise = database.hget<Datastore>('toohak', 'datastore');
-    const data = await promise;
-    
-    setData(data);
-
+  setData(data);
 
   // DO NOT CHANGE THIS LINE
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
