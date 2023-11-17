@@ -18,7 +18,7 @@ import { authRouterV2 } from './handlers/v2/authHandlerV2';
 import { quizRouterV2 } from './handlers/v2/quizHandlerV2';
 import { sessionRouterV1 } from './handlers/v1/sessionHandlerV1';
 import { userRouterV2 } from './handlers/v2/userHandlerV2';
-import { setData } from './dataStore';
+import { Datastore, setData } from './dataStore';
 import { playerRouter } from './handlers/v1/playerHandlerV1';
 
 import { createClient } from '@vercel/kv';
@@ -27,7 +27,7 @@ import { createClient } from '@vercel/kv';
 const KV_REST_API_URL="https://finer-glider-45574.kv.vercel-storage.com";
 const KV_REST_API_TOKEN="AbIGASQgOTRkNzc5ZWYtZmI5MC00NDliLTkyYjUtMGUyMTZkMWFlZTBmYzUwMzYyN2MxYjlmNGRkNTk1MTZkYTIyMzQyMjZkYzQ=";
 
-const database = createClient({
+export const database = createClient({
   url: KV_REST_API_URL,
   token: KV_REST_API_TOKEN,
 });
@@ -56,13 +56,13 @@ app.use(express.static(__dirname + '/public'));
 
 //deploy
 app.get('/data', async (req: Request, res: Response) => {
-  const data = await database.hgetall('data:forum');
+  const data = await database.hgetall('data:project');
   res.status(200).json({ data });
 });
 
 app.put('/data', async (req: Request, res: Response) => {
   const { data } = req.body;
-  await database.hset("data:forum", { data });
+  await database.hset("data:project", { data });
   return res.status(200).json({});
 });
 
@@ -115,14 +115,16 @@ app.use((req: Request, res: Response) => {
 app.use(errorHandler());
 
 // start server
-const server = app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, async () => {
   // Persistence - code sourced from
   // https://nw-syd-gitlab.cseunsw.tech/COMP1531/23T3/comp1531-lecturecode-23t3/-/blob/main/week3-9/src/5.1_4persistence.ts?ref_type=heads
-  if (fs.existsSync('datastore.json')) {
-    const datastr = fs.readFileSync('./datastore.json');
-    const data = JSON.parse(String(datastr));
+
+
+    const promise = database.hget<Datastore>('toohak', 'datastore');
+    const data = await promise;
+    
     setData(data);
-  }
+
 
   // DO NOT CHANGE THIS LINE
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);

@@ -5,6 +5,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import { SessionStates } from '../enums/SessionStates';
 import { UserRanking } from './playerService';
+import { database } from '../server';
 
 const MAXCHAR = 20;
 const MINCHAR = 2;
@@ -37,7 +38,7 @@ export function clear(): object {
  */
 export function setAndSave(dataStore: Datastore) {
   setData(dataStore);
-  fs.writeFileSync('datastore.json', JSON.stringify(dataStore));
+  database.hset<Datastore>('toohak', {datastore: dataStore});
 }
 
 /**
